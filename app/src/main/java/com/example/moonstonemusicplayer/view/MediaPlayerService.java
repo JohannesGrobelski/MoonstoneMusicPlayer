@@ -31,23 +31,84 @@ public class MediaPlayerService extends Service
   private AudioManager audioManager;
   private int resumePosition = 0;
 
-  public String getMediaFilePath() {
-    return mediaFilePath;
-  }
-
+  public String getMediaFilePath() {return mediaFilePath;}
 
   //public interface
   public void resume() {
-    resumeMedia();
+    //TODO: auf onPrepared warten
+    if(mediaPlayer != null && !mediaPlayer.isPlaying()){
+      mediaPlayer.seekTo(resumePosition);
+      mediaPlayer.start();
+    }
   }
 
   public void pause() {
-    pauseMedia();
+    //TODO: auf onPrepared warten
+    if(mediaPlayer != null && mediaPlayer.isPlaying()){
+      mediaPlayer.pause();
+      resumePosition = mediaPlayer.getCurrentPosition();
+    }
   }
+
+  public void playMedia(){
+    //TODO: auf onPrepared warten
+    if(mediaPlayer != null && !mediaPlayer.isPlaying()){
+      mediaPlayer.start();
+    }
+  }
+
+  public void stopMedia(){
+    //TODO: auf onPrepared warten
+    if(mediaPlayer != null && mediaPlayer.isPlaying()){
+      mediaPlayer.stop();
+    }
+  }
+
+  public void seekTo(int i) {mediaPlayer.seekTo(i);}
+
+  public boolean mediaPlayerReady(){return mediaPlayer != null;}
 
   public boolean isPlayingMusic() {
     if(mediaPlayer != null) return mediaPlayer.isPlaying();
     else return false;
+  }
+
+  public int getCurrentPosition() {
+    if(mediaPlayerReady())return mediaPlayer.getCurrentPosition();
+    else return -1;
+  }
+
+  public int getAudioDuration(){
+    if(mediaPlayer != null){
+      return mediaPlayer.getDuration();
+    } return -1;
+  }
+
+
+
+  //Listener interface
+  @Override
+  public int onStartCommand(Intent intent, int flags, int startId) {
+    try {
+      mediaFilePath = intent.getExtras().getString(FILEPATHEXTRA);
+    } catch (Exception e){
+      Log.e(TAG,"MediaPlayerService keine Datei angegeben");
+      stopSelf();
+    }
+
+    if(!requestAudioFocus())stopSelf();
+    if(mediaFilePath != null && !mediaFilePath.isEmpty())initMediaPlayer();
+    return super.onStartCommand(intent, flags, startId);
+  }
+
+  @Override
+  public void onDestroy() {
+    super.onDestroy();
+    if(mediaPlayer != null){
+      stopSelf();
+      mediaPlayer.release();
+    }
+    removeAudioFocus();
   }
 
 
@@ -76,35 +137,6 @@ public class MediaPlayerService extends Service
     mediaPlayer.prepareAsync();
   }
 
-  private void playMedia(){
-    //TODO: auf onPrepared warten
-    if(mediaPlayer != null && !mediaPlayer.isPlaying()){
-      mediaPlayer.start();
-    }
-  }
-
-  private void pauseMedia(){
-    //TODO: auf onPrepared warten
-    if(mediaPlayer != null && mediaPlayer.isPlaying()){
-      mediaPlayer.pause();
-      resumePosition = mediaPlayer.getCurrentPosition();
-    }
-  }
-
-  private void resumeMedia(){
-    //TODO: auf onPrepared warten
-    if(mediaPlayer != null && !mediaPlayer.isPlaying()){
-      mediaPlayer.seekTo(resumePosition);
-      mediaPlayer.start();
-    }
-  }
-
-  private void stopMedia(){
-    //TODO: auf onPrepared warten
-    if(mediaPlayer != null && mediaPlayer.isPlaying()){
-      mediaPlayer.stop();
-    }
-  }
 
 
 
@@ -117,6 +149,7 @@ public class MediaPlayerService extends Service
   /** wird aufgerufen um den BufferStatus einer Medienresource, die über Netzwerkgestreamt wird anzuzeigen*/
   @Override
   public void onBufferingUpdate(MediaPlayer mp, int percent) {
+
   }
 
   /** wird aufgerufen wenn Medienresource fertig abgespielt wurde*/
@@ -148,15 +181,11 @@ public class MediaPlayerService extends Service
 
   /** wird aufgerufen wenn medienresource bereit ist zum abspielen */
   @Override
-  public void onPrepared(MediaPlayer mp) {
-    playMedia();
-  }
+  public void onPrepared(MediaPlayer mp) {playMedia();}
 
   /** wird aufgerufen beim abschluss einer onSeek Operation*/
   @Override
-  public void onSeekComplete(MediaPlayer mp) {
-
-  }
+  public void onSeekComplete(MediaPlayer mp) {}
 
   /** aufgerufen wenn sich der Audiofokus ändert, z.B durch eingehenden Anruf */
   @Override
@@ -183,6 +212,7 @@ public class MediaPlayerService extends Service
     }
   }
 
+
   private boolean requestAudioFocus(){
     audioManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
     int result = audioManager.requestAudioFocus(this,AudioManager.STREAM_MUSIC,AudioManager.AUDIOFOCUS_GAIN);
@@ -193,48 +223,7 @@ public class MediaPlayerService extends Service
     return AudioManager.AUDIOFOCUS_REQUEST_GRANTED == audioManager.abandonAudioFocus(this);
   }
 
-  @Override
-  public int onStartCommand(Intent intent, int flags, int startId) {
-    try {
-      mediaFilePath = intent.getExtras().getString(FILEPATHEXTRA);
-    } catch (Exception e){
-      Log.e(TAG,"MediaPlayerService keine Datei angegeben");
-      stopSelf();
-    }
 
-    if(!requestAudioFocus())stopSelf();
-    if(mediaFilePath != null && !mediaFilePath.isEmpty())initMediaPlayer();
-    return super.onStartCommand(intent, flags, startId);
-  }
-
-  @Override
-  public void onDestroy() {
-    super.onDestroy();
-    if(mediaPlayer != null){
-      stopSelf();
-      mediaPlayer.release();
-    }
-    removeAudioFocus();
-  }
-
-  public int getAudioDuration(){
-    if(mediaPlayer != null){
-      return mediaPlayer.getDuration();
-    } return -1;
-  }
-
-  public boolean mediaPlayerReady(){
-    return mediaPlayer != null;
-  }
-
-  public int getCurrentPosition() {
-    if(mediaPlayerReady())return mediaPlayer.getCurrentPosition();
-    else return -1;
-  }
-
-  public void seekTo(int i) {
-    mediaPlayer.seekTo(i);
-  }
 
   public class LocalBinder extends Binder {
     public MediaPlayerService getService() {

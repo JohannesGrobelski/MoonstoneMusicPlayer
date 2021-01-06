@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/mi_loadLocaleAudioFile"
+        android:icon="@android:drawable/ic_popup_sync"
+        android:title="load locale audio files"
+        app:showAsAction="ifRoom" />
+</menu>

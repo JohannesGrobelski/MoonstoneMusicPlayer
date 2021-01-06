@@ -1,12 +1,17 @@
 package com.example.moonstonemusicplayer.view;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.MainActivityListener;
@@ -38,5 +43,18 @@ public class MainActivity extends AppCompatActivity {
     btn_play_pause.setOnClickListener(mainActivityListener);
     btn_next.setOnClickListener(mainActivityListener);
     seekBar.setOnSeekBarChangeListener(mainActivityListener);
+
+
+  }
+
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    return mainActivityListener.onCreateOptionsMenu(menu);
+
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+    return mainActivityListener.onOptionsItemSelected(item);
   }
 }

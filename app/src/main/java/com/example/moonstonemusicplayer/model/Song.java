@@ -5,6 +5,7 @@ public class Song {
   String artist;
   String genre = "";
   long duration_ms = 0;
+  long lastPosition = 0;
   String URI = "";
   String lyrics = "";
   String meaning = "";
@@ -19,6 +20,9 @@ public class Song {
   boolean isFavourite = false;
 
 
+  public long getLastPosition() { return lastPosition;}
+
+  public void setLastPosition(long lastPosition) {this.lastPosition = lastPosition;}
 
   public String getTitle() {
     return title;
