@@ -1,8 +1,10 @@
-package com.example.moonstonemusicplayer;
+package com.example.moonstonemusicplayer.view;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+
+import com.example.moonstonemusicplayer.R;
 
 public class MainActivity extends AppCompatActivity {
 
