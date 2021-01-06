@@ -4,16 +4,21 @@ public class Song {
   String title;
   String artist;
   String genre = "";
-  long duration = 0;
+  long duration_ms = 0;
   String URI = "";
   String lyrics = "";
   String meaning = "";
-  boolean isFavourite = false;
 
-  public Song(String title, String artist) {
+  public Song(String title, String artist, String URI, long duration_ms) {
     this.title = title;
     this.artist = artist;
+    this.URI = URI;
+    this.duration_ms = duration_ms;
   }
+
+  boolean isFavourite = false;
+
+
 
   public String getTitle() {
     return title;
@@ -39,12 +44,22 @@ public class Song {
     this.genre = genre;
   }
 
-  public long getDuration() {
-    return duration;
+  public long getDuration_ms() {
+    return duration_ms;
   }
 
-  public void setDuration(long duration) {
-    this.duration = duration;
+  public static String getDurationString(Integer duration_ms){
+    int duration_seconds = -1;
+    duration_seconds = (int) duration_ms / 1000;
+    int hours = duration_seconds / 3600;
+    int minutes = (duration_seconds - (hours * 3600)) / 60;
+    int seconds = (duration_seconds - (minutes * 60)) % 60;
+    if(duration_seconds < 3600) return minutes+":"+seconds;
+    else return hours+":"+minutes+":"+seconds;
+  }
+
+  public void setDuration_ms(long duration_ms) {
+    this.duration_ms = duration_ms;
   }
 
   public String getURI() {
@@ -78,6 +93,7 @@ public class Song {
   public void setFavourite(boolean favourite) {
     isFavourite = favourite;
   }
+
 
 
 }

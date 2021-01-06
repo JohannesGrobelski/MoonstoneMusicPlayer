@@ -13,6 +13,7 @@ import androidx.annotation.Nullable;
 
 import java.io.IOException;
 
+
 public class MediaPlayerService extends Service
        implements MediaPlayer.OnCompletionListener,
                   MediaPlayer.OnPreparedListener,
@@ -28,8 +29,27 @@ public class MediaPlayerService extends Service
   private MediaPlayer mediaPlayer;
   private String mediaFilePath;
   private AudioManager audioManager;
-
   private int resumePosition = 0;
+
+  public String getMediaFilePath() {
+    return mediaFilePath;
+  }
+
+
+  //public interface
+  public void resume() {
+    resumeMedia();
+  }
+
+  public void pause() {
+    pauseMedia();
+  }
+
+  public boolean isPlayingMusic() {
+    if(mediaPlayer != null) return mediaPlayer.isPlaying();
+    else return false;
+  }
+
 
   private void initMediaPlayer(){
     mediaPlayer = new MediaPlayer();
@@ -57,12 +77,14 @@ public class MediaPlayerService extends Service
   }
 
   private void playMedia(){
+    //TODO: auf onPrepared warten
     if(mediaPlayer != null && !mediaPlayer.isPlaying()){
       mediaPlayer.start();
     }
   }
 
   private void pauseMedia(){
+    //TODO: auf onPrepared warten
     if(mediaPlayer != null && mediaPlayer.isPlaying()){
       mediaPlayer.pause();
       resumePosition = mediaPlayer.getCurrentPosition();
@@ -70,17 +92,21 @@ public class MediaPlayerService extends Service
   }
 
   private void resumeMedia(){
-    if(mediaPlayer != null && mediaPlayer.isPlaying()){
+    //TODO: auf onPrepared warten
+    if(mediaPlayer != null && !mediaPlayer.isPlaying()){
       mediaPlayer.seekTo(resumePosition);
       mediaPlayer.start();
     }
   }
 
   private void stopMedia(){
+    //TODO: auf onPrepared warten
     if(mediaPlayer != null && mediaPlayer.isPlaying()){
       mediaPlayer.stop();
     }
   }
+
+
 
   @Nullable
   @Override
@@ -189,6 +215,25 @@ public class MediaPlayerService extends Service
       mediaPlayer.release();
     }
     removeAudioFocus();
+  }
+
+  public int getAudioDuration(){
+    if(mediaPlayer != null){
+      return mediaPlayer.getDuration();
+    } return -1;
+  }
+
+  public boolean mediaPlayerReady(){
+    return mediaPlayer != null;
+  }
+
+  public int getCurrentPosition() {
+    if(mediaPlayerReady())return mediaPlayer.getCurrentPosition();
+    else return -1;
+  }
+
+  public void seekTo(int i) {
+    mediaPlayer.seekTo(i);
   }
 
   public class LocalBinder extends Binder {
