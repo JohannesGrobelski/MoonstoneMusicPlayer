@@ -39,11 +39,14 @@ public class MainActivityListener implements AdapterView.OnItemClickListener, Vi
   private ServiceConnection serviceConnection;
 
   SongManager songManager;
+  private int currentSongIndex;
+
   boolean serviceBound = false;
   String mediaPath = "";
 
-  int currentSongIndex;
   SongListAdapter songListAdapter;
+
+  Thread seekbarAnimation;
 
   public MainActivityListener(MainActivity mainActivity) {
     this.mainActivity = mainActivity;
@@ -80,6 +83,8 @@ public class MainActivityListener implements AdapterView.OnItemClickListener, Vi
       mediaPlayerService.resume();
       mainActivity.btn_play_pause.setBackground(mainActivity.getResources().getDrawable(android.R.drawable.ic_media_pause));
       animateMediaplayerProgressOnSeekbar();
+      mainActivity.tv_title.setText(songManager.getSong(currentSongIndex).getTitle());
+      mainActivity.tv_artist.setText(songManager.getSong(currentSongIndex).getArtist());
     }
   }
 
@@ -87,16 +92,17 @@ public class MainActivityListener implements AdapterView.OnItemClickListener, Vi
     if(serviceBound){
       mediaPlayerService.pause();
       mainActivity.btn_play_pause.setBackground(mainActivity.getResources().getDrawable(android.R.drawable.ic_media_play));
+      if(seekbarAnimation != null)seekbarAnimation = null;
     }
   }
 
   private void animateMediaplayerProgressOnSeekbar(){
     final Handler mHandler = new Handler();
     //Make sure you update Seekbar on UI thread
-    mainActivity.runOnUiThread(new Runnable() {
-
-    @Override
-    public void run() {
+    if(seekbarAnimation != null)seekbarAnimation = null;
+    seekbarAnimation = new Thread() {
+      @Override
+      public void run() {
         //one second has past ... update seekbar and song:lastPositoin
         if(mediaPlayerService.mediaPlayerReady()){
           int mCurrentPosition = mediaPlayerService.getCurrentPosition() / 1000;
@@ -106,7 +112,8 @@ public class MainActivityListener implements AdapterView.OnItemClickListener, Vi
         }
         mHandler.postDelayed(this, 1000);
       }
-    });
+    };
+    mainActivity.runOnUiThread(seekbarAnimation);
   }
 
 
@@ -137,7 +144,7 @@ public class MainActivityListener implements AdapterView.OnItemClickListener, Vi
   }
 
   private void bindSongListAdapterToSongListView(){
-    songListAdapter = new SongListAdapter(mainActivity,songManager.getSongList());
+    songListAdapter = new SongListAdapter(mainActivity,songManager.getSongList(),currentSongIndex);
     mainActivity.lv_songlist.setAdapter(songListAdapter);
   }
 

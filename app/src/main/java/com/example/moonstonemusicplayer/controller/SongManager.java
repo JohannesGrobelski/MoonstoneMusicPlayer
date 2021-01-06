@@ -43,6 +43,7 @@ public class SongManager {
 
   public void findAllAudioFiles(String directory){
     if(directory == null){
+      this.songList.clear();
       if (Environment.MEDIA_MOUNTED.equals(getExternalStorageState())
       && (Environment.MEDIA_MOUNTED_READ_ONLY.equals(getExternalStorageState()))) {
         Toast.makeText(context,"cannot access all files: storage not readable",Toast.LENGTH_LONG).show();

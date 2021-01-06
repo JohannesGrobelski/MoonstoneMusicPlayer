@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
 
   public Button btn_prev,btn_play_pause,btn_next;
   public SeekBar seekBar;
-  public TextView tv_seekbar_progress,tv_seekbar_max;
+  public TextView tv_seekbar_progress,tv_seekbar_max,tv_title,tv_artist;
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -35,7 +35,8 @@ public class MainActivity extends AppCompatActivity {
     seekBar = findViewById(R.id.seekBar);
     tv_seekbar_progress = findViewById(R.id.tv_seekbar_progress);
     tv_seekbar_max = findViewById(R.id.tv_seekbar_max);
-
+    tv_title = findViewById(R.id.tv_title);
+    tv_artist = findViewById(R.id.tv_artist);
 
     mainActivityListener = new MainActivityListener(this);
     lv_songlist.setOnItemClickListener(mainActivityListener);

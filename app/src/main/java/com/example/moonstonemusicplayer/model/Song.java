@@ -2,13 +2,14 @@ package com.example.moonstonemusicplayer.model;
 
 public class Song {
   String title;
-  String artist;
+  String artist = "unknown Artist";
   String genre = "";
   long duration_ms = 0;
   long lastPosition = 0;
   String URI = "";
   String lyrics = "";
   String meaning = "";
+
 
   public Song(String title, String artist, String URI, long duration_ms) {
     this.title = title;
@@ -97,7 +98,6 @@ public class Song {
   public void setFavourite(boolean favourite) {
     isFavourite = favourite;
   }
-
 
 
 }
