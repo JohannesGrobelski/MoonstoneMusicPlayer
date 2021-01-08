@@ -1,4 +1,4 @@
-package com.example.moonstonemusicplayer.view;
+package com.example.moonstonemusicplayer.controller;
 
 import android.app.Service;
 import android.content.Context;
@@ -6,14 +6,19 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Binder;
+import android.os.Debug;
 import android.os.IBinder;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
 
 import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
 
 
+/** MediaPlayerService
+ * Plays an AudioFile specified by mediaFilePath.
+ */
 public class MediaPlayerService extends Service
        implements MediaPlayer.OnCompletionListener,
                   MediaPlayer.OnPreparedListener,
@@ -24,18 +29,45 @@ public class MediaPlayerService extends Service
                   AudioManager.OnAudioFocusChangeListener {
 
   private static final String TAG = MediaPlayerService.class.getSimpleName();
+  private static final boolean DEBUG = true;
+
+
   public static final String FILEPATHEXTRA = "media";
   private final IBinder iBinder = new LocalBinder();
-  private MediaPlayer mediaPlayer;
+  private MediaPlayer mediaPlayer; //ensure theere
   private String mediaFilePath;
   private AudioManager audioManager;
   private int resumePosition = 0;
 
-  public String getMediaFilePath() {return mediaFilePath;}
+
+  /** inits mediaplayer and sets Listeners */
+  private void initMediaPlayer(){
+    if(DEBUG)Log.d(TAG,"initMediaPlayer");
+    mediaPlayer = new MediaPlayer();
+    mediaPlayer.setOnCompletionListener(this);
+    mediaPlayer.setOnErrorListener(this);
+    mediaPlayer.setOnPreparedListener(this);
+    mediaPlayer.setOnSeekCompleteListener(this);
+    mediaPlayer.setOnInfoListener(this);
+    mediaPlayer.setOnBufferingUpdateListener(this);
+
+    //setzte Mediaplayer zurück damit er nicht auf falsche AudioDatei verweist
+    mediaPlayer.reset();
+    //stelle wiedergabe lautstärke auf musik ein
+    mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+    try {
+      //weise Mediendatei der Datenquelle zu
+      mediaPlayer.setDataSource(mediaFilePath);
+    } catch (IOException e) {
+      e.printStackTrace();
+      stopSelf();
+    }
+    //bereitet MediaPlayer für Wiedergabe vor
+    mediaPlayer.prepareAsync();
+  }
 
   //public interface
   public void resume() {
-    //TODO: auf onPrepared warten
     if(mediaPlayer != null && !mediaPlayer.isPlaying()){
       mediaPlayer.seekTo(resumePosition);
       mediaPlayer.start();
@@ -43,30 +75,15 @@ public class MediaPlayerService extends Service
   }
 
   public void pause() {
-    //TODO: auf onPrepared warten
     if(mediaPlayer != null && mediaPlayer.isPlaying()){
       mediaPlayer.pause();
       resumePosition = mediaPlayer.getCurrentPosition();
     }
   }
 
-  public void playMedia(){
-    //TODO: auf onPrepared warten
-    if(mediaPlayer != null && !mediaPlayer.isPlaying()){
-      mediaPlayer.start();
-    }
-  }
-
-  public void stopMedia(){
-    //TODO: auf onPrepared warten
-    if(mediaPlayer != null && mediaPlayer.isPlaying()){
-      mediaPlayer.stop();
-    }
-  }
-
   public void seekTo(int i) {mediaPlayer.seekTo(i);}
 
-  public boolean mediaPlayerReady(){return mediaPlayer != null;}
+  public boolean mediaPlayerReady(){return (mediaPlayer != null && isPlayingMusic());}
 
   public boolean isPlayingMusic() {
     if(mediaPlayer != null) return mediaPlayer.isPlaying();
@@ -78,13 +95,17 @@ public class MediaPlayerService extends Service
     else return -1;
   }
 
-  public int getAudioDuration(){
-    if(mediaPlayer != null){
-      return mediaPlayer.getDuration();
-    } return -1;
+  private void playMedia(){
+    if(mediaPlayer != null && !mediaPlayer.isPlaying()){
+      mediaPlayer.start();
+    }
   }
 
-
+  private void stopMedia(){
+    if(mediaPlayer != null && mediaPlayer.isPlaying()){
+      mediaPlayer.stop();
+    }
+  }
 
   //Listener interface
   @Override
@@ -105,40 +126,14 @@ public class MediaPlayerService extends Service
   public void onDestroy() {
     super.onDestroy();
     if(mediaPlayer != null){
-      stopSelf();
+      stopMedia();
       mediaPlayer.release();
+      mediaPlayer = null;
+      if(DEBUG)Log.d(TAG,"onDestroy");
     }
+    stopSelf(); //beende Service
     removeAudioFocus();
   }
-
-
-  private void initMediaPlayer(){
-    mediaPlayer = new MediaPlayer();
-    mediaPlayer.setOnCompletionListener(this);
-    mediaPlayer.setOnErrorListener(this);
-    mediaPlayer.setOnPreparedListener(this);
-    mediaPlayer.setOnSeekCompleteListener(this);
-    mediaPlayer.setOnInfoListener(this);
-    mediaPlayer.setOnBufferingUpdateListener(this);
-
-    //setzte Mediaplayer zurück damit er nicht auf falsche AudioDatei verweist
-    mediaPlayer.reset();
-    //stelle wiedergabe lautstärke auf musik ein
-    mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-    try {
-      //weise Mediendatei der Datenquelle zu
-      mediaPlayer.setDataSource(mediaFilePath);
-    } catch (IOException e) {
-      e.printStackTrace();
-      stopSelf();
-    }
-
-    //bereitet MediaPlayer für Wiedergabe vor
-    mediaPlayer.prepareAsync();
-  }
-
-
-
 
   @Nullable
   @Override
@@ -155,8 +150,9 @@ public class MediaPlayerService extends Service
   /** wird aufgerufen wenn Medienresource fertig abgespielt wurde*/
   @Override
   public void onCompletion(MediaPlayer mp) {
-    stopMedia();
-    stopSelf(); //beende Service
+    if(mediaPlayer != null && mp.isPlaying()){
+      stopMedia();
+    }
   }
 
   /** wird aufgerufen wenn es Fehler gibt */
@@ -181,7 +177,9 @@ public class MediaPlayerService extends Service
 
   /** wird aufgerufen wenn medienresource bereit ist zum abspielen */
   @Override
-  public void onPrepared(MediaPlayer mp) {playMedia();}
+  public void onPrepared(MediaPlayer mp) {
+    playMedia();
+  }
 
   /** wird aufgerufen beim abschluss einer onSeek Operation*/
   @Override
@@ -212,7 +210,6 @@ public class MediaPlayerService extends Service
     }
   }
 
-
   private boolean requestAudioFocus(){
     audioManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
     int result = audioManager.requestAudioFocus(this,AudioManager.STREAM_MUSIC,AudioManager.AUDIOFOCUS_GAIN);
@@ -222,8 +219,6 @@ public class MediaPlayerService extends Service
   private boolean removeAudioFocus(){
     return AudioManager.AUDIOFOCUS_REQUEST_GRANTED == audioManager.abandonAudioFocus(this);
   }
-
-
 
   public class LocalBinder extends Binder {
     public MediaPlayerService getService() {

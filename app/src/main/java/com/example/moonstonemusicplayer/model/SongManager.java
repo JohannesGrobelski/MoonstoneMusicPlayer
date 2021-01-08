@@ -1,14 +1,9 @@
-package com.example.moonstonemusicplayer.controller;
+package com.example.moonstonemusicplayer.model;
 
-import android.Manifest;
-import android.content.Context;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
-import android.widget.Toast;
-
-import com.example.moonstonemusicplayer.model.Song;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -16,37 +11,44 @@ import java.util.List;
 
 import static android.os.Environment.getExternalStorageState;
 
+/**
+ * datasource: contains a list of all songs avaiable
+ */
 public class SongManager {
-  Context context;
-  List<Song> songList = new ArrayList<>();
+  private static final boolean DEBUG = false;
 
-  public SongManager(Context context){
-    this.context= context;
+  List<Song> allLocaleSongs = new ArrayList<>();
+
+  public SongManager(){
+    findAllAudioFiles(null);
   }
 
+  /*
+
   public void addSong(Song song){
-    songList.add(song);
+    currentSongList.add(song);
   }
 
   public Song getSong(int songIndex){
-    return songList.get(songIndex);
+    return currentSongList.get(songIndex);
   }
 
   public int getSongCount(){
-    return songList.size();
+    return currentSongList.size();
   }
 
-  public List<Song> getSongList(){
-    return songList;
+  public List<Song> getCurrentSongList(){
+    return currentSongList;
   }
 
+
+   */
 
   public void findAllAudioFiles(String directory){
     if(directory == null){
-      this.songList.clear();
+      this.allLocaleSongs.clear();
       if (Environment.MEDIA_MOUNTED.equals(getExternalStorageState())
       && (Environment.MEDIA_MOUNTED_READ_ONLY.equals(getExternalStorageState()))) {
-        Toast.makeText(context,"cannot access all files: storage not readable",Toast.LENGTH_LONG).show();
         return;
       }
       directory = Environment.getExternalStorageDirectory().toString(); //sd_card
@@ -55,25 +57,27 @@ public class SongManager {
       File file = new File(directory );
       if (file.isDirectory()) {
         if(file.getAbsolutePath().endsWith("Android"))return; //throws null pointer exception; cannot enter without root
-        Log.d("songmanager dir","   try access: "+file.getAbsolutePath());
         for (File childFile: file.listFiles()) {
-          Log.d("songmanager dir",childFile.getAbsolutePath());
           findAllAudioFiles(childFile.getAbsolutePath());
         }
       } else{
-        Log.d("songmanager file",file.getAbsolutePath());
-        if (file.getName().endsWith(".mp3") || file.getName().endsWith(".MP3")) {
-          if(!this.songList.contains(getSongFromAudioFile(file)))this.songList.add(getSongFromAudioFile(file));
+        if(DEBUG)Log.d("SongManager","file found: "+file.getAbsolutePath());
+        if (isSupportedFormat(file.getName())) {
+          if(DEBUG)Log.d("SongManager","audiofile found: "+file.getAbsolutePath());
+          if(!this.allLocaleSongs.contains(getSongFromAudioFile(file))){
+            if(DEBUG)Log.d("SongManager","audiofile added: "+file.getAbsolutePath());
+            this.allLocaleSongs.add(getSongFromAudioFile(file));
+          }
         }
       }
     } catch (Exception e){
-      Toast.makeText(context,"cannot access all files: "+e.getMessage(),Toast.LENGTH_LONG).show();
+      if(DEBUG)Log.d("songmanager","cannot access all files");
+
     }
 
 
     if(directory.equals(Environment.getExternalStorageDirectory().toString())){
-      Toast.makeText(context,"songs: "+songList,Toast.LENGTH_LONG).show();
-      Log.d("songmanager listsize","songs: "+songList);
+      if(DEBUG)Log.d("songmanager listsize","songs: "+ allLocaleSongs.size());
     }
   }
 
@@ -83,11 +87,22 @@ public class SongManager {
     String URI = Uri.fromFile(file).toString();
 
     MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-    mmr.setDataSource(context,Uri.fromFile(file));
+      mmr.setDataSource(Uri.fromFile(file).getPath());
     String durationStr = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
     int duration = Integer.parseInt(durationStr);
     return new Song(title,author,URI,duration);
   }
 
+
+  private boolean isSupportedFormat(String filename){
+    String[] supportedExtensions = new String[]{
+        "mp3","3gp","mp4","m4a","3gp","amr","flac","mp3","mkv","ogg","wav"
+    };
+
+    for(String ext: supportedExtensions){
+      if(filename.endsWith(ext) || filename.endsWith(ext.toUpperCase()))return true;
+    }
+    return false;
+  }
 
 }

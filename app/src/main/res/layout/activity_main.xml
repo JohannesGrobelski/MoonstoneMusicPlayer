@@ -31,13 +31,15 @@
                 android:id="@+id/button"
                 android:layout_width="wrap_content"
                 android:layout_height="100dp"
+                android:layout_gravity="center_vertical"
                 android:layout_weight="1"
-                android:text="Button" />
+                android:text="repeat" />
 
             <Button
                 android:id="@+id/btn_prev"
                 android:layout_width="wrap_content"
                 android:layout_height="100dp"
+                android:layout_gravity="center_vertical"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
                 android:layout_weight="1"
@@ -47,6 +49,7 @@
                 android:id="@+id/btn_play_pause"
                 android:layout_width="wrap_content"
                 android:layout_height="100dp"
+                android:layout_gravity="center_vertical"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
                 android:layout_weight="1"
@@ -56,6 +59,7 @@
                 android:id="@+id/btn_next"
                 android:layout_width="wrap_content"
                 android:layout_height="100dp"
+                android:layout_gravity="center_vertical"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
                 android:layout_weight="1"
@@ -65,15 +69,16 @@
                 android:id="@+id/btn_shuffle"
                 android:layout_width="wrap_content"
                 android:layout_height="100dp"
+                android:layout_gravity="center_vertical"
                 android:layout_weight="1"
-                android:background="@android:drawable/ic_media_rew"
-                android:text="Button" />
+                android:text="shuffle" />
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="100dp"
+            android:layout_gravity="center_horizontal|center_vertical"
             android:layout_weight="1"
             android:orientation="horizontal">
 
@@ -81,6 +86,7 @@
                 android:id="@+id/tv_seekbar_progress"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
                 android:text="0:00" />
@@ -89,12 +95,14 @@
                 android:id="@+id/seekBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
                 android:layout_weight="1" />
 
             <TextView
                 android:id="@+id/tv_seekbar_max"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
                 android:text="0:00" />
@@ -110,13 +118,23 @@
                 android:id="@+id/tv_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:paddingStart="10dp"
+                android:paddingTop="1dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="1dp"
+                android:textSize="15sp" />
 
             <TextView
                 android:id="@+id/tv_artist"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:paddingStart="10dp"
+                android:paddingTop="1dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="1dp"
+                android:textSize="10sp" />
         </LinearLayout>
 
     </LinearLayout>

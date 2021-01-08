@@ -16,6 +16,11 @@ import android.widget.Toast;
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.MainActivityListener;
 
+/** MainActivity
+  * Defines the Mainscreen auf the app.
+  * Contains all Views and sets Listeners for them.
+  * Delegates the creation and management (itemselection) of the optionsmenu to the  {@link com.example.moonstonemusicplayer.controller.MainActivityListener}.
+*/
 public class MainActivity extends AppCompatActivity {
   MainActivityListener mainActivityListener;
 
@@ -44,14 +49,11 @@ public class MainActivity extends AppCompatActivity {
     btn_play_pause.setOnClickListener(mainActivityListener);
     btn_next.setOnClickListener(mainActivityListener);
     seekBar.setOnSeekBarChangeListener(mainActivityListener);
-
-
   }
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     return mainActivityListener.onCreateOptionsMenu(menu);
-
   }
 
   @Override

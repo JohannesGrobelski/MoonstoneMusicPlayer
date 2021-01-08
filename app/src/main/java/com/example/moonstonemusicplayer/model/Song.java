@@ -3,13 +3,12 @@ package com.example.moonstonemusicplayer.model;
 public class Song {
   String title;
   String artist = "unknown Artist";
-  String genre = "";
+  String URI = "";
   long duration_ms = 0;
   long lastPosition = 0;
-  String URI = "";
+  String genre = "";
   String lyrics = "";
   String meaning = "";
-
 
   public Song(String title, String artist, String URI, long duration_ms) {
     this.title = title;

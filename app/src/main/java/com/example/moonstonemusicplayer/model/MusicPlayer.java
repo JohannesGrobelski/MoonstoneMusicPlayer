@@ -4,42 +4,57 @@ import android.content.Context;
 import android.widget.ListView;
 
 import com.example.moonstonemusicplayer.controller.SongListAdapter;
-import com.example.moonstonemusicplayer.controller.SongManager;
 
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * models a music player
+ */
 public class MusicPlayer {
     Context context;
 
     SongManager songManager;
     private int currentSongIndex;
 
+    private List<Song> currentSongList = new ArrayList<>();
 
 
     public MusicPlayer(Context baseContext) {
         this.context = baseContext;
+        songManager = new SongManager();
+    }
+
+    public void loadLocalMusic(){
+        songManager.findAllAudioFiles(null);
+        currentSongList.addAll(songManager.allLocaleSongs);
     }
 
     public Song getCurrentSong(){
-        return songManager.getSong(currentSongIndex);
+        return currentSongList.get(currentSongIndex);
     }
 
-    public void bindSongListAdapterToSongListView(ListView lv_songlist){
-        ///TODO: move to songmanager
-        songListAdapter = new SongListAdapter(context,songManager.getSongList(),currentSongIndex);
-        lv_songlist.setAdapter(songListAdapter);
+
+    public int getCurrentSongIndex(){
+        return this.currentSongIndex;
     }
 
     public void setCurrentSongIndex(int index){
         this.currentSongIndex = index;
     }
 
-    private void prevSong(){
+    public void prevSong(){
         currentSongIndex = (--currentSongIndex);
-        if(currentSongIndex == -1)currentSongIndex = musicPlayer.getSongCount()-1;
-        playAudio();
+        if(currentSongIndex == -1)currentSongIndex = currentSongList.size()-1;
     }
 
-    private void nextSong(){
-        currentSongIndex = (++currentSongIndex)%musicPlayer.getSongCount();
-        playAudio();
+    public void nextSong(){
+        currentSongIndex = (++currentSongIndex)%currentSongList.size();
     }
+
+    public List<Song> getCurrentSongList(){
+        return currentSongList;
+    }
+
+
 }
