@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.model.MusicPlayer;
@@ -32,12 +33,17 @@ import com.example.moonstonemusicplayer.view.MainActivity;
  *  changes the model {@link com.example.moonstonemusicplayer.model.MusicPlayer}) according to the input and
  *  and, if necessary, sends messages to the {@link com.example.moonstonemusicplayer.model.MusicPlayer}).
  */
-public class MainActivityListener implements AdapterView.OnItemClickListener, View.OnClickListener, SeekBar.OnSeekBarChangeListener, SearchView.OnQueryTextListener, SearchView.OnCloseListener {
+public class MainActivityListener
+    implements AdapterView.OnItemClickListener, View.OnClickListener,
+    SeekBar.OnSeekBarChangeListener, SearchView.OnQueryTextListener,
+    SearchView.OnCloseListener {
+  public final String[] EXTERNAL_PERMS = {Manifest.permission.READ_EXTERNAL_STORAGE};
+
   private static final boolean DEBUG = true;
   private static final String TAG = MainActivityListener.class.getSimpleName();
   private final MainActivity mainActivity;
 
-  private MusicPlayer musicPlayer;
+  public MusicPlayer musicPlayer;
 
   private ServiceConnection serviceConnection = createServiceConnection();
   private MediaPlayerService mediaPlayerService;
@@ -71,10 +77,11 @@ public class MainActivityListener implements AdapterView.OnItemClickListener, Vi
 
 
   public boolean onOptionsItemSelected(MenuItem item) {
-    Log.d(TAG,"onOptionsItem");
     switch (item.getItemId()){
       case R.id.mi_loadLocaleAudioFile: {
         if(requestForPermission()){
+          /*RefreshTask refreshTask = new RefreshTask();
+          refreshTask.execute(this);*/
           musicPlayer.loadLocalMusic();
           songListAdapter.notifyDataSetChanged();
         }
@@ -82,6 +89,11 @@ public class MainActivityListener implements AdapterView.OnItemClickListener, Vi
       }
       case R.id.miSwitchAscDesc: {
 
+        break;
+      }
+      case R.id.miDeleteAllItems: {
+        musicPlayer.deleteAllSongs();
+        songListAdapter.notifyDataSetChanged();
         break;
       }
 
@@ -142,15 +154,17 @@ public class MainActivityListener implements AdapterView.OnItemClickListener, Vi
   @Override
   /** implements the music controll (seekTo)*/
   public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-    if(mediaPlayerService.mediaPlayerReady() && fromUser){
-      mediaPlayerService.seekTo(progress * 1000);
+    if(isServiceBound){
+      if(mediaPlayerService.mediaPlayerReady() && fromUser){
+        mediaPlayerService.seekTo(progress * 1000);
+      }
     }
   }
 
   private void resumeAudio(){
     if(isServiceBound){
       mediaPlayerService.resume();
-      mainActivity.btn_play_pause.setBackground(mainActivity.getResources().getDrawable(android.R.drawable.ic_media_pause));
+      mainActivity.btn_play_pause.setBackground(mainActivity.getResources().getDrawable(R.drawable.ic_pause));
       animateMediaplayerProgressOnSeekbar();
       mainActivity.tv_title.setText(musicPlayer.getCurrentSong().getTitle());
       mainActivity.tv_artist.setText(musicPlayer.getCurrentSong().getArtist());
@@ -160,7 +174,7 @@ public class MainActivityListener implements AdapterView.OnItemClickListener, Vi
   private void pauseAudio(){
     if(isServiceBound){
       mediaPlayerService.pause();
-      mainActivity.btn_play_pause.setBackground(mainActivity.getResources().getDrawable(android.R.drawable.ic_media_play));
+      mainActivity.btn_play_pause.setBackground(mainActivity.getResources().getDrawable(R.drawable.ic_play_button));
       if(seekbarAnimationThread != null) seekbarAnimationThread = null;
     }
   }
@@ -194,9 +208,10 @@ public class MainActivityListener implements AdapterView.OnItemClickListener, Vi
         isServiceBound = true;
 
         //set views
-        mainActivity.btn_play_pause.setBackground(mainActivity.getResources().getDrawable(android.R.drawable.ic_media_pause));
+        mainActivity.btn_play_pause.setBackground(mainActivity.getResources().getDrawable(R.drawable.ic_pause));
         mainActivity.tv_title.setText(musicPlayer.getCurrentSong().getTitle());
-        mainActivity.tv_artist.setText(musicPlayer.getCurrentSong().getArtist());
+        if(!musicPlayer.getCurrentSong().getArtist().isEmpty())mainActivity.tv_artist.setText(musicPlayer.getCurrentSong().getArtist());
+        else mainActivity.tv_artist.setText("unknown artist");
 
         //set Seekbar and animate progress
         mainActivity.seekBar.setMax((int) musicPlayer.getCurrentSong().getDuration_ms()/1000);
@@ -243,21 +258,16 @@ public class MainActivityListener implements AdapterView.OnItemClickListener, Vi
 
   /** requests runtime storage permissions (API>=23) for loading files from sd-card */
   public boolean requestForPermission() {
-    boolean hasStoragePermission;
-    int permissionCheck = ContextCompat.checkSelfPermission(
-        mainActivity, Manifest.permission.READ_EXTERNAL_STORAGE);
-    hasStoragePermission = (permissionCheck == PackageManager.PERMISSION_GRANTED);
-    if (!hasStoragePermission) {
-      if (ActivityCompat.shouldShowRequestPermissionRationale(mainActivity,
-          Manifest.permission.READ_EXTERNAL_STORAGE)) {
-        //showExplanation("Permission Needed", "Rationale", Manifest.permission.READ_PHONE_STATE, 1234);
+    int permissionCheck = ContextCompat.checkSelfPermission(mainActivity, Manifest.permission.READ_EXTERNAL_STORAGE);
+    if (!(permissionCheck == PackageManager.PERMISSION_GRANTED)) {
+      if (ActivityCompat.shouldShowRequestPermissionRationale(mainActivity,Manifest.permission.READ_EXTERNAL_STORAGE)) {
       } else {
-        mainActivity.requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1234);
+        mainActivity.requestPermissions(EXTERNAL_PERMS, 1234);
       }
     } else {
       Toast.makeText(mainActivity, "Permission (already) Granted!", Toast.LENGTH_SHORT).show();
     }
-    return hasStoragePermission;
+    return permissionCheck == PackageManager.PERMISSION_GRANTED;
   }
 
   @Override
@@ -278,4 +288,10 @@ public class MainActivityListener implements AdapterView.OnItemClickListener, Vi
     mainActivity.showMusicControlls();
     return false;
   }
+
+  public void finnishRefresh(){
+    songListAdapter.notifyDataSetChanged();
+  }
+
+
 }

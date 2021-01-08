@@ -30,8 +30,7 @@ public class MusicPlayer {
 
     /** loads local music and adds it to dataSource*/
     public void loadLocalMusic(){
-        dataSource.deleteAllSongs(); //TODO: dont delete db but only local files
-        currentSongList.clear();
+        deleteAllSongs();//TODO: dont delete db but only local files
         currentSongList.addAll(SongManager.findAllAudioFiles(null,null));
         for(Song song:currentSongList)dataSource.insertSong(song);
     }
@@ -73,5 +72,10 @@ public class MusicPlayer {
 
     public void toogleShuffleMode(){
         shuffleModelOn = !shuffleModelOn;
+    }
+
+    public void deleteAllSongs(){
+        dataSource.deleteAllSongs();
+        currentSongList.clear();
     }
 }
