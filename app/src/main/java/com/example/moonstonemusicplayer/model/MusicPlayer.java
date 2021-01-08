@@ -1,9 +1,6 @@
 package com.example.moonstonemusicplayer.model;
 
 import android.content.Context;
-import android.widget.ListView;
-
-import com.example.moonstonemusicplayer.controller.SongListAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,26 +11,31 @@ import java.util.List;
 public class MusicPlayer {
     Context context;
 
-    SongManager songManager;
     private int currentSongIndex;
+
+    private DataSource dataSource;
+
 
     private List<Song> currentSongList = new ArrayList<>();
 
 
     public MusicPlayer(Context baseContext) {
         this.context = baseContext;
-        songManager = new SongManager();
+        dataSource = new DataSource(this.context);
+        currentSongList = dataSource.getAllSong();
     }
 
+    /** loads local music and adds it to dataSource*/
     public void loadLocalMusic(){
-        songManager.findAllAudioFiles(null);
-        currentSongList.addAll(songManager.allLocaleSongs);
+        dataSource.deleteAllSongs(); //TODO: dont delete db but only local files
+        currentSongList.clear();
+        currentSongList.addAll(SongManager.findAllAudioFiles(null,null));
+        for(Song song:currentSongList)dataSource.insertSong(song);
     }
 
     public Song getCurrentSong(){
         return currentSongList.get(currentSongIndex);
     }
-
 
     public int getCurrentSongIndex(){
         return this.currentSongIndex;

@@ -45,6 +45,7 @@ public class MainActivityListener implements AdapterView.OnItemClickListener, Vi
   private SongListAdapter songListAdapter;
   private Thread seekbarAnimationThread;
 
+
   /**
    * Initiate the musicplayer and musicplayerservice.
    * @param mainActivity
@@ -198,7 +199,7 @@ public class MainActivityListener implements AdapterView.OnItemClickListener, Vi
   private void animateMediaplayerProgressOnSeekbar(){
     final Handler mHandler = new Handler();
     //Make sure you update Seekbar on UI thread
-    if(seekbarAnimationThread != null) seekbarAnimationThread = null;
+    seekbarAnimationThread = null;
     seekbarAnimationThread = new Thread() {
       @Override
       public void run() {

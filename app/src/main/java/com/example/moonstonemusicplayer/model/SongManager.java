@@ -17,56 +17,31 @@ import static android.os.Environment.getExternalStorageState;
 public class SongManager {
   private static final boolean DEBUG = false;
 
-  List<Song> allLocaleSongs = new ArrayList<>();
-
-  public SongManager(){
-    findAllAudioFiles(null);
-  }
-
-  /*
-
-  public void addSong(Song song){
-    currentSongList.add(song);
-  }
-
-  public Song getSong(int songIndex){
-    return currentSongList.get(songIndex);
-  }
-
-  public int getSongCount(){
-    return currentSongList.size();
-  }
-
-  public List<Song> getCurrentSongList(){
-    return currentSongList;
-  }
-
-
-   */
-
-  public void findAllAudioFiles(String directory){
+  public static List<Song> findAllAudioFiles(String directory, List<Song> localAudioFiles){
+    if(localAudioFiles == null){
+      localAudioFiles = new ArrayList<>();
+    }
     if(directory == null){
-      this.allLocaleSongs.clear();
       if (Environment.MEDIA_MOUNTED.equals(getExternalStorageState())
       && (Environment.MEDIA_MOUNTED_READ_ONLY.equals(getExternalStorageState()))) {
-        return;
+        return localAudioFiles;
       }
       directory = Environment.getExternalStorageDirectory().toString(); //sd_card
     }
     try {
       File file = new File(directory );
       if (file.isDirectory()) {
-        if(file.getAbsolutePath().endsWith("Android"))return; //throws null pointer exception; cannot enter without root
+        if(file.getAbsolutePath().endsWith("Android"))return localAudioFiles; //throws null pointer exception; cannot enter without root
         for (File childFile: file.listFiles()) {
-          findAllAudioFiles(childFile.getAbsolutePath());
+          findAllAudioFiles(childFile.getAbsolutePath(),localAudioFiles);
         }
       } else{
         if(DEBUG)Log.d("SongManager","file found: "+file.getAbsolutePath());
         if (isSupportedFormat(file.getName())) {
           if(DEBUG)Log.d("SongManager","audiofile found: "+file.getAbsolutePath());
-          if(!this.allLocaleSongs.contains(getSongFromAudioFile(file))){
+          if(!localAudioFiles.contains(getSongFromAudioFile(file))){
             if(DEBUG)Log.d("SongManager","audiofile added: "+file.getAbsolutePath());
-            this.allLocaleSongs.add(getSongFromAudioFile(file));
+            localAudioFiles.add(getSongFromAudioFile(file));
           }
         }
       }
@@ -74,14 +49,13 @@ public class SongManager {
       if(DEBUG)Log.d("songmanager","cannot access all files");
 
     }
-
-
     if(directory.equals(Environment.getExternalStorageDirectory().toString())){
-      if(DEBUG)Log.d("songmanager listsize","songs: "+ allLocaleSongs.size());
+      if(DEBUG)Log.d("songmanager listsize","songs: "+ localAudioFiles.size());
     }
+    return localAudioFiles;
   }
 
-  private Song getSongFromAudioFile(File file){
+  private static Song getSongFromAudioFile(File file){
     String title = file.getName().substring(0, (file.getName().length() - 4));
     String author = "";
     String URI = Uri.fromFile(file).toString();
@@ -93,8 +67,7 @@ public class SongManager {
     return new Song(title,author,URI,duration);
   }
 
-
-  private boolean isSupportedFormat(String filename){
+  private static boolean isSupportedFormat(String filename){
     String[] supportedExtensions = new String[]{
         "mp3","3gp","mp4","m4a","3gp","amr","flac","mp3","mkv","ogg","wav"
     };
@@ -104,5 +77,4 @@ public class SongManager {
     }
     return false;
   }
-
 }

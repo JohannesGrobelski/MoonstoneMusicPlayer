@@ -1,28 +1,50 @@
 package com.example.moonstonemusicplayer.model;
 
 public class Song {
+  int ID = -1;
   String title;
   String artist = "unknown Artist";
   String URI = "";
-  long duration_ms = 0;
-  long lastPosition = 0;
+  int duration_ms = 0;
+  int lastPosition = 0;
   String genre = "";
   String lyrics = "";
   String meaning = "";
 
-  public Song(String title, String artist, String URI, long duration_ms) {
+
+  /** "normal" constructor*/
+  public Song(String title, String artist, String URI, int duration_ms) {
     this.title = title;
     this.artist = artist;
     this.URI = URI;
     this.duration_ms = duration_ms;
   }
 
-  boolean isFavourite = false;
+  /** Constructor for DB*/
+  public Song(int ID, String title, String artist, String URI, int duration_ms, int lastPosition, String genre, String lyrics, String meaning) {
+    this.ID = ID;
+    this.title = title;
+    this.artist = artist;
+    this.URI = URI;
+    this.duration_ms = duration_ms;
+    this.lastPosition = lastPosition;
+    this.genre = genre;
+    this.lyrics = lyrics;
+    this.meaning = meaning;
+  }
 
 
   public long getLastPosition() { return lastPosition;}
 
-  public void setLastPosition(long lastPosition) {this.lastPosition = lastPosition;}
+  public void setLastPosition(int lastPosition) {this.lastPosition = lastPosition;}
+
+  public int getID() {
+    return ID;
+  }
+
+  public void setID(int ID) {
+    this.ID = ID;
+  }
 
   public String getTitle() {
     return title;
@@ -62,7 +84,7 @@ public class Song {
     else return hours+":"+minutes+":"+seconds;
   }
 
-  public void setDuration_ms(long duration_ms) {
+  public void setDuration_ms(int duration_ms) {
     this.duration_ms = duration_ms;
   }
 
@@ -89,14 +111,4 @@ public class Song {
   public void setMeaning(String meaning) {
     this.meaning = meaning;
   }
-
-  public boolean isFavourite() {
-    return isFavourite;
-  }
-
-  public void setFavourite(boolean favourite) {
-    isFavourite = favourite;
-  }
-
-
 }
