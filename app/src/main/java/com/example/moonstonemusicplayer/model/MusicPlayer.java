@@ -14,9 +14,12 @@ public class MusicPlayer {
     private int currentSongIndex;
 
     private DataSource dataSource;
+    private List<Song> currentSongList;
 
-
-    private List<Song> currentSongList = new ArrayList<>();
+    boolean shuffleModelOn = false;
+    enum REPEATMODE {
+        ONESONG, NONE ,ALL
+    } REPEATMODE repeatmode = REPEATMODE.ALL;
 
 
     public MusicPlayer(Context baseContext) {
@@ -58,5 +61,17 @@ public class MusicPlayer {
         return currentSongList;
     }
 
+    public void searchSong(String searchterm){
+        currentSongList.clear();
+        currentSongList.addAll(dataSource.searchSongs(searchterm));
+    }
 
+    public void getAllSongs(){
+        currentSongList.clear();
+        currentSongList = dataSource.getAllSong();
+    }
+
+    public void toogleShuffleMode(){
+        shuffleModelOn = !shuffleModelOn;
+    }
 }

@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
@@ -31,7 +32,7 @@ import com.example.moonstonemusicplayer.view.MainActivity;
  *  changes the model {@link com.example.moonstonemusicplayer.model.MusicPlayer}) according to the input and
  *  and, if necessary, sends messages to the {@link com.example.moonstonemusicplayer.model.MusicPlayer}).
  */
-public class MainActivityListener implements AdapterView.OnItemClickListener, View.OnClickListener, SeekBar.OnSeekBarChangeListener {
+public class MainActivityListener implements AdapterView.OnItemClickListener, View.OnClickListener, SeekBar.OnSeekBarChangeListener, SearchView.OnQueryTextListener, SearchView.OnCloseListener {
   private static final boolean DEBUG = true;
   private static final String TAG = MainActivityListener.class.getSimpleName();
   private final MainActivity mainActivity;
@@ -70,12 +71,17 @@ public class MainActivityListener implements AdapterView.OnItemClickListener, Vi
 
 
   public boolean onOptionsItemSelected(MenuItem item) {
+    Log.d(TAG,"onOptionsItem");
     switch (item.getItemId()){
       case R.id.mi_loadLocaleAudioFile: {
         if(requestForPermission()){
           musicPlayer.loadLocalMusic();
           songListAdapter.notifyDataSetChanged();
         }
+        break;
+      }
+      case R.id.miSwitchAscDesc: {
+
         break;
       }
 
@@ -85,7 +91,15 @@ public class MainActivityListener implements AdapterView.OnItemClickListener, Vi
   }
 
   public boolean onCreateOptionsMenu(Menu menu) {
+    //create options menu
     mainActivity.getMenuInflater().inflate(R.menu.options_menu,menu);
+
+    //create searchview
+    MenuItem searchItem = menu.findItem(R.id.miSearch);
+    SearchView searchView = (SearchView) searchItem.getActionView();
+    searchView.setOnQueryTextListener(this);
+    searchView.setOnSearchClickListener(this);
+    searchView.setOnCloseListener(this);
     return true;
   }
 
@@ -116,6 +130,9 @@ public class MainActivityListener implements AdapterView.OnItemClickListener, Vi
       case R.id.btn_next:
         musicPlayer.nextSong();
         destroyAndCreateNewService();
+        break;
+      case R.id.miSearch:
+        mainActivity.hideMusicControlls();
         break;
     }
   }
@@ -195,7 +212,7 @@ public class MainActivityListener implements AdapterView.OnItemClickListener, Vi
     };
   }
 
-  /** animate the progress seek bar */
+  /** animate the progress seek bar through a thread changes seekbar progress every second*/
   private void animateMediaplayerProgressOnSeekbar(){
     final Handler mHandler = new Handler();
     //Make sure you update Seekbar on UI thread
@@ -208,7 +225,6 @@ public class MainActivityListener implements AdapterView.OnItemClickListener, Vi
           int mCurrentPosition = mediaPlayerService.getCurrentPosition() / 1000;
           mainActivity.seekBar.setProgress(mCurrentPosition);
           mainActivity.tv_seekbar_progress.setText(Song.getDurationString(mediaPlayerService.getCurrentPosition()));
-          musicPlayer.getCurrentSong().setDuration_ms(mCurrentPosition);
         }
         mHandler.postDelayed(this, 1000);
       }
@@ -244,4 +260,22 @@ public class MainActivityListener implements AdapterView.OnItemClickListener, Vi
     return hasStoragePermission;
   }
 
+  @Override
+  /** called if query in search view is submitted*/
+  public boolean onQueryTextSubmit(String query) { return false; }
+
+  @Override
+  /** called if input in search view changes => search songs in db according to input*/
+  public boolean onQueryTextChange(String query) {
+    musicPlayer.searchSong(query);
+    songListAdapter.notifyDataSetChanged();
+    return false;
+  }
+
+  @Override
+  /** called when search view is closed => open music controlls, reset filter query*/
+  public boolean onClose() {
+    mainActivity.showMusicControlls();
+    return false;
+  }
 }

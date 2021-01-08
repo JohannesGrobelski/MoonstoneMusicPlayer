@@ -14,7 +14,7 @@ class DataSource {
     private static final String LOG_TAG = DataSource.class.getSimpleName();
 
     //Variablendeklaration
-    private DBHelperLocalSongs dbHelperLocalSongs;
+    private DBHelperLocalSongs DBHelperLocalSongs;
     private SQLiteDatabase databaseLocalSongs;
 
     private String[] columns = {
@@ -30,25 +30,25 @@ class DataSource {
     };
 
     public DataSource(Context context){
-        Log.d(LOG_TAG,"Unsere DataSource erzeugt den dbHelper");
-        dbHelperLocalSongs = new DBHelperLocalSongs(context);
+        Log.d(LOG_TAG,"Unsere DataSource erzeugt den DBHelperLocalSongs");
+        DBHelperLocalSongs = new DBHelperLocalSongs(context);
     }
 
     private void open_writable(){
         Log.d(LOG_TAG, "Eine schreibende Referenz auf die DB wird jetzt angefragt.");
-        databaseLocalSongs = dbHelperLocalSongs.getWritableDatabase();
+        databaseLocalSongs = DBHelperLocalSongs.getWritableDatabase();
         Log.d(LOG_TAG, "Datenbank-Referenz erhalten, Pfad zur Datenbank: "+ databaseLocalSongs.getPath());
     }
 
     private void open_readable(){
         Log.d(LOG_TAG, "Eine lesende Referenz auf die DB wird jetzt angefragt.");
-        databaseLocalSongs = dbHelperLocalSongs.getReadableDatabase();
+        databaseLocalSongs = DBHelperLocalSongs.getReadableDatabase();
         Log.d(LOG_TAG, "Datenbank-Referenz erhalten, Pfad zur Datenbank: "+ databaseLocalSongs.getPath());
     }
 
     private void close_db(){
-        Log.d(LOG_TAG, "DB mit hilfe des DBHelpers schließen");
-        dbHelperLocalSongs.close();
+        Log.d(LOG_TAG, "DB mit hilfe des DBHelperLocalSongss schließen");
+        DBHelperLocalSongs.close();
     }
 
     private Song cursorToSong(Cursor cursor){
@@ -174,5 +174,51 @@ class DataSource {
         databaseLocalSongs.execSQL(query);
         close_db();
     }
+
+    List<Song> searchSongs(String searchterm){
+        String query = "SELECT * FROM "+DBHelperLocalSongs.TABLE_SONG_LIST+" WHERE "+
+            "instr("+DBHelperLocalSongs.COLUMN_TITLE+", \'"+searchterm+"\') > 0 OR "+
+            "instr("+DBHelperLocalSongs.COLUMN_ARTIST+", \'"+searchterm+"\') > 0 OR "+
+            "instr("+DBHelperLocalSongs.COLUMN_GENRE+", \'"+searchterm+"\') > 0 OR "+
+            "instr("+DBHelperLocalSongs.COLUMN_LYRICS+", \'"+searchterm+"\') > 0 OR "+
+            "instr("+DBHelperLocalSongs.COLUMN_MEANING+", \'"+searchterm+"\') > 0";
+        return getSongListFromQuery(query);
+    }
+
+    List<Song> sortBy(String var, String mode){
+        String query = "SELECT * FROM "+DBHelperLocalSongs.TABLE_SONG_LIST+" ORDER BY " + var+" "+mode;
+        return getSongListFromQuery(query);
+    }
+
+    private List<Song> getSongListFromQuery(String query){
+        List<Song> SongList = new ArrayList<>();
+
+        open_readable();
+        //Zeiger auf die Einträge der Tabelle
+        Cursor cursor = databaseLocalSongs.rawQuery(query,null);
+        //Wenn Cursor beim ersten Eintrag steht
+        if(cursor.moveToNext()){
+            do{
+                int index = cursor.getInt(0);
+                String title = cursor.getString(1);
+                String artist = cursor.getString(2);
+                String uri = cursor.getString(3);
+                int duration = cursor.getInt(4);
+                int lastPosition = cursor.getInt(5);
+                String genre = cursor.getString(6);
+                String lyrics = cursor.getString(7);
+                String meaning = cursor.getString(8);
+
+                SongList.add(new Song(index,title,artist,uri,duration,lastPosition,genre,lyrics,meaning));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        close_db();
+
+        return SongList;
+    }
+
+
+
 
 }

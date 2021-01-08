@@ -7,7 +7,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -29,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
   public Button btn_prev,btn_play_pause,btn_next;
   public SeekBar seekBar;
   public TextView tv_seekbar_progress,tv_seekbar_max,tv_title,tv_artist;
+  private LinearLayout LL_MusicControlls;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -42,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     tv_seekbar_max = findViewById(R.id.tv_seekbar_max);
     tv_title = findViewById(R.id.tv_title);
     tv_artist = findViewById(R.id.tv_artist);
+    LL_MusicControlls = findViewById(R.id.LL_MusicControlls);
 
     mainActivityListener = new MainActivityListener(this);
     lv_songlist.setOnItemClickListener(mainActivityListener);
@@ -60,4 +65,11 @@ public class MainActivity extends AppCompatActivity {
   public boolean onOptionsItemSelected(@NonNull MenuItem item) {
     return mainActivityListener.onOptionsItemSelected(item);
   }
+
+
+
+  public void hideMusicControlls(){
+    LL_MusicControlls.setVisibility(View.GONE);}
+  public void showMusicControlls(){LL_MusicControlls.setVisibility(View.VISIBLE);}
+
 }

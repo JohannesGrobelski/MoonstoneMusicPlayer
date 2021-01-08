@@ -3,8 +3,36 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/miSwitchAscDesc"
+        android:title="Reihenfolge umdrehen" />
+    <item
+        android:id="@+id/miSearch"
+        android:icon="@android:drawable/ic_menu_search"
+        android:title="suche Fahrt"
+        app:actionViewClass="android.widget.SearchView"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/miDeleteAllItems"
+        android:title="Alle Songs löschen" />
+    <item
         android:id="@+id/mi_loadLocaleAudioFile"
         android:icon="@android:drawable/ic_popup_sync"
         android:title="load locale audio files"
         app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/miSort"
+        android:title="Songs sortieren">
+
+        <menu>
+            <item
+                android:id="@+id/miSortTitle"
+                android:title="sortieren nach Titel" />
+            <item
+                android:id="@+id/miSortArtist"
+                android:title="sortieren nach Künstler" />
+            <item
+                android:id="@+id/miSortGenre"
+                android:title="sortieren nach Genre" />
+        </menu>
+    </item>
 </menu>
