@@ -22,7 +22,8 @@ public class MusicPlayer {
     boolean shuffleModelOn = false;
     public enum REPEATMODE {
         NONE, ALL, ONESONG;
-    } REPEATMODE repeatmode = NONE;
+    };
+    public REPEATMODE repeatmode = NONE;
 
 
     public MusicPlayer(Context baseContext) {

@@ -148,8 +148,9 @@ public class MediaPlayerService extends Service
   /** wird aufgerufen wenn Medienresource fertig abgespielt wurde*/
   @Override
   public void onCompletion(MediaPlayer mp) {
-    if(mediaPlayer != null && mp.isPlaying()){
+    if(mediaPlayer != null){
       stopMedia();
+      if(((LocalBinder) iBinder) != null)((LocalBinder) iBinder).boundServiceListener.finishedSong();
     }
   }
 
@@ -164,6 +165,7 @@ public class MediaPlayerService extends Service
       case MediaPlayer.MEDIA_ERROR_UNKNOWN:
         break;
     }
+    if(((LocalBinder) iBinder) != null)((LocalBinder) iBinder).boundServiceListener.onError(what);
     return false;
   }
 
@@ -218,9 +220,18 @@ public class MediaPlayerService extends Service
     return AudioManager.AUDIOFOCUS_REQUEST_GRANTED == audioManager.abandonAudioFocus(this);
   }
 
+  /** used to bind service to activity*/
   public class LocalBinder extends Binder {
+    public MainActivityListener.BoundServiceListener boundServiceListener;
+
     public MediaPlayerService getService() {
       return MediaPlayerService.this;
     }
+
+    /** set Listener-Object*/
+    public void setListener(MainActivityListener.BoundServiceListener listener) {
+      boundServiceListener = listener;
+    }
+
   }
 }

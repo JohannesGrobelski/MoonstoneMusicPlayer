@@ -113,11 +113,13 @@ public class MainActivityListener
         songListAdapter.notifyDataSetChanged();
         break;
       }
-
-
     }
     songListAdapter.notifyDataSetChanged();
     return true;
+  }
+
+  public void finnishRefresh(){
+    songListAdapter.notifyDataSetChanged();
   }
 
   public boolean onCreateOptionsMenu(Menu menu) {
@@ -188,10 +190,30 @@ public class MainActivityListener
     }
   }
 
+
+  @Override
+  /** called if query in search view is submitted*/
+  public boolean onQueryTextSubmit(String query) { return false; }
+
+  @Override
+  /** called if input in search view changes => search songs in db according to input*/
+  public boolean onQueryTextChange(String query) {
+    musicPlayer.searchSong(query);
+    songListAdapter.notifyDataSetChanged();
+    return false;
+  }
+
+  @Override
+  /** called when search view is closed => open music controlls, reset filter query*/
+  public boolean onClose() {
+    mainActivity.showMusicControlls();
+    return false;
+  }
+
   @Override public void onStartTrackingTouch(SeekBar seekBar) {}
   @Override public void onStopTrackingTouch(SeekBar seekBar) {}
   @Override
-  /** implements the music controll (seekTo)*/
+  /** implements the music controll (seekto): seeks to position in mediaPlayerService*/
   public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
     if(isServiceBound){
       if(mediaPlayerService.mediaPlayerReady() && fromUser){
@@ -200,6 +222,40 @@ public class MainActivityListener
     }
   }
 
+  /** defines what happens when a song is finnished*/
+  private void autoPlay(){
+    switch(musicPlayer.repeatmode){
+      case ONESONG: {
+        mainActivity.btn_play_pause.setBackground(mainActivity.getResources().getDrawable(R.drawable.ic_pause));
+        destroyAndCreateNewService();
+        break;
+      }
+      case ALL: {
+        mainActivity.btn_play_pause.setBackground(mainActivity.getResources().getDrawable(R.drawable.ic_pause));
+        musicPlayer.nextSong();
+        destroyAndCreateNewService();
+        break;
+      }
+    }
+  }
+
+  /** media player error => set back UI */
+  private void onError(int cause){
+    mainActivity.seekBar.setProgress(0);
+    mainActivity.tv_seekbar_progress.setText("0:00");
+    mainActivity.btn_play_pause.setBackground(mainActivity.getResources().getDrawable(R.drawable.ic_play_button));
+    //TODO: react to cause and display message
+  }
+
+  /** song finnished => set back UI and autoplay */
+  private void onFinished(){
+    mainActivity.seekBar.setProgress(0);
+    mainActivity.tv_seekbar_progress.setText("0:00");
+    mainActivity.btn_play_pause.setBackground(mainActivity.getResources().getDrawable(R.drawable.ic_play_button));
+    autoPlay();
+  }
+
+  /** implements the music controll (resume): resumes audio in mediaPlayerService*/
   private void resumeAudio(){
     if(isServiceBound){
       mediaPlayerService.resume();
@@ -210,6 +266,7 @@ public class MainActivityListener
     }
   }
 
+  /** implements the music controll (pause): pauses audio in mediaPlayerService*/
   private void pauseAudio(){
     if(isServiceBound){
       mediaPlayerService.pause();
@@ -244,6 +301,10 @@ public class MainActivityListener
         if(DEBUG)Log.d(TAG,"onServiceConnected");
         MediaPlayerService.LocalBinder binder = (MediaPlayerService.LocalBinder) service;
         mediaPlayerService = binder.getService();
+        binder.setListener(new BoundServiceListener() {
+          @Override public void onError(int cause) {onError(cause);}
+          @Override public void finishedSong() {onFinished();}
+        });
         isServiceBound = true;
 
         //set views
@@ -309,27 +370,12 @@ public class MainActivityListener
     return permissionCheck == PackageManager.PERMISSION_GRANTED;
   }
 
-  @Override
-  /** called if query in search view is submitted*/
-  public boolean onQueryTextSubmit(String query) { return false; }
 
-  @Override
-  /** called if input in search view changes => search songs in db according to input*/
-  public boolean onQueryTextChange(String query) {
-    musicPlayer.searchSong(query);
-    songListAdapter.notifyDataSetChanged();
-    return false;
+
+  /** interface used to send messages from service to activity*/
+  public interface BoundServiceListener {
+
+    public void onError(int cause);
+    public void finishedSong();
   }
-
-  @Override
-  /** called when search view is closed => open music controlls, reset filter query*/
-  public boolean onClose() {
-    mainActivity.showMusicControlls();
-    return false;
-  }
-
-  public void finnishRefresh(){
-    songListAdapter.notifyDataSetChanged();
-  }
-
 }
