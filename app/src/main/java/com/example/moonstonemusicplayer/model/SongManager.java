@@ -26,21 +26,20 @@ import static android.os.Environment.getStorageDirectory;
 public class SongManager {
   private static final boolean DEBUG = true;
 
-  public static List<Song> findAllAudioFiles(String directory, List<Song> localAudioFiles){
-    if(DEBUG)Log.d("SongManager","findAllAudioFiles");
+  public static List<Song> findAllAudioFiles(){
+      List<Song> result = new ArrayList<>();
 
-    if(localAudioFiles == null){
-      localAudioFiles = new ArrayList<>();
-    }
-    if(directory == null){
-      directory = getExternalStorageDirectory().getAbsolutePath();
-         //System.getenv("SECONDARY_STORAGE");
-
+      //System.getenv("SECONDARY_STORAGE");
       Map<String, File> externalLocations = ExternalStorage.getAllStorageLocations();
+      for(String file: externalLocations.keySet())Log.d("SongManager",externalLocations.get(file).getAbsolutePath());
+      /*
       File sdCard = externalLocations.get(ExternalStorage.SD_CARD);
       File externalSdCard = externalLocations.get(ExternalStorage.EXTERNAL_SD_CARD);
 
-      directory = sdCard.getAbsolutePath();
+      if(externalSdCard.exists())result.addAll(findAllAudioFiles(sdCard.getAbsolutePath(),null));
+      //if(sdCard.exists())result.addAll(findAllAudioFiles(sdCard.getAbsolutePath(),null));
+
+       */
 
 
       /*
@@ -54,7 +53,15 @@ public class SongManager {
 
 
       */
+      return result;
+  }
+
+  private static List<Song> findAllAudioFiles(String directory, List<Song> localAudioFiles){
+    if(DEBUG)Log.d("SongManager","findAllAudioFiles");
+    if(localAudioFiles == null){
+      localAudioFiles = new ArrayList<>();
     }
+    if(directory == null)return localAudioFiles;
     File file;
     try {
       file = new File(directory );

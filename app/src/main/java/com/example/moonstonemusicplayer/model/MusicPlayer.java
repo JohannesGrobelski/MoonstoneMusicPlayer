@@ -29,14 +29,14 @@ public class MusicPlayer {
     public MusicPlayer(Context baseContext) {
         this.context = baseContext;
         dataSource = new DataSource(this.context);
-        currentSongList = dataSource.getAllSong();
+        currentSongList = dataSource.getAllSong(60000);
     }
 
     /** loads local music and adds it to dataSource*/
     public void loadLocalMusic(){
         deleteAllSongs();//TODO: dont delete db but only local files
-        currentSongList.addAll(SongManager.findAllAudioFiles(null,null));
-        for(Song song:currentSongList)dataSource.insertSong(song);
+        dataSource.insertSongList(SongManager.findAllAudioFiles());
+        currentSongList.addAll(dataSource.getAllSong(60000));
     }
 
     public Song getCurrentSong(){
@@ -103,7 +103,7 @@ public class MusicPlayer {
 
     public void getAllSongs(){
         currentSongList.clear();
-        currentSongList = dataSource.getAllSong();
+        currentSongList = dataSource.getAllSong(60000);
     }
 
 

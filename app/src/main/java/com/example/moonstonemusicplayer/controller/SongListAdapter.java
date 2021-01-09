@@ -33,13 +33,14 @@ public class SongListAdapter extends ArrayAdapter<Song> {
   @NonNull
   @Override
   public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+    Song aktuellerSong = songList.get(position);
+
     View rowView;
     if(convertView != null){
       rowView = convertView;
     } else {
       rowView = layoutInflater.inflate(R.layout.song_row_layout, parent, false);
     }
-    Song aktuellerSong = songList.get(position);
 
     //init the views of songRowView
     LinearLayout ll_song_background = rowView.findViewById(R.id.ll_song_background);
