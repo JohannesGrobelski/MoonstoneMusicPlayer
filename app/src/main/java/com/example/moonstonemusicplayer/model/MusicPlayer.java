@@ -51,23 +51,25 @@ public class MusicPlayer {
     }
 
     public void prevSong(){
-        if(currentSongList.size() == 1)return;
+        if(currentSongList.size() <= 1 || repeatmode.equals(ONESONG))return;
         if(shuffleModelOn){
             int previousSong = currentSongIndex;
             while(currentSongIndex == previousSong)currentSongIndex = (int) (Math.random()*currentSongList.size());
         } else {
-            currentSongIndex = (--currentSongIndex);
-            if(currentSongIndex == -1)currentSongIndex = currentSongList.size()-1;
+            if(repeatmode.equals(ALL)){
+                currentSongIndex = (--currentSongIndex);
+                if(currentSongIndex == -1)currentSongIndex = currentSongList.size()-1;
+            }
         }
     }
 
     public void nextSong(){
-        if(currentSongList.size() == 1)return;
+        if(currentSongList.size() <= 1 || repeatmode.equals(ONESONG))return;
         if(shuffleModelOn){
             int previousSong = currentSongIndex;
             while(currentSongIndex == previousSong)currentSongIndex = (int) (Math.random()*currentSongList.size());
         } else {
-            currentSongIndex = (++currentSongIndex)%currentSongList.size();
+            if(repeatmode.equals(ALL))currentSongIndex = (++currentSongIndex)%currentSongList.size();
         }
     }
 
