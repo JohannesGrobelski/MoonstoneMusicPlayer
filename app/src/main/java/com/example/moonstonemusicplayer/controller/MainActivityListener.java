@@ -88,12 +88,28 @@ public class MainActivityListener
         }
         break;
       }
-      case R.id.miSwitchAscDesc: {
-
-        break;
-      }
       case R.id.miDeleteAllItems: {
         musicPlayer.deleteAllSongs();
+        songListAdapter.notifyDataSetChanged();
+        break;
+      }
+      case R.id.miSortTitle: {
+        musicPlayer.sortTitle();
+        songListAdapter.notifyDataSetChanged();
+        break;
+      }
+      case R.id.miSortArtist: {
+        musicPlayer.sortArtist();
+        songListAdapter.notifyDataSetChanged();
+        break;
+      }
+      case R.id.miSortGenre: {
+        musicPlayer.sortGenre();
+        songListAdapter.notifyDataSetChanged();
+        break;
+      }
+      case R.id.miSwitchAscDesc: {
+        musicPlayer.reverseList();
         songListAdapter.notifyDataSetChanged();
         break;
       }
@@ -124,8 +140,8 @@ public class MainActivityListener
     destroyAndCreateNewService();
     //destroy searchview and show music controlls, close searchview and close virtual keyboard
     mainActivity.searchView.setIconified(true);
-    mainActivity.showMusicControlls();
     mainActivity.searchView.clearFocus();
+    mainActivity.showMusicControlls();
   }
 
   @Override
@@ -163,6 +179,7 @@ public class MainActivityListener
           case NONE: {mainActivity.btn_repeat.setBackgroundTintList(mainActivity.getResources().getColorStateList(android.R.color.darker_gray));break;}
           case ONESONG: {mainActivity.btn_repeat.setText("   1");}
         }
+        break;
       }
       case R.id.miSearch: {
         mainActivity.hideMusicControlls();

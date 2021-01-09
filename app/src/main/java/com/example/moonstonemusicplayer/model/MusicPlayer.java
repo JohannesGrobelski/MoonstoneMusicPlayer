@@ -2,6 +2,7 @@ package com.example.moonstonemusicplayer.model;
 
 import android.content.Context;
 
+import java.util.Collections;
 import java.util.List;
 
 import static com.example.moonstonemusicplayer.model.MusicPlayer.REPEATMODE.ALL;
@@ -12,10 +13,9 @@ import static com.example.moonstonemusicplayer.model.MusicPlayer.REPEATMODE.ONES
  * models a music player
  */
 public class MusicPlayer {
-    Context context;
+    private Context context;
 
     private int currentSongIndex;
-
     private DataSource dataSource;
     private List<Song> currentSongList;
 
@@ -80,6 +80,24 @@ public class MusicPlayer {
     public void searchSong(String searchterm){
         currentSongList.clear();
         currentSongList.addAll(dataSource.searchSongs(searchterm));
+    }
+
+    public void sortTitle(){
+        currentSongList.clear();
+        currentSongList.addAll(dataSource.sortBy(DBHelperLocalSongs.COLUMN_TITLE,"ASC"));
+    }
+
+    public void sortArtist(){
+        currentSongList.clear();
+        currentSongList.addAll(dataSource.sortBy(DBHelperLocalSongs.COLUMN_ARTIST,"ASC"));
+    }
+
+    public void sortGenre(){
+        currentSongList.clear();
+        currentSongList.addAll(dataSource.sortBy(DBHelperLocalSongs.COLUMN_GENRE,"ASC"));
+    }
+    public void reverseList(){
+        Collections.reverse(currentSongList);
     }
 
     public void getAllSongs(){
