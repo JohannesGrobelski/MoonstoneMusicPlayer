@@ -83,9 +83,8 @@ public class MainActivityListener
     switch (item.getItemId()){
       case R.id.mi_loadLocaleAudioFile: {
         if(requestForPermission()){
-          /*RefreshTask refreshTask = new RefreshTask();
-          refreshTask.execute(this);*/
-          musicPlayer.loadLocalMusic();
+          //getExternalMediaDirs actually does get both internal and external sdcards
+          musicPlayer.loadLocalMusic(mainActivity.getExternalMediaDirs());
           songListAdapter.notifyDataSetChanged();
         }
         break;

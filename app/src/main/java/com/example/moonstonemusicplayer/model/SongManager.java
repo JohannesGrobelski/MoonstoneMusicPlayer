@@ -4,21 +4,14 @@ import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
-import android.widget.Toast;
-import android.widget.Toolbar;
-
-import com.example.moonstonemusicplayer.utility.ExternalStorage;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
-import static android.os.Environment.getDataDirectory;
 import static android.os.Environment.getExternalStorageDirectory;
 import static android.os.Environment.getExternalStorageState;
-import static android.os.Environment.getStorageDirectory;
 
 /**
  * datasource: contains a list of all songs avaiable
@@ -26,20 +19,21 @@ import static android.os.Environment.getStorageDirectory;
 public class SongManager {
   private static final boolean DEBUG = true;
 
-  public static List<Song> findAllAudioFiles(){
+  public static List<Song> findAllAudioFiles(File[] externalFilesDir){
       List<Song> result = new ArrayList<>();
 
       //System.getenv("SECONDARY_STORAGE");
-      Map<String, File> externalLocations = ExternalStorage.getAllStorageLocations();
-      for(String file: externalLocations.keySet())Log.d("SongManager",externalLocations.get(file).getAbsolutePath());
-      /*
-      File sdCard = externalLocations.get(ExternalStorage.SD_CARD);
-      File externalSdCard = externalLocations.get(ExternalStorage.EXTERNAL_SD_CARD);
+      String[] fileDirs = new String[externalFilesDir.length];
+      for(int i=0; i<fileDirs.length; i++){
+        fileDirs[i] = externalFilesDir[i].getAbsolutePath().replace("/Android/media/com.example.moonstonemusicplayer","");
+        if(DEBUG)Log.d("SongManager",fileDirs[i]+" "+new File(fileDirs[i]).exists());
+      }
+      for(String fileDir: fileDirs){
+        if(new File(fileDir).exists())result.addAll(findAllAudioFiles(fileDir,null));
+      }
 
-      if(externalSdCard.exists())result.addAll(findAllAudioFiles(sdCard.getAbsolutePath(),null));
-      //if(sdCard.exists())result.addAll(findAllAudioFiles(sdCard.getAbsolutePath(),null));
 
-       */
+
 
 
       /*

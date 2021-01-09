@@ -2,6 +2,7 @@ package com.example.moonstonemusicplayer.model;
 
 import android.content.Context;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
@@ -33,9 +34,9 @@ public class MusicPlayer {
     }
 
     /** loads local music and adds it to dataSource*/
-    public void loadLocalMusic(){
+    public void loadLocalMusic(File[] externalFileDirs){
         deleteAllSongs();//TODO: dont delete db but only local files
-        dataSource.insertSongList(SongManager.findAllAudioFiles());
+        dataSource.insertSongList(SongManager.findAllAudioFiles(externalFileDirs));
         currentSongList.addAll(dataSource.getAllSong(60000));
     }
 

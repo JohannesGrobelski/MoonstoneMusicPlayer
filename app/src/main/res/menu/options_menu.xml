@@ -17,8 +17,8 @@
     <item
         android:id="@+id/mi_loadLocaleAudioFile"
         android:icon="@android:drawable/ic_popup_sync"
-        android:title="load locale audio files"
-        app:showAsAction="ifRoom" />
+        android:title="Lokale Audio Datein laden"
+        app:showAsAction="never" />
     <item
         android:id="@+id/miSort"
         android:title="Songs sortieren">

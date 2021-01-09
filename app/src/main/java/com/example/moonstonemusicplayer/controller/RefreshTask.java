@@ -12,7 +12,7 @@ public class RefreshTask extends AsyncTask<MainActivityListener,Void,Void> {
   @Override
   protected Void doInBackground(MainActivityListener... mainActivityListeners) {
     this.mainActivityListener = mainActivityListeners[0];
-    this.mainActivityListener.musicPlayer.loadLocalMusic();
+    this.mainActivityListener.musicPlayer.loadLocalMusic(null); //TODO:
     return null;
   }
 
