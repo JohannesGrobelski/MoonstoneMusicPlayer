@@ -32,7 +32,8 @@ public class MediaPlayerService extends Service
 
   public static final String FILEPATHEXTRA = "media";
   private final IBinder iBinder = new LocalBinder();
-  private MediaPlayer mediaPlayer; //ensure theere
+  private MediaPlayer mediaPlayer;
+  private boolean isMediaPlayerPrepared = false;
   private String mediaFilePath;
   private AudioManager audioManager;
   private int resumePosition = 0;
@@ -62,13 +63,22 @@ public class MediaPlayerService extends Service
     }
     //bereitet MediaPlayer für Wiedergabe vor
     mediaPlayer.prepareAsync();
+    resumePosition = 0;
   }
 
   //public interface
   public void resume() {
-    if(mediaPlayer != null && !mediaPlayer.isPlaying()){
+    if(DEBUG)Log.d(TAG,"resume: "+resumePosition);
+
+    //setze Wiedergabe fort
+    requestAudioFocus();
+    if(mediaPlayer == null)initMediaPlayer();
+    if(!isMediaPlayerPrepared){//state stop
+      mediaPlayer.prepareAsync();
+    } else {
       mediaPlayer.seekTo(resumePosition);
-      mediaPlayer.start();
+      mediaPlayer.setVolume(1.0f,1.0f);
+      if(!mediaPlayer.isPlaying())mediaPlayer.start();
     }
   }
 
@@ -101,7 +111,7 @@ public class MediaPlayerService extends Service
 
   private void stopMedia(){
     if(mediaPlayer != null && mediaPlayer.isPlaying()){
-      mediaPlayer.stop();
+      {mediaPlayer.stop(); isMediaPlayerPrepared=false;}
     }
   }
 
@@ -179,6 +189,10 @@ public class MediaPlayerService extends Service
   @Override
   public void onPrepared(MediaPlayer mp) {
     playMedia();
+    isMediaPlayerPrepared = true;
+    //seekto if player was stopped
+    if(resumePosition != 0)mediaPlayer.seekTo(resumePosition);
+    mediaPlayer.setVolume(1.0f,1.0f);
   }
 
   /** wird aufgerufen beim abschluss einer onSeek Operation*/
@@ -188,26 +202,28 @@ public class MediaPlayerService extends Service
   /** aufgerufen wenn sich der Audiofokus ändert, z.B durch eingehenden Anruf */
   @Override
   public void onAudioFocusChange(int focusState) {
+    if(DEBUG)Log.d(TAG,"onAudioFocusChange");
     switch (focusState){
       case AudioManager.AUDIOFOCUS_GAIN:
         //setze Wiedergabe fort
-        if(mediaPlayer == null)initMediaPlayer();
-        else if(!mediaPlayer.isPlaying())mediaPlayer.start();
-        mediaPlayer.setVolume(1.0f,1.0f);
+        resume();
         break;
       case AudioManager.AUDIOFOCUS_LOSS:
         //verlieren Audiofokus verloren und auf unbestimmte Zeit verloren
-        if(mediaPlayer.isPlaying())mediaPlayer.stop();
+        if(mediaPlayer.isPlaying()){mediaPlayer.stop(); isMediaPlayerPrepared=false;}
+        resumePosition = mediaPlayer.getCurrentPosition();
         break;
       case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
         //verlieren Audiofokus für kurze,unbestimmte Zeit verloren (z.B. YouTube Wiedergabe gestartet)
         if(mediaPlayer.isPlaying())mediaPlayer.pause();
+        resumePosition = mediaPlayer.getCurrentPosition();
         break;
       case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
         //verlieren Audiofokus für kurze Zeit (z.B. Klingelton)
         mediaPlayer.setVolume(0.1f,0.1f);
         break;
     }
+    if(((LocalBinder) iBinder) != null)((LocalBinder) iBinder).boundServiceListener.onAudioFocusChange(focusState);
   }
 
   private boolean requestAudioFocus(){

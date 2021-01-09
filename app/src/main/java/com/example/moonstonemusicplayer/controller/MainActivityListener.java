@@ -6,7 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
+import android.content.res.Configuration;
+import android.media.AudioManager;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
@@ -21,12 +22,13 @@ import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.model.MusicPlayer;
 import com.example.moonstonemusicplayer.model.Song;
 import com.example.moonstonemusicplayer.view.MainActivity;
+
+import java.util.logging.Logger;
 
 
 /** MainActivityListener
@@ -240,15 +242,26 @@ public class MainActivityListener
   }
 
   /** media player error => set back UI */
-  private void onError(int cause){
+  private void mediaPlayerServiceError(int cause){
     mainActivity.seekBar.setProgress(0);
     mainActivity.tv_seekbar_progress.setText("0:00");
     mainActivity.btn_play_pause.setBackground(mainActivity.getResources().getDrawable(R.drawable.ic_play_button));
+    Toast.makeText(mainActivity,"error: "+cause,Toast.LENGTH_LONG).show();
     //TODO: react to cause and display message
   }
 
+  private void audioFocusChange(int state){
+    if(state == AudioManager.AUDIOFOCUS_GAIN){
+      mainActivity.btn_play_pause.setBackground(mainActivity.getResources().getDrawable(R.drawable.ic_pause));
+      animateMediaplayerProgressOnSeekbar();
+    } else if(state == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT || state == AudioManager.AUDIOFOCUS_LOSS){
+      mainActivity.btn_play_pause.setBackground(mainActivity.getResources().getDrawable(R.drawable.ic_play_button));
+      if(seekbarAnimationThread != null) seekbarAnimationThread = null;
+    }
+  }
+
   /** song finnished => set back UI and autoplay */
-  private void onFinished(){
+  private void finishSong(){
     mainActivity.seekBar.setProgress(0);
     mainActivity.tv_seekbar_progress.setText("0:00");
     mainActivity.btn_play_pause.setBackground(mainActivity.getResources().getDrawable(R.drawable.ic_play_button));
@@ -302,8 +315,9 @@ public class MainActivityListener
         MediaPlayerService.LocalBinder binder = (MediaPlayerService.LocalBinder) service;
         mediaPlayerService = binder.getService();
         binder.setListener(new BoundServiceListener() {
-          @Override public void onError(int cause) {onError(cause);}
-          @Override public void finishedSong() {onFinished();}
+          @Override public void onError(int cause) { mediaPlayerServiceError(cause);}
+          @Override public void finishedSong() { finishSong();}
+          @Override public void onAudioFocusChange(int state) { audioFocusChange(state);}
         });
         isServiceBound = true;
 
@@ -370,6 +384,9 @@ public class MainActivityListener
     return permissionCheck == PackageManager.PERMISSION_GRANTED;
   }
 
+  public void onConfigurationChanged(Configuration newConfig) {
+
+  }
 
 
   /** interface used to send messages from service to activity*/
@@ -377,5 +394,6 @@ public class MainActivityListener
 
     public void onError(int cause);
     public void finishedSong();
+    public void onAudioFocusChange(int state);
   }
 }

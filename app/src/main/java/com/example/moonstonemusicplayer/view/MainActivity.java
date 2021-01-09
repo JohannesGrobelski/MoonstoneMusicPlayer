@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -60,6 +62,13 @@ public class MainActivity extends AppCompatActivity {
     btn_next.setOnClickListener(mainActivityListener);
     btn_repeat.setOnClickListener(mainActivityListener);
     seekBar.setOnSeekBarChangeListener(mainActivityListener);
+
+    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+  }
+
+  @Override
+  public void onConfigurationChanged(@NonNull Configuration newConfig) {
+    mainActivityListener.onConfigurationChanged(newConfig);
   }
 
   @Override
@@ -71,6 +80,8 @@ public class MainActivity extends AppCompatActivity {
   public boolean onOptionsItemSelected(@NonNull MenuItem item) {
     return mainActivityListener.onOptionsItemSelected(item);
   }
+
+
 
 
 
