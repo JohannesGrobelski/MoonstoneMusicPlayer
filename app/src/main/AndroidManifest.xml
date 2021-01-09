@@ -12,6 +12,7 @@
     <!-- wichtig: android:requestLegacyExternalStorage benötigt um auf externen speicher zuzugreifen! -->
 
     <application
+        android:screenOrientation="portrait"
         android:requestLegacyExternalStorage="true"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
