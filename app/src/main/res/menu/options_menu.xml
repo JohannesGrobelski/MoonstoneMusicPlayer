@@ -3,9 +3,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/miSwitchAscDesc"
-        android:title="Reihenfolge umdrehen" />
-    <item
         android:id="@+id/miSearch"
         android:icon="@android:drawable/ic_menu_search"
         android:title="suche Fahrt"
@@ -33,6 +30,9 @@
             <item
                 android:id="@+id/miSortGenre"
                 android:title="sortieren nach Genre" />
+            <item
+                android:id="@+id/miSwitchAscDesc"
+                android:title="Reihenfolge umdrehen" />
         </menu>
     </item>
 </menu>

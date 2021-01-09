@@ -24,17 +24,18 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.moonstonemusicplayer.R;
-import com.example.moonstonemusicplayer.model.MusicPlayer;
+import com.example.moonstonemusicplayer.model.MusicManager;
+import com.example.moonstonemusicplayer.model.PlayListModel;
 import com.example.moonstonemusicplayer.model.Song;
 import com.example.moonstonemusicplayer.view.MainActivity;
 
-import java.util.logging.Logger;
+import java.util.List;
 
 
 /** MainActivityListener
  *  Handles input from the User (through Views in {@link com.example.moonstonemusicplayer.view.MainActivity}),
- *  changes the model {@link com.example.moonstonemusicplayer.model.MusicPlayer}) according to the input and
- *  and, if necessary, sends messages to the {@link com.example.moonstonemusicplayer.model.MusicPlayer}).
+ *  changes the model {@link MusicManager}) according to the input and
+ *  and, if necessary, sends messages to the {@link MusicManager}).
  */
 public class MainActivityListener
     implements AdapterView.OnItemClickListener, View.OnClickListener,
@@ -46,9 +47,9 @@ public class MainActivityListener
   private static final String TAG = MainActivityListener.class.getSimpleName();
   private final MainActivity mainActivity;
 
-  public MusicPlayer musicPlayer;
+  MusicManager musicManager;
 
-  private ServiceConnection serviceConnection = createServiceConnection();
+  private ServiceConnection serviceConnection;
   private MediaPlayerService mediaPlayerService;
   boolean isServiceBound = false;
 
@@ -62,8 +63,9 @@ public class MainActivityListener
    */
   public MainActivityListener(MainActivity mainActivity) {
     this.mainActivity = mainActivity;
-    musicPlayer = new MusicPlayer(mainActivity.getBaseContext());
+    musicManager = new MusicManager(mainActivity.getBaseContext());
     bindSongListAdapterToSongListView(mainActivity.lv_songlist);
+    destroyAndCreateNewService();
 
     /*
     musicPlayer.addSong(new Song("Lyric Pieces"
@@ -84,33 +86,34 @@ public class MainActivityListener
       case R.id.mi_loadLocaleAudioFile: {
         if(requestForPermission()){
           //getExternalMediaDirs actually does get both internal and external sdcards
-          musicPlayer.loadLocalMusic(mainActivity.getExternalMediaDirs());
+          musicManager.loadLocalMusic(mainActivity.getExternalMediaDirs());
           songListAdapter.notifyDataSetChanged();
+          destroyAndCreateNewService();
         }
         break;
       }
       case R.id.miDeleteAllItems: {
-        musicPlayer.deleteAllSongs();
+        musicManager.deleteAllSongs();
         songListAdapter.notifyDataSetChanged();
         break;
       }
       case R.id.miSortTitle: {
-        musicPlayer.sortTitle();
+        musicManager.sortByTitle();
         songListAdapter.notifyDataSetChanged();
         break;
       }
       case R.id.miSortArtist: {
-        musicPlayer.sortArtist();
+        musicManager.sortByArtist();
         songListAdapter.notifyDataSetChanged();
         break;
       }
       case R.id.miSortGenre: {
-        musicPlayer.sortGenre();
+        musicManager.sortByGenre();
         songListAdapter.notifyDataSetChanged();
         break;
       }
       case R.id.miSwitchAscDesc: {
-        musicPlayer.reverseList();
+        musicManager.reverseList();
         songListAdapter.notifyDataSetChanged();
         break;
       }
@@ -139,8 +142,10 @@ public class MainActivityListener
   @Override
   /** plays song that was clicked by user in songlistView*/
   public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-    musicPlayer.setCurrentSongIndex(position);
-    destroyAndCreateNewService();
+    if(isServiceBound){
+      playSong(musicManager.getDisplayedSongList().get(position));
+    }
+
     //destroy searchview and show music controlls, close searchview and close virtual keyboard
     mainActivity.searchView.setIconified(true);
     mainActivity.searchView.clearFocus();
@@ -152,8 +157,7 @@ public class MainActivityListener
   public void onClick(View v) {
     switch (v.getId()){
       case R.id.btn_prev:
-        musicPlayer.prevSong();
-        destroyAndCreateNewService();
+        prevSong();
         break;
       case R.id.btn_play_pause:
         if(isServiceBound){
@@ -165,23 +169,14 @@ public class MainActivityListener
         }
         break;
       case R.id.btn_next:
-        musicPlayer.nextSong();
-        destroyAndCreateNewService();
+        nextSong();
         break;
       case R.id.btn_shuffle:{
-        boolean shuffleMode = musicPlayer.toogleShuffleMode();
-        if(shuffleMode)mainActivity.btn_shuffle.setBackgroundTintList(mainActivity.getResources().getColorStateList(R.color.colorPrimary));
-        else mainActivity.btn_shuffle.setBackgroundTintList(mainActivity.getResources().getColorStateList(android.R.color.darker_gray));
+        toogleShuffleMode();
         break;
       }
       case R.id.btn_repeat: {
-        MusicPlayer.REPEATMODE repeatmode = musicPlayer.nextRepeatMode();
-        mainActivity.btn_repeat.setBackgroundTintList(mainActivity.getResources().getColorStateList(R.color.colorPrimary));
-        mainActivity.btn_repeat.setText("");
-        switch (repeatmode){
-          case NONE: {mainActivity.btn_repeat.setBackgroundTintList(mainActivity.getResources().getColorStateList(android.R.color.darker_gray));break;}
-          case ONESONG: {mainActivity.btn_repeat.setText("   1");}
-        }
+        nextRepeatMode();
         break;
       }
       case R.id.miSearch: {
@@ -199,7 +194,7 @@ public class MainActivityListener
   @Override
   /** called if input in search view changes => search songs in db according to input*/
   public boolean onQueryTextChange(String query) {
-    musicPlayer.searchSong(query);
+    musicManager.searchSong(query);
     songListAdapter.notifyDataSetChanged();
     return false;
   }
@@ -218,27 +213,13 @@ public class MainActivityListener
   public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
     if(isServiceBound){
       if(mediaPlayerService.mediaPlayerReady() && fromUser){
-        mediaPlayerService.seekTo(progress * 1000);
+        seekTo(progress * 1000);
       }
     }
   }
 
-  /** defines what happens when a song is finnished*/
-  private void autoPlay(){
-    switch(musicPlayer.repeatmode){
-      case ONESONG: {
-        mainActivity.btn_play_pause.setBackground(mainActivity.getResources().getDrawable(R.drawable.ic_pause));
-        destroyAndCreateNewService();
-        break;
-      }
-      case ALL: {
-        mainActivity.btn_play_pause.setBackground(mainActivity.getResources().getDrawable(R.drawable.ic_pause));
-        musicPlayer.nextSong();
-        destroyAndCreateNewService();
-        break;
-      }
-    }
-  }
+
+  //messages from mediaPlayerService
 
   /** media player error => set back UI */
   private void mediaPlayerServiceError(int cause){
@@ -249,6 +230,7 @@ public class MainActivityListener
     //TODO: react to cause and display message
   }
 
+  /** media player: audioFocusChange => change UI */
   private void audioFocusChange(int state){
     if(state == AudioManager.AUDIOFOCUS_GAIN){
       mainActivity.btn_play_pause.setBackground(mainActivity.getResources().getDrawable(R.drawable.ic_pause));
@@ -260,11 +242,81 @@ public class MainActivityListener
   }
 
   /** song finnished => set back UI and autoplay */
-  private void finishSong(){
+  private void finishSong(PlayListModel.REPEATMODE repeatmode){
     mainActivity.seekBar.setProgress(0);
     mainActivity.tv_seekbar_progress.setText("0:00");
-    mainActivity.btn_play_pause.setBackground(mainActivity.getResources().getDrawable(R.drawable.ic_play_button));
-    autoPlay();
+    if(DEBUG)Log.d(TAG,"finishSong: "+repeatmode);
+
+    if(repeatmode.equals(PlayListModel.REPEATMODE.NONE)){
+      mainActivity.btn_play_pause.setBackground(mainActivity.getResources().getDrawable(R.drawable.ic_play_button));
+    } else {
+      mainActivity.btn_play_pause.setBackground(mainActivity.getResources().getDrawable(R.drawable.ic_pause));
+      animateMediaplayerProgressOnSeekbar();
+      mainActivity.tv_title.setText(mediaPlayerService.getCurrentSong().getTitle());
+      mainActivity.setArtist(mediaPlayerService.getCurrentSong().getArtist());
+      mainActivity.tv_seekbar_max.setText(mediaPlayerService.getCurrentSong().getDurationString());
+      mainActivity.seekBar.setMax((int) (mediaPlayerService.getCurrentSong().getDuration_ms() / 1000));
+    }
+  }
+
+  //messages to mediaPlayerService
+
+
+  private void playSong(Song song){
+    if(isServiceBound){
+      mediaPlayerService.playSong(song);
+      mainActivity.btn_play_pause.setBackground(mainActivity.getResources().getDrawable(R.drawable.ic_pause));
+      animateMediaplayerProgressOnSeekbar();
+      mainActivity.tv_title.setText(mediaPlayerService.getCurrentSong().getTitle());
+      mainActivity.setArtist(mediaPlayerService.getCurrentSong().getArtist());
+      mainActivity.tv_seekbar_max.setText(mediaPlayerService.getCurrentSong().getDurationString());
+      mainActivity.seekBar.setMax((int) (song.getDuration_ms() / 1000));
+    }
+  }
+
+  private void prevSong(){
+    if(isServiceBound){
+      mediaPlayerService.prevSong();
+      mainActivity.btn_play_pause.setBackground(mainActivity.getResources().getDrawable(R.drawable.ic_pause));
+      animateMediaplayerProgressOnSeekbar();
+      mainActivity.tv_title.setText(mediaPlayerService.getCurrentSong().getTitle());
+      mainActivity.setArtist(mediaPlayerService.getCurrentSong().getArtist());
+      mainActivity.tv_seekbar_max.setText(mediaPlayerService.getCurrentSong().getDurationString());
+      mainActivity.seekBar.setMax((int) (mediaPlayerService.getCurrentSong().getDuration_ms() / 1000));
+    }
+  }
+
+  private void nextSong(){
+    if(isServiceBound){
+      mediaPlayerService.nextSong();
+      mainActivity.btn_play_pause.setBackground(mainActivity.getResources().getDrawable(R.drawable.ic_pause));
+      animateMediaplayerProgressOnSeekbar();
+      mainActivity.tv_title.setText(mediaPlayerService.getCurrentSong().getTitle());
+      mainActivity.setArtist(mediaPlayerService.getCurrentSong().getArtist());
+      mainActivity.tv_seekbar_max.setText(mediaPlayerService.getCurrentSong().getDurationString());
+      mainActivity.seekBar.setMax((int) (mediaPlayerService.getCurrentSong().getDuration_ms() / 1000));
+    }
+  }
+
+  private void toogleShuffleMode(){
+    if(isServiceBound){
+      boolean shuffleMode = mediaPlayerService.toogleShuffleMode();
+      Log.d(TAG,"toogleShuffle: "+shuffleMode);
+      if(shuffleMode)mainActivity.btn_shuffle.setBackgroundTintList(mainActivity.getResources().getColorStateList(R.color.colorPrimary));
+      else mainActivity.btn_shuffle.setBackgroundTintList(mainActivity.getResources().getColorStateList(android.R.color.darker_gray));
+    }
+  }
+
+  private void nextRepeatMode(){
+    if(isServiceBound){
+      PlayListModel.REPEATMODE repeatmode = mediaPlayerService.nextRepeatMode();
+      mainActivity.btn_repeat.setBackgroundTintList(mainActivity.getResources().getColorStateList(R.color.colorPrimary));
+      mainActivity.btn_repeat.setText("");
+      switch (repeatmode){
+        case NONE: {mainActivity.btn_repeat.setBackgroundTintList(mainActivity.getResources().getColorStateList(android.R.color.darker_gray));break;}
+        case ONESONG: {mainActivity.btn_repeat.setText("   1");}
+      }
+    }
   }
 
   /** implements the music controll (resume): resumes audio in mediaPlayerService*/
@@ -273,8 +325,9 @@ public class MainActivityListener
       mediaPlayerService.resume();
       mainActivity.btn_play_pause.setBackground(mainActivity.getResources().getDrawable(R.drawable.ic_pause));
       animateMediaplayerProgressOnSeekbar();
-      mainActivity.tv_title.setText(musicPlayer.getCurrentSong().getTitle());
-      mainActivity.tv_artist.setText(musicPlayer.getCurrentSong().getArtist());
+      mainActivity.tv_title.setText(mediaPlayerService.getCurrentSong().getTitle());
+      mainActivity.setArtist(mediaPlayerService.getCurrentSong().getArtist());
+      mainActivity.tv_seekbar_max.setText(mediaPlayerService.getCurrentSong().getDurationString());
     }
   }
 
@@ -287,22 +340,39 @@ public class MainActivityListener
     }
   }
 
+  private void seekTo(int seekPosition){
+    if(isServiceBound){
+      mediaPlayerService.seekTo(seekPosition);
+      animateMediaplayerProgressOnSeekbar();
+      mainActivity.tv_seekbar_progress.setText(Song.getDurationString(seekPosition));
+    }
+  }
+
   /** destroys mediaplayerservice and starts new one */
   private void destroyAndCreateNewService(){
     //if an service is bound destroy it ...
-    if(DEBUG)Log.d(TAG,"destroyMediaPlayerService (bound: "+isServiceBound+")");
     if(isServiceBound){
+      if(DEBUG)Log.d(TAG,"destroyMediaPlayerService (bound: "+isServiceBound+")");
       mediaPlayerService.onDestroy();
       isServiceBound = false;
     }
 
     // ... and start a new one.
-    if(DEBUG)Log.d(TAG,"startMediaPlayerService");
     serviceConnection = createServiceConnection();
     Intent playerIntent = new Intent(mainActivity,MediaPlayerService.class);
-    playerIntent.putExtra(MediaPlayerService.FILEPATHEXTRA,musicPlayer.getCurrentSong().getURI());
+
+    //transfer playlist from MusicManager to MediaPlayerService
+    List<Song> playlist = musicManager.getPlayList();
+    for(int i=0; i<playlist.size(); i++){
+      playerIntent.putExtra(MediaPlayerService.PLAYLISTEXTRA+"_"+i,playlist.get(i));
+    }
+    if(DEBUG)Log.d(TAG,"playListSize: "+playlist.size());
+
+    //start service
     mainActivity.startService(playerIntent);
-    mainActivity.bindService(playerIntent,serviceConnection, Context.BIND_AUTO_CREATE);
+    boolean bindService = mainActivity.getApplicationContext().
+        bindService(playerIntent,serviceConnection, Context.BIND_AUTO_CREATE);
+    if(DEBUG)Log.d(TAG,"startMediaPlayerService: "+bindService);
   }
 
   /** create a serviceConnection for musicPlayerService and bind the service, prepare play*/
@@ -315,22 +385,10 @@ public class MainActivityListener
         mediaPlayerService = binder.getService();
         binder.setListener(new BoundServiceListener() {
           @Override public void onError(int cause) { mediaPlayerServiceError(cause);}
-          @Override public void finishedSong() { finishSong();}
+          @Override public void finishedSong(PlayListModel.REPEATMODE repeatmode){ finishSong(repeatmode);}
           @Override public void onAudioFocusChange(int state) { audioFocusChange(state);}
         });
         isServiceBound = true;
-
-        //set views
-        mainActivity.btn_play_pause.setBackground(mainActivity.getResources().getDrawable(R.drawable.ic_pause));
-        mainActivity.tv_title.setText(musicPlayer.getCurrentSong().getTitle());
-        if(!musicPlayer.getCurrentSong().getArtist().isEmpty())mainActivity.tv_artist.setText(musicPlayer.getCurrentSong().getArtist());
-        else mainActivity.tv_artist.setText("unknown artist");
-
-        //set Seekbar and animate progress
-        mainActivity.seekBar.setMax((int) musicPlayer.getCurrentSong().getDuration_ms()/1000);
-        mainActivity.tv_seekbar_max.setText(musicPlayer.getCurrentSong().getDurationString(
-            (int) musicPlayer.getCurrentSong().getDuration_ms()));
-        animateMediaplayerProgressOnSeekbar();
       }
 
       @Override
@@ -363,7 +421,7 @@ public class MainActivityListener
 
   /** bind songlistview to songlistadapter using the songList of musicplayer*/
   private void bindSongListAdapterToSongListView(ListView lv_songlist){
-    songListAdapter = new SongListAdapter(mainActivity,musicPlayer.getCurrentSongList());
+    songListAdapter = new SongListAdapter(mainActivity,musicManager.getDisplayedSongList());
     lv_songlist.setAdapter(songListAdapter);
   }
 
@@ -387,12 +445,20 @@ public class MainActivityListener
 
   }
 
+  public void onDestroy() {
+    if(isServiceBound){
+      if(DEBUG)Log.d(TAG,"activity destroyed => destroy service");
+      mediaPlayerService.onDestroy();
+      isServiceBound = false;
+    }
+  }
+
 
   /** interface used to send messages from service to activity*/
   public interface BoundServiceListener {
 
     public void onError(int cause);
-    public void finishedSong();
+    public void finishedSong(PlayListModel.REPEATMODE repeatmode);
     public void onAudioFocusChange(int state);
   }
 }

@@ -7,18 +7,15 @@ import android.util.Log;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import static android.os.Environment.getExternalStorageDirectory;
-import static android.os.Environment.getExternalStorageState;
-
 /**
- * datasource: contains a list of all songs avaiable
+ * Class to load List<Song> from sd-card(s).
  */
-public class SongManager {
+public class LocalSongLoader {
   private static final boolean DEBUG = true;
 
+  /** find all Audiofiles in externalDirs and create a List<Song> from these files*/
   public static List<Song> findAllAudioFiles(File[] externalFilesDir){
       List<Song> result = new ArrayList<>();
 
@@ -31,22 +28,6 @@ public class SongManager {
       for(String fileDir: fileDirs){
         if(new File(fileDir).exists())result.addAll(findAllAudioFiles(fileDir,null));
       }
-
-
-
-
-
-      /*
-      if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())){
-        if(DEBUG)Log.d("SongManager","MEDIA_MOUNTED");
-        localAudioFiles.add(new Song(getExternalStorageDirectory().getAbsolutePath(),Environment.MEDIA_MOUNTED,"",-1));
-        return localAudioFiles;
-      } else {
-        directory = getExternalStorageDirectory().toString(); //sd_card
-      }
-
-
-      */
       return result;
   }
 
@@ -61,13 +42,10 @@ public class SongManager {
       file = new File(directory );
       if (file.exists() && file.isDirectory()) {
         if(file.getAbsolutePath().endsWith("Android"))return localAudioFiles; //throws null pointer exception; cannot enter without root
-        if(file.listFiles() == null){
-          localAudioFiles.add(new Song("listFiles null for: "+file.getName(),file.getAbsolutePath(),"",-1));
-          localAudioFiles.add(new Song("children for: "+file.getName(), Arrays.toString(file.list()),"",-1));
-
-        }
-        for (File childFile: file.listFiles()) {
-          findAllAudioFiles(childFile.getAbsolutePath(),localAudioFiles);
+        if(file.listFiles() != null){
+          for (File childFile: file.listFiles()) {
+            findAllAudioFiles(childFile.getAbsolutePath(),localAudioFiles);
+          }
         }
       } else{
         if(DEBUG)Log.d("SongManager","file found: "+file.getAbsolutePath());
@@ -82,14 +60,10 @@ public class SongManager {
     } catch (Exception e){
       if(DEBUG)Log.e("songmanager",e.getMessage());
       if(DEBUG)Log.e("songmanager", String.valueOf(e.getCause()));
-      localAudioFiles.add(new Song("error",e.getMessage()+": "+String.valueOf(e.getCause()),"",-1));
-      localAudioFiles.add(new Song("storage info: "+getExternalStorageDirectory().getAbsolutePath(),getExternalStorageState(),"",-1));
-
       return localAudioFiles;
     }
     if(directory.equals(Environment.getExternalStorageDirectory().toString())){
       if(DEBUG)Log.d("songmanager listsize","songs: "+ localAudioFiles.size());
-
     }
     return localAudioFiles;
   }
@@ -108,7 +82,7 @@ public class SongManager {
 
   private static boolean isSupportedFormat(String filename){
     String[] supportedExtensions = new String[]{
-        "mp3","3gp","mp4","m4a","3gp","amr","flac","mp3","mkv","ogg","wav"
+        "mp3","3gp","mp4","m4a","amr","flac","mkv","ogg","wav"
     };
 
     for(String ext: supportedExtensions){
