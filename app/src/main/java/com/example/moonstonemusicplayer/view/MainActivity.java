@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
   public SeekBar seekBar;
   public TextView tv_seekbar_progress,tv_seekbar_max,tv_title,tv_artist;
   private LinearLayout LL_MusicControlls;
-
+  public SearchView searchView;
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -73,8 +74,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-  public void hideMusicControlls(){
-    LL_MusicControlls.setVisibility(View.GONE);}
+  public void hideMusicControlls(){LL_MusicControlls.setVisibility(View.GONE);}
   public void showMusicControlls(){LL_MusicControlls.setVisibility(View.VISIBLE);}
 
 }

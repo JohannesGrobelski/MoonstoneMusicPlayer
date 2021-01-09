@@ -98,6 +98,7 @@ public class MainActivityListener
         break;
       }
 
+
     }
     songListAdapter.notifyDataSetChanged();
     return true;
@@ -109,10 +110,10 @@ public class MainActivityListener
 
     //create searchview
     MenuItem searchItem = menu.findItem(R.id.miSearch);
-    SearchView searchView = (SearchView) searchItem.getActionView();
-    searchView.setOnQueryTextListener(this);
-    searchView.setOnSearchClickListener(this);
-    searchView.setOnCloseListener(this);
+    mainActivity.searchView = (SearchView) searchItem.getActionView();
+    mainActivity.searchView.setOnQueryTextListener(this);
+    mainActivity.searchView.setOnSearchClickListener(this);
+    mainActivity.searchView.setOnCloseListener(this);
     return true;
   }
 
@@ -121,6 +122,10 @@ public class MainActivityListener
   public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
     musicPlayer.setCurrentSongIndex(position);
     destroyAndCreateNewService();
+    //destroy searchview and show music controlls, close searchview and close virtual keyboard
+    mainActivity.searchView.setIconified(true);
+    mainActivity.showMusicControlls();
+    mainActivity.searchView.clearFocus();
   }
 
   @Override
@@ -158,6 +163,10 @@ public class MainActivityListener
           case NONE: {mainActivity.btn_repeat.setBackgroundTintList(mainActivity.getResources().getColorStateList(android.R.color.darker_gray));break;}
           case ONESONG: {mainActivity.btn_repeat.setText("   1");}
         }
+      }
+      case R.id.miSearch: {
+        mainActivity.hideMusicControlls();
+        break;
       }
     }
   }
@@ -305,6 +314,5 @@ public class MainActivityListener
   public void finnishRefresh(){
     songListAdapter.notifyDataSetChanged();
   }
-
 
 }
