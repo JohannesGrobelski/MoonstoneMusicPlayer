@@ -2,8 +2,11 @@ package com.example.moonstonemusicplayer.model;
 
 import android.content.Context;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import static com.example.moonstonemusicplayer.model.MusicPlayer.REPEATMODE.ALL;
+import static com.example.moonstonemusicplayer.model.MusicPlayer.REPEATMODE.NONE;
+import static com.example.moonstonemusicplayer.model.MusicPlayer.REPEATMODE.ONESONG;
 
 /**
  * models a music player
@@ -17,9 +20,9 @@ public class MusicPlayer {
     private List<Song> currentSongList;
 
     boolean shuffleModelOn = false;
-    enum REPEATMODE {
-        ONESONG, NONE ,ALL
-    } REPEATMODE repeatmode = REPEATMODE.ALL;
+    public enum REPEATMODE {
+        NONE, ALL, ONESONG;
+    } REPEATMODE repeatmode = NONE;
 
 
     public MusicPlayer(Context baseContext) {
@@ -48,12 +51,24 @@ public class MusicPlayer {
     }
 
     public void prevSong(){
-        currentSongIndex = (--currentSongIndex);
-        if(currentSongIndex == -1)currentSongIndex = currentSongList.size()-1;
+        if(currentSongList.size() == 1)return;
+        if(shuffleModelOn){
+            int previousSong = currentSongIndex;
+            while(currentSongIndex == previousSong)currentSongIndex = (int) (Math.random()*currentSongList.size());
+        } else {
+            currentSongIndex = (--currentSongIndex);
+            if(currentSongIndex == -1)currentSongIndex = currentSongList.size()-1;
+        }
     }
 
     public void nextSong(){
-        currentSongIndex = (++currentSongIndex)%currentSongList.size();
+        if(currentSongList.size() == 1)return;
+        if(shuffleModelOn){
+            int previousSong = currentSongIndex;
+            while(currentSongIndex == previousSong)currentSongIndex = (int) (Math.random()*currentSongList.size());
+        } else {
+            currentSongIndex = (++currentSongIndex)%currentSongList.size();
+        }
     }
 
     public List<Song> getCurrentSongList(){
@@ -70,12 +85,22 @@ public class MusicPlayer {
         currentSongList = dataSource.getAllSong();
     }
 
-    public void toogleShuffleMode(){
-        shuffleModelOn = !shuffleModelOn;
-    }
 
     public void deleteAllSongs(){
         dataSource.deleteAllSongs();
         currentSongList.clear();
+    }
+
+    public boolean toogleShuffleMode(){
+        shuffleModelOn = !shuffleModelOn; return shuffleModelOn;
+    }
+
+    public REPEATMODE nextRepeatMode(){
+        switch (repeatmode){
+            case NONE: {repeatmode = ALL; break;}
+            case ALL: {repeatmode = ONESONG; break;}
+            case ONESONG: {repeatmode = NONE; break;}
+        }
+        return repeatmode;
     }
 }

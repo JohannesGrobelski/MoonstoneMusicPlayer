@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
@@ -143,9 +144,21 @@ public class MainActivityListener
         musicPlayer.nextSong();
         destroyAndCreateNewService();
         break;
-      case R.id.miSearch:
-        mainActivity.hideMusicControlls();
+      case R.id.btn_shuffle:{
+        boolean shuffleMode = musicPlayer.toogleShuffleMode();
+        if(shuffleMode)mainActivity.btn_shuffle.setBackgroundTintList(mainActivity.getResources().getColorStateList(R.color.colorPrimary));
+        else mainActivity.btn_shuffle.setBackgroundTintList(mainActivity.getResources().getColorStateList(android.R.color.darker_gray));
         break;
+      }
+      case R.id.btn_repeat: {
+        MusicPlayer.REPEATMODE repeatmode = musicPlayer.nextRepeatMode();
+        mainActivity.btn_repeat.setBackgroundTintList(mainActivity.getResources().getColorStateList(R.color.colorPrimary));
+        mainActivity.btn_repeat.setText("");
+        switch (repeatmode){
+          case NONE: {mainActivity.btn_repeat.setBackgroundTintList(mainActivity.getResources().getColorStateList(android.R.color.darker_gray));break;}
+          case ONESONG: {mainActivity.btn_repeat.setText("   1");}
+        }
+      }
     }
   }
 
