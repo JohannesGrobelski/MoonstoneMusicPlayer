@@ -1,8 +1,13 @@
 package com.example.moonstonemusicplayer.model;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+
 public class Song {
   int ID = -1;
-  String title;
+  String title = "";
   String artist = "unknown Artist";
   String URI = "";
   int duration_ms = 0;
@@ -10,6 +15,7 @@ public class Song {
   String genre = "";
   String lyrics = "";
   String meaning = "";
+  List<String> playLists = new ArrayList<>();
 
 
   /** "normal" constructor*/
@@ -21,7 +27,7 @@ public class Song {
   }
 
   /** Constructor for DB*/
-  public Song(int ID, String title, String artist, String URI, int duration_ms, int lastPosition, String genre, String lyrics, String meaning) {
+  public Song(int ID, String title, String artist, String URI, int duration_ms, int lastPosition, String genre, String lyrics, String meaning, List<String> playLists) {
     this.ID = ID;
     this.title = title;
     this.artist = artist;
@@ -31,8 +37,21 @@ public class Song {
     this.genre = genre;
     this.lyrics = lyrics;
     this.meaning = meaning;
+    this.playLists = playLists;
   }
 
+  public static String playListAsString(List<String> playLists){
+    StringBuilder playListString = new StringBuilder("");
+    for(String playList: playLists){
+      playListString.append(playList);
+      if(!playList.equals(playLists.get(playList.length() - 1)))playListString.append("|");
+    }
+    return playListString.toString();
+  }
+
+  public static List<String> playListStringAsPlayList(String playListString){
+    return Arrays.asList(playListString.split("\\|"));
+  }
 
   public long getLastPosition() { return lastPosition;}
 
@@ -124,4 +143,13 @@ public class Song {
   public void setMeaning(String meaning) {
     this.meaning = meaning;
   }
+
+  public List<String> getPlayLists() {
+    return playLists;
+  }
+
+  public void setPlayLists(List<String> playLists) {
+    this.playLists = playLists;
+  }
+
 }

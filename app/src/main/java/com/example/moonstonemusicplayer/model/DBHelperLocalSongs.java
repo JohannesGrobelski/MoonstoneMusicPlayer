@@ -32,6 +32,7 @@ class DBHelperLocalSongs extends SQLiteOpenHelper {
     static final String COLUMN_GENRE = "Genre";
     static final String COLUMN_LYRICS = "Lyrics";
     static final String COLUMN_MEANING = "Meaning";
+    static final String COLUMN_PLAYLISTS = "Playlists";
 
     //Create-Statement
     private static final String SQL_CREATE =
@@ -44,7 +45,8 @@ class DBHelperLocalSongs extends SQLiteOpenHelper {
                     COLUMN_LAST_POSITION + " INT NOT NULL, "  +
                     COLUMN_GENRE + " TEXT NOT NULL, "  +
                     COLUMN_LYRICS + " TEXT NOT NULL, "  +
-                    COLUMN_MEANING + " TEXT NOT NULL)";
+                    COLUMN_MEANING + " TEXT NOT NULL, "  +
+                    COLUMN_PLAYLISTS + " TEXT NOT NULL)";
 
     //Drop-Statement
     private static final String SQL_DROP = "DROP TABLE IF EXISTS "+TABLE_SONG_LIST;
