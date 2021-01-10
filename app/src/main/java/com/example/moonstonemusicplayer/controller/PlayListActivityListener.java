@@ -29,25 +29,22 @@ import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.model.MusicManager;
 import com.example.moonstonemusicplayer.model.PlayListModel;
 import com.example.moonstonemusicplayer.model.Song;
-import com.example.moonstonemusicplayer.view.MainActivity;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.example.moonstonemusicplayer.view.PlayListActivity;
 
 
 /** MainActivityListener
- *  Handles input from the User (through Views in {@link com.example.moonstonemusicplayer.view.MainActivity}),
+ *  Handles input from the User (through Views in {@link PlayListActivity}),
  *  changes the model {@link MusicManager}) according to the input and
  *  and, if necessary, sends messages to the {@link MusicManager}).
  */
-public class MainActivityListener
+public class PlayListActivityListener
     implements AdapterView.OnItemClickListener, View.OnClickListener,
     SeekBar.OnSeekBarChangeListener, SearchView.OnQueryTextListener,
     SearchView.OnCloseListener {
   private static final boolean DEBUG = true;
-  private static final String TAG = MainActivityListener.class.getSimpleName();
+  private static final String TAG = PlayListActivityListener.class.getSimpleName();
 
-  private final MainActivity mainActivity;
+  private final PlayListActivity playListActivity;
 
   MusicManager musicManager;
 
@@ -61,12 +58,12 @@ public class MainActivityListener
 
   /**
    * Initiate the musicplayer and musicplayerservice.
-   * @param mainActivity
+   * @param playListActivity
    */
-  public MainActivityListener(MainActivity mainActivity) {
-    this.mainActivity = mainActivity;
-    musicManager = new MusicManager(mainActivity.getBaseContext());
-    bindSongListAdapterToSongListView(mainActivity.lv_songlist);
+  public PlayListActivityListener(PlayListActivity playListActivity) {
+    this.playListActivity = playListActivity;
+    musicManager = new MusicManager(playListActivity.getBaseContext());
+    bindSongListAdapterToSongListView(playListActivity.lv_songlist);
     destroyAndCreateNewService();
 
     /*
@@ -87,13 +84,13 @@ public class MainActivityListener
     switch (item.getItemId()){
       case R.id.mi_loadLocaleAudioFile: {
         if(requestForPermission()){
-          AlertDialog alertDialog = new AlertDialog.Builder(mainActivity)
+          AlertDialog alertDialog = new AlertDialog.Builder(playListActivity)
               .setTitle("Lädt lokale Audiodatein neu ein.")
               .setMessage("Dies kann einige Minuten dauern.")
               .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                  RefreshTask refreshTask = new RefreshTask(new RefreshTashListener() {
+                  RefreshTask refreshTask = new RefreshTask(new RefreshTaskListener() {
                     @Override
                     public void onCompletion() {
                       songListAdapter.notifyDataSetChanged();
@@ -147,14 +144,14 @@ public class MainActivityListener
 
   public boolean onCreateOptionsMenu(Menu menu) {
     //create options menu
-    mainActivity.getMenuInflater().inflate(R.menu.options_menu,menu);
+    playListActivity.getMenuInflater().inflate(R.menu.options_menu,menu);
 
     //create searchview
     MenuItem searchItem = menu.findItem(R.id.miSearch);
-    mainActivity.searchView = (SearchView) searchItem.getActionView();
-    mainActivity.searchView.setOnQueryTextListener(this);
-    mainActivity.searchView.setOnSearchClickListener(this);
-    mainActivity.searchView.setOnCloseListener(this);
+    playListActivity.searchView = (SearchView) searchItem.getActionView();
+    playListActivity.searchView.setOnQueryTextListener(this);
+    playListActivity.searchView.setOnSearchClickListener(this);
+    playListActivity.searchView.setOnCloseListener(this);
     return true;
   }
 
@@ -167,9 +164,9 @@ public class MainActivityListener
     }
 
     //destroy searchview and show music controlls, close searchview and close virtual keyboard
-    mainActivity.searchView.setIconified(true);
-    mainActivity.searchView.clearFocus();
-    mainActivity.showMusicControlls();
+    playListActivity.searchView.setIconified(true);
+    playListActivity.searchView.clearFocus();
+    playListActivity.showMusicControlls();
   }
 
   @Override
@@ -200,7 +197,7 @@ public class MainActivityListener
         break;
       }
       case R.id.miSearch: {
-        mainActivity.hideMusicControlls();
+        playListActivity.hideMusicControlls();
         break;
       }
     }
@@ -222,7 +219,7 @@ public class MainActivityListener
   @Override
   /** called when search view is closed => open music controlls, reset filter query*/
   public boolean onClose() {
-    mainActivity.showMusicControlls();
+    playListActivity.showMusicControlls();
     return false;
   }
 
@@ -243,39 +240,39 @@ public class MainActivityListener
 
   /** media player error => set back UI */
   private void mediaPlayerServiceError(int cause){
-    mainActivity.seekBar.setProgress(0);
-    mainActivity.tv_seekbar_progress.setText("0:00");
-    mainActivity.btn_play_pause.setBackground(mainActivity.getResources().getDrawable(R.drawable.ic_play_button));
-    Toast.makeText(mainActivity,"error: "+cause,Toast.LENGTH_LONG).show();
+    playListActivity.seekBar.setProgress(0);
+    playListActivity.tv_seekbar_progress.setText("0:00");
+    playListActivity.btn_play_pause.setBackground(playListActivity.getResources().getDrawable(R.drawable.ic_play_button));
+    Toast.makeText(playListActivity,"error: "+cause,Toast.LENGTH_LONG).show();
     //TODO: react to cause and display message
   }
 
   /** media player: audioFocusChange => change UI */
   private void audioFocusChange(int state){
     if(state == AudioManager.AUDIOFOCUS_GAIN){
-      mainActivity.btn_play_pause.setBackground(mainActivity.getResources().getDrawable(R.drawable.ic_pause));
+      playListActivity.btn_play_pause.setBackground(playListActivity.getResources().getDrawable(R.drawable.ic_pause));
       animateMediaplayerProgressOnSeekbar();
     } else if(state == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT || state == AudioManager.AUDIOFOCUS_LOSS){
-      mainActivity.btn_play_pause.setBackground(mainActivity.getResources().getDrawable(R.drawable.ic_play_button));
+      playListActivity.btn_play_pause.setBackground(playListActivity.getResources().getDrawable(R.drawable.ic_play_button));
       if(seekbarAnimationThread != null) seekbarAnimationThread = null;
     }
   }
 
   /** song finnished => set back UI and autoplay */
   private void finishSong(PlayListModel.REPEATMODE repeatmode){
-    mainActivity.seekBar.setProgress(0);
-    mainActivity.tv_seekbar_progress.setText("0:00");
+    playListActivity.seekBar.setProgress(0);
+    playListActivity.tv_seekbar_progress.setText("0:00");
     if(DEBUG)Log.d(TAG,"finishSong: "+repeatmode);
 
     if(repeatmode.equals(PlayListModel.REPEATMODE.NONE)){
-      mainActivity.btn_play_pause.setBackground(mainActivity.getResources().getDrawable(R.drawable.ic_play_button));
+      playListActivity.btn_play_pause.setBackground(playListActivity.getResources().getDrawable(R.drawable.ic_play_button));
     } else {
-      mainActivity.btn_play_pause.setBackground(mainActivity.getResources().getDrawable(R.drawable.ic_pause));
+      playListActivity.btn_play_pause.setBackground(playListActivity.getResources().getDrawable(R.drawable.ic_pause));
       animateMediaplayerProgressOnSeekbar();
-      mainActivity.tv_title.setText(mediaPlayerService.getCurrentSong().getTitle());
-      mainActivity.setArtist(mediaPlayerService.getCurrentSong().getArtist());
-      mainActivity.tv_seekbar_max.setText(mediaPlayerService.getCurrentSong().getDurationString());
-      mainActivity.seekBar.setMax((int) (mediaPlayerService.getCurrentSong().getDuration_ms() / 1000));
+      playListActivity.tv_title.setText(mediaPlayerService.getCurrentSong().getTitle());
+      playListActivity.setArtist(mediaPlayerService.getCurrentSong().getArtist());
+      playListActivity.tv_seekbar_max.setText(mediaPlayerService.getCurrentSong().getDurationString());
+      playListActivity.seekBar.setMax((int) (mediaPlayerService.getCurrentSong().getDuration_ms() / 1000));
     }
   }
 
@@ -285,36 +282,36 @@ public class MainActivityListener
   private void playSong(Song song){
     if(isServiceBound){
       mediaPlayerService.playSong(song);
-      mainActivity.btn_play_pause.setBackground(mainActivity.getResources().getDrawable(R.drawable.ic_pause));
+      playListActivity.btn_play_pause.setBackground(playListActivity.getResources().getDrawable(R.drawable.ic_pause));
       animateMediaplayerProgressOnSeekbar();
-      mainActivity.tv_title.setText(mediaPlayerService.getCurrentSong().getTitle());
-      mainActivity.setArtist(mediaPlayerService.getCurrentSong().getArtist());
-      mainActivity.tv_seekbar_max.setText(mediaPlayerService.getCurrentSong().getDurationString());
-      mainActivity.seekBar.setMax((int) (song.getDuration_ms() / 1000));
+      playListActivity.tv_title.setText(mediaPlayerService.getCurrentSong().getTitle());
+      playListActivity.setArtist(mediaPlayerService.getCurrentSong().getArtist());
+      playListActivity.tv_seekbar_max.setText(mediaPlayerService.getCurrentSong().getDurationString());
+      playListActivity.seekBar.setMax((int) (song.getDuration_ms() / 1000));
     }
   }
 
   private void prevSong(){
     if(isServiceBound){
       mediaPlayerService.prevSong();
-      mainActivity.btn_play_pause.setBackground(mainActivity.getResources().getDrawable(R.drawable.ic_pause));
+      playListActivity.btn_play_pause.setBackground(playListActivity.getResources().getDrawable(R.drawable.ic_pause));
       animateMediaplayerProgressOnSeekbar();
-      mainActivity.tv_title.setText(mediaPlayerService.getCurrentSong().getTitle());
-      mainActivity.setArtist(mediaPlayerService.getCurrentSong().getArtist());
-      mainActivity.tv_seekbar_max.setText(mediaPlayerService.getCurrentSong().getDurationString());
-      mainActivity.seekBar.setMax((int) (mediaPlayerService.getCurrentSong().getDuration_ms() / 1000));
+      playListActivity.tv_title.setText(mediaPlayerService.getCurrentSong().getTitle());
+      playListActivity.setArtist(mediaPlayerService.getCurrentSong().getArtist());
+      playListActivity.tv_seekbar_max.setText(mediaPlayerService.getCurrentSong().getDurationString());
+      playListActivity.seekBar.setMax((int) (mediaPlayerService.getCurrentSong().getDuration_ms() / 1000));
     }
   }
 
   private void nextSong(){
     if(isServiceBound){
       mediaPlayerService.nextSong();
-      mainActivity.btn_play_pause.setBackground(mainActivity.getResources().getDrawable(R.drawable.ic_pause));
+      playListActivity.btn_play_pause.setBackground(playListActivity.getResources().getDrawable(R.drawable.ic_pause));
       animateMediaplayerProgressOnSeekbar();
-      mainActivity.tv_title.setText(mediaPlayerService.getCurrentSong().getTitle());
-      mainActivity.setArtist(mediaPlayerService.getCurrentSong().getArtist());
-      mainActivity.tv_seekbar_max.setText(mediaPlayerService.getCurrentSong().getDurationString());
-      mainActivity.seekBar.setMax((int) (mediaPlayerService.getCurrentSong().getDuration_ms() / 1000));
+      playListActivity.tv_title.setText(mediaPlayerService.getCurrentSong().getTitle());
+      playListActivity.setArtist(mediaPlayerService.getCurrentSong().getArtist());
+      playListActivity.tv_seekbar_max.setText(mediaPlayerService.getCurrentSong().getDurationString());
+      playListActivity.seekBar.setMax((int) (mediaPlayerService.getCurrentSong().getDuration_ms() / 1000));
     }
   }
 
@@ -322,19 +319,21 @@ public class MainActivityListener
     if(isServiceBound){
       boolean shuffleMode = mediaPlayerService.toogleShuffleMode();
       Log.d(TAG,"toogleShuffle: "+shuffleMode);
-      if(shuffleMode)mainActivity.btn_shuffle.setBackgroundTintList(mainActivity.getResources().getColorStateList(R.color.colorPrimary));
-      else mainActivity.btn_shuffle.setBackgroundTintList(mainActivity.getResources().getColorStateList(android.R.color.darker_gray));
+      if(shuffleMode) playListActivity.btn_shuffle.setBackgroundTintList(playListActivity.getResources().getColorStateList(R.color.colorPrimary));
+      else playListActivity.btn_shuffle.setBackgroundTintList(playListActivity.getResources().getColorStateList(android.R.color.darker_gray));
     }
   }
 
   private void nextRepeatMode(){
     if(isServiceBound){
       PlayListModel.REPEATMODE repeatmode = mediaPlayerService.nextRepeatMode();
-      mainActivity.btn_repeat.setBackgroundTintList(mainActivity.getResources().getColorStateList(R.color.colorPrimary));
-      mainActivity.btn_repeat.setText("");
+      playListActivity.btn_repeat.setBackgroundTintList(playListActivity.getResources().getColorStateList(R.color.colorPrimary));
+      playListActivity.btn_repeat.setText("");
       switch (repeatmode){
-        case NONE: {mainActivity.btn_repeat.setBackgroundTintList(mainActivity.getResources().getColorStateList(android.R.color.darker_gray));break;}
-        case ONESONG: {mainActivity.btn_repeat.setText("   1");}
+        case NONE: {
+          playListActivity.btn_repeat.setBackgroundTintList(playListActivity.getResources().getColorStateList(android.R.color.darker_gray));break;}
+        case ONESONG: {
+          playListActivity.btn_repeat.setText("   1");}
       }
     }
   }
@@ -343,11 +342,11 @@ public class MainActivityListener
   private void resumeAudio(){
     if(isServiceBound){
       mediaPlayerService.resume();
-      mainActivity.btn_play_pause.setBackground(mainActivity.getResources().getDrawable(R.drawable.ic_pause));
+      playListActivity.btn_play_pause.setBackground(playListActivity.getResources().getDrawable(R.drawable.ic_pause));
       animateMediaplayerProgressOnSeekbar();
-      mainActivity.tv_title.setText(mediaPlayerService.getCurrentSong().getTitle());
-      mainActivity.setArtist(mediaPlayerService.getCurrentSong().getArtist());
-      mainActivity.tv_seekbar_max.setText(mediaPlayerService.getCurrentSong().getDurationString());
+      playListActivity.tv_title.setText(mediaPlayerService.getCurrentSong().getTitle());
+      playListActivity.setArtist(mediaPlayerService.getCurrentSong().getArtist());
+      playListActivity.tv_seekbar_max.setText(mediaPlayerService.getCurrentSong().getDurationString());
     }
   }
 
@@ -355,7 +354,7 @@ public class MainActivityListener
   private void pauseAudio(){
     if(isServiceBound){
       mediaPlayerService.pause();
-      mainActivity.btn_play_pause.setBackground(mainActivity.getResources().getDrawable(R.drawable.ic_play_button));
+      playListActivity.btn_play_pause.setBackground(playListActivity.getResources().getDrawable(R.drawable.ic_play_button));
       if(seekbarAnimationThread != null) seekbarAnimationThread = null;
     }
   }
@@ -364,7 +363,7 @@ public class MainActivityListener
     if(isServiceBound){
       mediaPlayerService.seekTo(seekPosition);
       animateMediaplayerProgressOnSeekbar();
-      mainActivity.tv_seekbar_progress.setText(Song.getDurationString(seekPosition));
+      playListActivity.tv_seekbar_progress.setText(Song.getDurationString(seekPosition));
     }
   }
 
@@ -379,11 +378,11 @@ public class MainActivityListener
 
     // ... and start a new one.
     serviceConnection = createServiceConnection();
-    Intent playerIntent = new Intent(mainActivity,MediaPlayerService.class);
+    Intent playerIntent = new Intent(playListActivity,MediaPlayerService.class);
 
     //start service
-    mainActivity.startService(playerIntent);
-    boolean bindService = mainActivity.getApplicationContext().
+    playListActivity.startService(playerIntent);
+    boolean bindService = playListActivity.getApplicationContext().
         bindService(playerIntent,serviceConnection, Context.BIND_AUTO_CREATE);
     if(DEBUG)Log.d(TAG,"startMediaPlayerService: "+bindService);
   }
@@ -438,19 +437,19 @@ public class MainActivityListener
         //one second has past ... update seekbar and song:lastPositoin
         if(mediaPlayerService.mediaPlayerReady()){
           int mCurrentPosition = mediaPlayerService.getCurrentPosition() / 1000;
-          mainActivity.seekBar.setProgress(mCurrentPosition);
-          mainActivity.tv_seekbar_progress.setText(Song.getDurationString(mediaPlayerService.getCurrentPosition()));
+          playListActivity.seekBar.setProgress(mCurrentPosition);
+          playListActivity.tv_seekbar_progress.setText(Song.getDurationString(mediaPlayerService.getCurrentPosition()));
         }
         mHandler.postDelayed(this, 1000);
       }
     };
-    mainActivity.runOnUiThread(seekbarAnimationThread);
+    playListActivity.runOnUiThread(seekbarAnimationThread);
   }
 
 
   /** bind songlistview to songlistadapter using the songList of musicplayer*/
   private void bindSongListAdapterToSongListView(ListView lv_songlist){
-    songListAdapter = new SongListAdapter(mainActivity,musicManager.getDisplayedSongList());
+    songListAdapter = new SongListAdapter(playListActivity,musicManager.getDisplayedSongList());
     lv_songlist.setAdapter(songListAdapter);
   }
 
@@ -458,14 +457,14 @@ public class MainActivityListener
 
   /** requests runtime storage permissions (API>=23) for loading files from sd-card */
   public boolean requestForPermission() {
-    int permissionCheck = ContextCompat.checkSelfPermission(mainActivity, Manifest.permission.READ_EXTERNAL_STORAGE);
+    int permissionCheck = ContextCompat.checkSelfPermission(playListActivity, Manifest.permission.READ_EXTERNAL_STORAGE);
     if (!(permissionCheck == PackageManager.PERMISSION_GRANTED)) {
-      if (ActivityCompat.shouldShowRequestPermissionRationale(mainActivity,Manifest.permission.READ_EXTERNAL_STORAGE)) {
+      if (ActivityCompat.shouldShowRequestPermissionRationale(playListActivity,Manifest.permission.READ_EXTERNAL_STORAGE)) {
       } else {
-        mainActivity.requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1234);
+        playListActivity.requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1234);
       }
     } else {
-      Toast.makeText(mainActivity, "Permission (already) Granted!", Toast.LENGTH_SHORT).show();
+      Toast.makeText(playListActivity, "Permission (already) Granted!", Toast.LENGTH_SHORT).show();
     }
     return permissionCheck == PackageManager.PERMISSION_GRANTED;
   }
@@ -493,7 +492,7 @@ public class MainActivityListener
   }
 
   /** */
-  public interface RefreshTashListener {
+  public interface RefreshTaskListener {
     public void onCompletion();
   }
 }

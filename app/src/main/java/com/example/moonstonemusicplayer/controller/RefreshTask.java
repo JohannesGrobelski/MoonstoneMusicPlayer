@@ -5,11 +5,11 @@ import android.os.AsyncTask;
 import com.example.moonstonemusicplayer.model.MusicManager;
 
 public class RefreshTask extends AsyncTask<MusicManager,Void,Void> {
-  com.example.moonstonemusicplayer.model.MusicManager MusicManager;
-  MainActivityListener.RefreshTashListener refreshTashListener;
+  private com.example.moonstonemusicplayer.model.MusicManager MusicManager;
+  private PlayListActivityListener.RefreshTaskListener refreshTaskListener;
 
-  public RefreshTask(MainActivityListener.RefreshTashListener refreshTashListener){
-    this.refreshTashListener = refreshTashListener;
+  public RefreshTask(PlayListActivityListener.RefreshTaskListener refreshTaskListener){
+    this.refreshTaskListener = refreshTaskListener;
   }
 
   @Override
@@ -22,7 +22,7 @@ public class RefreshTask extends AsyncTask<MusicManager,Void,Void> {
   @Override
   protected void onPostExecute(Void aVoid) {
     super.onPostExecute(aVoid);
-    this.refreshTashListener.onCompletion();
+    this.refreshTaskListener.onCompletion();
   }
 
 

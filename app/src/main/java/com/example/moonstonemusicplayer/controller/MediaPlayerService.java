@@ -11,14 +11,11 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
-import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.model.PlayListModel;
 import com.example.moonstonemusicplayer.model.Song;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 
 /** MediaPlayerService
@@ -277,7 +274,6 @@ public class MediaPlayerService extends Service
         break; 
       }
     }
-
   }
 
   public void setPlayList(List<Song> playList) {
@@ -288,14 +284,14 @@ public class MediaPlayerService extends Service
 
   /** used to bind service to activity*/
   public class LocalBinder extends Binder {
-    public MainActivityListener.BoundServiceListener boundServiceListener;
+    public PlayListActivityListener.BoundServiceListener boundServiceListener;
 
     public MediaPlayerService getService() {
       return MediaPlayerService.this;
     }
 
     /** set Listener-Object*/
-    public void setListener(MainActivityListener.BoundServiceListener listener) {
+    public void setListener(PlayListActivityListener.BoundServiceListener listener) {
       boundServiceListener = listener;
     }
 

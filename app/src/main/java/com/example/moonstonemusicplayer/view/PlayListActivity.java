@@ -2,12 +2,10 @@ package com.example.moonstonemusicplayer.view;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,18 +15,17 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.moonstonemusicplayer.R;
-import com.example.moonstonemusicplayer.controller.MainActivityListener;
+import com.example.moonstonemusicplayer.controller.PlayListActivityListener;
 
 /** MainActivity
   * Defines the Mainscreen auf the app.
   * Contains all Views and sets Listeners for them.
-  * Delegates the creation and management (itemselection) of the optionsmenu to the  {@link com.example.moonstonemusicplayer.controller.MainActivityListener}.
+  * Delegates the creation and management (itemselection) of the optionsmenu to the  {@link PlayListActivityListener}.
 */
-public class MainActivity extends AppCompatActivity {
-  MainActivityListener mainActivityListener;
+public class PlayListActivity extends AppCompatActivity {
+  PlayListActivityListener playListActivityListener;
   public ListView lv_songlist;
 
   public Button btn_prev,btn_play_pause,btn_next,btn_shuffle,btn_repeat;
@@ -36,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
   public TextView tv_seekbar_progress,tv_seekbar_max,tv_title,tv_artist;
   private LinearLayout LL_MusicControlls;
   public SearchView searchView;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -54,31 +52,31 @@ public class MainActivity extends AppCompatActivity {
     tv_artist = findViewById(R.id.tv_artist);
     LL_MusicControlls = findViewById(R.id.LL_MusicControlls);
 
-    mainActivityListener = new MainActivityListener(this);
-    lv_songlist.setOnItemClickListener(mainActivityListener);
-    btn_shuffle.setOnClickListener(mainActivityListener);
-    btn_prev.setOnClickListener(mainActivityListener);
-    btn_play_pause.setOnClickListener(mainActivityListener);
-    btn_next.setOnClickListener(mainActivityListener);
-    btn_repeat.setOnClickListener(mainActivityListener);
-    seekBar.setOnSeekBarChangeListener(mainActivityListener);
+    playListActivityListener = new PlayListActivityListener(this);
+    lv_songlist.setOnItemClickListener(playListActivityListener);
+    btn_shuffle.setOnClickListener(playListActivityListener);
+    btn_prev.setOnClickListener(playListActivityListener);
+    btn_play_pause.setOnClickListener(playListActivityListener);
+    btn_next.setOnClickListener(playListActivityListener);
+    btn_repeat.setOnClickListener(playListActivityListener);
+    seekBar.setOnSeekBarChangeListener(playListActivityListener);
 
     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
   }
 
   @Override
   public void onConfigurationChanged(@NonNull Configuration newConfig) {
-    mainActivityListener.onConfigurationChanged(newConfig);
+    playListActivityListener.onConfigurationChanged(newConfig);
   }
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
-    return mainActivityListener.onCreateOptionsMenu(menu);
+    return playListActivityListener.onCreateOptionsMenu(menu);
   }
 
   @Override
   public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-    return mainActivityListener.onOptionsItemSelected(item);
+    return playListActivityListener.onOptionsItemSelected(item);
   }
 
 
@@ -90,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
   @Override
   protected void onDestroy() {
     super.onDestroy();
-    mainActivityListener.onDestroy();
+    playListActivityListener.onDestroy();
   }
 
   public void hideMusicControlls(){LL_MusicControlls.setVisibility(View.GONE);}

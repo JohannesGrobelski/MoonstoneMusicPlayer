@@ -20,7 +20,7 @@
         android:screenOrientation="portrait"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".view.MainActivity">
+        <activity android:name=".view.PlayListActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
