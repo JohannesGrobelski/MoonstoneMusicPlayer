@@ -22,6 +22,8 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
   private static final int[] TAB_TITLES = new int[]{R.string.tab_playlists, R.string.tab_folders};
   private final Context mContext;
 
+  Fragment[] fragments = new Fragment[2];
+
   public SectionsPagerAdapter(Context context, FragmentManager fm) {
     super(fm);
     mContext = context;
@@ -33,12 +35,16 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     // Return a PlaceholderFragment (defined as a static inner class below).
     if(position == 0){
       Log.d("SectionPager","getItem: "+position);
-      return PlayListFragment.newInstance(position + 1);
+      fragments[0] = PlayListFragment.newInstance(position + 1);
+      return fragments[0];
     } else if(position == 1){
-      return FolderFragment.newInstance(position + 1);
+      fragments[1] = FolderFragment.newInstance(position + 1);
+      return fragments[1];
     }
     return null;
   }
+
+  public Fragment[] getFragments(){return fragments;}
 
   @Nullable
   @Override

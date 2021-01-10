@@ -1,13 +1,20 @@
 package com.example.moonstonemusicplayer.model.MainActivity.FolderFragment;
 
+import android.util.Log;
+
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Folder {
+  Folder parent;
   String name;
   Folder[] children_folders;
   Song[] children_songs;
 
-  public Folder(String name, Folder[] children_folders, Song[] children_songs) {
+  public Folder(String name, Folder parent, Folder[] children_folders, Song[] children_songs) {
+    this.parent = parent;
     this.name = name;
     this.children_folders = children_folders;
     this.children_songs = children_songs;
@@ -37,6 +44,14 @@ public class Folder {
     this.children_songs = children_songs;
   }
 
+  public Folder getParent() {
+    return parent;
+  }
+
+  public void setParent(Folder parent) {
+    this.parent = parent;
+  }
+
   public void print(int startingdepth){
     String offset = new String(new char[startingdepth]).replace("\0", " ");
     System.out.println(offset+"DIR: "+name);
@@ -50,6 +65,32 @@ public class Folder {
         if(child != null)System.out.println(offset+"  SONG: "+child.getTitle());
       }
     }
+  }
 
+  public String[] getAllChildrenAsStrings(){
+    List<String> childrenString = new ArrayList<>();
+    if(children_folders != null){
+      for(Folder child: children_folders){
+         if(child != null)childrenString.add("DIR: "+child.name);
+      }
+    }
+    if(children_songs != null){
+      for(Song child: children_songs){
+        if(child != null)childrenString.add("SONG: "+child.getTitle());
+      }
+    }
+    return childrenString.toArray(new String[childrenString.size()]);
+  }
+
+  public void setParentsBelow(){
+    Log.d("Folder","setParentBelow: "+this.name);
+    if(children_folders != null){
+      for(Folder child: children_folders){
+        if(child != null){
+          child.setParent(this);
+          child.setParentsBelow();
+        }
+      }
+    }
   }
 }

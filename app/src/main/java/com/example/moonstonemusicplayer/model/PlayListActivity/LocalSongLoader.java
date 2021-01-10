@@ -27,14 +27,17 @@ public class LocalSongLoader {
       fileDirs[i] = externalFilesDir[i].getAbsolutePath().replace("/Android/media/com.example.moonstonemusicplayer","");
       if(DEBUG)Log.d(TAG,fileDirs[i]+" "+new File(fileDirs[i]).exists());
     }
+
     List<Folder> childrenList = new ArrayList<>();
     for(String fileDir: fileDirs){
-      if(new File(fileDir).exists())childrenList.add(findAllAudioFilesAsFolder(fileDir));
+      if(new File(fileDir).exists())childrenList.add(findAllAudioFilesAsFolder(fileDir,null));
     }
-    return new Folder("root", childrenList.toArray(new Folder[childrenList.size()]),null);
+    Folder rootFolder = new Folder("root", null, childrenList.toArray(new Folder[childrenList.size()]),null);
+    rootFolder.setParentsBelow();
+    return rootFolder;
   }
 
-  private static Folder findAllAudioFilesAsFolder(String directory){
+  private static Folder findAllAudioFilesAsFolder(String directory, Folder parentFolder){
     if(DEBUG)Log.d(TAG,"findAllAudioFilesAsFolder DIR: "+directory);
     try {
       File file = new File(directory );
@@ -45,7 +48,7 @@ public class LocalSongLoader {
             List<Folder> children_folder = new ArrayList<>();
             List<Song> children_song = new ArrayList<>();
             for (File childFile: file.listFiles()) { //gehe durch Kinder
-              Folder child_folder = findAllAudioFilesAsFolder(childFile.getAbsolutePath());
+              Folder child_folder = findAllAudioFilesAsFolder(childFile.getAbsolutePath(), parentFolder);
               if(child_folder != null){//child is a directory
                 children_folder.add(child_folder);
               } else {//child is not a dir, might be a song-file?
@@ -57,6 +60,7 @@ public class LocalSongLoader {
             if(!(children_folder.isEmpty() && children_song.isEmpty())){ //directory is not empty
               if(DEBUG)Log.d(TAG,"findAllAudioFilesAsFolder: "+file.getName()+" "+children_folder.size()+" "+children_song.size());
               return new Folder(file.getName(),
+                  parentFolder,
                   children_folder.toArray(new Folder[children_folder.size()]),
                   children_song.toArray(new Song[children_song.size()])
               );

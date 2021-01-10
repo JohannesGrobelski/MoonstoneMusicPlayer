@@ -8,17 +8,17 @@
     tools:context=".view.ui.main.FolderFragment">
 
 
-    <TextView
-        android:id="@+id/textView"
+    <Button
+        android:id="@+id/btn_folder_back"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="folders" />
+        android:text="back" />
 
     <ListView
         android:id="@+id/lv_folderlist"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/textView">
+        android:layout_below="@id/btn_folder_back">
 
     </ListView>
 
