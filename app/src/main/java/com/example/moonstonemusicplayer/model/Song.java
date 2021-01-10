@@ -1,11 +1,6 @@
 package com.example.moonstonemusicplayer.model;
 
-import android.util.Log;
-
-import java.io.Serializable;
-import java.util.logging.Logger;
-
-public class Song implements Serializable {
+public class Song {
   int ID = -1;
   String title;
   String artist = "unknown Artist";
@@ -80,26 +75,13 @@ public class Song implements Serializable {
   }
 
   public static String getDurationString(Integer duration_ms){
-    int duration_seconds = duration_ms / 1000;
+    int duration_seconds = -1;
+    duration_seconds = (int) duration_ms / 1000;
     int hours = duration_seconds / 3600;
     int minutes = (duration_seconds - (hours * 3600)) / 60;
     int seconds = (duration_seconds - (minutes * 60)) % 60;
-
-    String secondsString = String.valueOf(seconds);
-    if(seconds < 10) secondsString = "0"+seconds;
-
-    String minutesString = String.valueOf(minutes);
-    if(minutes < 10) minutesString = "0"+minutesString;
-
-    String hoursString = String.valueOf(hours);
-    if(hours < 10) hoursString = "0"+hoursString;
-
-    if(duration_seconds < 3600) return minutesString+":"+secondsString;
-    else return hoursString+":"+minutesString+":"+secondsString;
-  }
-
-  public String getDurationString(){
-    return Song.getDurationString(duration_ms);
+    if(duration_seconds < 3600) return minutes+":"+seconds;
+    else return hours+":"+minutes+":"+seconds;
   }
 
   public void setDuration_ms(int duration_ms) {

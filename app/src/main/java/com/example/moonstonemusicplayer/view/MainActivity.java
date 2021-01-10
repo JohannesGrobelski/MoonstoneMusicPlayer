@@ -82,16 +82,8 @@ public class MainActivity extends AppCompatActivity {
   }
 
 
-  public void setArtist(String artist){
-    if(artist.isEmpty()) tv_artist.setText("unknown artist");
-    else tv_artist.setText(artist);
-  }
 
-  @Override
-  protected void onDestroy() {
-    super.onDestroy();
-    mainActivityListener.onDestroy();
-  }
+
 
   public void hideMusicControlls(){LL_MusicControlls.setVisibility(View.GONE);}
   public void showMusicControlls(){LL_MusicControlls.setVisibility(View.VISIBLE);}

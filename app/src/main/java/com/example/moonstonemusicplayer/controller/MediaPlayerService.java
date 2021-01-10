@@ -11,18 +11,11 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
-import com.example.moonstonemusicplayer.R;
-import com.example.moonstonemusicplayer.model.PlayListModel;
-import com.example.moonstonemusicplayer.model.Song;
-
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Logger;
 
 
 /** MediaPlayerService
- * Plays the List<Song> specified by MusicPlayer.
+ * Plays an AudioFile specified by mediaFilePath.
  */
 public class MediaPlayerService extends Service
        implements MediaPlayer.OnCompletionListener,
@@ -36,21 +29,18 @@ public class MediaPlayerService extends Service
   private static final String TAG = MediaPlayerService.class.getSimpleName();
   private static final boolean DEBUG = true;
 
-  public static final String PLAYLISTEXTRA = "playlist";
-  private final IBinder iBinder = new LocalBinder();;
+
+  public static final String FILEPATHEXTRA = "media";
+  private final IBinder iBinder = new LocalBinder();
   private MediaPlayer mediaPlayer;
   private boolean isMediaPlayerPrepared = false;
-  private PlayListModel playListModel;
-
+  private String mediaFilePath;
   private AudioManager audioManager;
   private int resumePosition = 0;
-
-  public MediaPlayerService() {}
 
 
   /** inits mediaplayer and sets Listeners */
   private void initMediaPlayer(){
-    onDestroy();
     if(DEBUG)Log.d(TAG,"initMediaPlayer");
     mediaPlayer = new MediaPlayer();
     mediaPlayer.setOnCompletionListener(this);
@@ -66,7 +56,7 @@ public class MediaPlayerService extends Service
     mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
     try {
       //weise Mediendatei der Datenquelle zu
-      mediaPlayer.setDataSource(playListModel.getCurrentSong().getURI());
+      mediaPlayer.setDataSource(mediaFilePath);
     } catch (IOException e) {
       e.printStackTrace();
       stopSelf();
@@ -83,16 +73,13 @@ public class MediaPlayerService extends Service
     //setze Wiedergabe fort
     requestAudioFocus();
     if(mediaPlayer == null)initMediaPlayer();
-    else {
-      if(!isMediaPlayerPrepared){//state stop
-        mediaPlayer.prepareAsync();
-      } else {
-        mediaPlayer.seekTo(resumePosition);
-        mediaPlayer.setVolume(1.0f,1.0f);
-        if(!mediaPlayer.isPlaying())mediaPlayer.start();
-      }
+    if(!isMediaPlayerPrepared){//state stop
+      mediaPlayer.prepareAsync();
+    } else {
+      mediaPlayer.seekTo(resumePosition);
+      mediaPlayer.setVolume(1.0f,1.0f);
+      if(!mediaPlayer.isPlaying())mediaPlayer.start();
     }
-
   }
 
   public void pause() {
@@ -101,6 +88,8 @@ public class MediaPlayerService extends Service
       resumePosition = mediaPlayer.getCurrentPosition();
     }
   }
+
+  public void seekTo(int i) {mediaPlayer.seekTo(i);}
 
   public boolean mediaPlayerReady(){return (mediaPlayer != null && isPlayingMusic());}
 
@@ -129,18 +118,15 @@ public class MediaPlayerService extends Service
   //Listener interface
   @Override
   public int onStartCommand(Intent intent, int flags, int startId) {
-    //initialize the playListModel with the playlist passed as List<Song>
-    List<Song> playList = new ArrayList<>();
-    int i = 0;
-    while(true){
-      String extraKey = PLAYLISTEXTRA+"_"+i;
-      if(intent.hasExtra(extraKey)){
-        playList.add((Song) (intent.getSerializableExtra(extraKey)));
-        ++i;
-      } else break;
+    try {
+      mediaFilePath = intent.getExtras().getString(FILEPATHEXTRA);
+    } catch (Exception e){
+      Log.e(TAG,"MediaPlayerService keine Datei angegeben");
+      stopSelf();
     }
-    this.playListModel = new PlayListModel(playList);
-    if(DEBUG)Log.d(TAG,"onStartCommand: "+playList.size());
+
+    if(!requestAudioFocus())stopSelf();
+    if(mediaFilePath != null && !mediaFilePath.isEmpty())initMediaPlayer();
     return super.onStartCommand(intent, flags, startId);
   }
 
@@ -173,12 +159,8 @@ public class MediaPlayerService extends Service
   @Override
   public void onCompletion(MediaPlayer mp) {
     if(mediaPlayer != null){
-      autoPlay();
-
-      if(((LocalBinder) iBinder) != null){
-        if(DEBUG)Log.d(TAG,"onCompltion: "+(iBinder != null));
-        ((LocalBinder) iBinder).boundServiceListener.finishedSong(playListModel.repeatmode);
-      }
+      stopMedia();
+      if(((LocalBinder) iBinder) != null)((LocalBinder) iBinder).boundServiceListener.finishedSong();
     }
   }
 
@@ -245,56 +227,14 @@ public class MediaPlayerService extends Service
   }
 
   private boolean requestAudioFocus(){
-    if(audioManager!=null){
-      audioManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
-      int result = audioManager.requestAudioFocus(this,AudioManager.STREAM_MUSIC,AudioManager.AUDIOFOCUS_GAIN);
-      return result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED;
-    } else return true;
+    audioManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
+    int result = audioManager.requestAudioFocus(this,AudioManager.STREAM_MUSIC,AudioManager.AUDIOFOCUS_GAIN);
+    return result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED;
   }
 
   private boolean removeAudioFocus(){
-    if(audioManager!=null)return AudioManager.AUDIOFOCUS_REQUEST_GRANTED == audioManager.abandonAudioFocus(this);
-    else return true;
+    return AudioManager.AUDIOFOCUS_REQUEST_GRANTED == audioManager.abandonAudioFocus(this);
   }
-
-  public Song getCurrentSong() {return playListModel.getCurrentSong();}
-  public void seekTo(int i) {mediaPlayer.seekTo(i);}
-
-  public void playSong(Song song) {
-    playListModel.setCurrentSong(song);
-    initMediaPlayer();
-  }
-
-  public void nextSong() {
-    playListModel.nextSong();
-    initMediaPlayer();
-  }
-
-  public void prevSong() {
-    playListModel.nextSong();
-    initMediaPlayer();
-  }
-
-  public boolean toogleShuffleMode() {return playListModel.toogleShuffleMode();}
-  public PlayListModel.REPEATMODE nextRepeatMode() { return playListModel.nextRepeatMode();}
-
-  /** defines what happens when a song is finnished*/
-  private void autoPlay(){
-    switch(playListModel.repeatmode){
-      case ONESONG: {
-        playSong(playListModel.getCurrentSong());
-        break;
-      }
-      case ALL: {
-        nextSong();
-        break;
-      }
-    }
-
-  }
-
-
-
 
   /** used to bind service to activity*/
   public class LocalBinder extends Binder {
