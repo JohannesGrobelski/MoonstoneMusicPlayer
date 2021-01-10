@@ -1,8 +1,11 @@
 package com.example.moonstonemusicplayer.controller;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
@@ -83,9 +86,29 @@ public class MainActivityListener
     switch (item.getItemId()){
       case R.id.mi_loadLocaleAudioFile: {
         if(requestForPermission()){
-          //getExternalMediaDirs actually does get both internal and external sdcards
-          musicPlayer.loadLocalMusic(mainActivity.getExternalMediaDirs());
-          songListAdapter.notifyDataSetChanged();
+          AlertDialog alertDialog = new Builder(mainActivity)
+              .setTitle("lädt lokale Audiodatein neu ein")
+              .setMessage("dies kann einige Minuten dauern")
+              .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                  RefreshTask refreshTask = new RefreshTask(new RefreshTashListener() {
+                    @Override
+                    public void onCompletion() {
+                      songListAdapter.notifyDataSetChanged();
+                    }
+                  });
+                  refreshTask.execute(musicPlayer);
+                }
+              })
+              .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                  //abort
+                }
+              })
+              .create();
+          alertDialog.show();
         }
         break;
       }
@@ -315,7 +338,7 @@ public class MainActivityListener
         mediaPlayerService = binder.getService();
         binder.setListener(new BoundServiceListener() {
           @Override public void onError(int cause) { mediaPlayerServiceError(cause);}
-          @Override public void finishedSong() { finishSong();}
+          @Override public void onFinishedSong() { finishSong();}
           @Override public void onAudioFocusChange(int state) { audioFocusChange(state);}
         });
         isServiceBound = true;
@@ -392,7 +415,12 @@ public class MainActivityListener
   public interface BoundServiceListener {
 
     public void onError(int cause);
-    public void finishedSong();
+    public void onFinishedSong();
     public void onAudioFocusChange(int state);
+  }
+
+  /** */
+  public interface RefreshTashListener {
+    public void onCompletion();
   }
 }

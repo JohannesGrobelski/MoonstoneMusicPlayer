@@ -34,8 +34,9 @@ public class MusicPlayer {
     }
 
     /** loads local music and adds it to dataSource*/
-    public void loadLocalMusic(File[] externalFileDirs){
+    public void loadLocalMusic(){
         deleteAllSongs();//TODO: dont delete db but only local files
+        File[] externalFileDirs = context.getExternalMediaDirs(); //getExternalMediaDirs actually does get both internal and external sdcards
         dataSource.insertSongList(SongManager.findAllAudioFiles(externalFileDirs));
         currentSongList.addAll(dataSource.getAllSong(60000));
     }

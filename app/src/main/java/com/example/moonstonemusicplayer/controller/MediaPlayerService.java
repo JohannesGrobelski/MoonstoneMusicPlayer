@@ -159,7 +159,7 @@ public class MediaPlayerService extends Service
   public void onCompletion(MediaPlayer mp) {
     if(mediaPlayer != null){
       stopMedia();
-      if(((LocalBinder) iBinder) != null)((LocalBinder) iBinder).boundServiceListener.finishedSong();
+      if(((LocalBinder) iBinder) != null)((LocalBinder) iBinder).boundServiceListener.onFinishedSong();
     }
   }
 
