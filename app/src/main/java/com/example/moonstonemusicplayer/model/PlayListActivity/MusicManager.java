@@ -1,4 +1,4 @@
-package com.example.moonstonemusicplayer.model;
+package com.example.moonstonemusicplayer.model.PlayListActivity;
 
 import android.content.Context;
 
@@ -24,7 +24,6 @@ public class MusicManager {
         dataSource = new DataSource(this.context);
         playList = dataSource.getAllSong(60000);
         displayedSongList.addAll(playList);
-
     }
 
     /** loads local music and adds it to dataSource*/

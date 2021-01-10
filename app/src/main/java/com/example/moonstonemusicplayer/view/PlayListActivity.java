@@ -17,7 +17,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.example.moonstonemusicplayer.R;
-import com.example.moonstonemusicplayer.controller.PlayListActivityListener;
+import com.example.moonstonemusicplayer.controller.PlayListActivity.PlayListActivityListener;
 
 /** MainActivity
   * Defines the Mainscreen auf the app.
@@ -37,7 +37,7 @@ public class PlayListActivity extends AppCompatActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_main);
+    setContentView(R.layout.activity_playlist);
     lv_songlist = findViewById(R.id.lv_songlist);
     btn_prev = findViewById( R.id.btn_prev);
     btn_play_pause = findViewById( R.id.btn_play_pause);

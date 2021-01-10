@@ -1,9 +1,4 @@
-package com.example.moonstonemusicplayer.model;
-
-import android.util.Log;
-
-import java.io.Serializable;
-import java.util.logging.Logger;
+package com.example.moonstonemusicplayer.model.PlayListActivity;
 
 public class Song {
   int ID = -1;

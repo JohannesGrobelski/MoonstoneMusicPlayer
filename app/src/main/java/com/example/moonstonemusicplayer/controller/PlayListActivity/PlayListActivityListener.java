@@ -1,4 +1,4 @@
-package com.example.moonstonemusicplayer.controller;
+package com.example.moonstonemusicplayer.controller.PlayListActivity;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -26,9 +26,9 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.moonstonemusicplayer.R;
-import com.example.moonstonemusicplayer.model.MusicManager;
-import com.example.moonstonemusicplayer.model.PlayListModel;
-import com.example.moonstonemusicplayer.model.Song;
+import com.example.moonstonemusicplayer.model.PlayListActivity.MusicManager;
+import com.example.moonstonemusicplayer.model.PlayListActivity.PlayListModel;
+import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import com.example.moonstonemusicplayer.view.PlayListActivity;
 
 
@@ -112,7 +112,7 @@ public class PlayListActivityListener
       }
 
 
-      case R.id.miDeleteAllItems: {
+      case R.id.miDeleteAllAudioFiles: {
         musicManager.deleteAllSongs();
         songListAdapter.notifyDataSetChanged();
         break;
@@ -144,7 +144,7 @@ public class PlayListActivityListener
 
   public boolean onCreateOptionsMenu(Menu menu) {
     //create options menu
-    playListActivity.getMenuInflater().inflate(R.menu.options_menu,menu);
+    playListActivity.getMenuInflater().inflate(R.menu.options_menu_playlistactivity,menu);
 
     //create searchview
     MenuItem searchItem = menu.findItem(R.id.miSearch);

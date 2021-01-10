@@ -1,11 +1,11 @@
-package com.example.moonstonemusicplayer.controller;
+package com.example.moonstonemusicplayer.controller.PlayListActivity;
 
 import android.os.AsyncTask;
 
-import com.example.moonstonemusicplayer.model.MusicManager;
+import com.example.moonstonemusicplayer.model.PlayListActivity.MusicManager;
 
 public class RefreshTask extends AsyncTask<MusicManager,Void,Void> {
-  private com.example.moonstonemusicplayer.model.MusicManager MusicManager;
+  private com.example.moonstonemusicplayer.model.PlayListActivity.MusicManager MusicManager;
   private PlayListActivityListener.RefreshTaskListener refreshTaskListener;
 
   public RefreshTask(PlayListActivityListener.RefreshTaskListener refreshTaskListener){

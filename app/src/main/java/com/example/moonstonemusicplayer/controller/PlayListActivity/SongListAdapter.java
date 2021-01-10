@@ -1,7 +1,6 @@
-package com.example.moonstonemusicplayer.controller;
+package com.example.moonstonemusicplayer.controller.PlayListActivity;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.moonstonemusicplayer.R;
-import com.example.moonstonemusicplayer.model.Song;
+import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 
 import java.util.List;
 

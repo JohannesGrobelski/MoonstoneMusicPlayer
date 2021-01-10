@@ -1,15 +1,10 @@
-package com.example.moonstonemusicplayer.model;
-
-import android.os.Parcel;
-import android.os.Parcelable;
-import android.util.Log;
+package com.example.moonstonemusicplayer.model.PlayListActivity;
 
 import java.util.List;
-import java.util.logging.Logger;
 
-import static com.example.moonstonemusicplayer.model.PlayListModel.REPEATMODE.NONE;
-import static com.example.moonstonemusicplayer.model.PlayListModel.REPEATMODE.ONESONG;
-import static com.example.moonstonemusicplayer.model.PlayListModel.REPEATMODE.ALL;
+import static com.example.moonstonemusicplayer.model.PlayListActivity.PlayListModel.REPEATMODE.NONE;
+import static com.example.moonstonemusicplayer.model.PlayListActivity.PlayListModel.REPEATMODE.ONESONG;
+import static com.example.moonstonemusicplayer.model.PlayListActivity.PlayListModel.REPEATMODE.ALL;
 
 
 public class PlayListModel {

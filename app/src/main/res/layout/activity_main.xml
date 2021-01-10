@@ -1,169 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/SRL_background"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".view.PlayListActivity">
+    tools:context=".view.MainActivity">
 
-    <ListView
-        android:id="@+id/lv_songlist"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1">
-
-    </ListView>
-
-    <LinearLayout
-        android:id="@+id/LL_MusicControlls"
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="vertical"
-        android:visibility="visible">
+        android:theme="@style/AppTheme.AppBarOverlay">
 
-        <LinearLayout
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:paddingStart="-12dp"
-            android:paddingTop="5dp"
-            android:paddingEnd="-12dp"
-            android:paddingBottom="5dp">
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="?attr/actionBarTheme" />
 
-            <Button
-                android:id="@+id/btn_repeat"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="22dp"
-                android:layout_marginEnd="22dp"
-                android:layout_weight="1"
-                android:background="@drawable/ic_replay"
-                android:backgroundTint="@android:color/darker_gray"
-                android:textAlignment="textStart"
-                android:textColor="@color/colorPrimary"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:minHeight="?actionBarSize"
+            android:padding="@dimen/appbar_padding"
+            android:text="@string/app_name"
+            android:textAppearance="@style/TextAppearance.Widget.AppCompat.Toolbar.Title" />
 
-            <Button
-                android:id="@+id/btn_prev"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="22dp"
-                android:layout_marginEnd="22dp"
-                android:layout_weight="1"
-                android:background="@drawable/ic_previous"
-                android:backgroundTint="@color/colorPrimary" />
-
-            <Button
-                android:id="@+id/btn_play_pause"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="22dp"
-                android:layout_marginEnd="22dp"
-                android:layout_weight="1"
-                android:background="@drawable/ic_play_button"
-                android:backgroundTint="@color/colorPrimary" />
-
-            <Button
-                android:id="@+id/btn_next"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="22dp"
-                android:layout_marginEnd="22dp"
-                android:layout_weight="1"
-                android:background="@drawable/ic_next"
-                android:backgroundTint="@color/colorPrimary" />
-
-            <Button
-                android:id="@+id/btn_shuffle"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="22dp"
-                android:layout_marginEnd="22dp"
-                android:layout_weight="1"
-                android:background="@drawable/ic_shuffle"
-                android:backgroundTint="@android:color/darker_gray" />
-
-        </LinearLayout>
-
-        <LinearLayout
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabs"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:layout_gravity="center_horizontal|center_vertical"
-            android:layout_weight="1"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary" />
+    </com.google.android.material.appbar.AppBarLayout>
 
-            <TextView
-                android:id="@+id/tv_seekbar_progress"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:text="00:00"
-                android:textColor="@color/colorPrimary" />
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-            <SeekBar
-                android:id="@+id/seekBar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_weight="1"
-                android:thumbTint="@color/colorPrimary" />
-
-            <TextView
-                android:id="@+id/tv_seekbar_max"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:text="00:00"
-                android:textColor="@color/colorPrimary" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/tv_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:paddingStart="10dp"
-                android:paddingTop="1dp"
-                android:paddingEnd="10dp"
-                android:paddingBottom="1dp"
-                android:text="unknown title"
-                android:textColor="@color/colorPrimary"
-                android:textSize="15sp" />
-
-            <TextView
-                android:id="@+id/tv_artist"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:paddingStart="10dp"
-                android:paddingTop="1dp"
-                android:paddingEnd="10dp"
-                android:paddingBottom="1dp"
-                android:text="unknown artist"
-                android:textColor="@color/colorPrimary"
-                android:textSize="10sp" />
-        </LinearLayout>
-
-    </LinearLayout>
-
-</LinearLayout>
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        android:visibility="gone"
+        app:srcCompat="@android:drawable/ic_dialog_email" />
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

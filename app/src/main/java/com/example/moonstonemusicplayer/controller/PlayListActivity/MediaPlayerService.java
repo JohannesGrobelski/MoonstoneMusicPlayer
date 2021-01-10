@@ -1,4 +1,4 @@
-package com.example.moonstonemusicplayer.controller;
+package com.example.moonstonemusicplayer.controller.PlayListActivity;
 
 import android.app.Service;
 import android.content.Context;
@@ -11,8 +11,8 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
-import com.example.moonstonemusicplayer.model.PlayListModel;
-import com.example.moonstonemusicplayer.model.Song;
+import com.example.moonstonemusicplayer.model.PlayListActivity.PlayListModel;
+import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 
 import java.io.IOException;
 import java.util.List;

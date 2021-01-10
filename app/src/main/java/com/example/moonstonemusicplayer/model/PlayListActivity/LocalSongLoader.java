@@ -1,9 +1,11 @@
-package com.example.moonstonemusicplayer.model;
+package com.example.moonstonemusicplayer.model.PlayListActivity;
 
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
+
+import com.example.moonstonemusicplayer.model.MainActivity.FolderFragment.Folder;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -13,7 +15,66 @@ import java.util.List;
  * Class to load List<Song> from sd-card(s).
  */
 public class LocalSongLoader {
+  private static final String TAG = LocalSongLoader.class.getSimpleName();
   private static final boolean DEBUG = true;
+
+
+  /** find all Audiofiles in externalDirs and create a List<Song> from these files*/
+  public static Folder findAllAudioFilesAsFolder(File[] externalFilesDir){
+    //System.getenv("SECONDARY_STORAGE");
+    String[] fileDirs = new String[externalFilesDir.length];
+    for(int i=0; i<fileDirs.length; i++){
+      fileDirs[i] = externalFilesDir[i].getAbsolutePath().replace("/Android/media/com.example.moonstonemusicplayer","");
+      if(DEBUG)Log.d(TAG,fileDirs[i]+" "+new File(fileDirs[i]).exists());
+    }
+    List<Folder> childrenList = new ArrayList<>();
+    for(String fileDir: fileDirs){
+      if(new File(fileDir).exists())childrenList.add(findAllAudioFilesAsFolder(fileDir));
+    }
+    return new Folder("root", childrenList.toArray(new Folder[childrenList.size()]),null);
+  }
+
+  private static Folder findAllAudioFilesAsFolder(String directory){
+    if(DEBUG)Log.d(TAG,"findAllAudioFilesAsFolder DIR: "+directory);
+    try {
+      File file = new File(directory );
+      if(file.exists()) {
+        if(file.isDirectory()) {
+          if(file.getAbsolutePath().endsWith("Android"))return null; //throws null pointer exception; cannot enter without root
+          if(file.listFiles() != null){
+            List<Folder> children_folder = new ArrayList<>();
+            List<Song> children_song = new ArrayList<>();
+            for (File childFile: file.listFiles()) { //gehe durch Kinder
+              Folder child_folder = findAllAudioFilesAsFolder(childFile.getAbsolutePath());
+              if(child_folder != null){//child is a directory
+                children_folder.add(child_folder);
+              } else {//child is not a dir, might be a song-file?
+                if (isSupportedFormat(childFile.getName())) {
+                  children_song.add(getSongFromAudioFile(childFile));
+                } else { /* ignore */ }
+              }
+            }
+            if(!(children_folder.isEmpty() && children_song.isEmpty())){ //directory is not empty
+              if(DEBUG)Log.d(TAG,"findAllAudioFilesAsFolder: "+file.getName()+" "+children_folder.size()+" "+children_song.size());
+              return new Folder(file.getName(),
+                  children_folder.toArray(new Folder[children_folder.size()]),
+                  children_song.toArray(new Song[children_song.size()])
+              );
+            }
+          }
+        } else { //file is not a directory
+          return null;
+        }
+      } else{ //file does not exist
+        return null;
+      }
+    } catch (Exception e){
+      if(DEBUG)Log.e("songmanager",e.getMessage());
+      if(DEBUG)Log.e("songmanager", String.valueOf(e.getCause()));
+      return null;
+    }
+    return null;
+  }
 
   /** find all Audiofiles in externalDirs and create a List<Song> from these files*/
   public static List<Song> findAllAudioFiles(File[] externalFilesDir){
