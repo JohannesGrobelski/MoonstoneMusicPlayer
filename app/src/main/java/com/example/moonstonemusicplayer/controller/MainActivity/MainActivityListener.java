@@ -25,7 +25,7 @@ public class MainActivityListener {
   public boolean onOptionsItemSelected(MenuItem item) {
     switch (item.getItemId()){
       case R.id.mi_loadLocaleAudioFile: {
-        folderManager.loadLocalMusic();
+        folderManager.loadLocalMusicAsFolder();
         folderManager.getRootFolder().print(0);
         break;
       }
