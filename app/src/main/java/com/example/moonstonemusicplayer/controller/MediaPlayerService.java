@@ -29,7 +29,6 @@ public class MediaPlayerService extends Service
   private static final String TAG = MediaPlayerService.class.getSimpleName();
   private static final boolean DEBUG = true;
 
-
   public static final String FILEPATHEXTRA = "media";
   private final IBinder iBinder = new LocalBinder();
   private MediaPlayer mediaPlayer;
