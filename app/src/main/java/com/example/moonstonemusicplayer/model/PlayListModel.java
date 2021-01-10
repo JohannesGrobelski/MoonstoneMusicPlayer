@@ -16,6 +16,10 @@ public class PlayListModel {
   private List<Song> playlist;
   private int currentSongIndex = 0;
   boolean shuffleModelOn = false;
+  public enum REPEATMODE {
+    NONE, ALL, ONESONG;
+  };
+  public REPEATMODE repeatmode = NONE;
 
   public PlayListModel(List<Song> playList) {
     this.playlist = playList;
@@ -27,22 +31,9 @@ public class PlayListModel {
     }
   }
 
-  public enum REPEATMODE {
-    NONE, ALL, ONESONG;
-  };
-  public REPEATMODE repeatmode = NONE;
-
 
   public Song getCurrentSong(){
     return playlist.get(currentSongIndex);
-  }
-
-  public int getCurrentSongIndex(){
-    return this.currentSongIndex;
-  }
-
-  public void setCurrentSongIndex(int index){
-    this.currentSongIndex = index;
   }
 
   public void prevSong(){
@@ -68,9 +59,7 @@ public class PlayListModel {
     }
   }
 
-  public List<Song> getPlaylist(){
-    return playlist;
-  }
+
 
   public boolean toogleShuffleMode(){
     shuffleModelOn = !shuffleModelOn; return shuffleModelOn;

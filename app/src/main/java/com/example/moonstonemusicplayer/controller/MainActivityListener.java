@@ -44,10 +44,9 @@ public class MainActivityListener
     implements AdapterView.OnItemClickListener, View.OnClickListener,
     SeekBar.OnSeekBarChangeListener, SearchView.OnQueryTextListener,
     SearchView.OnCloseListener {
-  public final String[] EXTERNAL_PERMS = {Manifest.permission.READ_EXTERNAL_STORAGE};
-
   private static final boolean DEBUG = true;
   private static final String TAG = MainActivityListener.class.getSimpleName();
+
   private final MainActivity mainActivity;
 
   MusicManager musicManager;
@@ -146,10 +145,6 @@ public class MainActivityListener
     return true;
   }
 
-  public void finnishRefresh(){
-    songListAdapter.notifyDataSetChanged();
-  }
-
   public boolean onCreateOptionsMenu(Menu menu) {
     //create options menu
     mainActivity.getMenuInflater().inflate(R.menu.options_menu,menu);
@@ -162,6 +157,7 @@ public class MainActivityListener
     mainActivity.searchView.setOnCloseListener(this);
     return true;
   }
+
 
   @Override
   /** plays song that was clicked by user in songlistView*/
@@ -466,7 +462,7 @@ public class MainActivityListener
     if (!(permissionCheck == PackageManager.PERMISSION_GRANTED)) {
       if (ActivityCompat.shouldShowRequestPermissionRationale(mainActivity,Manifest.permission.READ_EXTERNAL_STORAGE)) {
       } else {
-        mainActivity.requestPermissions(EXTERNAL_PERMS, 1234);
+        mainActivity.requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1234);
       }
     } else {
       Toast.makeText(mainActivity, "Permission (already) Granted!", Toast.LENGTH_SHORT).show();

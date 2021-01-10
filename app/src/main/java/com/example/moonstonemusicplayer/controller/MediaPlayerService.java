@@ -258,7 +258,7 @@ public class MediaPlayerService extends Service
   }
 
   public void prevSong() {
-    playListModel.nextSong();
+    playListModel.prevSong();
     initMediaPlayer();
   }
 
