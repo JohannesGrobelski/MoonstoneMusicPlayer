@@ -87,8 +87,8 @@ public class MainActivityListener
       case R.id.mi_loadLocaleAudioFile: {
         if(requestForPermission()){
           AlertDialog alertDialog = new Builder(mainActivity)
-              .setTitle("lädt lokale Audiodatein neu ein")
-              .setMessage("dies kann einige Minuten dauern")
+              .setTitle("Lädt lokale Audiodatein neu ein.")
+              .setMessage("Dies kann einige Minuten dauern.")
               .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
