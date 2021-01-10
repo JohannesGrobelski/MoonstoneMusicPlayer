@@ -1,13 +1,13 @@
 package com.example.moonstonemusicplayer.model;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import android.util.Log;
+
+import java.io.Serializable;
+import java.util.logging.Logger;
 
 public class Song {
   int ID = -1;
-  String title = "";
+  String title;
   String artist = "unknown Artist";
   String URI = "";
   int duration_ms = 0;
@@ -15,7 +15,6 @@ public class Song {
   String genre = "";
   String lyrics = "";
   String meaning = "";
-  List<String> playLists = new ArrayList<>();
 
 
   /** "normal" constructor*/
@@ -27,7 +26,7 @@ public class Song {
   }
 
   /** Constructor for DB*/
-  public Song(int ID, String title, String artist, String URI, int duration_ms, int lastPosition, String genre, String lyrics, String meaning, List<String> playLists) {
+  public Song(int ID, String title, String artist, String URI, int duration_ms, int lastPosition, String genre, String lyrics, String meaning) {
     this.ID = ID;
     this.title = title;
     this.artist = artist;
@@ -37,21 +36,8 @@ public class Song {
     this.genre = genre;
     this.lyrics = lyrics;
     this.meaning = meaning;
-    this.playLists = playLists;
   }
 
-  public static String playListAsString(List<String> playLists){
-    StringBuilder playListString = new StringBuilder("");
-    for(String playList: playLists){
-      playListString.append(playList);
-      if(!playList.equals(playLists.get(playList.length() - 1)))playListString.append("|");
-    }
-    return playListString.toString();
-  }
-
-  public static List<String> playListStringAsPlayList(String playListString){
-    return Arrays.asList(playListString.split("\\|"));
-  }
 
   public long getLastPosition() { return lastPosition;}
 
@@ -92,6 +78,7 @@ public class Song {
   public long getDuration_ms() {
     return duration_ms;
   }
+
   public static String getDurationString(Integer duration_ms){
     int duration_seconds = duration_ms / 1000;
     int hours = duration_seconds / 3600;
@@ -114,7 +101,6 @@ public class Song {
   public String getDurationString(){
     return Song.getDurationString(duration_ms);
   }
-
 
   public void setDuration_ms(int duration_ms) {
     this.duration_ms = duration_ms;
@@ -143,13 +129,4 @@ public class Song {
   public void setMeaning(String meaning) {
     this.meaning = meaning;
   }
-
-  public List<String> getPlayLists() {
-    return playLists;
-  }
-
-  public void setPlayLists(List<String> playLists) {
-    this.playLists = playLists;
-  }
-
 }

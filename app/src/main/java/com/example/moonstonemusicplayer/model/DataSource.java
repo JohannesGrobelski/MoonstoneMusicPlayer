@@ -7,7 +7,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 class DataSource {
@@ -28,8 +27,7 @@ class DataSource {
             DBHelperLocalSongs.COLUMN_LAST_POSITION,
             DBHelperLocalSongs.COLUMN_GENRE,
             DBHelperLocalSongs.COLUMN_LYRICS,
-            DBHelperLocalSongs.COLUMN_MEANING,
-            DBHelperLocalSongs.COLUMN_PLAYLISTS
+            DBHelperLocalSongs.COLUMN_MEANING
     };
 
     public DataSource(Context context){
@@ -65,7 +63,6 @@ class DataSource {
         int idGenre = cursor.getColumnIndex(DBHelperLocalSongs.COLUMN_GENRE);
         int idLyrics = cursor.getColumnIndex(DBHelperLocalSongs.COLUMN_LYRICS);
         int idMeaning = cursor.getColumnIndex(DBHelperLocalSongs.COLUMN_MEANING);
-        int idPlaylists = cursor.getColumnIndex(DBHelperLocalSongs.COLUMN_PLAYLISTS);
 
         //get values from indezes
         int index = cursor.getInt(idIndex);
@@ -77,10 +74,9 @@ class DataSource {
         String genre = cursor.getString(idGenre);
         String lyrics = cursor.getString(idLyrics);
         String meaning = cursor.getString(idMeaning);
-        List<String> playlists = Song.playListStringAsPlayList(cursor.getString(idPlaylists));
 
         //create Song from values
-        return new Song(index,title,artist,uri,duration,lastPosition,genre,lyrics,meaning,playlists);
+        return new Song(index,title,artist,uri,duration,lastPosition,genre,lyrics,meaning);
     }
 
     List<Song> insertSongList(List<Song> songList){
@@ -97,8 +93,6 @@ class DataSource {
             values.put(DBHelperLocalSongs.COLUMN_GENRE, inputSong.getGenre());
             values.put(DBHelperLocalSongs.COLUMN_LYRICS, inputSong.getLyrics());
             values.put(DBHelperLocalSongs.COLUMN_MEANING, inputSong.getMeaning());
-            values.put(DBHelperLocalSongs.COLUMN_PLAYLISTS, Song.playListAsString(inputSong.getPlayLists()));
-
 
             //Song-Objekt in DB einfügen und ID zurückbekommen
             long insertID = databaseLocalSongs.insert(DBHelperLocalSongs.TABLE_SONG_LIST, null,values);
@@ -131,7 +125,6 @@ class DataSource {
         values.put(DBHelperLocalSongs.COLUMN_GENRE, inputSong.getGenre());
         values.put(DBHelperLocalSongs.COLUMN_LYRICS, inputSong.getLyrics());
         values.put(DBHelperLocalSongs.COLUMN_MEANING, inputSong.getMeaning());
-        values.put(DBHelperLocalSongs.COLUMN_PLAYLISTS, Song.playListAsString(inputSong.getPlayLists()));
 
         //öffnen der DB
         open_writable();
@@ -176,7 +169,6 @@ class DataSource {
         values.put(DBHelperLocalSongs.COLUMN_GENRE, inputSong.getGenre());
         values.put(DBHelperLocalSongs.COLUMN_LYRICS, inputSong.getLyrics());
         values.put(DBHelperLocalSongs.COLUMN_MEANING, inputSong.getMeaning());
-        values.put(DBHelperLocalSongs.COLUMN_PLAYLISTS, Song.playListAsString(inputSong.getPlayLists()));
 
         open_writable();
         databaseLocalSongs.update(DBHelperLocalSongs.TABLE_SONG_LIST,values, DBHelperLocalSongs.COLUMN_ID+ " = "+inputSong.getID(),null);
@@ -251,9 +243,8 @@ class DataSource {
                 String genre = cursor.getString(6);
                 String lyrics = cursor.getString(7);
                 String meaning = cursor.getString(8);
-                List<String> playlists = Song.playListStringAsPlayList(cursor.getString(9));
 
-                SongList.add(new Song(index,title,artist,uri,duration,lastPosition,genre,lyrics,meaning,playlists));
+                SongList.add(new Song(index,title,artist,uri,duration,lastPosition,genre,lyrics,meaning));
             } while (cursor.moveToNext());
         }
         cursor.close();
