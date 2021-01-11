@@ -19,8 +19,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 
 import org.w3c.dom.*;
@@ -28,18 +30,16 @@ import org.w3c.dom.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 /** save RootFolder as xml file and load RootFolder from xml file
  * Format:
- * <root
- *  path="root">
- *    <folder
- *    path="root/child1">
+ * <root>
+ *    <folder path="root/child1">
  *      <song
  *        id=-1
  *        title=...
@@ -52,49 +52,42 @@ import javax.xml.transform.stream.StreamResult;
  *        meaning=.../>
  *    </folder>
  *
- *    <folder
- *    name="root/child2">
+ *    <folder path="root/child2">
+ *      ...
  *    </folder>
  *
  *    ...
- * </Folder>
- *
+ * </root>
  * */
 public class FolderLoader {
-  private static final boolean DEBUG = true;
+  private static final boolean DEBUG = false;
   private static final String TAG = FolderLoader.class.getSimpleName();
 
-  private static final String xml_path = "folders.xml";
+  private static final String xml_filename = "folders.xml";
 
-  public static void saveIntoXML(Folder rootFolder){
+  public static void saveIntoXML(Folder rootFolder, String appFileDir){
     //create a document using DocumentBuilder
     DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
     DocumentBuilder documentBuilder = null;
     try {
       documentBuilder = documentFactory.newDocumentBuilder();
+      Document document = documentBuilder.newDocument();
+
+      /* create root */
+      Element root = document.createElement("root");
+      document.appendChild(root);
+
+      // root element
+      for(Folder childFolder: rootFolder.getChildren_folders()){
+        if(childFolder != null){
+          appendChildFolderToParentNodeInDocument(document,root,childFolder);
+        }
+      }
+
+      if(DEBUG)Log.d(TAG,"saved XML File");
+      //Log.d(TAG,documentToString(document));
+      saveDocument(document,appFileDir);
     } catch (ParserConfigurationException e) {
-      e.printStackTrace();
-    }
-    Document document = documentBuilder.newDocument();
-
-    //create root
-    Element root = document.createElement("root");
-    document.appendChild(root);
-
-    for(Folder childFolder: rootFolder.getChildren_folders()){
-      appendChildFolderToParentNodeInDocument(document,root,childFolder);
-    }
-
-    // create the xml file
-    //transform the DOM Object to an XML File
-    TransformerFactory transformerFactory = TransformerFactory.newInstance();
-    try {
-      Transformer transformer = transformerFactory.newTransformer();
-      DOMSource domSource = new DOMSource(document);
-      StreamResult streamResult = new StreamResult(new File(xml_path));
-      transformer.transform(domSource, streamResult);
-      Log.d(TAG,"saved XML File");
-    } catch (TransformerException e) {
       e.printStackTrace();
     }
   }
@@ -119,12 +112,12 @@ public class FolderLoader {
 
     //recursively append all childrenFolders of folder to childNode
     for(Folder childFolder: folder.getChildren_folders()){
-      appendChildFolderToParentNodeInDocument(document,childNode,childFolder);
+      if(childFolder != null)appendChildFolderToParentNodeInDocument(document,childNode,childFolder);
     }
 
     //recursively append all childrenSongs of folder to childNode
     for(Song childSong: folder.getChildren_songs()){
-      appendChildSongToParentNodeInDocument(document,childNode,childSong);
+      if(childSong != null)appendChildSongToParentNodeInDocument(document,childNode,childSong);
     }
   }
 
@@ -196,10 +189,18 @@ public class FolderLoader {
 
     FileInputStream fileInputStream;
     try {
-      fileInputStream = context.openFileInput(xml_path);
-      InputStream inputStream = new BufferedInputStream(fileInputStream);
-      root = loadFromXML(convertStreamToString(inputStream));
-      fileInputStream.close();
+      String path = context.getFilesDir().getAbsolutePath();
+      if(DEBUG)Log.d(TAG,"load file: "+path+"/"+xml_filename);
+      if(new File(path+"/"+xml_filename).exists()){
+        fileInputStream = new FileInputStream (new File(path+"/"+xml_filename));//wrong: context.openFileInput(path+"/"+xml_filename);
+        InputStream inputStream = new BufferedInputStream(fileInputStream);
+        String xmlString = convertStreamToString(inputStream);
+        root = loadFromXML(xmlString);
+        fileInputStream.close();
+      } else {
+        if(DEBUG)Log.e(TAG,"xml-file does not exist: "+path+"/"+xml_filename);
+      }
+
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -228,12 +229,25 @@ public class FolderLoader {
       //parse document aus inputsource
       document = documentBuilder.parse(inputSource);
 
+      if(DEBUG)Log.d(TAG,"document: "+documentToString(document));
+
       //Anfordern der Notelist aus Document
       NodeList rootNodeList = document.getElementsByTagName("root");
 
       if(rootNodeList.getLength() == 1){
         Node root = rootNodeList.item(0);
-        rootFolder = getFolderFromNode(root);
+        rootFolder = new Folder("root",null,null,null);
+
+        List<Folder> children_folders = new ArrayList<>();
+        for(int i=0; i<root.getChildNodes().getLength(); i++){ //go through child nodes (sd-cards)
+          Folder childFolder = getFolderFromNode(root.getChildNodes().item(i));
+          if(childFolder != null)children_folders.add(childFolder);
+        }
+        if(children_folders.size() == 0){
+          rootFolder.setChildren_folders(null);
+        } else {
+          rootFolder.setChildren_folders(children_folders.toArray(new Folder[children_folders.size()]));
+        }
         rootFolder.setParentsBelow();
       } else {
         Log.e("FolderLoader","multiple root folders!");
@@ -253,24 +267,39 @@ public class FolderLoader {
    */
   private static Folder getFolderFromNode(Node node){
     Folder folder = null;
-
     if(node.getNodeName().equals("folder")){
       String name = node.getAttributes().getNamedItem("path").getNodeValue();
       List<Folder> childrenFolders = new ArrayList<>();
-      for(int i=0; i<node.getChildNodes().getLength(); i++){
-        Folder childFolder = getFolderFromNode(node.getChildNodes().item(i));
-        if(childFolder!=null)childrenFolders.add(childFolder);
+      if(DEBUG)Log.d(TAG,"getFolderFromNode: folder1: "+name+" children: "+node.getChildNodes().getLength());
+      for(int i=0; i<node.getChildNodes().getLength(); i++){ //load all child folder recursively
+        Node childNode = node.getChildNodes().item(i);
+        if(childNode.getNodeName().equals("folder")){
+          if(DEBUG)Log.d(TAG,"getFolderFromNode: folder: "+name+" has child: "+childNode.getAttributes().getNamedItem("path").getNodeValue());
+          Folder childFolder = getFolderFromNode(node.getChildNodes().item(i));
+          if(childFolder!=null){
+            childrenFolders.add(childFolder);
+            if(DEBUG)Log.d(TAG,"getFolderFromNode subfolder loaded: "+childFolder.getName());
+          }
+        }
       }
 
       List<Song> childrenSongs = new ArrayList<>();
       for(int i=0; i<node.getChildNodes().getLength(); i++){
-        Song childSong = getSongFromNode(node.getChildNodes().item(i));
-        if(childSong!=null)childrenSongs.add(childSong);
+        Node childNode = node.getChildNodes().item(i);
+        if(childNode.getNodeName().equals("song")){
+          Song childSong = getSongFromNode(node.getChildNodes().item(i));
+          if(childSong!=null)childrenSongs.add(childSong);
+        }
       }
 
-      folder = new Folder(name,null,
-          childrenFolders.toArray(new Folder[childrenFolders.size()]),
-          childrenSongs.toArray(new Song[childrenSongs.size()]));
+      Folder[] childFolderArray = childrenFolders.toArray(new Folder[childrenFolders.size()]);
+      if(childrenFolders.size() == 0)childFolderArray = null;
+      Song[] childSongArray = childrenSongs.toArray(new Song[childrenSongs.size()]);
+      if(childrenSongs.size() == 0)childSongArray = null;
+
+      folder = new Folder(name,null,childFolderArray,childSongArray);
+
+      if(DEBUG)Log.d(TAG,"getFolderFromNode parsed Folder ("+folder.getName()+"):\n"+folder.toString());
 
       return folder;
     } else { //node is not a folder
@@ -296,7 +325,6 @@ public class FolderLoader {
   private static Song getSongFromNode(Node node){
     Song song;
     if(node.getNodeName().equals("song")) {
-      String path = node.getAttributes().getNamedItem("path").getNodeValue();
       String id = node.getAttributes().getNamedItem("id").getNodeValue();
       String title = node.getAttributes().getNamedItem("title").getNodeValue();
       String artist = node.getAttributes().getNamedItem("artist").getNodeValue();
@@ -306,6 +334,8 @@ public class FolderLoader {
       String genre = node.getAttributes().getNamedItem("genre").getNodeValue();
       String lyrics = node.getAttributes().getNamedItem("lyrics").getNodeValue();
       String meaning = node.getAttributes().getNamedItem("meaning").getNodeValue();
+      if(DEBUG)Log.d(TAG,"getSongFromNode: "+uri);
+
       song = new Song(Integer.valueOf(id),
           title,
           artist,
@@ -341,4 +371,50 @@ public class FolderLoader {
     }
     return stringBuilder.toString();
   }
+
+  /** transforms Document to string.
+   * source: https://stackoverflow.com/a/2567428.
+   * @param doc
+   * @return
+   */
+  public static String documentToString(Document doc) {
+    try {
+      StringWriter sw = new StringWriter();
+      TransformerFactory tf = TransformerFactory.newInstance();
+      Transformer transformer = tf.newTransformer();
+      transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+      transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+      transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+      transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+
+      transformer.transform(new DOMSource(doc), new StreamResult(sw));
+      return sw.toString();
+    } catch (Exception ex) {
+      throw new RuntimeException("Error converting to String", ex);
+    }
+  }
+
+  public static void saveDocument(Document document, String appFileDir) {
+    try {
+      //domsource create
+      DOMSource domSource = new DOMSource(document);
+
+      // create the xml file
+      StreamResult streamResult = new StreamResult(new File(appFileDir+"/"+ xml_filename));
+
+      // transform the DOM Object to an XML File
+      TransformerFactory transformerFactory = TransformerFactory.newInstance();
+      Transformer transformer = transformerFactory.newTransformer();
+      transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+      transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+      transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+      transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+
+      transformer.transform(domSource, streamResult);
+      if(DEBUG)Log.d(TAG,"saved file to: "+appFileDir+"/"+xml_filename);
+    } catch (Exception ex) {
+      throw new RuntimeException("Error converting to String", ex);
+    }
+  }
+
 }

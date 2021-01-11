@@ -10,13 +10,14 @@ import com.example.moonstonemusicplayer.model.MainActivity.FolderFragment.Folder
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Class to load List<Song> from sd-card(s).
  */
 public class LocalSongLoader {
   private static final String TAG = LocalSongLoader.class.getSimpleName();
-  private static final boolean DEBUG = true;
+  private static final boolean DEBUG = false;
 
   /** find all Audiofiles in externalDirs and create a List<Song> from these files*/
   public static Folder findAllAudioFilesAsFolder(File[] externalFilesDir){
@@ -41,16 +42,20 @@ public class LocalSongLoader {
 
   /** recursive */
   private static Folder findAllAudioFilesAsFolder(String directory, Folder parentFolder){
-    if(DEBUG)Log.d(TAG,"findAllAudioFilesAsFolder DIR: "+directory);
+    if(DEBUG)Log.d(TAG,"findAllAudioFilesAsFolder FILE: "+directory);
     try {
       File file = new File(directory );
       if(file.exists()) {
         if(file.isDirectory()) {
-          if(file.getAbsolutePath().endsWith("Android"))return null; //throws null pointer exception; cannot enter without root
+          if(file.getAbsolutePath().endsWith("Android")){
+            if(DEBUG)Log.d(TAG,"findAllAudioFilesAsFolder isAndroid: "+file.getAbsolutePath());
+            return null; //throws null pointer exception; cannot enter without root
+          }
           if(file.listFiles() != null){
             List<Folder> children_folder = new ArrayList<>();
             List<Song> children_song = new ArrayList<>();
             for (File childFile: file.listFiles()) { //gehe durch Kinder
+              if(DEBUG)Log.d(TAG,"findAllAudioFilesAsFolder TEST: "+childFile.getAbsolutePath());
               Folder child_folder = findAllAudioFilesAsFolder(childFile.getAbsolutePath(), parentFolder);
               if(child_folder != null){//child is a directory
                 children_folder.add(child_folder);
@@ -61,23 +66,31 @@ public class LocalSongLoader {
               }
             }
             if(!(children_folder.isEmpty() && children_song.isEmpty())){ //directory is not empty
-              if(DEBUG)Log.d(TAG,"findAllAudioFilesAsFolder: "+file.getName()+" "+children_folder.size()+" "+children_song.size());
+              if(DEBUG)Log.d(TAG,"findAllAudioFilesAsFolder: save"+file.getName()+" "+children_folder.size()+" "+children_song.size());
               return new Folder(file.getName(),
                   parentFolder,
                   children_folder.toArray(new Folder[children_folder.size()]),
                   children_song.toArray(new Song[children_song.size()])
               );
+            } else {
+              if(DEBUG)Log.d(TAG,"findAllAudioFilesAsFolder empty Dir: "+file.getAbsolutePath());
             }
+          } else {
+            if(DEBUG)Log.d(TAG,"findAllAudioFilesAsFolder list files is null: "+file.getName());
+            return null;
           }
         } else { //file is not a directory
+          if(DEBUG)Log.d(TAG,"findAllAudioFilesAsFolder file is not a dir: "+file.getName());
           return null;
         }
       } else{ //file does not exist
+        if(DEBUG)Log.d(TAG,"findAllAudioFilesAsFolder file does not exist: "+file.getName());
         return null;
+
       }
     } catch (Exception e){
-      if(DEBUG)Log.e("songmanager",e.getMessage());
-      if(DEBUG)Log.e("songmanager", String.valueOf(e.getCause()));
+      if(DEBUG)Log.e(TAG,"findAllAudioFilesAsFolder error: "+e.getMessage());
+      if(DEBUG)Log.e(TAG, "findAllAudioFilesAsFolder error: "+String.valueOf(e.getCause()));
       return null;
     }
     return null;

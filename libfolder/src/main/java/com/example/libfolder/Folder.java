@@ -1,24 +1,34 @@
-package com.example.moonstonemusicplayer.model.MainActivity.FolderFragment;
-import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
+package com.example.libfolder;
+
+import com.example.libfolder.Song;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Folder {
-  private static final boolean DEBUG = true;
+  private static final boolean DEBUG = false;
   private static final String TAG = Folder.class.getSimpleName();
 
   Folder parent;
   String name;
-  Folder[] children_folders = null;
-  Song[] children_songs = null;
+  Folder[] children_folders = new Folder[0];
+  Song[] children_songs = new Song[0];
 
   public Folder(String name, Folder parent, Folder[] children_folders, Song[] children_songs) {
     this.parent = parent;
     this.name = name;
     this.children_folders = children_folders;
     this.children_songs = children_songs;
+  }
+
+  public static void main(String[] a){
+    Song x = new Song("x",null,null,0);
+    Song y = new Song("y",null,null,1);
+    Song z = new Song("z",null,null,2);
+
+    Folder music = new Folder("Music",null,null,new Song[]{x,y,z});
+    Folder zero = new Folder("0",null,new Folder[]{music},null);
+    System.out.println(zero.toString());
   }
 
   public String getName() {
@@ -70,7 +80,7 @@ public class Folder {
       }
       if(children_folders.length==0)if(DEBUG)System.out.println("Folder "+name+" has no children folders");
     } else {
-      if(DEBUG)System.out.println("Folder "+name+" has children_folders = null");
+      if(DEBUG)System.out.println("Folder "+name+" has childfolder null");
     }
     if(children_songs != null){
       for(Song child: children_songs){
@@ -78,7 +88,7 @@ public class Folder {
       }
       if(children_songs.length==0)if(DEBUG)System.out.println("Folder "+name+" has no children songs");
     } else {
-      if(DEBUG)System.out.println("Folder "+name+" has children_songs = null");
+      if(DEBUG)System.out.println("Folder "+name+" has childsong null");
     }
     return input;
   }
@@ -87,7 +97,7 @@ public class Folder {
     List<String> childrenString = new ArrayList<>();
     if(children_folders != null){
       for(Folder child: children_folders){
-         if(child != null)childrenString.add("DIR: "+child.name);
+        if(child != null)childrenString.add("DIR: "+child.name);
       }
     }
     if(children_songs != null){
@@ -99,13 +109,14 @@ public class Folder {
   }
 
   public void setParentsBelow(){
+    System.out.println("setParentBelow: "+this.name);
     if(children_folders != null){
-      //remove all null children
       for(Folder child: children_folders){
-        child.setParent(this);
-        child.setParentsBelow();
+        if(child != null){
+          child.setParent(this);
+          child.setParentsBelow();
+        }
       }
     }
   }
-
 }
