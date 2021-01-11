@@ -56,15 +56,6 @@ public class PlayListActivityListener
   private Thread seekbarAnimationThread;
 
 
-  /**
-   * Initiate the musicplayer and musicplayerservice.
-   * @param playListActivity
-   */
-  public PlayListActivityListener(PlayListActivity playListActivity) {
-    this.playListActivity = playListActivity;
-    musicManager = new MusicManager(playListActivity.getBaseContext());
-    bindSongListAdapterToSongListView(playListActivity.lv_songlist);
-    destroyAndCreateNewService();
 
     /*
     musicPlayer.addSong(new Song("Lyric Pieces"
@@ -77,6 +68,12 @@ public class PlayListActivityListener
           ,383000));
            songListAdapter.notifyDataSetChanged();
      */
+
+  public PlayListActivityListener(PlayListActivity playListActivity, Song[] playlist) {
+    this.playListActivity = playListActivity;
+    musicManager = new MusicManager(playListActivity.getBaseContext(),playlist);
+    bindSongListAdapterToSongListView(playListActivity.lv_songlist);
+    destroyAndCreateNewService();
   }
 
 
@@ -113,27 +110,27 @@ public class PlayListActivityListener
 
 
       case R.id.miDeleteAllAudioFiles: {
-        musicManager.deleteAllSongs();
+        //musicManager.deleteAllSongs();
         songListAdapter.notifyDataSetChanged();
         break;
       }
       case R.id.miSortTitle: {
-        musicManager.sortByTitle();
+        //musicManager.sortByTitle();
         songListAdapter.notifyDataSetChanged();
         break;
       }
       case R.id.miSortArtist: {
-        musicManager.sortByArtist();
+        //musicManager.sortByArtist();
         songListAdapter.notifyDataSetChanged();
         break;
       }
       case R.id.miSortGenre: {
-        musicManager.sortByGenre();
+        //musicManager.sortByGenre();
         songListAdapter.notifyDataSetChanged();
         break;
       }
       case R.id.miSwitchAscDesc: {
-        musicManager.reverseList();
+        //musicManager.reverseList();
         songListAdapter.notifyDataSetChanged();
         break;
       }
@@ -164,8 +161,10 @@ public class PlayListActivityListener
     }
 
     //destroy searchview and show music controlls, close searchview and close virtual keyboard
+    /*
     playListActivity.searchView.setIconified(true);
     playListActivity.searchView.clearFocus();
+     */
     playListActivity.showMusicControlls();
   }
 
@@ -211,7 +210,7 @@ public class PlayListActivityListener
   @Override
   /** called if input in search view changes => search songs in db according to input*/
   public boolean onQueryTextChange(String query) {
-    musicManager.searchSong(query);
+    //musicManager.searchSong(query);
     songListAdapter.notifyDataSetChanged();
     return false;
   }
@@ -479,6 +478,11 @@ public class PlayListActivityListener
       mediaPlayerService.onDestroy();
       isServiceBound = false;
     }
+  }
+
+  /** stop service */
+  public void onBackPressed() {
+    mediaPlayerService.onDestroy();
   }
 
 

@@ -15,7 +15,7 @@ public class RefreshTask extends AsyncTask<MusicManager,Void,Void> {
   @Override
   protected Void doInBackground(MusicManager... MusicManagers) {
     this.MusicManager = MusicManagers[0];
-    this.MusicManager.loadLocalMusic();
+    //TODO: this.MusicManager.loadLocalMusic();
     return null;
   }
 

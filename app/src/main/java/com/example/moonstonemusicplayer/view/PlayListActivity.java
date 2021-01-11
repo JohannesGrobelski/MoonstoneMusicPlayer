@@ -3,6 +3,7 @@ package com.example.moonstonemusicplayer.view;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -18,6 +19,8 @@ import android.widget.TextView;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.PlayListActivity.PlayListActivityListener;
+import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
+import com.example.moonstonemusicplayer.view.ui.main.FolderFragment;
 
 /** MainActivity
   * Defines the Mainscreen auf the app.
@@ -38,6 +41,7 @@ public class PlayListActivity extends AppCompatActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_playlist);
+
     lv_songlist = findViewById(R.id.lv_songlist);
     btn_prev = findViewById( R.id.btn_prev);
     btn_play_pause = findViewById( R.id.btn_play_pause);
@@ -52,7 +56,8 @@ public class PlayListActivity extends AppCompatActivity {
     tv_artist = findViewById(R.id.tv_artist);
     LL_MusicControlls = findViewById(R.id.LL_MusicControlls);
 
-    playListActivityListener = new PlayListActivityListener(this);
+    playListActivityListener = new PlayListActivityListener(this,FolderFragment.getPlaylist());
+
     lv_songlist.setOnItemClickListener(playListActivityListener);
     btn_shuffle.setOnClickListener(playListActivityListener);
     btn_prev.setOnClickListener(playListActivityListener);
@@ -62,6 +67,12 @@ public class PlayListActivity extends AppCompatActivity {
     seekBar.setOnSeekBarChangeListener(playListActivityListener);
 
     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+  }
+
+  @Override
+  public void onBackPressed() {
+    playListActivityListener.onBackPressed();
+    super.onBackPressed();
   }
 
   @Override

@@ -49,7 +49,7 @@ public class FolderFragment extends Fragment {
   public ListView lv_folderList;
   public Button btn_folder_back;
 
-  public static Song[] playlist;
+  public static Song[] Playlist;
 
   // TODO: Rename and change types of parameters
   private String mParam1;
@@ -142,13 +142,14 @@ public class FolderFragment extends Fragment {
   }
 
   public void startPlaylist(Song[] playlist){
+    Playlist = playlist.clone();
     Intent intent = new Intent(getActivity(), PlayListActivity.class);
     startActivity(intent);
   }
 
   public static Song[] getPlaylist(){
-    Song[] playlistCopy = playlist.clone();
-    playlist = null;
+    Song[] playlistCopy = Playlist.clone();
+    Playlist = null;
     return playlistCopy;
   }
 

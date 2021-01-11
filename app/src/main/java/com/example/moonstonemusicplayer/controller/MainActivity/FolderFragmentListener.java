@@ -49,7 +49,7 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
         Log.d(TAG,"itemClick FEHLER");
       }
     } else { //selected Song
-      Song[] playlist = folderFragment.selectedFolder.getParent().getChildren_songs();
+      Song[] playlist = folderFragment.selectedFolder.getChildren_songs();
       folderFragment.startPlaylist(playlist);
     }
 
