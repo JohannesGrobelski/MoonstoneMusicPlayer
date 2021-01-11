@@ -18,7 +18,6 @@ public class LocalSongLoader {
   private static final String TAG = LocalSongLoader.class.getSimpleName();
   private static final boolean DEBUG = true;
 
-
   /** find all Audiofiles in externalDirs and create a List<Song> from these files*/
   public static Folder findAllAudioFilesAsFolder(File[] externalFilesDir){
     //System.getenv("SECONDARY_STORAGE");
@@ -28,15 +27,19 @@ public class LocalSongLoader {
       if(DEBUG)Log.d(TAG,fileDirs[i]+" "+new File(fileDirs[i]).exists());
     }
 
+    //go through sd-cards and
     List<Folder> childrenList = new ArrayList<>();
     for(String fileDir: fileDirs){
       if(new File(fileDir).exists())childrenList.add(findAllAudioFilesAsFolder(fileDir,null));
     }
     Folder rootFolder = new Folder("root", null, childrenList.toArray(new Folder[childrenList.size()]),null);
+
+    //set parents of folders (recursively)
     rootFolder.setParentsBelow();
     return rootFolder;
   }
 
+  /** recursive */
   private static Folder findAllAudioFilesAsFolder(String directory, Folder parentFolder){
     if(DEBUG)Log.d(TAG,"findAllAudioFilesAsFolder DIR: "+directory);
     try {
