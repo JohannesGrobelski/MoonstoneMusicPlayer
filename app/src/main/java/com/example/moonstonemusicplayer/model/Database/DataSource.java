@@ -12,6 +12,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 class DataSource {
+
+    tabelle playlist
+
+    playlistname | song
+    -------------+--------
+    rock         | alpha ...
+    rock         | waf
+    metal        | bfmv 1
+    ....
+
+
+    tabelle ordner/song
+
+    ordner_path       | name |  typ
+    ------------------+------+------
+    0/Music           | Music| folder
+    0/Music/bla.mp3   | bla  | song
+    0/Music/blub.mp3  | blub | song
+
     //Angabe Klassenname für spätere LogAusgaben
     private static final String LOG_TAG = DataSource.class.getSimpleName();
     private static final int minDuration = 60000;
