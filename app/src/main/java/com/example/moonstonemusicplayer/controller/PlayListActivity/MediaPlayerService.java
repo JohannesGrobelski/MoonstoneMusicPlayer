@@ -8,6 +8,7 @@ import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -29,7 +30,7 @@ public class MediaPlayerService extends Service
                   MediaPlayer.OnInfoListener,
                   MediaPlayer.OnBufferingUpdateListener,
                   AudioManager.OnAudioFocusChangeListener {
-
+  public static final String STARTING_INDEX = "STARTING_INDEX";
   private static final String TAG = MediaPlayerService.class.getSimpleName();
   private static final boolean DEBUG = true;
 
@@ -41,6 +42,7 @@ public class MediaPlayerService extends Service
   /**/
 
   private AudioManager audioManager;
+  private int startIndex;
   private int resumePosition = 0;
 
   /** inits mediaplayer and sets Listeners */
@@ -124,6 +126,9 @@ public class MediaPlayerService extends Service
   @Override
   public int onStartCommand(Intent intent, int flags, int startId) {
     Log.d(TAG,"onStartCommand: binder: "+String.valueOf(iBinder==null));
+    if(intent.hasExtra(STARTING_INDEX)){
+      startIndex = intent.getIntExtra(STARTING_INDEX,0);
+    }
     return super.onStartCommand(intent, flags, startId);
   }
 
@@ -246,6 +251,8 @@ public class MediaPlayerService extends Service
 
   public void playSong(Song song) {
     playListModel.setCurrentSong(song);
+    Toast.makeText(this,"clicked: "+playListModel.getCurrentSong().getTitle(),Toast.LENGTH_LONG).show();
+
     initMediaPlayer();
   }
 
@@ -279,6 +286,7 @@ public class MediaPlayerService extends Service
   public void setPlayList(List<Song> playList) {
     if(DEBUG)Log.d(TAG,"startMediaPlayerService init Playlist: "+playList.size());
     this.playListModel = new PlayListModel(playList);
+    this.playListModel.setCurrentSong(playList.get(startIndex));
   }
 
 

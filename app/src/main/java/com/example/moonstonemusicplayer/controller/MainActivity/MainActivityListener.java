@@ -52,7 +52,7 @@ public class MainActivityListener {
         break;
       }
       case R.id.miDeleteAllAudioFiles: {
-
+        ((FolderFragment) fragments[1]).loadMusicNew();
         break;
       }
     }

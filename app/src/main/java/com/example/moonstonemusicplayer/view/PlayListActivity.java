@@ -56,7 +56,11 @@ public class PlayListActivity extends AppCompatActivity {
     tv_artist = findViewById(R.id.tv_artist);
     LL_MusicControlls = findViewById(R.id.LL_MusicControlls);
 
-    playListActivityListener = new PlayListActivityListener(this,FolderFragment.getPlaylist());
+    int song_index = 0;
+    if(getIntent().hasExtra(FolderFragment.SONGINDEXEXTRA)){
+       song_index = getIntent().getIntExtra(FolderFragment.SONGINDEXEXTRA,0);
+    }
+    playListActivityListener = new PlayListActivityListener(this,FolderFragment.getPlaylist(),song_index);
 
     lv_songlist.setOnItemClickListener(playListActivityListener);
     btn_shuffle.setOnClickListener(playListActivityListener);

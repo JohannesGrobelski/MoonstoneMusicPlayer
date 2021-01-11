@@ -23,12 +23,12 @@ import com.example.moonstonemusicplayer.view.ui.main.SectionsPagerAdapter;
 public class MainActivity extends AppCompatActivity {
   MainActivityListener mainActivityListener;
 
-
+  SectionsPagerAdapter sectionsPagerAdapter;
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
-    SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
+    sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
 
     ViewPager viewPager = findViewById(R.id.view_pager);
     viewPager.setAdapter(sectionsPagerAdapter);
@@ -61,5 +61,10 @@ public class MainActivity extends AppCompatActivity {
   @Override
   public boolean onOptionsItemSelected(@NonNull MenuItem item) {
     return mainActivityListener.onOptionsItemSelected(item);
+  }
+
+  @Override
+  public void onBackPressed() {
+    super.onBackPressed();
   }
 }

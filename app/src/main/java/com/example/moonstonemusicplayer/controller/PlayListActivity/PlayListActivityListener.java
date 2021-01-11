@@ -10,6 +10,7 @@ import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
@@ -69,11 +70,11 @@ public class PlayListActivityListener
            songListAdapter.notifyDataSetChanged();
      */
 
-  public PlayListActivityListener(PlayListActivity playListActivity, Song[] playlist) {
+  public PlayListActivityListener(PlayListActivity playListActivity, Song[] playlist,int starting_song_index) {
     this.playListActivity = playListActivity;
     musicManager = new MusicManager(playListActivity.getBaseContext(),playlist);
     bindSongListAdapterToSongListView(playListActivity.lv_songlist);
-    destroyAndCreateNewService();
+    destroyAndCreateNewService(starting_song_index);
   }
 
 
@@ -367,7 +368,7 @@ public class PlayListActivityListener
   }
 
   /** destroys mediaplayerservice and starts new one */
-  private void destroyAndCreateNewService(){
+  private void destroyAndCreateNewService(int starting_index){
     //if an service is bound destroy it ...
     if(isServiceBound){
       if(DEBUG)Log.d(TAG,"destroyMediaPlayerService (bound: "+isServiceBound+")");
@@ -378,6 +379,9 @@ public class PlayListActivityListener
     // ... and start a new one.
     serviceConnection = createServiceConnection();
     Intent playerIntent = new Intent(playListActivity,MediaPlayerService.class);
+    if(starting_index != -1){
+      playerIntent.putExtra(MediaPlayerService.STARTING_INDEX,0);
+    }
 
     //start service
     playListActivity.startService(playerIntent);

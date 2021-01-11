@@ -8,17 +8,39 @@
     tools:context=".view.ui.main.FolderFragment">
 
 
-    <Button
-        android:id="@+id/btn_folder_back"
+    <LinearLayout
+        android:id="@+id/ll_back_folder"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="back" />
+        android:layout_height="50dp">
+
+        <ImageView
+            android:id="@+id/iv_folderBack"
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginBottom="10dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_folder_up"
+            />
+
+        <TextView
+            android:id="@+id/tv_folderBack"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center|center_horizontal|center_vertical"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:padding="5dp"
+            android:text="..." />
+    </LinearLayout>
 
     <ListView
         android:id="@+id/lv_folderlist"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/btn_folder_back">
+        android:layout_below="@id/ll_back_folder">
 
     </ListView>
 

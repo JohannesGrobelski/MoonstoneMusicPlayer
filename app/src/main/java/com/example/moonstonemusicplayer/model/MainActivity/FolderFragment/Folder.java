@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Folder {
-  private static final boolean DEBUG = true;
+  private static final boolean DEBUG = false;
   private static final String TAG = Folder.class.getSimpleName();
 
   Folder parent;

@@ -16,7 +16,9 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.MainActivity.FolderFragmentListener;
@@ -33,7 +35,8 @@ import java.util.Arrays;
  * create an instance of this fragment.
  */
 public class FolderFragment extends Fragment {
-  private static final boolean DEBUG = true;
+  public static final String SONGINDEXEXTRA = "SONG_INDEX";
+  private static final boolean DEBUG = false;
   FolderFragmentListener folderFragmentListener;
 
   // TODO: Rename parameter arguments, choose names that match
@@ -47,7 +50,8 @@ public class FolderFragment extends Fragment {
 
   public Folder selectedFolder;
   public ListView lv_folderList;
-  public Button btn_folder_back;
+  public LinearLayout ll_folder_back;
+  public TextView tv_folder_back;
 
   public static Song[] Playlist;
 
@@ -104,15 +108,19 @@ public class FolderFragment extends Fragment {
     initViews();
   }
 
+  public void deleteAllMusic(){
+    folderManager.loadLocalMusicAsFolder(this.getContext());
+    selectedFolder = folderManager.getRootFolder();
+    initViews();
+  }
+
   private void initViews(){
     if(DEBUG)Log.d(TAG, "rootFolder: "+selectedFolder.toString());
     String[] children = selectedFolder.getAllChildrenAsStrings();
     if(DEBUG)Log.d(TAG, "rootFolder: "+ Arrays.toString(children));
 
-    ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this.getContext(),android.R.layout.simple_list_item_1,children);
-    lv_folderList.setAdapter(arrayAdapter);
     lv_folderList.setOnItemClickListener(folderFragmentListener);
-    btn_folder_back.setOnClickListener(folderFragmentListener);
+    ll_folder_back.setOnClickListener(folderFragmentListener);
   }
 
 
@@ -125,7 +133,8 @@ public class FolderFragment extends Fragment {
     View view = inflater.inflate(R.layout.fragment_folder, container, false);
     //Referenz des listviews
     lv_folderList = view.findViewById(R.id.lv_folderlist);
-    btn_folder_back = view.findViewById(R.id.btn_folder_back);
+    ll_folder_back = view.findViewById(R.id.ll_back_folder);
+    tv_folder_back = view.findViewById(R.id.tv_folderBack);
 
     folderFragmentListener = new FolderFragmentListener(this);
     if(selectedFolder != null){
@@ -141,9 +150,10 @@ public class FolderFragment extends Fragment {
     return view;
   }
 
-  public void startPlaylist(Song[] playlist){
+  public void startPlaylist(Song[] playlist,int song_index){
     Playlist = playlist.clone();
     Intent intent = new Intent(getActivity(), PlayListActivity.class);
+    intent.putExtra(SONGINDEXEXTRA,song_index);
     startActivity(intent);
   }
 
@@ -152,5 +162,6 @@ public class FolderFragment extends Fragment {
     Playlist = null;
     return playlistCopy;
   }
+
 
 }

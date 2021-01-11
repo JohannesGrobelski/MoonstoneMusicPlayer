@@ -1,10 +1,12 @@
-package com.example.moonstonemusicplayer.model.PlayListActivity;
+package com.example.moonstonemusicplayer.model.Database;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+
+import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 
 import java.util.ArrayList;
 import java.util.List;
