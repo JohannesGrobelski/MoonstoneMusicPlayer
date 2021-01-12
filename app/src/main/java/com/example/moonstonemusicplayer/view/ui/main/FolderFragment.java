@@ -9,7 +9,9 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -132,6 +134,7 @@ public class FolderFragment extends Fragment {
     if(selectedFolder != null){
       initViews();
     }
+    registerForContextMenu(lv_folderList);
 
     /*
     fragmentListener = new FirstFragmentListener(this);
@@ -156,5 +159,13 @@ public class FolderFragment extends Fragment {
     return playlistCopy;
   }
 
+  @Override
+  public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v, @Nullable ContextMenu.ContextMenuInfo menuInfo) {
+    folderFragmentListener.onCreateContextMenu(menu, v, menuInfo);
+  }
 
+  @Override
+  public boolean onContextItemSelected(@NonNull MenuItem item) {
+    return folderFragmentListener.onContextItemSelected(item);
+  }
 }

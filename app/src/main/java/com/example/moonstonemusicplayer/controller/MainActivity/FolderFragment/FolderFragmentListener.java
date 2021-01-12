@@ -1,6 +1,8 @@
 package com.example.moonstonemusicplayer.controller.MainActivity.FolderFragment;
 
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 
@@ -84,5 +86,23 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
         setAdapter(folderFragment.selectedFolder);
       }
     }
+  }
+
+  public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+    folderFragment.getActivity().getMenuInflater().inflate(R.menu.song_context_menu,menu);
+  }
+
+  public boolean onContextItemSelected(MenuItem item) {
+    switch (item.getItemId()){
+      case R.id.mi_addToFavorites: {
+        hier weiter machen
+        break;
+      }
+      case R.id.mi_addToPlaylist:  {
+        //open Alert Dialog
+        break;
+      }
+    }
+    return true;
   }
 }

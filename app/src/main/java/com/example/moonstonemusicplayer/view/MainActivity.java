@@ -48,8 +48,6 @@ public class MainActivity extends AppCompatActivity {
             .setAction("Action", null).show();
       }
     });
-
-
     Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
   }
