@@ -1,14 +1,19 @@
 package com.example.moonstonemusicplayer.view.ui.main;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.example.moonstonemusicplayer.R;
+import com.example.moonstonemusicplayer.controller.MainActivity.RadioFragment.RadioFragmentListener;
+import com.example.moonstonemusicplayer.model.MainActivity.RadioFragment.RadioManager;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -22,6 +27,9 @@ public class RadioFragment extends Fragment {
   private static final String ARG_SECTION_NUMBER = "section_number";
   private PageViewModel pageViewModel;
 
+  public RadioManager radioManager;
+  RadioFragmentListener radioFragmentListener;
+  public ListView lv_radiolist;
 
   public RadioFragment() {
     // Required empty public constructor
@@ -57,7 +65,17 @@ public class RadioFragment extends Fragment {
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
-    // Inflate the layout for this fragment
-    return inflater.inflate(R.layout.fragment_radio, container, false);
+    View rootView =  inflater.inflate(R.layout.fragment_radio, container, false);
+
+    lv_radiolist = rootView.findViewById(R.id.lv_radio);
+    radioFragmentListener = new RadioFragmentListener(this);
+    lv_radiolist.setOnItemClickListener(radioFragmentListener);
+    return rootView;
+  }
+
+  @Override
+  public void onAttach(@NonNull Context context) {
+    super.onAttach(context);
+    radioManager = new RadioManager(context);
   }
 }

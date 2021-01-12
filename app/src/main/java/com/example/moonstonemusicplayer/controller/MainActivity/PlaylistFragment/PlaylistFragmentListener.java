@@ -56,7 +56,7 @@ public class PlaylistFragmentListener implements AdapterView.OnItemClickListener
 
   @Override
   public void onClick(View v) {
-    if(v.getId() == R.id.ll_back_folder){
+    if(v.getId() == R.id.ll_back_playlist){
       List<Object> itemList = new ArrayList<>();;
       itemList.addAll(playListFragment.playlistListManager.getAllPlaylists());
       setAdapter(itemList);

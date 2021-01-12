@@ -273,21 +273,25 @@ public class DataSourceSingleton {
     //TODO
     public List<Playlist> getAllPlaylists() {
         List<Playlist> playlists = new ArrayList<Playlist>();
-        playlists.add(new Playlist("STUB",new ArrayList<Song>(0)));
+        List<Song> songlist = new ArrayList<>();
+        songlist.add(new Song("EXAMPLE1","EXAMPLEARTIST1","EXAMPLEURL1",0));
+        songlist.add(new Song("EXAMPLE2","EXAMPLEARTIST2","EXAMPLEURL2",0));
+
+        playlists.add(new Playlist("EXAMPLE",songlist));
         return playlists;
     }
 
     //TODO
     public List<Song> getAllFavorites() {
         ArrayList<Song> songList = new ArrayList<>();
-        songList.add(new Song("STUB","STUB","STUB",0));
+        songList.add(new Song("EXAMPLE","EXAMPLEARTIST","EXAMPLEURL",0));
         return songList;
     }
 
     //TODO
     public List<Radio> getAllRadios() {
         ArrayList<Radio> radioList = new ArrayList<>();
-        radioList.add(new Radio("STUB","STUB"));
-        return new ArrayList<Radio>();
+        radioList.add(new Radio("EXAMPLE","EXAMPLEURL"));
+        return radioList;
     }
 }

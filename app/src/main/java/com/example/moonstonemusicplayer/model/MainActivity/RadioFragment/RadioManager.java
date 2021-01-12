@@ -14,7 +14,7 @@ public class RadioManager {
   private Context context;
   //private DataSource dataSource;
 
-  private List<Radio> radiolists;
+  private List<Radio> radiolists = new ArrayList<>();
 
   public RadioManager(Context baseContext) {
     this.context = baseContext;
@@ -29,7 +29,7 @@ public class RadioManager {
 
   }
 
-  public List<Radio> getAllRadios(String name){
+  public List<Radio> getAllRadios(){
     return this.radiolists;
   }
 }

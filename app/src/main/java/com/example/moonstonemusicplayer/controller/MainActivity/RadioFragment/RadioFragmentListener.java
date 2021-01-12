@@ -8,28 +8,29 @@ import android.widget.AdapterView;
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.MainActivity.PlaylistFragment.PlaylistListAdapter;
 import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.Playlist;
+import com.example.moonstonemusicplayer.model.MainActivity.RadioFragment.Radio;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import com.example.moonstonemusicplayer.view.PlayListActivity;
 import com.example.moonstonemusicplayer.view.ui.main.PlayListFragment;
+import com.example.moonstonemusicplayer.view.ui.main.RadioFragment;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class RadioFragmentListener implements AdapterView.OnItemClickListener, View.OnClickListener {
+public class RadioFragmentListener implements AdapterView.OnItemClickListener {
   private static final String TAG = RadioFragmentListener.class.getSimpleName();
   private static final boolean DEBUG = false;
-  public static final String PLAYLISTINDEXEXTRA = "playlistextra";
+  public static final String RADIOLISTINDEXEXTRA = "radiolistextra";
 
-  private PlayListFragment playListFragment;
-  private PlaylistListAdapter playlistListAdapter;
+  private RadioFragment radioFragment;
+  private RadioListAdapter radioListAdapter;
 
-  private static Playlist Playlist;
+  private static List<Radio> Radiolist;
 
-  public RadioFragmentListener(PlayListFragment playListFragment) {
-    this.playListFragment = playListFragment;
-    List<Object> playlists = new ArrayList<>();
-    playlists.addAll(playListFragment.playlistListManager.getAllPlaylists());
-    setAdapter(playlists);
+  public RadioFragmentListener(RadioFragment radioFragment) {
+    this.radioFragment = radioFragment;
+    List<Radio> radios = radioFragment.radioManager.getAllRadios();
+    setAdapter(radios);
   }
 
   @Override
@@ -37,46 +38,32 @@ public class RadioFragmentListener implements AdapterView.OnItemClickListener, V
     if(DEBUG)Log.d(TAG,"\n\n\n\n\n");
 
     //set back text
-    Object clickItem = playlistListAdapter.getItem(position);
-    if(clickItem != null) {
-      if(clickItem instanceof Playlist) {
-        List<Object> itemList = new ArrayList<>();;
-        itemList.addAll(((Playlist) clickItem).getPlaylist());
-        setAdapter(itemList);
-        playListFragment.playlistListManager.setCurrentPlaylist((Playlist) clickItem);
-      } else if(clickItem instanceof Song) {
-        startPlaylist(playListFragment.playlistListManager.getCurrentPlaylist(),position);
-      } else { }
+    Radio radio = radioListAdapter.getItem(position);
+    if(radio != null) {
+      if(radio instanceof Radio) {
+        startRadiolist(radioFragment.radioManager.getAllRadios(),position);
+      } else { Log.e(TAG,"radiolist contains non radio");}
     }
   }
 
-  private void setAdapter(List<Object> itemList){
-    playlistListAdapter = new PlaylistListAdapter(playListFragment.getContext(),itemList);
-    playListFragment.lv_playlist.setAdapter(playlistListAdapter);
+  private void setAdapter(List<Radio> radiolist){
+    radioListAdapter = new RadioListAdapter(radioFragment.getContext(),radiolist);
+    radioFragment.lv_radiolist.setAdapter(radioListAdapter);
   }
 
-  @Override
-  public void onClick(View v) {
-    if(v.getId() == R.id.ll_back_folder){
-      List<Object> itemList = new ArrayList<>();;
-      itemList.addAll(playListFragment.playlistListManager.getAllPlaylists());
-      setAdapter(itemList);
-      playListFragment.playlistListManager.setCurrentPlaylist(null);
-    }
-  }
 
-  /** starts playlistactivity with selected songlist; playlistactivity grabs songlist by calling getPlaylistSonglist*/
-  public void startPlaylist(Playlist playlist, int song_index){
-    Playlist = new Playlist(playlist.getName(),playlist.getPlaylist());
-    Intent intent = new Intent(playListFragment.getActivity(), PlayListActivity.class);
-    intent.putExtra(PLAYLISTINDEXEXTRA,song_index);
-    playListFragment.startActivity(intent);
+  /** starts playlistactivity with selected radiolist; playlistactivity grabs radiolist by calling getRadiolist*/
+  public void startRadiolist(List<Radio> radiolist, int radioPosition){
+    Radiolist = new ArrayList<>(radiolist);
+    Intent intent = new Intent(radioFragment.getActivity(), PlayListActivity.class);
+    intent.putExtra(RADIOLISTINDEXEXTRA,radioPosition);
+    radioFragment.startActivity(intent);
   }
 
   /** used by playlistactivity to get songs to play*/
-  public static Song[] getPlaylistSonglist(){
-    Song[] playlistCopy = Playlist.getPlaylist().toArray(new Song[Playlist.getPlaylist().size()]);
-    Playlist = null;
-    return playlistCopy;
+  public static Radio[] getRadiolist(){
+    Radio[] radiolistCopy = Radiolist.toArray(new Radio[Radiolist.size()]);
+    Radiolist = null;
+    return radiolistCopy;
   }
 }
