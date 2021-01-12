@@ -11,40 +11,21 @@ import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 public class DataSourceSingleton {
 
-    tabelle playlist
 
-    playlistname | song
-    -------------+--------
-    rock         | alpha ...
-    rock         | waf
-    metal        | bfmv 1
-    ....
-
-
-
-    tabelle ordner/song
-
-    ordner_path       | name |  typ
-    ------------------+------+------
-    0/Music           | Music| folder
-    0/Music/bla.mp3   | bla  | song
-    0/Music/blub.mp3  | blub | song
 
     private static DataSourceSingleton instance;
 
     //Angabe Klassenname für spätere LogAusgaben
     private static final String LOG_TAG = DataSourceSingleton.class.getSimpleName();
-    private static final int minDuration = 60000;
+    private static final int minSongDuration = 60000;
 
     //Variablendeklaration
     private DBHelper DBHelper;
     private static SQLiteDatabase databaseLocalSongs;
 
-    private String[] columns = {
+    private String[] columnsSonglist = {
             DBHelper.COLUMN_ID,
             DBHelper.COLUMN_TITLE,
             DBHelper.COLUMN_ARTIST,
@@ -125,7 +106,7 @@ public class DataSourceSingleton {
 
             //Zeiger auf gerade eingefügtes Element
             Cursor cursor = databaseLocalSongs.query(DBHelper.TABLE_SONG_LIST,
-                columns,
+                columnsSonglist,
                 DBHelper.COLUMN_ID + " = " + insertID,
                 null,null,null,null);
 
@@ -160,7 +141,7 @@ public class DataSourceSingleton {
 
         //Zeiger auf gerade eingefügtes Element
         Cursor cursor = databaseLocalSongs.query(DBHelper.TABLE_SONG_LIST,
-                columns,
+                columnsSonglist,
                 DBHelper.COLUMN_ID + " = " + insertID,
                 null,null,null,null);
 
@@ -227,7 +208,7 @@ public class DataSourceSingleton {
         String query = "SELECT * FROM "+ DBHelper.TABLE_SONG_LIST+" WHERE ("+
             DBHelper.COLUMN_TITLE+" LIKE \'"+"%"+searchterm+"%"+"\' OR "+ // search column for match containing substring searchterm (% is wildcard)
             DBHelper.COLUMN_ARTIST+" LIKE \'"+"%"+searchterm+"%"+"\') AND ("+
-            DBHelper.COLUMN_DURATION+" >= "+minDuration+")";
+            DBHelper.COLUMN_DURATION+" >= "+ minSongDuration +")";
 
             /* OR "+
             DBHelperLocalSongs.COLUMN_GENRE+" LIKE \'"+"%"+searchterm+"%"+"\' OR "+

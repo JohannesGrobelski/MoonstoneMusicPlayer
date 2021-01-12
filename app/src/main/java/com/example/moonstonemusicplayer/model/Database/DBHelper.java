@@ -9,12 +9,33 @@ import androidx.annotation.NonNull;
 
 public class DBHelper extends SQLiteOpenHelper {
 
+    /**
+     *  TODO: tabelle playlist
+     *
+     *     playlistname | song
+     *     -------------+--------
+     *     rock         | alpha ...
+     *     rock         | waf
+     *     metal        | bfmv 1
+     *     ....
+     *
+     *
+     *
+     *     tabelle ordner/song
+     *
+     *     ordner_path       | name |  typ
+     *     ------------------+------+------
+     *     0/Music           | Music| folder
+     *     0/Music/bla.mp3   | bla  | song
+     *     0/Music/blub.mp3  | blub | song
+     */
+
     //Angabe Klassenname für spätere Log-Ausgaben (vereinfacht das Auffinden in der Konsole)
     private static final boolean DEBUG = false;
     private static final String LOG_TAG = DBHelper.class.getSimpleName();
 
     ///Variable für den Datenbanknamen
-    private static final String DB_NAME = "song_list.db3";
+    private static final String DB_NAME = "music_db.db3";
 
     //Variable für die Datenbank-Version (Änderung bei Upgrade => DB neu anlegen)
     private static final int DB_VERSION = 1;
@@ -34,7 +55,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String COLUMN_MEANING = "Meaning";
 
     //Create-Statement
-    private static final String SQL_CREATE =
+    private static final String SQL_CREATE_TABLE_SONG =
             "CREATE TABLE " + TABLE_SONG_LIST +
                     "(" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     COLUMN_TITLE + " TEXT NOT NULL, " +
@@ -59,7 +80,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         try {
             if(DEBUG)Log.d(LOG_TAG,"DBHelper hat die Datenbank: "+getDatabaseName()+" erzeugt.");
-            db.execSQL(SQL_CREATE);
+            db.execSQL(SQL_CREATE_TABLE_SONG);
         } catch (Exception e){
             if(DEBUG)Log.d(LOG_TAG,"Fehler beim anlegen: "+e.getMessage());
         }

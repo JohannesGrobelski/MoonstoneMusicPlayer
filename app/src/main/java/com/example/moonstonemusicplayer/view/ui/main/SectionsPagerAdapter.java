@@ -10,6 +10,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.example.moonstonemusicplayer.R;
+import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.PlayList;
 
 
 /**
@@ -19,10 +20,10 @@ import com.example.moonstonemusicplayer.R;
 public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
   @StringRes
-  private static final int[] TAB_TITLES = new int[]{R.string.tab_playlists, R.string.tab_folders};
+  private static final int[] TAB_TITLES = new int[]{R.string.tab_folders,R.string.tab_playlists,R.string.tab_favorites,R.string.tab_radios};
   private final Context mContext;
 
-  Fragment[] fragments = new Fragment[2];
+  Fragment[] fragments = new Fragment[4];
 
   public SectionsPagerAdapter(Context context, FragmentManager fm) {
     super(fm);
@@ -34,12 +35,17 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     // getItem is called to instantiate the fragment for the given page.
     // Return a PlaceholderFragment (defined as a static inner class below).
     if(position == 0){
-      Log.d("SectionPager","getItem: "+position);
-      fragments[0] = PlayListFragment.newInstance(position + 1);
+      fragments[0] = FolderFragment.newInstance(position + 1);
       return fragments[0];
     } else if(position == 1){
-      fragments[1] = FolderFragment.newInstance(position + 1);
+      fragments[1] = PlayListFragment.newInstance(position + 1);
       return fragments[1];
+    } else if(position == 2){
+      fragments[2] = FavoritesFragment.newInstance(position + 1);
+      return fragments[2];
+    } else if(position == 3){
+      fragments[3] = RadioFragment.newInstance(position + 1);
+      return fragments[3];
     }
     return null;
   }
@@ -54,7 +60,6 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
   @Override
   public int getCount() {
-    // Show 2 total pages.
-    return 2;
+    return fragments.length;
   }
 }
