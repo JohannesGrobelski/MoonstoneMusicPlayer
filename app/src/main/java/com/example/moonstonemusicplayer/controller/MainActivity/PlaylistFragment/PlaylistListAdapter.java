@@ -20,6 +20,7 @@ import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 
 import java.util.List;
 
+/** describes how playlists and the songs in it are displayed in listview*/
 public class PlaylistListAdapter extends ArrayAdapter<Object> {
 
   private List<Object> playlistSongList;
@@ -36,19 +37,19 @@ public class PlaylistListAdapter extends ArrayAdapter<Object> {
   @NonNull
   @Override
   public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-    Song aktuellerSong = null; Playlist aktuellePlaylist = null;
-    if(playlistSongList.get(position) instanceof Song){
-      aktuellerSong = ((Song) playlistSongList.get(position));
-    } else {
-      aktuellePlaylist = ((Playlist) playlistSongList.get(position));
-    }
-
     View rowView;
     if(convertView != null){
       rowView = convertView;
     } else {
       rowView = layoutInflater.inflate(R.layout.item_row_layout, parent, false);
     }
+
+    Song aktuellerSong = null; Playlist aktuellePlaylist = null;
+    if(playlistSongList.get(position) instanceof Song){
+      aktuellerSong = ((Song) playlistSongList.get(position));
+    } else if(playlistSongList.get(position) instanceof Playlist){
+      aktuellePlaylist = ((Playlist) playlistSongList.get(position));
+    } else {return rowView;}
 
     //init the views of songRowView
     TextView tv_playlistSongItem = rowView.findViewById(R.id.tv_item);
@@ -65,6 +66,13 @@ public class PlaylistListAdapter extends ArrayAdapter<Object> {
       tv_playlistSongItem.setText(aktuellerSong.getName());
     }
     return rowView;
+  }
+
+  public Object getItem(int index){
+    if(index >= 0 && index <= playlistSongList.size()){
+      return playlistSongList.get(index);
+    }
+    return null;
   }
 
 }

@@ -138,7 +138,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/tv_name_radio"
+                android:id="@+id/tv_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -151,7 +151,7 @@
                 android:textSize="15sp" />
 
             <TextView
-                android:id="@+id/tv_artist_song"
+                android:id="@+id/tv_artist"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"

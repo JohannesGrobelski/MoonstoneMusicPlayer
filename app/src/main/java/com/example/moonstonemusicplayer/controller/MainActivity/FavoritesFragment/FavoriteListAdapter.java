@@ -43,9 +43,9 @@ public class FavoriteListAdapter extends ArrayAdapter<Song> {
 
     //init the views of songRowView
     LinearLayout ll_song_background = rowView.findViewById(R.id.ll_song_background);
-    TextView tv_title = rowView.findViewById(R.id.tv_name);
-    TextView tv_artist = rowView.findViewById(R.id.tv_artist);
-    TextView tv_duration = rowView.findViewById(R.id.tv_duration);
+    TextView tv_title = rowView.findViewById(R.id.tv_name_song);
+    TextView tv_artist = rowView.findViewById(R.id.tv_artist_song);
+    TextView tv_duration = rowView.findViewById(R.id.tv_duration_song);
 
     //set the views of songRowView
     tv_title.setText(aktuellerSong.getName());

@@ -3,21 +3,21 @@ package com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment;
 import android.content.Context;
 
 import com.example.moonstonemusicplayer.model.Database.DataSourceSingleton;
-import com.example.moonstonemusicplayer.model.MainActivity.FolderFragment.Folder;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PlaylistManager {
+/** saves and loads playlists and contains the current (displayed) playlist in playlistfragment*/
+public class PlaylistListManager {
 
-  private static final String TAG = PlaylistManager.class.getSimpleName();
+  private static final String TAG = PlaylistListManager.class.getSimpleName();
   private Context context;
   //private DataSource dataSource;
 
   private Playlist currentPlaylist;
   private List<Playlist> playlists;
 
-  public PlaylistManager(Context baseContext) {
+  public PlaylistListManager(Context baseContext) {
     this.context = baseContext;
     loadPlaylistsFromDB(baseContext);
   }
@@ -27,14 +27,19 @@ public class PlaylistManager {
     if(context != null){
       this.playlists.addAll(DataSourceSingleton.getInstance(context).getAllPlaylists());
     }
-
   }
 
-  public Playlist getPlaylists(String name){
+
+
+  public Playlist getPlaylist(String name){
     for(Playlist playList: this.playlists){
       if(playList.name.equals(name))return playList;
     }
     return null;
+  }
+
+  public List<Playlist> getAllPlaylists(){
+    return this.playlists;
   }
 
   public List<String> getPlaylistNames(){

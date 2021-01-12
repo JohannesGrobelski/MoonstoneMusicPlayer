@@ -60,12 +60,8 @@ public class FolderFragment extends Fragment {
   @Override
   public void onAttach(@NonNull Context context) {
     super.onAttach(context);
-    if(this.getContext() != null){
-      folderManager = new FolderManager(this.getContext());
-      loadMusicAsFolders();
-    } else {
-      Log.e(TAG,"context null");
-    }
+    folderManager = new FolderManager(this.getContext());
+    loadMusicAsFolders();
   }
 
   /**

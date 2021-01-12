@@ -13,7 +13,7 @@
         android:text="favorites" />
 
     <ListView
-        android:id="@+id/lv_radio"
+        android:id="@+id/lv_favorites"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 </LinearLayout>

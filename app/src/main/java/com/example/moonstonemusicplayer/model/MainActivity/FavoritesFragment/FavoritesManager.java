@@ -32,4 +32,6 @@ public class FavoritesManager {
   public List<Song> getFavorites(){
    return this.favorites;
   }
+
+
 }

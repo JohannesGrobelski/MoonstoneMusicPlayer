@@ -36,19 +36,21 @@ public class FolderListAdapter extends ArrayAdapter<Object> {
   @NonNull
   @Override
   public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-    Song aktuellerSong = null; Folder aktuellerFolder = null;
-    if(folderSongList.get(position) instanceof Song){
-      aktuellerSong = ((Song) folderSongList.get(position));
-    } else {
-      aktuellerFolder = ((Folder) folderSongList.get(position));
-    }
-
     View rowView;
     if(convertView != null){
       rowView = convertView;
     } else {
       rowView = layoutInflater.inflate(R.layout.item_row_layout, parent, false);
     }
+
+    Song aktuellerSong = null; Folder aktuellerFolder = null;
+    if(folderSongList.get(position) instanceof Song){
+      aktuellerSong = ((Song) folderSongList.get(position));
+    } else if(folderSongList.get(position) instanceof Folder){
+      aktuellerFolder = ((Folder) folderSongList.get(position));
+    } else {return rowView;}
+
+
 
     //init the views of songRowView
     TextView tv_folderSongItem = rowView.findViewById(R.id.tv_item);

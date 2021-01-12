@@ -17,6 +17,7 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
   private static final String TAG = FolderFragmentListener.class.getSimpleName();
   private static final boolean DEBUG = false;
   private final FolderFragment folderFragment;
+  private FolderListAdapter folderListAdapter;
 
   public FolderFragmentListener(FolderFragment folderFragment) {
     this.folderFragment = folderFragment;
@@ -64,7 +65,8 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
     List<Object> children = new ArrayList<>();
     if(folder.getChildren_folders()!=null)children.addAll(Arrays.asList(folder.getChildren_folders()));
     if(folder.getChildren_songs()!=null)children.addAll(Arrays.asList(folder.getChildren_songs()));
-    folderFragment.lv_folderList.setAdapter(new FolderListAdapter(folderFragment.getContext(),children));
+    folderListAdapter = new FolderListAdapter(folderFragment.getContext(),children);
+    folderFragment.lv_folderList.setAdapter(folderListAdapter);
   }
 
   @Override

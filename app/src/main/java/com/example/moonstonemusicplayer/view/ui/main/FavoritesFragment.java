@@ -1,15 +1,23 @@
 package com.example.moonstonemusicplayer.view.ui.main;
 
+import android.content.Context;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
 import com.example.moonstonemusicplayer.R;
+import com.example.moonstonemusicplayer.controller.MainActivity.FavoritesFragment.FavoriteFragmentListener;
+import com.example.moonstonemusicplayer.controller.MainActivity.FavoritesFragment.FavoriteListAdapter;
+import com.example.moonstonemusicplayer.model.MainActivity.FavoritesFragment.FavoritesManager;
+import com.example.moonstonemusicplayer.model.MainActivity.FolderFragment.FolderManager;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -23,6 +31,11 @@ public class FavoritesFragment extends Fragment {
   private static final String ARG_SECTION_NUMBER = "section_number";
   private PageViewModel pageViewModel;
 
+  public FavoritesManager favoritesManager;
+  FavoriteListAdapter favoriteListAdapter;
+  FavoriteFragmentListener favoriteFragmentListener;
+
+  public ListView lv_favorites;
 
   public FavoritesFragment() {
     // Required empty public constructor
@@ -58,7 +71,19 @@ public class FavoritesFragment extends Fragment {
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
-    // Inflate the layout for this fragment
-    return inflater.inflate(R.layout.fragment_favorites, container, false);
+
+    View rootView = inflater.inflate(R.layout.fragment_favorites, container, false);
+
+    lv_favorites = rootView.findViewById(R.id.lv_favorites);
+    favoriteFragmentListener = new FavoriteFragmentListener(this);
+
+    lv_favorites.setOnItemClickListener(favoriteFragmentListener);
+    return rootView;
+  }
+
+  @Override
+  public void onAttach(@NonNull Context context) {
+    super.onAttach(context);
+    favoritesManager = new FavoritesManager(context);
   }
 }
