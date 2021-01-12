@@ -44,7 +44,7 @@ public class MainActivityListener {
     switch (item.getItemId()){
       case R.id.mi_loadLocaleAudioFile: {
         if(fragments != null && fragments[1] != null){
-          ((FolderFragment) fragments[1]).loadMusicNew();
+          ((FolderFragment) fragments[0]).loadMusicNew();
         } else {
           Log.e(TAG,"fragment null");
         }
@@ -52,7 +52,7 @@ public class MainActivityListener {
         break;
       }
       case R.id.miDeleteAllAudioFiles: {
-        ((FolderFragment) fragments[1]).loadMusicNew();
+
         break;
       }
     }

@@ -11,13 +11,9 @@ import com.example.moonstonemusicplayer.model.MainActivity.RadioFragment.Radio;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class DataSourceSingleton {
-
-
-
     private static DataSourceSingleton instance;
 
     //Angabe Klassenname für spätere LogAusgaben
@@ -26,18 +22,25 @@ public class DataSourceSingleton {
 
     //Variablendeklaration
     private DBHelper DBHelper;
-    private static SQLiteDatabase databaseLocalSongs;
+    private static SQLiteDatabase database_music;
+
+
+    private String[] columnsPlaylist = {
+            DBHelper.PLAYLIST_COLUMN_ID,
+            DBHelper.PLAYLIST_COLUMN_NAME,
+            DBHelper.PLAYLIST_COLUMN_SONG_URI
+    };
 
     private String[] columnsSonglist = {
-            DBHelper.COLUMN_ID,
-            DBHelper.COLUMN_TITLE,
-            DBHelper.COLUMN_ARTIST,
-            DBHelper.COLUMN_URI,
-            DBHelper.COLUMN_DURATION,
-            DBHelper.COLUMN_LAST_POSITION,
-            DBHelper.COLUMN_GENRE,
-            DBHelper.COLUMN_LYRICS,
-            DBHelper.COLUMN_MEANING
+            DBHelper.SONG_COLUMN_ID,
+            DBHelper.SONG_COLUMN_TITLE,
+            DBHelper.SONG_COLUMN_ARTIST,
+            DBHelper.SONG_COLUMN_URI,
+            DBHelper.SONG_COLUMN_DURATION,
+            DBHelper.SONG_COLUMN_LAST_POSITION,
+            DBHelper.SONG_COLUMN_GENRE,
+            DBHelper.SONG_COLUMN_LYRICS,
+            DBHelper.SONG_COLUMN_MEANING
     };
 
     private DataSourceSingleton(Context context){
@@ -47,14 +50,14 @@ public class DataSourceSingleton {
 
     private void open_writable(){
         Log.d(LOG_TAG, "Eine schreibende Referenz auf die DB wird jetzt angefragt.");
-        databaseLocalSongs = DBHelper.getWritableDatabase();
-        Log.d(LOG_TAG, "Datenbank-Referenz erhalten, Pfad zur Datenbank: "+ databaseLocalSongs.getPath());
+        database_music = DBHelper.getWritableDatabase();
+        Log.d(LOG_TAG, "Datenbank-Referenz erhalten, Pfad zur Datenbank: "+ database_music.getPath());
     }
 
     private void open_readable(){
         Log.d(LOG_TAG, "Eine lesende Referenz auf die DB wird jetzt angefragt.");
-        databaseLocalSongs = DBHelper.getReadableDatabase();
-        Log.d(LOG_TAG, "Datenbank-Referenz erhalten, Pfad zur Datenbank: "+ databaseLocalSongs.getPath());
+        database_music = DBHelper.getReadableDatabase();
+        Log.d(LOG_TAG, "Datenbank-Referenz erhalten, Pfad zur Datenbank: "+ database_music.getPath());
     }
 
     private void close_db(){
@@ -62,17 +65,19 @@ public class DataSourceSingleton {
         DBHelper.close();
     }
 
+
+
     private Song cursorToSong(Cursor cursor){
         //get Indexes
-        int idIndex = cursor.getColumnIndex(DBHelper.COLUMN_ID);
-        int idTitle = cursor.getColumnIndex(DBHelper.COLUMN_TITLE);
-        int idArtist = cursor.getColumnIndex(DBHelper.COLUMN_ARTIST);
-        int idURI = cursor.getColumnIndex(DBHelper.COLUMN_URI);
-        int idDuration = cursor.getColumnIndex(DBHelper.COLUMN_DURATION);
-        int idLastPosition = cursor.getColumnIndex(DBHelper.COLUMN_LAST_POSITION);
-        int idGenre = cursor.getColumnIndex(DBHelper.COLUMN_GENRE);
-        int idLyrics = cursor.getColumnIndex(DBHelper.COLUMN_LYRICS);
-        int idMeaning = cursor.getColumnIndex(DBHelper.COLUMN_MEANING);
+        int idIndex = cursor.getColumnIndex(DBHelper.SONG_COLUMN_ID);
+        int idTitle = cursor.getColumnIndex(DBHelper.SONG_COLUMN_TITLE);
+        int idArtist = cursor.getColumnIndex(DBHelper.SONG_COLUMN_ARTIST);
+        int idURI = cursor.getColumnIndex(DBHelper.SONG_COLUMN_URI);
+        int idDuration = cursor.getColumnIndex(DBHelper.SONG_COLUMN_DURATION);
+        int idLastPosition = cursor.getColumnIndex(DBHelper.SONG_COLUMN_LAST_POSITION);
+        int idGenre = cursor.getColumnIndex(DBHelper.SONG_COLUMN_GENRE);
+        int idLyrics = cursor.getColumnIndex(DBHelper.SONG_COLUMN_LYRICS);
+        int idMeaning = cursor.getColumnIndex(DBHelper.SONG_COLUMN_MEANING);
 
         //get values from indezes
         int index = cursor.getInt(idIndex);
@@ -89,28 +94,57 @@ public class DataSourceSingleton {
         return new Song(index,title,artist,uri,duration,lastPosition,genre,lyrics,meaning);
     }
 
+    private Song getSongByID(String ID){
+        Song song = null;
+        String query = "SELECT * FROM "+ DBHelper.TABLE_SONG_LIST+
+                " WHERE "+ DBHelper.SONG_COLUMN_ID+" = "+ID+")";
+
+        open_readable();
+        //Zeiger auf die Einträge der Tabelle
+        Cursor cursor = database_music.rawQuery(query,null);
+        //Wenn Cursor beim ersten Eintrag steht
+        if(cursor.moveToNext()){
+            do{
+                int index = cursor.getInt(0);
+                String title = cursor.getString(1);
+                String artist = cursor.getString(2);
+                String uri = cursor.getString(3);
+                int duration = cursor.getInt(4);
+                int lastPosition = cursor.getInt(5);
+                String genre = cursor.getString(6);
+                String lyrics = cursor.getString(7);
+                String meaning = cursor.getString(8);
+
+                song = new Song(index,title,artist,uri,duration,lastPosition,genre,lyrics,meaning);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        close_db();
+        return song;
+    }
+
     List<Song> insertSongList(List<Song> songList){
         //öffnen der DB
         open_writable();
         for(Song inputSong:songList){
             //Anlegen von Wertepaaren zur Übergabe in Insert-Methode
             ContentValues values = new ContentValues();
-            values.put(DBHelper.COLUMN_TITLE, inputSong.getName());
-            values.put(DBHelper.COLUMN_ARTIST, inputSong.getArtist());
-            values.put(DBHelper.COLUMN_URI, inputSong.getURI());
-            values.put(DBHelper.COLUMN_DURATION, inputSong.getDuration_ms());
-            values.put(DBHelper.COLUMN_LAST_POSITION, inputSong.getLastPosition());
-            values.put(DBHelper.COLUMN_GENRE, inputSong.getGenre());
-            values.put(DBHelper.COLUMN_LYRICS, inputSong.getLyrics());
-            values.put(DBHelper.COLUMN_MEANING, inputSong.getMeaning());
+            values.put(DBHelper.SONG_COLUMN_TITLE, inputSong.getName());
+            values.put(DBHelper.SONG_COLUMN_ARTIST, inputSong.getArtist());
+            values.put(DBHelper.SONG_COLUMN_URI, inputSong.getURI());
+            values.put(DBHelper.SONG_COLUMN_DURATION, inputSong.getDuration_ms());
+            values.put(DBHelper.SONG_COLUMN_LAST_POSITION, inputSong.getLastPosition());
+            values.put(DBHelper.SONG_COLUMN_GENRE, inputSong.getGenre());
+            values.put(DBHelper.SONG_COLUMN_LYRICS, inputSong.getLyrics());
+            values.put(DBHelper.SONG_COLUMN_MEANING, inputSong.getMeaning());
 
             //Song-Objekt in DB einfügen und ID zurückbekommen
-            long insertID = databaseLocalSongs.insert(DBHelper.TABLE_SONG_LIST, null,values);
+            long insertID = database_music.insert(DBHelper.TABLE_SONG_LIST, null,values);
 
             //Zeiger auf gerade eingefügtes Element
-            Cursor cursor = databaseLocalSongs.query(DBHelper.TABLE_SONG_LIST,
+            Cursor cursor = database_music.query(DBHelper.TABLE_SONG_LIST,
                 columnsSonglist,
-                DBHelper.COLUMN_ID + " = " + insertID,
+                DBHelper.SONG_COLUMN_ID + " = " + insertID,
                 null,null,null,null);
 
             //Zeiger auf Anfang bringen
@@ -124,28 +158,57 @@ public class DataSourceSingleton {
         return songList;
     }
 
+    List<Song> insertPlaylist(Playlist playlist){
+        //öffnen der DB
+        open_writable();
+        for(Song inputSong: playlist.getPlaylist()){
+            //Anlegen von Wertepaaren zur Übergabe in Insert-Methode
+            ContentValues values = new ContentValues();
+            values.put(DBHelper.PLAYLIST_COLUMN_NAME, playlist.getName());
+            values.put(DBHelper.PLAYLIST_COLUMN_SONG_URI, inputSong.getURI());
+
+            //Song-Objekt in DB einfügen und ID zurückbekommen
+            long insertID = database_music.insert(DBHelper.TABLE_PLAYLIST_LIST, null,values);
+
+            //Zeiger auf gerade eingefügtes Element
+            Cursor cursor = database_music.query(DBHelper.TABLE_PLAYLIST_LIST,
+                    columnsSonglist,
+                    DBHelper.SONG_COLUMN_ID + " = " + insertID,
+                    null,null,null,null);
+
+            //Zeiger auf Anfang bringen
+            cursor.moveToFirst();
+
+            //zeiger zerstören
+            cursor.close();
+        }
+        //datenbank schließen und rückgabe des Songobjekts
+        close_db();
+        return playlist.getPlaylist();
+    }
+
     Song insertSong(Song inputSong){
         //Anlegen von Wertepaaren zur Übergabe in Insert-Methode
         ContentValues values = new ContentValues();
-        values.put(DBHelper.COLUMN_TITLE, inputSong.getName());
-        values.put(DBHelper.COLUMN_ARTIST, inputSong.getArtist());
-        values.put(DBHelper.COLUMN_URI, inputSong.getURI());
-        values.put(DBHelper.COLUMN_DURATION, inputSong.getDuration_ms());
-        values.put(DBHelper.COLUMN_LAST_POSITION, inputSong.getLastPosition());
-        values.put(DBHelper.COLUMN_GENRE, inputSong.getGenre());
-        values.put(DBHelper.COLUMN_LYRICS, inputSong.getLyrics());
-        values.put(DBHelper.COLUMN_MEANING, inputSong.getMeaning());
+        values.put(DBHelper.SONG_COLUMN_TITLE, inputSong.getName());
+        values.put(DBHelper.SONG_COLUMN_ARTIST, inputSong.getArtist());
+        values.put(DBHelper.SONG_COLUMN_URI, inputSong.getURI());
+        values.put(DBHelper.SONG_COLUMN_DURATION, inputSong.getDuration_ms());
+        values.put(DBHelper.SONG_COLUMN_LAST_POSITION, inputSong.getLastPosition());
+        values.put(DBHelper.SONG_COLUMN_GENRE, inputSong.getGenre());
+        values.put(DBHelper.SONG_COLUMN_LYRICS, inputSong.getLyrics());
+        values.put(DBHelper.SONG_COLUMN_MEANING, inputSong.getMeaning());
 
         //öffnen der DB
         open_writable();
 
         //Song-Objekt in DB einfügen und ID zurückbekommen
-        long insertID = databaseLocalSongs.insert(DBHelper.TABLE_SONG_LIST, null,values);
+        long insertID = database_music.insert(DBHelper.TABLE_SONG_LIST, null,values);
 
         //Zeiger auf gerade eingefügtes Element
-        Cursor cursor = databaseLocalSongs.query(DBHelper.TABLE_SONG_LIST,
+        Cursor cursor = database_music.query(DBHelper.TABLE_SONG_LIST,
                 columnsSonglist,
-                DBHelper.COLUMN_ID + " = " + insertID,
+                DBHelper.SONG_COLUMN_ID + " = " + insertID,
                 null,null,null,null);
 
         //Zeiger auf Anfang bringen
@@ -164,37 +227,50 @@ public class DataSourceSingleton {
 
     void deleteSong(Song Song){
         open_writable();
-        databaseLocalSongs.delete(DBHelper.TABLE_SONG_LIST, DBHelper.COLUMN_ID+ " = "+Song.getID(),null);
+        database_music.delete(DBHelper.TABLE_SONG_LIST, DBHelper.SONG_COLUMN_ID+ " = "+Song.getID(),null);
+        close_db();
+    }
+
+    void deletePlaylist(Playlist playlist){
+        open_writable();
+        database_music.delete(DBHelper.TABLE_SONG_LIST,
+                DBHelper.PLAYLIST_COLUMN_NAME+ " = "+playlist.getName()
+                ,null);
         close_db();
     }
 
     void updateSong(Song inputSong){
         //Anlegen von Wertepaaren zur Übergabe in Update-Methode
         ContentValues values = new ContentValues();
-        values.put(DBHelper.COLUMN_TITLE, inputSong.getName());
-        values.put(DBHelper.COLUMN_ARTIST, inputSong.getArtist());
-        values.put(DBHelper.COLUMN_URI, inputSong.getURI());
-        values.put(DBHelper.COLUMN_DURATION, inputSong.getDuration_ms());
-        values.put(DBHelper.COLUMN_LAST_POSITION, inputSong.getLastPosition());
-        values.put(DBHelper.COLUMN_GENRE, inputSong.getGenre());
-        values.put(DBHelper.COLUMN_LYRICS, inputSong.getLyrics());
-        values.put(DBHelper.COLUMN_MEANING, inputSong.getMeaning());
+        values.put(DBHelper.SONG_COLUMN_TITLE, inputSong.getName());
+        values.put(DBHelper.SONG_COLUMN_ARTIST, inputSong.getArtist());
+        values.put(DBHelper.SONG_COLUMN_URI, inputSong.getURI());
+        values.put(DBHelper.SONG_COLUMN_DURATION, inputSong.getDuration_ms());
+        values.put(DBHelper.SONG_COLUMN_LAST_POSITION, inputSong.getLastPosition());
+        values.put(DBHelper.SONG_COLUMN_GENRE, inputSong.getGenre());
+        values.put(DBHelper.SONG_COLUMN_LYRICS, inputSong.getLyrics());
+        values.put(DBHelper.SONG_COLUMN_MEANING, inputSong.getMeaning());
 
         open_writable();
-        databaseLocalSongs.update(DBHelper.TABLE_SONG_LIST,values, DBHelper.COLUMN_ID+ " = "+inputSong.getID(),null);
+        database_music.update(DBHelper.TABLE_SONG_LIST,values, DBHelper.SONG_COLUMN_ID+ " = "+inputSong.getID(),null);
         close_db();
+    }
+
+    void updatePlaylist(Playlist playlist){
+        deletePlaylist(playlist);
+        insertPlaylist(playlist);
     }
 
     List<Song> getAllSong(int minduration){
        List<Song> SongList = new ArrayList<>();
-       String query = "SELECT * FROM "+ DBHelper.TABLE_SONG_LIST+" WHERE "+ DBHelper.COLUMN_DURATION+" >= "+minduration;
+       String query = "SELECT * FROM "+ DBHelper.TABLE_SONG_LIST+" WHERE "+ DBHelper.SONG_COLUMN_DURATION+" >= "+minduration;
        return getSongListFromQuery(query);
     }
 
     public void deleteAllSongs(){
         open_writable();
         String query = "DELETE FROM "+ DBHelper.TABLE_SONG_LIST;
-        databaseLocalSongs.execSQL(query);
+        database_music.execSQL(query);
         close_db();
     }
 
@@ -209,9 +285,9 @@ public class DataSourceSingleton {
          */
         //TODO: es wird nur nach titeln gesucht
         String query = "SELECT * FROM "+ DBHelper.TABLE_SONG_LIST+" WHERE ("+
-            DBHelper.COLUMN_TITLE+" LIKE \'"+"%"+searchterm+"%"+"\' OR "+ // search column for match containing substring searchterm (% is wildcard)
-            DBHelper.COLUMN_ARTIST+" LIKE \'"+"%"+searchterm+"%"+"\') AND ("+
-            DBHelper.COLUMN_DURATION+" >= "+ minSongDuration +")";
+            DBHelper.SONG_COLUMN_TITLE+" LIKE \'"+"%"+searchterm+"%"+"\' OR "+ // search column for match containing substring searchterm (% is wildcard)
+            DBHelper.SONG_COLUMN_ARTIST+" LIKE \'"+"%"+searchterm+"%"+"\') AND ("+
+            DBHelper.SONG_COLUMN_DURATION+" >= "+ minSongDuration +")";
 
             /* OR "+
             DBHelperLocalSongs.COLUMN_GENRE+" LIKE \'"+"%"+searchterm+"%"+"\' OR "+
@@ -229,7 +305,7 @@ public class DataSourceSingleton {
 
     public List<Song> sortBy(String var, String mode){
         String query = "SELECT * FROM "+ DBHelper.TABLE_SONG_LIST+
-            " WHERE "+ DBHelper.COLUMN_DURATION+" >= 60000"+
+            " WHERE "+ DBHelper.SONG_COLUMN_DURATION+" >= 60000"+
             " ORDER BY " + var+" "+mode;
         return getSongListFromQuery(query);
     }
@@ -240,7 +316,7 @@ public class DataSourceSingleton {
 
         open_readable();
         //Zeiger auf die Einträge der Tabelle
-        Cursor cursor = databaseLocalSongs.rawQuery(query,null);
+        Cursor cursor = database_music.rawQuery(query,null);
         //Wenn Cursor beim ersten Eintrag steht
         if(cursor.moveToNext()){
             do{

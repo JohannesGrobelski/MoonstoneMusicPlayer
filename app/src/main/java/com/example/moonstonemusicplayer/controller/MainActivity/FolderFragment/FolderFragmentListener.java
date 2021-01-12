@@ -55,7 +55,7 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
       Song[] playlist = folderFragment.selectedFolder.getChildren_songs();
       int song_index = position;
       if(folderFragment.selectedFolder.getChildren_folders() != null){
-        song_index = position - folderFragment.selectedFolder.getChildren_folders().length; //folders are always written before songs
+        song_index -= folderFragment.selectedFolder.getChildren_folders().length; //folders are always written before songs
       }
       folderFragment.startFolderSonglist(playlist,song_index);
     }

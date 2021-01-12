@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,8 +21,8 @@ import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.MainActivity.FavoritesFragment.FavoriteFragmentListener;
 import com.example.moonstonemusicplayer.controller.MainActivity.PlaylistFragment.PlaylistFragmentListener;
 import com.example.moonstonemusicplayer.controller.PlayListActivity.PlayListActivityListener;
+import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.Playlist;
 import com.example.moonstonemusicplayer.view.ui.main.FolderFragment;
-import com.example.moonstonemusicplayer.view.ui.main.PlayListFragment;
 
 import static com.example.moonstonemusicplayer.controller.MainActivity.FavoritesFragment.FavoriteFragmentListener.FAVORITELISTEXTRA;
 
@@ -31,6 +32,8 @@ import static com.example.moonstonemusicplayer.controller.MainActivity.Favorites
   * Delegates the creation and management (itemselection) of the optionsmenu to the  {@link PlayListActivityListener}.
 */
 public class PlayListActivity extends AppCompatActivity {
+  private static final String TAG = PlayListActivity.class.getName();
+  private static final boolean DEBUG = true;
   PlayListActivityListener playListActivityListener;
   public ListView lv_songlist;
 
@@ -60,8 +63,8 @@ public class PlayListActivity extends AppCompatActivity {
     LL_MusicControlls = findViewById(R.id.LL_MusicControlls);
 
     int song_index = 0;
-    if(getIntent().hasExtra(FolderFragment.SONGINDEXEXTRA)){
-      song_index = getIntent().getIntExtra(FolderFragment.SONGINDEXEXTRA,0);
+    if(getIntent().hasExtra(FolderFragment.FOLDERSONGINDEXEXTRA)){
+      song_index = getIntent().getIntExtra(FolderFragment.FOLDERSONGINDEXEXTRA,0);
       playListActivityListener = new PlayListActivityListener(this,FolderFragment.getFolderSonglist(),song_index);
     }
     else if(getIntent().hasExtra(FAVORITELISTEXTRA)){

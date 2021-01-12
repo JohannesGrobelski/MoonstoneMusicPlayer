@@ -70,6 +70,7 @@ public class PlayListActivityListener
      */
 
   public PlayListActivityListener(PlayListActivity playListActivity, Song[] playlist,int starting_song_index) {
+    if(DEBUG)Log.d(TAG,"selected song: "+playlist[starting_song_index].getName());
     this.playListActivity = playListActivity;
     playlistManager = new PlaylistManager(playListActivity.getBaseContext(),playlist);
     bindSongListAdapterToSongListView(playListActivity.lv_songlist);
@@ -379,7 +380,7 @@ public class PlayListActivityListener
     serviceConnection = createServiceConnection();
     Intent playerIntent = new Intent(playListActivity,MediaPlayerService.class);
     if(starting_index != -1){
-      playerIntent.putExtra(MediaPlayerService.STARTING_INDEX,0);
+      playerIntent.putExtra(MediaPlayerService.STARTING_INDEX,starting_index);
     }
 
     //start service
@@ -419,6 +420,7 @@ public class PlayListActivityListener
         //transfer data
         if(DEBUG)Log.d(TAG,"startMediaPlayerService transfer Playlist: "+ playlistManager.getPlayList().size());
         mediaPlayerService.setPlayList(playlistManager.getPlayList());
+        playSong(mediaPlayerService.getCurrentSong());
       }
 
       @Override

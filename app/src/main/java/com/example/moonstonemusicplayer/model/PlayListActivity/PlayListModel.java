@@ -26,6 +26,9 @@ public class PlayListModel {
     }
   }
 
+  public void setCurrentSong(int index) {
+    this.currentSongIndex = index;
+  }
 
   public Song getCurrentSong(){
     return playlist.get(currentSongIndex);

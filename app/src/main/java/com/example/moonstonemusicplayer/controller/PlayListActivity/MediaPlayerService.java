@@ -128,7 +128,9 @@ public class MediaPlayerService extends Service
     Log.d(TAG,"onStartCommand: binder: "+String.valueOf(iBinder==null));
     if(intent.hasExtra(STARTING_INDEX)){
       startIndex = intent.getIntExtra(STARTING_INDEX,0);
+      if(DEBUG)Log.d(TAG,"starting song: "+startIndex);
     }
+
     return super.onStartCommand(intent, flags, startId);
   }
 
@@ -251,8 +253,7 @@ public class MediaPlayerService extends Service
 
   public void playSong(Song song) {
     playListModel.setCurrentSong(song);
-    Toast.makeText(this,"clicked: "+playListModel.getCurrentSong().getName(),Toast.LENGTH_LONG).show();
-
+    //Toast.makeText(this,"clicked: "+playListModel.getCurrentSong().getName(),Toast.LENGTH_LONG).show();
     initMediaPlayer();
   }
 

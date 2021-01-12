@@ -31,10 +31,14 @@ public class LocalSongLoader {
     //go through sd-cards and
     List<Folder> childrenList = new ArrayList<>();
     for(String fileDir: fileDirs){
-      if(new File(fileDir).exists())childrenList.add(findAllAudioFilesAsFolder(fileDir,null));
+      if(new File(fileDir).exists()){
+        Folder child = findAllAudioFilesAsFolder(fileDir,null);
+        if(child != null)childrenList.add(child);
+      }
     }
     Folder rootFolder = new Folder("root", null, childrenList.toArray(new Folder[childrenList.size()]),null);
 
+    Log.d(TAG,rootFolder.toString());
     //set parents of folders (recursively)
     rootFolder.setParentsBelow();
     return rootFolder;
@@ -73,25 +77,23 @@ public class LocalSongLoader {
                   children_song.toArray(new Song[children_song.size()])
               );
             } else {
-              if(DEBUG)Log.d(TAG,"findAllAudioFilesAsFolder empty Dir: "+file.getAbsolutePath());
+              if(DEBUG)Log.e(TAG,"findAllAudioFilesAsFolder empty Dir: "+file.getAbsolutePath());
             }
           } else {
-            if(DEBUG)Log.d(TAG,"findAllAudioFilesAsFolder list files is null: "+file.getName());
+            if(DEBUG)Log.e(TAG,"findAllAudioFilesAsFolder list files is null: "+file.getName());
             return null;
           }
         } else { //file is not a directory
-          if(DEBUG)Log.d(TAG,"findAllAudioFilesAsFolder file is not a dir: "+file.getName());
+          if(DEBUG)Log.e(TAG,"findAllAudioFilesAsFolder file is not a dir: "+file.getName());
           return null;
         }
       } else{ //file does not exist
-        if(DEBUG)Log.d(TAG,"findAllAudioFilesAsFolder file does not exist: "+file.getName());
+        if(DEBUG)Log.e(TAG,"findAllAudioFilesAsFolder file does not exist: "+file.getName());
         return null;
-
       }
     } catch (Exception e){
       if(DEBUG)Log.e(TAG,"findAllAudioFilesAsFolder error: "+e.getMessage());
       if(DEBUG)Log.e(TAG, "findAllAudioFilesAsFolder error: "+String.valueOf(e.getCause()));
-      return null;
     }
     return null;
   }

@@ -31,7 +31,7 @@ import java.util.Arrays;
  * create an instance of this fragment.
  */
 public class FolderFragment extends Fragment {
-  public static final String SONGINDEXEXTRA = "SONG_INDEX";
+  public static final String FOLDERSONGINDEXEXTRA = "SONG_INDEX";
   private static final boolean DEBUG = false;
   FolderFragmentListener folderFragmentListener;
 
@@ -145,7 +145,8 @@ public class FolderFragment extends Fragment {
   public void startFolderSonglist(Song[] playlist, int song_index){
     FolderSonglist = playlist.clone();
     Intent intent = new Intent(getActivity(), PlayListActivity.class);
-    intent.putExtra(SONGINDEXEXTRA,song_index);
+
+    intent.putExtra(FOLDERSONGINDEXEXTRA,song_index);
     startActivity(intent);
   }
 

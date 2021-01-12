@@ -18,10 +18,10 @@ import com.example.moonstonemusicplayer.R;
 public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
   @StringRes
-  private static final int[] TAB_TITLES = new int[]{R.string.tab_folders,R.string.tab_playlists,R.string.tab_favorites,R.string.tab_radios};
+  private static final int[] TAB_TITLES = new int[]{R.string.tab_folders,R.string.tab_playlists,R.string.tab_favorites};
   private final Context mContext;
 
-  Fragment[] fragments = new Fragment[4];
+  Fragment[] fragments = new Fragment[3];
 
   public SectionsPagerAdapter(Context context, FragmentManager fm) {
     super(fm);
@@ -41,10 +41,10 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     } else if(position == 2){
       fragments[2] = FavoritesFragment.newInstance(position + 1);
       return fragments[2];
-    } else if(position == 3){
+    } /*else if(position == 3){
       fragments[3] = RadioFragment.newInstance(position + 1);
       return fragments[3];
-    }
+    }*/
     return null;
   }
 
