@@ -50,7 +50,7 @@ public class PlayListActivity extends AppCompatActivity {
     seekBar = findViewById(R.id.seekBar);
     tv_seekbar_progress = findViewById(R.id.tv_seekbar_progress);
     tv_seekbar_max = findViewById(R.id.tv_seekbar_max);
-    tv_title = findViewById(R.id.tv_title);
+    tv_title = findViewById(R.id.tv_name);
     tv_artist = findViewById(R.id.tv_artist);
     LL_MusicControlls = findViewById(R.id.LL_MusicControlls);
 

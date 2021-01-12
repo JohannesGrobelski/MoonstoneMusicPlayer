@@ -1,4 +1,4 @@
-package com.example.moonstonemusicplayer.controller.PlayListActivity;
+package com.example.moonstonemusicplayer.controller.MainActivity.FavoritesFragment;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -16,13 +16,13 @@ import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 
 import java.util.List;
 
-public class SongListAdapter extends ArrayAdapter<Song> {
+public class FavoriteListAdapter extends ArrayAdapter<Song> {
   private List<Song> songList;
 
   Context context;
   LayoutInflater layoutInflater;
 
-  public SongListAdapter(@NonNull Context context, List<Song> songList) {
+  public FavoriteListAdapter(@NonNull Context context, List<Song> songList) {
     super(context, R.layout.song_row_layout,songList);
     this.songList = songList;
     this.context = context;

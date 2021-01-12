@@ -17,7 +17,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.moonstonemusicplayer.R;
-import com.example.moonstonemusicplayer.controller.MainActivity.FolderFragmentListener;
+import com.example.moonstonemusicplayer.controller.MainActivity.FolderFragment.FolderFragmentListener;
 import com.example.moonstonemusicplayer.model.MainActivity.FolderFragment.Folder;
 import com.example.moonstonemusicplayer.model.MainActivity.FolderFragment.FolderManager;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;

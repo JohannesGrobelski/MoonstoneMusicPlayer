@@ -1,14 +1,12 @@
-package com.example.moonstonemusicplayer.controller.MainActivity;
+package com.example.moonstonemusicplayer.controller.MainActivity.FolderFragment;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -29,7 +27,7 @@ public class FolderListAdapter extends ArrayAdapter<Object> {
   LayoutInflater layoutInflater;
 
   public FolderListAdapter(@NonNull Context context, List<Object> folderSongList) {
-    super(context, R.layout.folder_row_layout,folderSongList);
+    super(context, R.layout.item_row_layout,folderSongList);
     this.folderSongList = folderSongList;
     this.context = context;
     this.layoutInflater = layoutInflater.from(context);
@@ -49,12 +47,12 @@ public class FolderListAdapter extends ArrayAdapter<Object> {
     if(convertView != null){
       rowView = convertView;
     } else {
-      rowView = layoutInflater.inflate(R.layout.folder_row_layout, parent, false);
+      rowView = layoutInflater.inflate(R.layout.item_row_layout, parent, false);
     }
 
     //init the views of songRowView
-    TextView tv_folderSongItem = rowView.findViewById(R.id.tv_folderSongItem);
-    ImageView iv_folderSongItem = rowView.findViewById(R.id.iv_folderSongItem);
+    TextView tv_folderSongItem = rowView.findViewById(R.id.tv_item);
+    ImageView iv_folderSongItem = rowView.findViewById(R.id.iv_item);
     tv_folderSongItem.setTextColor(context.getResources().getColor(R.color.colorPrimary));
     iv_folderSongItem.setColorFilter(ContextCompat.getColor(context, R.color.colorPrimary), android.graphics.PorterDuff.Mode.SRC_IN);
     ImageViewCompat.setImageTintList(iv_folderSongItem, ColorStateList.valueOf(ContextCompat.getColor(context, R.color.colorPrimary)));

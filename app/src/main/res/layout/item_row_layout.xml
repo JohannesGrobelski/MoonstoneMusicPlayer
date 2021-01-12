@@ -2,12 +2,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/LL_background_folder"
+    android:id="@+id/LL_background_item"
     android:layout_width="match_parent"
     android:layout_height="50dp">
 
     <ImageView
-        android:id="@+id/iv_folderSongItem"
+        android:id="@+id/iv_item"
         android:layout_width="100dp"
         android:layout_height="match_parent"
         android:layout_marginStart="15dp"
@@ -21,7 +21,7 @@
         tools:srcCompat="@drawable/ic_music" />
 
     <TextView
-        android:id="@+id/tv_folderSongItem"
+        android:id="@+id/tv_item"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center|center_horizontal|center_vertical"
