@@ -190,6 +190,25 @@ public class DataSourceSingleton {
         return playlist.getPlaylist();
     }
 
+    public void deleteSongToPlaylist(String songUri, String playlistname){
+        //öffnen der DB
+        open_writable();
+
+        //Anlegen von Wertepaaren zur Übergabe in Insert-Methode
+        ContentValues values = new ContentValues();
+        values.put(DBHelper.PLAYLIST_COLUMN_NAME, playlistname);
+        values.put(DBHelper.PLAYLIST_COLUMN_SONG_URI, songUri);
+
+
+
+        //Song-Objekt in DB einfügen und ID zurückbekommen
+        long insertID = database_music.delete(DBHelper.TABLE_PLAYLIST_LIST, DBHelper.PLAYLIST_COLUMN_NAME+" = "+playlistname+" AND "+
+            DBHelper.SONG_COLUMN_URI+" = "+songUri+")",null);
+
+        //datenbank schließen und rückgabe des Songobjekts
+        close_db();
+    }
+
     public void insertSongToPlaylist(String songUri, String playlistname){
         //öffnen der DB
         open_writable();

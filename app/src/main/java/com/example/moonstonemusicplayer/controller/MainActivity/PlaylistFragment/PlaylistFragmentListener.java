@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.AdapterView;
 
 import com.example.moonstonemusicplayer.R;
+import com.example.moonstonemusicplayer.model.Database.DataSourceSingleton;
 import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.Playlist;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import com.example.moonstonemusicplayer.view.PlayListActivity;
@@ -88,7 +89,12 @@ public class PlaylistFragmentListener implements AdapterView.OnItemClickListener
   public boolean onContextItemSelected(MenuItem item) {
     switch (item.getItemId()){
       case R.id.mi_delFromPlaylist: {
-        asd
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        int index = info.position;
+        DataSourceSingleton.getInstance(playListFragment.getContext()).deleteSongToPlaylist(
+            playListFragment.playlistListManager.getCurrentPlaylist().getName(),
+            playListFragment.playlistListManager.getCurrentPlaylist().getPlaylist().get(index).getURI()
+        );
         break;
       }
     }

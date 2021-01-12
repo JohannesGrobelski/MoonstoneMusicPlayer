@@ -95,7 +95,7 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
   public boolean onContextItemSelected(MenuItem item) {
     switch (item.getItemId()){
       case R.id.mi_addToFavorites: {
-        hier weiter machen
+awd
         break;
       }
       case R.id.mi_addToPlaylist:  {
