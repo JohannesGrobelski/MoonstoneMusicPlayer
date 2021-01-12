@@ -6,9 +6,12 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.Playlist;
+import com.example.moonstonemusicplayer.model.MainActivity.RadioFragment.Radio;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class DataSourceSingleton {
@@ -92,7 +95,7 @@ public class DataSourceSingleton {
         for(Song inputSong:songList){
             //Anlegen von Wertepaaren zur Übergabe in Insert-Methode
             ContentValues values = new ContentValues();
-            values.put(DBHelper.COLUMN_TITLE, inputSong.getTitle());
+            values.put(DBHelper.COLUMN_TITLE, inputSong.getName());
             values.put(DBHelper.COLUMN_ARTIST, inputSong.getArtist());
             values.put(DBHelper.COLUMN_URI, inputSong.getURI());
             values.put(DBHelper.COLUMN_DURATION, inputSong.getDuration_ms());
@@ -124,7 +127,7 @@ public class DataSourceSingleton {
     Song insertSong(Song inputSong){
         //Anlegen von Wertepaaren zur Übergabe in Insert-Methode
         ContentValues values = new ContentValues();
-        values.put(DBHelper.COLUMN_TITLE, inputSong.getTitle());
+        values.put(DBHelper.COLUMN_TITLE, inputSong.getName());
         values.put(DBHelper.COLUMN_ARTIST, inputSong.getArtist());
         values.put(DBHelper.COLUMN_URI, inputSong.getURI());
         values.put(DBHelper.COLUMN_DURATION, inputSong.getDuration_ms());
@@ -168,7 +171,7 @@ public class DataSourceSingleton {
     void updateSong(Song inputSong){
         //Anlegen von Wertepaaren zur Übergabe in Update-Methode
         ContentValues values = new ContentValues();
-        values.put(DBHelper.COLUMN_TITLE, inputSong.getTitle());
+        values.put(DBHelper.COLUMN_TITLE, inputSong.getName());
         values.put(DBHelper.COLUMN_ARTIST, inputSong.getArtist());
         values.put(DBHelper.COLUMN_URI, inputSong.getURI());
         values.put(DBHelper.COLUMN_DURATION, inputSong.getDuration_ms());
@@ -267,4 +270,20 @@ public class DataSourceSingleton {
         return instance;
     }
 
+    //TODO
+    public List<Playlist> getAllPlaylists() {
+        List<Playlist> playlists = new ArrayList<Playlist>();
+        playlists.add(new Playlist("STUB",new ArrayList<Song>(0)));
+        return playlists;
+    }
+
+    //TODO
+    public List<Song> getAllFavorites() {
+        return new ArrayList<Song>();
+    }
+
+    //TODO
+    public List<Radio> getAllRadios() {
+        return new ArrayList<Radio>();
+    }
 }

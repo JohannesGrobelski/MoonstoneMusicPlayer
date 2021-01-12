@@ -1,7 +1,6 @@
 package com.example.moonstonemusicplayer.view.ui.main;
 
 import android.content.Context;
-import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
@@ -10,7 +9,6 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.example.moonstonemusicplayer.R;
-import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.PlayList;
 
 
 /**

@@ -4,11 +4,11 @@ import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 
 import java.util.List;
 
-public class PlayList {
+public class Playlist {
   String name = "";
   List<Song> playlist;
 
-  public PlayList(String name, List<Song> playlist) {
+  public Playlist(String name, List<Song> playlist) {
     this.name = name;
     this.playlist = playlist;
   }
