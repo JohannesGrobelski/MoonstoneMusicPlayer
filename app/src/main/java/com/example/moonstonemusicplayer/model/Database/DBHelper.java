@@ -7,11 +7,11 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-class DBHelperLocalSongs extends SQLiteOpenHelper {
+public class DBHelper extends SQLiteOpenHelper {
 
     //Angabe Klassenname für spätere Log-Ausgaben (vereinfacht das Auffinden in der Konsole)
     private static final boolean DEBUG = false;
-    private static final String LOG_TAG = DBHelperLocalSongs.class.getSimpleName();
+    private static final String LOG_TAG = DBHelper.class.getSimpleName();
 
     ///Variable für den Datenbanknamen
     private static final String DB_NAME = "song_list.db3";
@@ -23,15 +23,15 @@ class DBHelperLocalSongs extends SQLiteOpenHelper {
     static final String TABLE_SONG_LIST = "song_list";
 
     //Variablen für die Tabellenspalten
-    static final String COLUMN_ID = "_id";
-    static final String COLUMN_TITLE = "Title";
-    static final String COLUMN_ARTIST = "Artist";
-    static final String COLUMN_URI = "Uri";
-    static final String COLUMN_DURATION = "Duration";
-    static final String COLUMN_LAST_POSITION = "LastPosition";
-    static final String COLUMN_GENRE = "Genre";
-    static final String COLUMN_LYRICS = "Lyrics";
-    static final String COLUMN_MEANING = "Meaning";
+    public static final String COLUMN_ID = "_id";
+    public static final String COLUMN_TITLE = "Title";
+    public static final String COLUMN_ARTIST = "Artist";
+    public static final String COLUMN_URI = "Uri";
+    public static final String COLUMN_DURATION = "Duration";
+    public static final String COLUMN_LAST_POSITION = "LastPosition";
+    public static final String COLUMN_GENRE = "Genre";
+    public static final String COLUMN_LYRICS = "Lyrics";
+    public static final String COLUMN_MEANING = "Meaning";
 
     //Create-Statement
     private static final String SQL_CREATE =
@@ -49,7 +49,7 @@ class DBHelperLocalSongs extends SQLiteOpenHelper {
     //Drop-Statement
     private static final String SQL_DROP = "DROP TABLE IF EXISTS "+TABLE_SONG_LIST;
 
-    public DBHelperLocalSongs(@NonNull Context context) {
+    public DBHelper(@NonNull Context context) {
         super(context, DB_NAME, null, DB_VERSION);
         if(DEBUG)Log.d(LOG_TAG,"DBHelper hat die Datenbank: "+getDatabaseName()+" erzeugt.");
     }

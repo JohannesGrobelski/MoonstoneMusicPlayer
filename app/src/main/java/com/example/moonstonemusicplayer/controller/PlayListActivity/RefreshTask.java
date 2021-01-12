@@ -2,10 +2,10 @@ package com.example.moonstonemusicplayer.controller.PlayListActivity;
 
 import android.os.AsyncTask;
 
-import com.example.moonstonemusicplayer.model.PlayListActivity.MusicManager;
+import com.example.moonstonemusicplayer.model.PlayListActivity.PlaylistManager;
 
-public class RefreshTask extends AsyncTask<MusicManager,Void,Void> {
-  private com.example.moonstonemusicplayer.model.PlayListActivity.MusicManager MusicManager;
+public class RefreshTask extends AsyncTask<PlaylistManager,Void,Void> {
+  private PlaylistManager PlaylistManager;
   private PlayListActivityListener.RefreshTaskListener refreshTaskListener;
 
   public RefreshTask(PlayListActivityListener.RefreshTaskListener refreshTaskListener){
@@ -13,8 +13,8 @@ public class RefreshTask extends AsyncTask<MusicManager,Void,Void> {
   }
 
   @Override
-  protected Void doInBackground(MusicManager... MusicManagers) {
-    this.MusicManager = MusicManagers[0];
+  protected Void doInBackground(PlaylistManager... playlistManagers) {
+    this.PlaylistManager = playlistManagers[0];
     //TODO: this.MusicManager.loadLocalMusic();
     return null;
   }

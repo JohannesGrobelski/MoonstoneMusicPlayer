@@ -22,7 +22,7 @@ public class PlayListModel {
 
   public void setCurrentSong(Song song) {
     for(int i=0; i<playlist.size(); i++){
-      if(song.getID() == playlist.get(i).getID())currentSongIndex = i;
+      if(song.equals(playlist.get(i)))currentSongIndex = i;
     }
   }
 

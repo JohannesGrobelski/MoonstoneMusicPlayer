@@ -10,7 +10,6 @@ import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.media.AudioManager;
-import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
@@ -27,7 +26,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.moonstonemusicplayer.R;
-import com.example.moonstonemusicplayer.model.PlayListActivity.MusicManager;
+import com.example.moonstonemusicplayer.model.PlayListActivity.PlaylistManager;
 import com.example.moonstonemusicplayer.model.PlayListActivity.PlayListModel;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import com.example.moonstonemusicplayer.view.PlayListActivity;
@@ -35,8 +34,8 @@ import com.example.moonstonemusicplayer.view.PlayListActivity;
 
 /** MainActivityListener
  *  Handles input from the User (through Views in {@link PlayListActivity}),
- *  changes the model {@link MusicManager}) according to the input and
- *  and, if necessary, sends messages to the {@link MusicManager}).
+ *  changes the model {@link PlaylistManager}) according to the input and
+ *  and, if necessary, sends messages to the {@link PlaylistManager}).
  */
 public class PlayListActivityListener
     implements AdapterView.OnItemClickListener, View.OnClickListener,
@@ -47,7 +46,7 @@ public class PlayListActivityListener
 
   private final PlayListActivity playListActivity;
 
-  MusicManager musicManager;
+  PlaylistManager playlistManager;
 
   private ServiceConnection serviceConnection;
   private MediaPlayerService mediaPlayerService;
@@ -72,7 +71,7 @@ public class PlayListActivityListener
 
   public PlayListActivityListener(PlayListActivity playListActivity, Song[] playlist,int starting_song_index) {
     this.playListActivity = playListActivity;
-    musicManager = new MusicManager(playListActivity.getBaseContext(),playlist);
+    playlistManager = new PlaylistManager(playListActivity.getBaseContext(),playlist);
     bindSongListAdapterToSongListView(playListActivity.lv_songlist);
     destroyAndCreateNewService(starting_song_index);
   }
@@ -94,7 +93,7 @@ public class PlayListActivityListener
                       songListAdapter.notifyDataSetChanged();
                     }
                   });
-                  refreshTask.execute(musicManager);
+                  refreshTask.execute(playlistManager);
                 }
               })
               .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
@@ -111,27 +110,27 @@ public class PlayListActivityListener
 
 
       case R.id.miDeleteAllAudioFiles: {
-        //musicManager.deleteAllSongs();
+        playlistManager.deleteAllSongs();
         songListAdapter.notifyDataSetChanged();
         break;
       }
       case R.id.miSortTitle: {
-        //musicManager.sortByTitle();
+        playlistManager.sortByTitle();
         songListAdapter.notifyDataSetChanged();
         break;
       }
       case R.id.miSortArtist: {
-        //musicManager.sortByArtist();
+        playlistManager.sortByArtist();
         songListAdapter.notifyDataSetChanged();
         break;
       }
       case R.id.miSortGenre: {
-        //musicManager.sortByGenre();
+        playlistManager.sortByGenre();
         songListAdapter.notifyDataSetChanged();
         break;
       }
       case R.id.miSwitchAscDesc: {
-        //musicManager.reverseList();
+        playlistManager.reverseList();
         songListAdapter.notifyDataSetChanged();
         break;
       }
@@ -158,7 +157,7 @@ public class PlayListActivityListener
   /** plays song that was clicked by user in songlistView*/
   public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
     if(isServiceBound){
-      playSong(musicManager.getDisplayedSongList().get(position));
+      playSong(playlistManager.getDisplayedSongList().get(position));
     }
 
     //destroy searchview and show music controlls, close searchview and close virtual keyboard
@@ -410,16 +409,16 @@ public class PlayListActivityListener
             //transfer playlist from MusicManager to MediaPlayerService; problem: limit of 1MB of data in a Bundle
             //solution: save data in static variable and get it later in service
 
-            if(DEBUG)Log.d(TAG,"startMediaPlayerService create Playlist: "+musicManager.getPlayList().size());
-            if(DEBUG)Log.d(TAG,"startMediaPlayerService transfer Playlist: "+musicManager.getPlayList().size());
-            mediaPlayerService.setPlayList(musicManager.getPlayList());
+            if(DEBUG)Log.d(TAG,"startMediaPlayerService create Playlist: "+ playlistManager.getPlayList().size());
+            if(DEBUG)Log.d(TAG,"startMediaPlayerService transfer Playlist: "+ playlistManager.getPlayList().size());
+            mediaPlayerService.setPlayList(playlistManager.getPlayList());
           }
         });
         Log.d(TAG,"onServiceConnected: binder: "+String.valueOf(binder==null));
         isServiceBound = true;
         //transfer data
-        if(DEBUG)Log.d(TAG,"startMediaPlayerService transfer Playlist: "+musicManager.getPlayList().size());
-        mediaPlayerService.setPlayList(musicManager.getPlayList());
+        if(DEBUG)Log.d(TAG,"startMediaPlayerService transfer Playlist: "+ playlistManager.getPlayList().size());
+        mediaPlayerService.setPlayList(playlistManager.getPlayList());
       }
 
       @Override
@@ -452,7 +451,7 @@ public class PlayListActivityListener
 
   /** bind songlistview to songlistadapter using the songList of musicplayer*/
   private void bindSongListAdapterToSongListView(ListView lv_songlist){
-    songListAdapter = new SongListAdapter(playListActivity,musicManager.getDisplayedSongList());
+    songListAdapter = new SongListAdapter(playListActivity, playlistManager.getDisplayedSongList());
     lv_songlist.setAdapter(songListAdapter);
   }
 
