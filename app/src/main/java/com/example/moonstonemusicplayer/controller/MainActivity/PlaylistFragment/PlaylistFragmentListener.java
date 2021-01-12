@@ -2,6 +2,8 @@ package com.example.moonstonemusicplayer.controller.MainActivity.PlaylistFragmen
 
 import android.content.Intent;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 
@@ -77,5 +79,19 @@ public class PlaylistFragmentListener implements AdapterView.OnItemClickListener
     Song[] playlistCopy = Playlist.getPlaylist().toArray(new Song[Playlist.getPlaylist().size()]);
     Playlist = null;
     return playlistCopy;
+  }
+
+  public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+    playListFragment.getActivity().getMenuInflater().inflate(R.menu.song_context_menu_playlistfrag,menu);
+  }
+
+  public boolean onContextItemSelected(MenuItem item) {
+    switch (item.getItemId()){
+      case R.id.mi_delFromPlaylist: {
+        asd
+        break;
+      }
+    }
+    return true;
   }
 }

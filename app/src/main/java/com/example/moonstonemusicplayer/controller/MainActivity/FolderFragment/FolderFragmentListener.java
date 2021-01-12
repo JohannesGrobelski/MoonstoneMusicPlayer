@@ -89,7 +89,7 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
   }
 
   public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-    folderFragment.getActivity().getMenuInflater().inflate(R.menu.song_context_menu,menu);
+    folderFragment.getActivity().getMenuInflater().inflate(R.menu.song_context_menu_folderfrag_playlistact,menu);
   }
 
   public boolean onContextItemSelected(MenuItem item) {
