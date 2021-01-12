@@ -15,7 +15,7 @@ public class PlaylistListManager {
   //private DataSource dataSource;
 
   private Playlist currentPlaylist;
-  private List<Playlist> playlists;
+  private List<Playlist> playlists = new ArrayList<>();
 
   public PlaylistListManager(Context baseContext) {
     this.context = baseContext;
@@ -28,8 +28,6 @@ public class PlaylistListManager {
       this.playlists.addAll(DataSourceSingleton.getInstance(context).getAllPlaylists());
     }
   }
-
-
 
   public Playlist getPlaylist(String name){
     for(Playlist playList: this.playlists){

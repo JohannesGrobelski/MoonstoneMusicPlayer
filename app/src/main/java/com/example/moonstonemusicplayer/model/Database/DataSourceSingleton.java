@@ -279,11 +279,15 @@ public class DataSourceSingleton {
 
     //TODO
     public List<Song> getAllFavorites() {
-        return new ArrayList<Song>();
+        ArrayList<Song> songList = new ArrayList<>();
+        songList.add(new Song("STUB","STUB","STUB",0));
+        return songList;
     }
 
     //TODO
     public List<Radio> getAllRadios() {
+        ArrayList<Radio> radioList = new ArrayList<>();
+        radioList.add(new Radio("STUB","STUB"));
         return new ArrayList<Radio>();
     }
 }

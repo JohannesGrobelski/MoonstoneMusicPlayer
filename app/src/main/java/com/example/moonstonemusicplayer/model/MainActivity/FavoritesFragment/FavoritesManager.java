@@ -14,7 +14,7 @@ public class FavoritesManager {
   private static final String TAG = FavoritesManager.class.getSimpleName();
   private Context context;
 
-  private List<Song> favorites;
+  private List<Song> favorites = new ArrayList<>();
 
   public FavoritesManager(Context baseContext) {
     this.context = baseContext;

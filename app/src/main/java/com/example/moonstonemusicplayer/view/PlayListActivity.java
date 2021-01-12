@@ -17,10 +17,13 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.example.moonstonemusicplayer.R;
+import com.example.moonstonemusicplayer.controller.MainActivity.FavoritesFragment.FavoriteFragmentListener;
 import com.example.moonstonemusicplayer.controller.MainActivity.PlaylistFragment.PlaylistFragmentListener;
 import com.example.moonstonemusicplayer.controller.PlayListActivity.PlayListActivityListener;
 import com.example.moonstonemusicplayer.view.ui.main.FolderFragment;
 import com.example.moonstonemusicplayer.view.ui.main.PlayListFragment;
+
+import static com.example.moonstonemusicplayer.controller.MainActivity.FavoritesFragment.FavoriteFragmentListener.FAVORITELISTEXTRA;
 
 /** MainActivity
   * Defines the Mainscreen auf the app.
@@ -58,9 +61,14 @@ public class PlayListActivity extends AppCompatActivity {
 
     int song_index = 0;
     if(getIntent().hasExtra(FolderFragment.SONGINDEXEXTRA)){
-       song_index = getIntent().getIntExtra(FolderFragment.SONGINDEXEXTRA,0);
-        playListActivityListener = new PlayListActivityListener(this,FolderFragment.getFolderSonglist(),song_index);
-    } else if(getIntent().hasExtra(PlaylistFragmentListener.PLAYLISTINDEXEXTRA)){
+      song_index = getIntent().getIntExtra(FolderFragment.SONGINDEXEXTRA,0);
+      playListActivityListener = new PlayListActivityListener(this,FolderFragment.getFolderSonglist(),song_index);
+    }
+    else if(getIntent().hasExtra(FAVORITELISTEXTRA)){
+      song_index = getIntent().getIntExtra(FAVORITELISTEXTRA,0);
+      playListActivityListener = new PlayListActivityListener(this, FavoriteFragmentListener.getFavoriteSonglist(),song_index);
+    }
+    else if(getIntent().hasExtra(PlaylistFragmentListener.PLAYLISTINDEXEXTRA)){
       song_index = getIntent().getIntExtra(PlaylistFragmentListener.PLAYLISTINDEXEXTRA,0);
       playListActivityListener = new PlayListActivityListener(this,PlaylistFragmentListener.getPlaylistSonglist(),song_index);
     }

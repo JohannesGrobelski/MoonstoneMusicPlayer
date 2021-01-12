@@ -16,10 +16,10 @@ import com.example.moonstonemusicplayer.view.ui.main.PlayListFragment;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FavoriteFragmentListener implements AdapterView.OnItemClickListener, View.OnClickListener {
+public class FavoriteFragmentListener implements AdapterView.OnItemClickListener {
   private static final String TAG = FavoriteFragmentListener.class.getSimpleName();
   private static final boolean DEBUG = false;
-  public static final String PLAYLISTINDEXEXTRA = "playlistextra";
+  public static final String FAVORITELISTEXTRA = "favoritelistextra";
 
   private FavoritesFragment favoritesFragment;
   private FavoriteListAdapter favoriteListAdapter;
@@ -34,46 +34,33 @@ public class FavoriteFragmentListener implements AdapterView.OnItemClickListener
 
   @Override
   public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-    if(DEBUG)Log.d(TAG,"\n\n\n\n\n");
 
     //set back text
     Object clickItem = favoriteListAdapter.getItem(position);
     if(clickItem != null) {
       if(clickItem instanceof Song) {
-        startPlaylist();
-      } else if(clickItem instanceof Song) {
-        startPlaylist(playListFragment.playlistListManager.getCurrentPlaylist(),position);
-      } else { }
+        startPlaylist(favoritesFragment.favoritesManager.getFavorites(),position);
+      } else { Log.e(TAG,"favorite list contains something different than songs");}
     }
   }
 
   private void setAdapter(List<Song> itemList){
-    favoriteListAdapter = new FavoriteListAdapter(favoriteListAdapter.getContext(),itemList);
+    favoriteListAdapter = new FavoriteListAdapter(favoritesFragment.getContext(),itemList);
     favoritesFragment.lv_favorites.setAdapter(favoriteListAdapter);
-  }
-
-  @Override
-  public void onClick(View v) {
-    if(v.getId() == R.id.ll_back_folder){
-      List<Object> itemList = new ArrayList<>();;
-      itemList.addAll(playListFragment.playlistListManager.getAllPlaylists());
-      setAdapter(itemList);
-      playListFragment.playlistListManager.setCurrentPlaylist(null);
-    }
   }
 
   /** starts playlistactivity with selected songlist; playlistactivity grabs songlist by calling getPlaylistSonglist*/
   public void startPlaylist(List<Song> favoriteList, int song_index){
-    Playlist = new Playlist(playlist.getName(),playlist.getPlaylist());
-    Intent intent = new Intent(playListFragment.getActivity(), PlayListActivity.class);
-    intent.putExtra(PLAYLISTINDEXEXTRA,song_index);
-    playListFragment.startActivity(intent);
+    FavoriteList = new ArrayList<>(favoriteList);
+    Intent intent = new Intent(favoritesFragment.getActivity(), PlayListActivity.class);
+    intent.putExtra(FAVORITELISTEXTRA,song_index);
+    favoritesFragment.startActivity(intent);
   }
 
   /** used by playlistactivity to get songs to play*/
-  public static Song[] getPlaylistSonglist(){
-    Song[] playlistCopy = Playlist.getPlaylist().toArray(new Song[Playlist.getPlaylist().size()]);
-    Playlist = null;
-    return playlistCopy;
+  public static Song[] getFavoriteSonglist(){
+    Song[] songlistCopy = FavoriteList.toArray(new Song[FavoriteList.size()]);
+    FavoriteList = null;
+    return songlistCopy;
   }
 }
