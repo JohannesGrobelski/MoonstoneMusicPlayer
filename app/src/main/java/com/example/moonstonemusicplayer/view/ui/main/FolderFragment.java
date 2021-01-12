@@ -8,14 +8,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import android.os.Debug;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -53,7 +49,7 @@ public class FolderFragment extends Fragment {
   public LinearLayout ll_folder_back;
   public TextView tv_folder_back;
 
-  public static Song[] Playlist;
+  public static Song[] FolderSonglist;
 
   // TODO: Rename and change types of parameters
   private String mParam1;
@@ -150,16 +146,16 @@ public class FolderFragment extends Fragment {
     return view;
   }
 
-  public void startPlaylist(Song[] playlist,int song_index){
-    Playlist = playlist.clone();
+  public void startFolderSonglist(Song[] playlist, int song_index){
+    FolderSonglist = playlist.clone();
     Intent intent = new Intent(getActivity(), PlayListActivity.class);
     intent.putExtra(SONGINDEXEXTRA,song_index);
     startActivity(intent);
   }
 
-  public static Song[] getPlaylist(){
-    Song[] playlistCopy = Playlist.clone();
-    Playlist = null;
+  public static Song[] getFolderSonglist(){
+    Song[] playlistCopy = FolderSonglist.clone();
+    FolderSonglist = null;
     return playlistCopy;
   }
 

@@ -4,7 +4,9 @@ import android.content.Context;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import com.example.moonstonemusicplayer.model.Database.DBHelper;
@@ -49,27 +51,59 @@ public class PlaylistManager {
 
     public void searchSong(String searchterm){
         displayedSongList.clear();
+        for(Song song: playList){
+            if(song.getTitle().toLowerCase().contains(searchterm.toLowerCase()))displayedSongList.add(song);
+        }
+        /*
         intersectPlaylist(DataSourceSingleton.getInstance(context).searchSongs(searchterm));
         displayedSongList.addAll(playList);
+         */
     }
 
 
     public void sortByTitle(){
         displayedSongList.clear();
+        Collections.sort(playList, new Comparator<Song>() {
+            @Override
+            public int compare(Song o1, Song o2) {
+                return (o1.getTitle().compareTo(o2.getTitle()));
+            }
+        });
+        displayedSongList.addAll(playList);
+        /*
         intersectPlaylist(DataSourceSingleton.getInstance(context).sortBy(DBHelper.COLUMN_TITLE,"ASC"));
         displayedSongList.addAll(playList);
+         */
     }
 
     public void sortByArtist(){
         displayedSongList.clear();
+        Collections.sort(playList, new Comparator<Song>() {
+            @Override
+            public int compare(Song o1, Song o2) {
+                return (o1.getArtist().compareTo(o2.getArtist()));
+            }
+        });
+        displayedSongList.addAll(playList);
+        /*
         intersectPlaylist(DataSourceSingleton.getInstance(context).sortBy(DBHelper.COLUMN_ARTIST,"ASC"));
         displayedSongList.addAll(playList);
+         */
     }
 
     public void sortByGenre(){
         displayedSongList.clear();
+        Collections.sort(playList, new Comparator<Song>() {
+            @Override
+            public int compare(Song o1, Song o2) {
+                return (o1.getGenre().compareTo(o2.getGenre()));
+            }
+        });
+        displayedSongList.addAll(playList);
+        /*
         intersectPlaylist(DataSourceSingleton.getInstance(context).sortBy(DBHelper.COLUMN_GENRE,"ASC"));
         displayedSongList.addAll(playList);
+         */
     }
 
     public void reverseList(){
@@ -82,9 +116,12 @@ public class PlaylistManager {
         displayedSongList.clear();
     }
 
-    public void intersectPlaylist(List<Song> input){
+    /*
+    * public void intersectPlaylist(List<Song> input){
         input.retainAll(playList);
         playList.clear();
         playList.addAll(input);
     }
+    * */
+
 }

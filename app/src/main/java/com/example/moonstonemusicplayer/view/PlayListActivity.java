@@ -3,7 +3,6 @@ package com.example.moonstonemusicplayer.view;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -19,7 +18,6 @@ import android.widget.TextView;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.PlayListActivity.PlayListActivityListener;
-import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import com.example.moonstonemusicplayer.view.ui.main.FolderFragment;
 
 /** MainActivity
@@ -60,7 +58,7 @@ public class PlayListActivity extends AppCompatActivity {
     if(getIntent().hasExtra(FolderFragment.SONGINDEXEXTRA)){
        song_index = getIntent().getIntExtra(FolderFragment.SONGINDEXEXTRA,0);
     }
-    playListActivityListener = new PlayListActivityListener(this,FolderFragment.getPlaylist(),song_index);
+    playListActivityListener = new PlayListActivityListener(this,FolderFragment.getFolderSonglist(),song_index);
 
     lv_songlist.setOnItemClickListener(playListActivityListener);
     btn_shuffle.setOnClickListener(playListActivityListener);

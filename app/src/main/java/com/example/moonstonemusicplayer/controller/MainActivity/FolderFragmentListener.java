@@ -3,7 +3,6 @@ package com.example.moonstonemusicplayer.controller.MainActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.model.MainActivity.FolderFragment.Folder;
@@ -57,7 +56,7 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
       if(folderFragment.selectedFolder.getChildren_folders() != null){
         song_index = position - folderFragment.selectedFolder.getChildren_folders().length; //folders are always written before songs
       }
-      folderFragment.startPlaylist(playlist,song_index);
+      folderFragment.startFolderSonglist(playlist,song_index);
     }
   }
 
