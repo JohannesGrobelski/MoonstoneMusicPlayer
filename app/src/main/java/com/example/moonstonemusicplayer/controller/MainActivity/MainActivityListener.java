@@ -1,11 +1,15 @@
 package com.example.moonstonemusicplayer.controller.MainActivity;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Debug;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
@@ -13,12 +17,14 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.moonstonemusicplayer.R;
+import com.example.moonstonemusicplayer.controller.PlayListActivity.PlayListActivityListener;
+import com.example.moonstonemusicplayer.controller.PlayListActivity.RefreshTask;
 import com.example.moonstonemusicplayer.model.MainActivity.FolderFragment.Folder;
 import com.example.moonstonemusicplayer.model.MainActivity.FolderFragment.FolderManager;
 import com.example.moonstonemusicplayer.view.MainActivity;
 import com.example.moonstonemusicplayer.view.ui.main.FolderFragment;
 
-public class MainActivityListener {
+public class MainActivityListener implements SearchView.OnQueryTextListener, View.OnClickListener, SearchView.OnCloseListener {
   private static final boolean DEBUG = true;
   private static final String TAG = MainActivityListener.class.getSimpleName();
 
@@ -37,16 +43,24 @@ public class MainActivityListener {
   public boolean onCreateOptionsMenu(Menu menu) {
     //create options menu
     mainActivity.getMenuInflater().inflate(R.menu.options_menu_mainactivity,menu);
+
+    //create searchview
+    MenuItem searchItem = menu.findItem(R.id.miSearch);
+    mainActivity.searchView = (SearchView) searchItem.getActionView();
+    mainActivity.searchView.setOnQueryTextListener(this);
+    mainActivity.searchView.setOnSearchClickListener(this);
+    mainActivity.searchView.setOnCloseListener(this);
     return true;
   }
 
   public boolean onOptionsItemSelected(MenuItem item) {
-    switch (item.getItemId()){
+    switch (item.getItemId()) {
       case R.id.mi_loadLocaleAudioFile: {
-        if(fragments != null && fragments[1] != null){
+        if (fragments != null && fragments[1] != null) {
+          requestForPermission();
           ((FolderFragment) fragments[0]).loadMusicNew();
         } else {
-          Log.e(TAG,"fragment null");
+          Log.e(TAG, "fragment null");
         }
         //folderManager.getRootFolder().print(0);
         break;
@@ -55,10 +69,42 @@ public class MainActivityListener {
 
         break;
       }
-    }
-    //songListAdapter.notifyDataSetChanged();
-    return true;
+      /*
+      case R.id.mi_loadLocaleAudioFile: {
+        if(requestForPermission()){
+          AlertDialog alertDialog = new AlertDialog.Builder(mainActivity)
+                  .setTitle("Lädt lokale Audiodatein neu ein.")
+                  .setMessage("Dies kann einige Minuten dauern.")
+                  .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                      RefreshTask refreshTask = new RefreshTask(new PlayListActivityListener.RefreshTaskListener() {
+                        @Override
+                        public void onCompletion() {
+                          //songListAdapter.notifyDataSetChanged();
+                        }
+                      });
+                      //refreshTask.execute(mainActivity);
+                    }
+                  })
+                  .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                      //abort
+                    }
+                  })
+                  .create();
+          alertDialog.show();
+                  break;
+
+        }
+       */
+
+      }
+          return true;
   }
+    //songListAdapter.notifyDataSetChanged();
+
 
   /** requests runtime storage permissions (API>=23) for loading files from sd-card */
   public boolean requestForPermission() {
@@ -72,5 +118,29 @@ public class MainActivityListener {
       //Toast.makeText(mainActivity, "Permission (already) Granted!", Toast.LENGTH_SHORT).show();
     }
     return permissionCheck == PackageManager.PERMISSION_GRANTED;
+  }
+
+  @Override
+  public boolean onQueryTextSubmit(String query) {
+    return false;
+  }
+
+  @Override
+  public boolean onQueryTextChange(String newText) {
+    /*switch (mainActivity.sec.){
+      case 0:{
+      }
+    }*/
+    return false;
+  }
+
+  @Override
+  public void onClick(View v) {
+
+  }
+
+  @Override
+  public boolean onClose() {
+    return false;
   }
 }

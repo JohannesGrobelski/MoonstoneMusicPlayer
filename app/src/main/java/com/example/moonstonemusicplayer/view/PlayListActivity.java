@@ -2,6 +2,7 @@ package com.example.moonstonemusicplayer.view;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
@@ -85,6 +86,8 @@ public class PlayListActivity extends AppCompatActivity {
     seekBar.setOnSeekBarChangeListener(playListActivityListener);
 
     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+    Toolbar toolbar = findViewById(R.id.toolbar);
+    setSupportActionBar(toolbar);
   }
 
   @Override

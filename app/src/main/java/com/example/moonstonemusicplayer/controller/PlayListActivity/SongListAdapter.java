@@ -1,6 +1,7 @@
 package com.example.moonstonemusicplayer.controller.PlayListActivity;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ import java.util.List;
 
 public class SongListAdapter extends ArrayAdapter<Song> {
   private List<Song> songList;
+  private int selectedSongIndex = -1;
 
   Context context;
   LayoutInflater layoutInflater;
@@ -52,9 +54,18 @@ public class SongListAdapter extends ArrayAdapter<Song> {
     if(!aktuellerSong.getArtist().isEmpty())tv_artist.setText(aktuellerSong.getArtist());
     else tv_artist.setText("unknown artist");
 
+    if(position==selectedSongIndex)ll_song_background.setBackgroundColor(Color.LTGRAY);
+    else ll_song_background.setBackgroundColor(Color.WHITE);
+
     tv_duration.setText(Song.getDurationString((int) aktuellerSong.getDuration_ms()));
     return rowView;
   }
 
+  public int getSelectedSongIndex() {
+    return selectedSongIndex;
+  }
 
+  public void setSelectedSongIndex(int selectedSongIndex) {
+    this.selectedSongIndex = selectedSongIndex;
+  }
 }

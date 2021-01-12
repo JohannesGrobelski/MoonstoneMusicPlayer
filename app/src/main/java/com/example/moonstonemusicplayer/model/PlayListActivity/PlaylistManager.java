@@ -55,20 +55,18 @@ public class PlaylistManager {
         }
         /*
         intersectPlaylist(DataSourceSingleton.getInstance(context).searchSongs(searchterm));
-        displayedSongList.addAll(playList);
          */
+        displayedSongList.addAll(playList);
     }
 
 
     public void sortByTitle(){
-        displayedSongList.clear();
-        Collections.sort(playList, new Comparator<Song>() {
+        Collections.sort(displayedSongList, new Comparator<Song>() {
             @Override
             public int compare(Song o1, Song o2) {
                 return (o1.getName().compareTo(o2.getName()));
             }
         });
-        displayedSongList.addAll(playList);
         /*
         intersectPlaylist(DataSourceSingleton.getInstance(context).sortBy(DBHelper.COLUMN_TITLE,"ASC"));
         displayedSongList.addAll(playList);
@@ -76,14 +74,12 @@ public class PlaylistManager {
     }
 
     public void sortByArtist(){
-        displayedSongList.clear();
-        Collections.sort(playList, new Comparator<Song>() {
+        Collections.sort(displayedSongList, new Comparator<Song>() {
             @Override
             public int compare(Song o1, Song o2) {
                 return (o1.getArtist().compareTo(o2.getArtist()));
             }
         });
-        displayedSongList.addAll(playList);
         /*
         intersectPlaylist(DataSourceSingleton.getInstance(context).sortBy(DBHelper.COLUMN_ARTIST,"ASC"));
         displayedSongList.addAll(playList);
@@ -91,14 +87,12 @@ public class PlaylistManager {
     }
 
     public void sortByGenre(){
-        displayedSongList.clear();
-        Collections.sort(playList, new Comparator<Song>() {
+        Collections.sort(displayedSongList, new Comparator<Song>() {
             @Override
             public int compare(Song o1, Song o2) {
                 return (o1.getGenre().compareTo(o2.getGenre()));
             }
         });
-        displayedSongList.addAll(playList);
         /*
         intersectPlaylist(DataSourceSingleton.getInstance(context).sortBy(DBHelper.COLUMN_GENRE,"ASC"));
         displayedSongList.addAll(playList);

@@ -8,6 +8,22 @@
     android:orientation="vertical"
     tools:context=".view.PlayListActivity">
 
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="?attr/actionBarTheme" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
     <ListView
         android:id="@+id/lv_songlist"
         android:layout_width="match_parent"
@@ -19,14 +35,15 @@
     <LinearLayout
         android:id="@+id/LL_MusicControlls"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="350dp"
         android:layout_weight="1"
         android:orientation="vertical"
+        android:paddingTop="15dp"
         android:visibility="visible">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="110dp"
             android:layout_gravity="center"
             android:layout_weight="1"
             android:paddingStart="-12dp"
@@ -43,7 +60,7 @@
                 android:layout_marginEnd="22dp"
                 android:layout_weight="1"
                 android:background="@drawable/ic_replay"
-                android:backgroundTint="@android:color/darker_gray"
+                android:backgroundTint="@color/colorPrimary"
                 android:textAlignment="textStart"
                 android:textColor="@color/colorPrimary"
                 android:textSize="18sp"

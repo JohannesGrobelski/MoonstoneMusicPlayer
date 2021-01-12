@@ -11,7 +11,10 @@ import com.example.moonstonemusicplayer.model.MainActivity.RadioFragment.Radio;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DataSourceSingleton {
     private static DataSourceSingleton instance;
@@ -187,6 +190,42 @@ public class DataSourceSingleton {
         return playlist.getPlaylist();
     }
 
+    public void insertSongToPlaylist(String songUri, String playlistname){
+        //öffnen der DB
+        open_writable();
+
+        //Anlegen von Wertepaaren zur Übergabe in Insert-Methode
+        ContentValues values = new ContentValues();
+        values.put(DBHelper.PLAYLIST_COLUMN_NAME, playlistname);
+        values.put(DBHelper.PLAYLIST_COLUMN_SONG_URI, songUri);
+
+        //Song-Objekt in DB einfügen und ID zurückbekommen
+        long insertID = database_music.insert(DBHelper.TABLE_PLAYLIST_LIST, null,values);
+
+        //Zeiger auf gerade eingefügtes Element
+        Cursor cursor = database_music.query(DBHelper.TABLE_PLAYLIST_LIST,
+                columnsSonglist,
+                DBHelper.SONG_COLUMN_ID + " = " + insertID,
+                null,null,null,null);
+
+        //Zeiger auf Anfang bringen
+        cursor.moveToFirst();
+
+        //zeiger zerstören
+        cursor.close();
+
+        //datenbank schließen und rückgabe des Songobjekts
+        close_db();
+    }
+
+    void deleteSong(String songUri, String playlistname){
+        open_writable();
+        database_music.delete(DBHelper.TABLE_PLAYLIST_LIST,
+                DBHelper.PLAYLIST_COLUMN_SONG_URI+ " = "+songUri+" AND "+
+                DBHelper.PLAYLIST_COLUMN_NAME+" = "+playlistname,null);
+        close_db();
+    }
+
     Song insertSong(Song inputSong){
         //Anlegen von Wertepaaren zur Übergabe in Insert-Methode
         ContentValues values = new ContentValues();
@@ -339,6 +378,48 @@ public class DataSourceSingleton {
         return SongList;
     }
 
+    private List<Playlist> getPlaylistsFromQuery(String query){
+        List<Playlist> playlists = new ArrayList<>();
+
+        Map<String,List<Song>> playlistMap = new LinkedHashMap<>();
+
+        open_readable();
+        //Zeiger auf die Einträge der Tabelle
+        Cursor cursor = database_music.rawQuery(query,null);
+        //Wenn Cursor beim ersten Eintrag steht
+        if(cursor.moveToNext()){
+            do{
+               int index = cursor.getInt(0);
+               String name = cursor.getString(1);
+               String uri = cursor.getString(2);
+
+               String songQuery = "SELECT * FROM "+ DBHelper.TABLE_SONG_LIST+
+                        " WHERE "+ DBHelper.SONG_COLUMN_URI+" = "+uri;
+
+               Song song = getSongListFromQuery(songQuery).get(0);
+
+               List<Song> newSongList = new ArrayList<>();
+               if(playlistMap.keySet().contains(name)){
+                   newSongList = playlistMap.get(name);
+               }
+               newSongList.add(song);
+               playlistMap.put(name,newSongList);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        close_db();
+
+        //create List<Playlist> from playlistmap
+        for(String playlistname: playlistMap.keySet()){
+            Playlist playlist = new Playlist(playlistname,playlistMap.get(playlistname));
+            playlists.add(playlist);
+        }
+
+        return playlists;
+    }
+
+
+
     public static DataSourceSingleton getInstance(Context context){
         if(instance == null){
             instance = new DataSourceSingleton(context);
@@ -346,15 +427,8 @@ public class DataSourceSingleton {
         return instance;
     }
 
-    //TODO
     public List<Playlist> getAllPlaylists() {
-        List<Playlist> playlists = new ArrayList<Playlist>();
-        List<Song> songlist = new ArrayList<>();
-        songlist.add(new Song("EXAMPLE1","EXAMPLEARTIST1","EXAMPLEURL1",0));
-        songlist.add(new Song("EXAMPLE2","EXAMPLEARTIST2","EXAMPLEURL2",0));
-
-        playlists.add(new Playlist("EXAMPLE",songlist));
-        return playlists;
+       return getPlaylistsFromQuery("SELECT * FROM "+DBHelper.TABLE_SONG_LIST);
     }
 
     //TODO

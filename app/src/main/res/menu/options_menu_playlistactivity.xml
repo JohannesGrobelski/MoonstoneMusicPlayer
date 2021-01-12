@@ -12,9 +12,6 @@
         app:actionViewClass="android.widget.SearchView"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/miDeleteAllAudioFiles"
-        android:title="Alle Songs löschen" />
-    <item
         android:id="@+id/miSort"
         android:title="Songs sortieren">
 

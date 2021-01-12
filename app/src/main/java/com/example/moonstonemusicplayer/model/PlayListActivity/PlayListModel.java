@@ -6,7 +6,6 @@ import static com.example.moonstonemusicplayer.model.PlayListActivity.PlayListMo
 import static com.example.moonstonemusicplayer.model.PlayListActivity.PlayListModel.REPEATMODE.ONESONG;
 import static com.example.moonstonemusicplayer.model.PlayListActivity.PlayListModel.REPEATMODE.ALL;
 
-
 public class PlayListModel {
   private List<Song> playlist;
   private int currentSongIndex = 0;
@@ -14,7 +13,7 @@ public class PlayListModel {
   public enum REPEATMODE {
     NONE, ALL, ONESONG;
   };
-  public REPEATMODE repeatmode = NONE;
+  public REPEATMODE repeatmode = ALL;
 
   public PlayListModel(List<Song> playList) {
     this.playlist = playList;
@@ -32,6 +31,10 @@ public class PlayListModel {
 
   public Song getCurrentSong(){
     return playlist.get(currentSongIndex);
+  }
+
+  public int getCurrentSongIndex(){
+    return currentSongIndex;
   }
 
   public void prevSong(){
@@ -56,7 +59,6 @@ public class PlayListModel {
       if(repeatmode.equals(ALL))currentSongIndex = (++currentSongIndex)% playlist.size();
     }
   }
-
 
 
   public boolean toogleShuffleMode(){

@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.media.AudioManager;
 import android.os.Handler;
 import android.os.IBinder;
@@ -80,36 +81,6 @@ public class PlayListActivityListener
 
   public boolean onOptionsItemSelected(MenuItem item) {
     switch (item.getItemId()){
-      case R.id.mi_loadLocaleAudioFile: {
-        if(requestForPermission()){
-          AlertDialog alertDialog = new AlertDialog.Builder(playListActivity)
-              .setTitle("Lädt lokale Audiodatein neu ein.")
-              .setMessage("Dies kann einige Minuten dauern.")
-              .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                  RefreshTask refreshTask = new RefreshTask(new RefreshTaskListener() {
-                    @Override
-                    public void onCompletion() {
-                      songListAdapter.notifyDataSetChanged();
-                    }
-                  });
-                  refreshTask.execute(playlistManager);
-                }
-              })
-              .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                  //abort
-                }
-              })
-              .create();
-          alertDialog.show();
-        }
-        break;
-      }
-
-
       case R.id.miDeleteAllAudioFiles: {
         playlistManager.deleteAllSongs();
         songListAdapter.notifyDataSetChanged();
@@ -211,7 +182,7 @@ public class PlayListActivityListener
   @Override
   /** called if input in search view changes => search songs in db according to input*/
   public boolean onQueryTextChange(String query) {
-    //musicManager.searchSong(query);
+    playlistManager.searchSong(query);
     songListAdapter.notifyDataSetChanged();
     return false;
   }
@@ -288,6 +259,9 @@ public class PlayListActivityListener
       playListActivity.setArtist(mediaPlayerService.getCurrentSong().getArtist());
       playListActivity.tv_seekbar_max.setText(mediaPlayerService.getCurrentSong().getDurationString());
       playListActivity.seekBar.setMax((int) (song.getDuration_ms() / 1000));
+
+      View view = playListActivity.lv_songlist.getChildAt(mediaPlayerService.getCurrentPosition());
+      if(view != null)view.setBackgroundColor(Color.RED);
     }
   }
 
@@ -402,8 +376,20 @@ public class PlayListActivityListener
         mediaPlayerService = binder.getService();
         binder.setListener(new BoundServiceListener() {
           @Override public void onError(int cause) { mediaPlayerServiceError(cause);}
-          @Override public void finishedSong(PlayListModel.REPEATMODE repeatmode){ finishSong(repeatmode);}
+
+          @Override
+          public void selectedSong(int index) {
+            if(DEBUG)Log.d(TAG,"song playing: "+index);
+            songListAdapter.setSelectedSongIndex(index);
+            playListActivity.lv_songlist.invalidateViews();
+          }
+
+
+          @Override public void finishedSong(PlayListModel.REPEATMODE repeatmode){
+            finishSong(repeatmode);
+          }
           @Override public void onAudioFocusChange(int state) { audioFocusChange(state);}
+
 
           @Override
           public void transferPlayListFromActivityToService() {
@@ -495,6 +481,7 @@ public class PlayListActivityListener
   public interface BoundServiceListener {
 
     public void onError(int cause);
+    public void selectedSong(int index);
     public void finishedSong(PlayListModel.REPEATMODE repeatmode);
     public void onAudioFocusChange(int state);
     public void transferPlayListFromActivityToService();

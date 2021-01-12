@@ -70,6 +70,11 @@ public class MediaPlayerService extends Service
     //bereitet MediaPlayer für Wiedergabe vor
     mediaPlayer.prepareAsync();
     resumePosition = 0;
+
+    if(((LocalBinder) iBinder) != null){
+      ((LocalBinder) iBinder).boundServiceListener.selectedSong(playListModel.getCurrentSongIndex());
+    }
+
   }
 
   //public interface
