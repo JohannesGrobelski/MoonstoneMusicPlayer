@@ -49,7 +49,7 @@ public class SongListAdapter extends ArrayAdapter<Song> {
     TextView tv_duration = rowView.findViewById(R.id.tv_duration);
 
     //set the views of songRowView
-    tv_title.setText(aktuellerSong.getTitle());
+    tv_title.setText(aktuellerSong.getName());
     if(!aktuellerSong.getArtist().isEmpty())tv_artist.setText(aktuellerSong.getArtist());
     else tv_artist.setText("unknown artist");
 

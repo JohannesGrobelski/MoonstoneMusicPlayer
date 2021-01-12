@@ -74,7 +74,7 @@ public class Folder {
     }
     if(children_songs != null){
       for(Song child: children_songs){
-        if(child != null)input += offset+"  SONG: "+child.getTitle()+"\n";
+        if(child != null)input += offset+"  SONG: "+child.getName()+"\n";
       }
       if(children_songs.length==0)if(DEBUG)System.out.println("Folder "+name+" has no children songs");
     } else {
@@ -92,7 +92,7 @@ public class Folder {
     }
     if(children_songs != null){
       for(Song child: children_songs){
-        if(child != null)childrenString.add("SONG: "+child.getTitle());
+        if(child != null)childrenString.add("SONG: "+child.getName());
       }
     }
     return childrenString.toArray(new String[childrenString.size()]);

@@ -251,7 +251,7 @@ public class MediaPlayerService extends Service
 
   public void playSong(Song song) {
     playListModel.setCurrentSong(song);
-    Toast.makeText(this,"clicked: "+playListModel.getCurrentSong().getTitle(),Toast.LENGTH_LONG).show();
+    Toast.makeText(this,"clicked: "+playListModel.getCurrentSong().getName(),Toast.LENGTH_LONG).show();
 
     initMediaPlayer();
   }

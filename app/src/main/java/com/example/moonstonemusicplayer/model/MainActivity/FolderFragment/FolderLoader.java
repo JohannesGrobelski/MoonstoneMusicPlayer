@@ -143,7 +143,7 @@ public class FolderLoader {
     Attr attrId = document.createAttribute("id");
       attrId.setValue(String.valueOf(song.getID()));
     Attr attrTitle = document.createAttribute("title");
-      attrTitle.setValue(song.getTitle());
+      attrTitle.setValue(song.getName());
     Attr attrArtist = document.createAttribute("artist");
       attrArtist.setValue(song.getArtist());
     Attr attrUri = document.createAttribute("uri");

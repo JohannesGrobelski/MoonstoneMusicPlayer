@@ -268,7 +268,7 @@ public class PlayListActivityListener
     } else {
       playListActivity.btn_play_pause.setBackground(playListActivity.getResources().getDrawable(R.drawable.ic_pause));
       animateMediaplayerProgressOnSeekbar();
-      playListActivity.tv_title.setText(mediaPlayerService.getCurrentSong().getTitle());
+      playListActivity.tv_title.setText(mediaPlayerService.getCurrentSong().getName());
       playListActivity.setArtist(mediaPlayerService.getCurrentSong().getArtist());
       playListActivity.tv_seekbar_max.setText(mediaPlayerService.getCurrentSong().getDurationString());
       playListActivity.seekBar.setMax((int) (mediaPlayerService.getCurrentSong().getDuration_ms() / 1000));
@@ -283,7 +283,7 @@ public class PlayListActivityListener
       mediaPlayerService.playSong(song);
       playListActivity.btn_play_pause.setBackground(playListActivity.getResources().getDrawable(R.drawable.ic_pause));
       animateMediaplayerProgressOnSeekbar();
-      playListActivity.tv_title.setText(mediaPlayerService.getCurrentSong().getTitle());
+      playListActivity.tv_title.setText(mediaPlayerService.getCurrentSong().getName());
       playListActivity.setArtist(mediaPlayerService.getCurrentSong().getArtist());
       playListActivity.tv_seekbar_max.setText(mediaPlayerService.getCurrentSong().getDurationString());
       playListActivity.seekBar.setMax((int) (song.getDuration_ms() / 1000));
@@ -295,7 +295,7 @@ public class PlayListActivityListener
       mediaPlayerService.prevSong();
       playListActivity.btn_play_pause.setBackground(playListActivity.getResources().getDrawable(R.drawable.ic_pause));
       animateMediaplayerProgressOnSeekbar();
-      playListActivity.tv_title.setText(mediaPlayerService.getCurrentSong().getTitle());
+      playListActivity.tv_title.setText(mediaPlayerService.getCurrentSong().getName());
       playListActivity.setArtist(mediaPlayerService.getCurrentSong().getArtist());
       playListActivity.tv_seekbar_max.setText(mediaPlayerService.getCurrentSong().getDurationString());
       playListActivity.seekBar.setMax((int) (mediaPlayerService.getCurrentSong().getDuration_ms() / 1000));
@@ -307,7 +307,7 @@ public class PlayListActivityListener
       mediaPlayerService.nextSong();
       playListActivity.btn_play_pause.setBackground(playListActivity.getResources().getDrawable(R.drawable.ic_pause));
       animateMediaplayerProgressOnSeekbar();
-      playListActivity.tv_title.setText(mediaPlayerService.getCurrentSong().getTitle());
+      playListActivity.tv_title.setText(mediaPlayerService.getCurrentSong().getName());
       playListActivity.setArtist(mediaPlayerService.getCurrentSong().getArtist());
       playListActivity.tv_seekbar_max.setText(mediaPlayerService.getCurrentSong().getDurationString());
       playListActivity.seekBar.setMax((int) (mediaPlayerService.getCurrentSong().getDuration_ms() / 1000));
@@ -343,7 +343,7 @@ public class PlayListActivityListener
       mediaPlayerService.resume();
       playListActivity.btn_play_pause.setBackground(playListActivity.getResources().getDrawable(R.drawable.ic_pause));
       animateMediaplayerProgressOnSeekbar();
-      playListActivity.tv_title.setText(mediaPlayerService.getCurrentSong().getTitle());
+      playListActivity.tv_title.setText(mediaPlayerService.getCurrentSong().getName());
       playListActivity.setArtist(mediaPlayerService.getCurrentSong().getArtist());
       playListActivity.tv_seekbar_max.setText(mediaPlayerService.getCurrentSong().getDurationString());
     }

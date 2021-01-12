@@ -52,7 +52,7 @@ public class PlaylistManager {
     public void searchSong(String searchterm){
         displayedSongList.clear();
         for(Song song: playList){
-            if(song.getTitle().toLowerCase().contains(searchterm.toLowerCase()))displayedSongList.add(song);
+            if(song.getName().toLowerCase().contains(searchterm.toLowerCase()))displayedSongList.add(song);
         }
         /*
         intersectPlaylist(DataSourceSingleton.getInstance(context).searchSongs(searchterm));
@@ -66,7 +66,7 @@ public class PlaylistManager {
         Collections.sort(playList, new Comparator<Song>() {
             @Override
             public int compare(Song o1, Song o2) {
-                return (o1.getTitle().compareTo(o2.getTitle()));
+                return (o1.getName().compareTo(o2.getName()));
             }
         });
         displayedSongList.addAll(playList);

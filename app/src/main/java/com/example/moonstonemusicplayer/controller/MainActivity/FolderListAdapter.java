@@ -64,7 +64,7 @@ public class FolderListAdapter extends ArrayAdapter<Object> {
       tv_folderSongItem.setText(aktuellerFolder.getName());
     } else {
       iv_folderSongItem.setBackground(context.getDrawable(R.drawable.ic_music));
-      tv_folderSongItem.setText(aktuellerSong.getTitle());
+      tv_folderSongItem.setText(aktuellerSong.getName());
     }
     return rowView;
   }

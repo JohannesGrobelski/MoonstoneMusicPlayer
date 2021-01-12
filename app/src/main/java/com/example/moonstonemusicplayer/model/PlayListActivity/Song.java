@@ -1,10 +1,10 @@
 package com.example.moonstonemusicplayer.model.PlayListActivity;
 
-public class Song {
+import com.example.moonstonemusicplayer.model.Playable;
+
+public class Song extends Playable {
   int ID = -1;
-  String title;
   String artist = "unknown Artist";
-  String URI = "";
   int duration_ms = 0;
   int lastPosition = 0;
   String genre = "";
@@ -13,19 +13,17 @@ public class Song {
 
 
   /** "normal" constructor*/
-  public Song(String title, String artist, String URI, int duration_ms) {
-    this.title = title;
+  public Song(String name, String artist, String URI, int duration_ms) {
+    super(name,URI);
     this.artist = artist;
-    this.URI = URI;
     this.duration_ms = duration_ms;
   }
 
   /** Constructor for DB*/
-  public Song(int ID, String title, String artist, String URI, int duration_ms, int lastPosition, String genre, String lyrics, String meaning) {
+  public Song(int ID, String name, String artist, String URI, int duration_ms, int lastPosition, String genre, String lyrics, String meaning) {
+    super(name,URI);
     this.ID = ID;
-    this.title = title;
     this.artist = artist;
-    this.URI = URI;
     this.duration_ms = duration_ms;
     this.lastPosition = lastPosition;
     this.genre = genre;
@@ -46,13 +44,6 @@ public class Song {
     this.ID = ID;
   }
 
-  public String getTitle() {
-    return title;
-  }
-
-  public void setTitle(String title) {
-    this.title = title;
-  }
 
   public String getArtist() {
     return artist;
@@ -101,13 +92,6 @@ public class Song {
     this.duration_ms = duration_ms;
   }
 
-  public String getURI() {
-    return URI;
-  }
-
-  public void setURI(String URI) {
-    this.URI = URI;
-  }
 
   public String getLyrics() {
     return lyrics;
