@@ -473,11 +473,11 @@ public class PlayListActivityListener
     Song selectedSong = playlistManager.getDisplayedSongList().get(index);
 
     switch (item.getItemId()){
-      case R.id.mi_addToFavorites: {
+      case 1: {
         DBPlaylists.getInstance(playListActivity).addToFavorites(selectedSong);
         break;
       }
-      case R.id.mi_addToPlaylist:  {
+      case 2:  {
         showAlertDialogAddToPlaylists(selectedSong);
         break;
       }
@@ -521,7 +521,8 @@ public class PlayListActivityListener
   }
 
   public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-    playListActivity.getMenuInflater().inflate(R.menu.song_context_menu_folderfrag_playlistact,menu);
+    menu.add(0, 1, 0, "add to favorites");
+    menu.add(0, 2, 0, "add to playlist");
   }
 
 

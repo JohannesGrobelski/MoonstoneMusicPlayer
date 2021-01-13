@@ -16,7 +16,9 @@ import java.util.List;
 import java.util.Set;
 
 public class DBPlaylists {
+    //favorites is just another playlist
     private static final String FAVORITES_PLAYLIST_NAME = "FAVORITES_MOONSTONEMUSICPLAYER_32325393434133218379432139324316239844321";
+
     private static final String TAG = DBPlaylists.class.getSimpleName();
     private static DBPlaylists instance;
 
@@ -107,42 +109,50 @@ public class DBPlaylists {
     }
 
     public Song addToPlaylist(Song inputSong, String playlistname){
-        //Anlegen von Wertepaaren zur Übergabe in Insert-Methode
-        ContentValues values = new ContentValues();
-        values.put(DBHelperPlaylists.COLUMN_PLAYLIST_NAME, playlistname);
-        values.put(DBHelperPlaylists.COLUMN_SONG_NAME, inputSong.getName());
-        values.put(DBHelperPlaylists.COLUMN_ARTIST, inputSong.getArtist());
-        values.put(DBHelperPlaylists.COLUMN_URI, inputSong.getURI());
-        values.put(DBHelperPlaylists.COLUMN_DURATION, inputSong.getDuration_ms());
-        values.put(DBHelperPlaylists.COLUMN_LAST_POSITION, inputSong.getLastPosition());
-        values.put(DBHelperPlaylists.COLUMN_GENRE, inputSong.getGenre());
-        values.put(DBHelperPlaylists.COLUMN_LYRICS, inputSong.getLyrics());
-        values.put(DBHelperPlaylists.COLUMN_MEANING, inputSong.getMeaning());
+        //check if song is already in playlist
+        String query = "SELECT * FROM "+DBHelperPlaylists.TABLE_PLAYLISTS+" WHERE "+
+            DBHelperPlaylists.COLUMN_PLAYLIST_NAME+" LIKE \'"+playlistname+"\'";
+        List<Song> playlistSongs = getSongListFromQuery(query);
 
-        //öffnen der DB
-        open_writable();
+        if(playlistSongs.isEmpty()){
+            //Anlegen von Wertepaaren zur Übergabe in Insert-Methode
+            ContentValues values = new ContentValues();
+            values.put(DBHelperPlaylists.COLUMN_PLAYLIST_NAME, playlistname);
+            values.put(DBHelperPlaylists.COLUMN_SONG_NAME, inputSong.getName());
+            values.put(DBHelperPlaylists.COLUMN_ARTIST, inputSong.getArtist());
+            values.put(DBHelperPlaylists.COLUMN_URI, inputSong.getURI());
+            values.put(DBHelperPlaylists.COLUMN_DURATION, inputSong.getDuration_ms());
+            values.put(DBHelperPlaylists.COLUMN_LAST_POSITION, inputSong.getLastPosition());
+            values.put(DBHelperPlaylists.COLUMN_GENRE, inputSong.getGenre());
+            values.put(DBHelperPlaylists.COLUMN_LYRICS, inputSong.getLyrics());
+            values.put(DBHelperPlaylists.COLUMN_MEANING, inputSong.getMeaning());
 
-        //Song-Objekt in DB einfügen und ID zurückbekommen
-        long insertID = database_playlists.insert(DBHelperPlaylists.TABLE_PLAYLISTS, null, values);
+            //öffnen der DB
+            open_writable();
 
-        //Zeiger auf gerade eingefügtes Element
-        Cursor cursor = database_playlists.query(DBHelperPlaylists.TABLE_PLAYLISTS,
-            columns,
-            DBHelperPlaylists.COLUMN_ID + " = " + insertID,
-            null, null, null, null);
+            //Song-Objekt in DB einfügen und ID zurückbekommen
+            long insertID = database_playlists.insert(DBHelperPlaylists.TABLE_PLAYLISTS, null, values);
 
-        //Zeiger auf Anfang bringen
-        cursor.moveToFirst();
+            //Zeiger auf gerade eingefügtes Element
+            Cursor cursor = database_playlists.query(DBHelperPlaylists.TABLE_PLAYLISTS,
+                columns,
+                DBHelperPlaylists.COLUMN_ID + " = " + insertID,
+                null, null, null, null);
 
-        //aktuelles Element auslesen
-        Song current = cursorToSong(cursor);
+            //Zeiger auf Anfang bringen
+            cursor.moveToFirst();
 
-        //zeiger zerstören
-        cursor.close();
+            //aktuelles Element auslesen
+            Song current = cursorToSong(cursor);
 
-        //datenbank schließen und rückgabe des Songobjekts
-        close_db();
-        return current;
+            //zeiger zerstören
+            cursor.close();
+
+            //datenbank schließen und rückgabe des Songobjekts
+            close_db();
+            return current;
+        }
+        return inputSong;
     }
 
     public void addToFavorites(Song song){

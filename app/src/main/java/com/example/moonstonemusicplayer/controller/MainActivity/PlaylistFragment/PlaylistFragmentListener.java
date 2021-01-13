@@ -84,19 +84,31 @@ public class PlaylistFragmentListener implements AdapterView.OnItemClickListener
   }
 
   public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-    playListFragment.getActivity().getMenuInflater().inflate(R.menu.song_context_menu_playlistfrag,menu);
+    //only show context menu if clicked on song
+    if(playListFragment.playlistListManager.getCurrentPlaylist() != null){
+      //create menu item with groupid to distinguish between fragments
+      menu.add(1, 11, 0, "delete from playlist");
+    }
   }
 
   public boolean onContextItemSelected(MenuItem item) {
-    switch (item.getItemId()){
-      case R.id.mi_delFromPlaylist: {
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        int index = info.position;
+    if(item.getGroupId() == 1){
+      switch (item.getItemId()){
+        case 11: {
+          AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+          int index = info.position;
+          Song song = playListFragment.playlistListManager.getCurrentPlaylist().getPlaylist().get(index);
+          String playlistName = playListFragment.playlistListManager.getCurrentPlaylist().getName();
+          Log.d("delFromPlaylist",playlistName+" - "+song.getName());
+
+        /*
         DBPlaylists.getInstance(playListFragment.getContext()).deleteFromPlaylist(
-            playListFragment.playlistListManager.getCurrentPlaylist().getPlaylist().get(index),
-            playListFragment.playlistListManager.getCurrentPlaylist().getName()
+            ,
+
         );
-        break;
+         */
+          break;
+        }
       }
     }
     return true;

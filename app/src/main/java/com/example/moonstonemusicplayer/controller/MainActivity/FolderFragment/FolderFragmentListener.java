@@ -40,9 +40,6 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
   public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
     if(DEBUG)Log.d(TAG,"\n\n\n\n\n");
 
-    //set back text
-    folderFragment.tv_folder_back.setText(folderFragment.selectedFolder.getName());
-
     if( folderFragment.selectedFolder.getChildren_folders() != null &&
         position < folderFragment.selectedFolder.getChildren_folders().length){ //selected Folder
       Folder selectedFolder = folderFragment.selectedFolder.getChildren_folders()[position];
@@ -95,24 +92,35 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
   }
 
   public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-    folderFragment.getActivity().getMenuInflater().inflate(R.menu.song_context_menu_folderfrag_playlistact,menu);
+    AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+    int clickedPosition = info.position;
+    //only show context menu if clicked on song
+    if(folderFragment.selectedFolder.getChildren_folders() == null
+    ||(folderFragment.selectedFolder.getChildren_folders().length <= clickedPosition)){
+        menu.add(0, 1, 0, "add to favorites");
+        menu.add(0, 2, 0, "add to playlist");
+    }
   }
 
   public boolean onContextItemSelected(MenuItem item) {
-    AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-    int index = info.position;
-    Song selectedSong = folderFragment.selectedFolder.getChildren_songs()[index];
+    //only react to context menu in this fragment
+    if(item.getGroupId() == 0){
+      AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+      int index = info.position;
+      Song selectedSong = folderFragment.selectedFolder.getChildren_songs()[index];
 
-    switch (item.getItemId()){
-      case R.id.mi_addToFavorites: {
-        DBPlaylists.getInstance(folderFragment.getActivity()).addToFavorites(selectedSong);
-        break;
-      }
-      case R.id.mi_addToPlaylist:  {
-        showAlertDialogAddToPlaylists(selectedSong);
-        break;
+      switch (item.getItemId()){
+        case 1: {
+          DBPlaylists.getInstance(folderFragment.getActivity()).addToFavorites(selectedSong);
+          break;
+        }
+        case 2:  {
+          showAlertDialogAddToPlaylists(selectedSong);
+          break;
+        }
       }
     }
+
     return true;
   }
 
