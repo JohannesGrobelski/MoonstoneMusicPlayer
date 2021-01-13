@@ -19,7 +19,7 @@ import java.util.List;
 
 public class SongListAdapter extends ArrayAdapter<Song> {
   private List<Song> songList;
-  private int selectedSongIndex = -1;
+  private String selectedSongUri = "";
 
   Context context;
   LayoutInflater layoutInflater;
@@ -54,18 +54,18 @@ public class SongListAdapter extends ArrayAdapter<Song> {
     if(!aktuellerSong.getArtist().isEmpty())tv_artist.setText(aktuellerSong.getArtist());
     else tv_artist.setText("unknown artist");
 
-    if(position==selectedSongIndex)ll_song_background.setBackgroundColor(Color.LTGRAY);
+    if(aktuellerSong.getURI().equals(selectedSongUri))ll_song_background.setBackgroundColor(Color.LTGRAY);
     else ll_song_background.setBackgroundColor(Color.WHITE);
 
     tv_duration.setText(Song.getDurationString((int) aktuellerSong.getDuration_ms()));
     return rowView;
   }
 
-  public int getSelectedSongIndex() {
-    return selectedSongIndex;
+  public String getSelectedSongUri() {
+    return selectedSongUri;
   }
 
-  public void setSelectedSongIndex(int selectedSongIndex) {
-    this.selectedSongIndex = selectedSongIndex;
+  public void setSelectedSongUri(String selectedSongIndex) {
+    this.selectedSongUri = selectedSongIndex;
   }
 }

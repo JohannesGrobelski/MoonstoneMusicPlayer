@@ -83,7 +83,7 @@ public class MediaPlayerService extends Service
     resumePosition = 0;
 
     if(((LocalBinder) iBinder) != null){
-      ((LocalBinder) iBinder).boundServiceListener.selectedSong(playListModel.getCurrentSongIndex());
+      ((LocalBinder) iBinder).boundServiceListener.selectedSong(playListModel.getCurrentSong().getURI());
     }
 
     songNotification.buildNotification(playListModel.getCurrentSong());

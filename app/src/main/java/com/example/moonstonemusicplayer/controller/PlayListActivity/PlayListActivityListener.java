@@ -151,10 +151,10 @@ public class PlayListActivityListener
   /** implements music controll: play/pause, next/prev*/
   public void onClick(View v) {
     switch (v.getId()){
-      case R.id.notification_btn_prev:
+      case R.id.btn_prev:
         prevSong();
         break;
-      case R.id.notification_btn_play_pause:
+      case R.id.btn_play_pause:
         if(isServiceBound){
           if (mediaPlayerService.isPlayingMusic()) {
             pauseAudio();
@@ -163,7 +163,7 @@ public class PlayListActivityListener
           }
         }
         break;
-      case R.id.notification_btn_next:
+      case R.id.btn_next:
         nextSong();
         break;
       case R.id.btn_shuffle:{
@@ -385,9 +385,9 @@ public class PlayListActivityListener
           @Override public void onError(int cause) { mediaPlayerServiceError(cause);}
 
           @Override
-          public void selectedSong(int index) {
-            if(DEBUG)Log.d(TAG,"song playing: "+index);
-            songListAdapter.setSelectedSongIndex(index);
+          public void selectedSong(String selectedSongUri) {
+            if(DEBUG)Log.d(TAG,"song playing: "+selectedSongUri);
+            songListAdapter.setSelectedSongUri(selectedSongUri);
             playListActivity.lv_songlist.invalidateViews();
           }
 
@@ -552,7 +552,7 @@ public class PlayListActivityListener
   public interface BoundServiceListener {
 
     public void onError(int cause);
-    public void selectedSong(int index);
+    public void selectedSong(String selectedSongUri);
     public void finishedSong(PlayListModel.REPEATMODE repeatmode);
     public void onAudioFocusChange(int state);
     public void transferPlayListFromActivityToService();
