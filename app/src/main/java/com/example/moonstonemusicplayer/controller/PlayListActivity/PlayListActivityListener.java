@@ -496,12 +496,14 @@ public class PlayListActivityListener
     dialogBuilder.setView(dialogView);
     dialogBuilder.setNegativeButton(android.R.string.no,null);
     dialogBuilder.setTitle("Add Song to a playlist:");
-    dialogBuilder.show();
+
+    final AlertDialog alertDialog  = dialogBuilder.show();
 
     lv_playlist_alert.setOnItemClickListener(new AdapterView.OnItemClickListener() {
       @Override
       public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         DBPlaylists.getInstance(playListActivity).addToPlaylist(song,allPlaylistNames[position]);
+        alertDialog.dismiss();
       }
     });
   }

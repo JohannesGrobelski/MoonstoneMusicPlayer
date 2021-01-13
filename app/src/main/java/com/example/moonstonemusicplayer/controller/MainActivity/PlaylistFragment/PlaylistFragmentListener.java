@@ -24,7 +24,7 @@ public class PlaylistFragmentListener implements AdapterView.OnItemClickListener
   public static final String PLAYLISTINDEXEXTRA = "playlistextra";
 
   private PlayListFragment playListFragment;
-  private PlaylistListAdapter playlistListAdapter;
+  public PlaylistListAdapter playlistListAdapter;
 
   private static Playlist Playlist;
 

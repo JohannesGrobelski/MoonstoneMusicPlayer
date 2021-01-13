@@ -38,7 +38,7 @@ public class PlayListFragment extends Fragment {
 
   private PageViewModel pageViewModel;
   public PlaylistListManager playlistListManager;
-  PlaylistFragmentListener playlistFragmentListener;
+  public PlaylistFragmentListener playlistFragmentListener;
 
   LinearLayout ll_playlistBack;
   public ListView lv_playlist;

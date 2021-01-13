@@ -1,6 +1,7 @@
 package com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.example.moonstonemusicplayer.model.Database.DBPlaylists;
 import com.example.moonstonemusicplayer.model.Database.DBSonglists;
@@ -26,6 +27,7 @@ public class PlaylistListManager {
   /** loads local music and adds it to dataSource*/
   public void loadPlaylistsFromDB(Context context){
     if(context != null){
+      Log.d(TAG,"loadPlaylistsFromDB");
       this.playlists.addAll(DBPlaylists.getInstance(context).getAllPlaylists());
     }
   }

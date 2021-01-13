@@ -127,6 +127,9 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
     ((PlayListFragment) ((MainActivity) folderFragment.getActivity())
         .sectionsPagerAdapter.getFragments()[1])
         .playlistListManager.loadPlaylistsFromDB(folderFragment.getActivity());
+    ((PlayListFragment) ((MainActivity) folderFragment.getActivity())
+        .sectionsPagerAdapter.getFragments()[1])
+        .playlistFragmentListener.playlistListAdapter.notifyDataSetChanged();
     return true;
   }
 
@@ -153,14 +156,15 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
       }
     });
     dialogBuilder.setTitle("Add Song to a playlist:");
-    dialogBuilder.show();
+
+    final AlertDialog alertDialog  = dialogBuilder.show();
 
     lv_playlist_alert.setOnItemClickListener(new AdapterView.OnItemClickListener() {
       @Override
       public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         DBPlaylists.getInstance(folderFragment.getActivity()).addToPlaylist(song,allPlaylistNames[position]);
+        alertDialog.dismiss();
       }
     });
   }
-
 }
