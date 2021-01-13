@@ -17,9 +17,10 @@ import java.util.Set;
 
 public class DBPlaylists {
     //favorites is just another playlist
-    private static final String FAVORITES_PLAYLIST_NAME = "FAVORITES_MOONSTONEMUSICPLAYER_32325393434133218379432139324316239844321";
+    private static final String FAVORITES_PLAYLIST_NAME = "FAVORITES_MOONSTONEMUSICPLAYER_32325393434133218379";
 
     private static final String TAG = DBPlaylists.class.getSimpleName();
+    private static final boolean DEBUG = true;
     private static DBPlaylists instance;
 
     //Angabe Klassenname für spätere LogAusgaben
@@ -88,6 +89,7 @@ public class DBPlaylists {
 
 
     public List<Song> getAllFavorites(){
+        if(DEBUG)Log.d(TAG,"load Favorites");
         String query = "SELECT * FROM "+DBHelperPlaylists.TABLE_PLAYLISTS
             +" WHERE "+DBHelperPlaylists.COLUMN_PLAYLIST_NAME+" = \'"+FAVORITES_PLAYLIST_NAME+"\'";
         return getSongListFromQuery(query);
@@ -109,9 +111,12 @@ public class DBPlaylists {
     }
 
     public Song addToPlaylist(Song inputSong, String playlistname){
+        if(DEBUG)Log.d(TAG,"add "+inputSong.getName()+" to playlist "+playlistname);
+
         //check if song is already in playlist
         String query = "SELECT * FROM "+DBHelperPlaylists.TABLE_PLAYLISTS+" WHERE "+
-            DBHelperPlaylists.COLUMN_PLAYLIST_NAME+" LIKE \'"+playlistname+"\'";
+            DBHelperPlaylists.COLUMN_PLAYLIST_NAME+" LIKE \'"+playlistname+"\' AND "+
+            DBHelperPlaylists.COLUMN_URI+" LIKE \'"+inputSong.getURI()+"\'";
         List<Song> playlistSongs = getSongListFromQuery(query);
 
         if(playlistSongs.isEmpty()){
@@ -132,7 +137,7 @@ public class DBPlaylists {
 
             //Song-Objekt in DB einfügen und ID zurückbekommen
             long insertID = database_playlists.insert(DBHelperPlaylists.TABLE_PLAYLISTS, null, values);
-
+            Log.d(TAG,"add to playlist: "+inputSong.getName()+" "+insertID);
             //Zeiger auf gerade eingefügtes Element
             Cursor cursor = database_playlists.query(DBHelperPlaylists.TABLE_PLAYLISTS,
                 columns,
@@ -197,6 +202,8 @@ public class DBPlaylists {
                 String genre = cursor.getString(7);
                 String lyrics = cursor.getString(8);
                 String meaning = cursor.getString(9);
+
+                if(DEBUG)Log.d(TAG,"load Favorites: "+title);
 
                 SongList.add(new Song(index, title, artist, uri, duration, lastPosition, genre, lyrics, meaning));
             } while (cursor.moveToNext());

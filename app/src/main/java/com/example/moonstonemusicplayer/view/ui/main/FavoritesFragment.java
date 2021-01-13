@@ -31,6 +31,7 @@ public class FavoritesFragment extends Fragment {
   // TODO: Rename parameter arguments, choose names that match
   // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
   private static final String ARG_SECTION_NUMBER = "section_number";
+  private static final String TAG = FavoritesFragment.class.getSimpleName();
   private PageViewModel pageViewModel;
 
   public FavoritesManager favoritesManager;
@@ -93,5 +94,11 @@ public class FavoritesFragment extends Fragment {
   @Override
   public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v, @Nullable ContextMenu.ContextMenuInfo menuInfo) {
     favoriteFragmentListener.onCreateContextMenu(menu, v, menuInfo);
+  }
+
+  @Override
+  public void onResume() {
+    super.onResume();
+    favoriteFragmentListener.onResume();
   }
 }

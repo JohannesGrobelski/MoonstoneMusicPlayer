@@ -17,7 +17,9 @@ import com.example.moonstonemusicplayer.model.Database.DBPlaylists;
 import com.example.moonstonemusicplayer.model.Database.DBSonglists;
 import com.example.moonstonemusicplayer.model.MainActivity.FolderFragment.Folder;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
+import com.example.moonstonemusicplayer.view.MainActivity;
 import com.example.moonstonemusicplayer.view.ui.main.FolderFragment;
+import com.example.moonstonemusicplayer.view.ui.main.PlayListFragment;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -105,8 +107,10 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
   public boolean onContextItemSelected(MenuItem item) {
     //only react to context menu in this fragment
     if(item.getGroupId() == 0){
+      //calculate the index of the song clicked
       AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
       int index = info.position;
+      if(folderFragment.selectedFolder.getChildren_folders() != null)index -= folderFragment.selectedFolder.getChildren_folders().length;
       Song selectedSong = folderFragment.selectedFolder.getChildren_songs()[index];
 
       switch (item.getItemId()){
@@ -120,7 +124,9 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
         }
       }
     }
-
+    ((PlayListFragment) ((MainActivity) folderFragment.getActivity())
+        .sectionsPagerAdapter.getFragments()[1])
+        .playlistListManager.loadPlaylistsFromDB(folderFragment.getActivity());
     return true;
   }
 

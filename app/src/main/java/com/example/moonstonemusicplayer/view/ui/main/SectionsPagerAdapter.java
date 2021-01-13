@@ -48,7 +48,9 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     return null;
   }
 
-  public Fragment[] getFragments(){return fragments;}
+  public Fragment[] getFragments(){
+    return fragments;
+  }
 
   @Nullable
   @Override
@@ -60,4 +62,6 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
   public int getCount() {
     return fragments.length;
   }
+
+
 }

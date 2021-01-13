@@ -25,9 +25,9 @@ public class FavoritesManager {
   /** loads local music and adds it to dataSource*/
   public void loadFavoritesFromDB(Context context){
     if(context != null){
+      this.favorites.clear();
       this.favorites.addAll(DBPlaylists.getInstance(context).getAllFavorites());
     }
-
   }
 
   public List<Song> getFavorites(){

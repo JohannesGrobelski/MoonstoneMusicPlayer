@@ -25,18 +25,24 @@ public class MainActivity extends AppCompatActivity {
   public SearchView searchView;
   MainActivityListener mainActivityListener;
 
-  SectionsPagerAdapter sectionsPagerAdapter;
+  public SectionsPagerAdapter sectionsPagerAdapter;
+  TabLayout tabs;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
     sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
 
+
     ViewPager viewPager = findViewById(R.id.view_pager);
     viewPager.setAdapter(sectionsPagerAdapter);
     TabLayout tabs = findViewById(R.id.mainactivity_tabs);
     tabs.setupWithViewPager(viewPager);
     FloatingActionButton fab = findViewById(R.id.fab);
+    tabs = findViewById(R.id.mainactivity_tabs);
+
+    tabs.setOnTabSelectedListener(mainActivityListener);
 
     mainActivityListener = new MainActivityListener(this,sectionsPagerAdapter.getFragments());
 

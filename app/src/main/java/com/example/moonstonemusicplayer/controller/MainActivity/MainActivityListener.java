@@ -15,8 +15,10 @@ import androidx.fragment.app.Fragment;
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.view.MainActivity;
 import com.example.moonstonemusicplayer.view.ui.main.FolderFragment;
+import com.google.android.material.tabs.TabLayout;
 
-public class MainActivityListener implements SearchView.OnQueryTextListener, View.OnClickListener, SearchView.OnCloseListener {
+public class MainActivityListener implements SearchView.OnQueryTextListener,
+    View.OnClickListener, SearchView.OnCloseListener, TabLayout.OnTabSelectedListener {
   private static final boolean DEBUG = true;
   private static final String TAG = MainActivityListener.class.getSimpleName();
 
@@ -135,5 +137,40 @@ public class MainActivityListener implements SearchView.OnQueryTextListener, Vie
   @Override
   public boolean onClose() {
     return false;
+  }
+
+  @Override
+  public void onTabSelected(TabLayout.Tab tab) {
+    Log.e(TAG,"selected Tab: "+tab.getPosition());
+    switch (tab.getPosition()) {
+      case 0:
+        Log.e(TAG,"TAB1");
+        break;
+      case 1:
+        Log.e(TAG,"TAB2");
+        break;
+      case 2:
+        Log.e(TAG,"TAB3");
+        break;
+    }
+  }
+
+  @Override
+  public void onTabUnselected(TabLayout.Tab tab) {}
+
+  @Override
+  public void onTabReselected(TabLayout.Tab tab) {
+    Log.e(TAG,"selected Tab: "+tab.getPosition());
+    switch (tab.getPosition()) {
+      case 0:
+        Log.e(TAG,"TAB1");
+        break;
+      case 1:
+        Log.e(TAG,"TAB2");
+        break;
+      case 2:
+        Log.e(TAG,"TAB3");
+        break;
+    }
   }
 }
