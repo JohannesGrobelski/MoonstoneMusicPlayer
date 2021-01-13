@@ -59,6 +59,7 @@ public class MainActivityListener implements SearchView.OnQueryTextListener, Vie
         if (fragments != null && fragments[1] != null) {
           requestForPermission();
           ((FolderFragment) fragments[0]).loadMusicNew();
+
         } else {
           Log.e(TAG, "fragment null");
         }

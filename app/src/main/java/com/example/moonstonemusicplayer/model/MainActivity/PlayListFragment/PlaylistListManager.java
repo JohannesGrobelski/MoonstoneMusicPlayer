@@ -2,7 +2,8 @@ package com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment;
 
 import android.content.Context;
 
-import com.example.moonstonemusicplayer.model.Database.DataSourceSingleton;
+import com.example.moonstonemusicplayer.model.Database.DBPlaylists;
+import com.example.moonstonemusicplayer.model.Database.DBSonglists;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,13 +20,13 @@ public class PlaylistListManager {
 
   public PlaylistListManager(Context baseContext) {
     this.context = baseContext;
-    loadPlaylistsFromDB(baseContext);
+    //loadPlaylistsFromDB(baseContext);
   }
 
   /** loads local music and adds it to dataSource*/
   public void loadPlaylistsFromDB(Context context){
     if(context != null){
-      this.playlists.addAll(DataSourceSingleton.getInstance(context).getAllPlaylists());
+      this.playlists.addAll(DBPlaylists.getInstance(context).getAllPlaylists());
     }
   }
 

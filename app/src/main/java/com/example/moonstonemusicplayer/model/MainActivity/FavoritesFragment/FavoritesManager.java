@@ -2,7 +2,9 @@ package com.example.moonstonemusicplayer.model.MainActivity.FavoritesFragment;
 
 import android.content.Context;
 
-import com.example.moonstonemusicplayer.model.Database.DataSourceSingleton;
+import com.example.moonstonemusicplayer.model.Database.DBHelperPlaylists;
+import com.example.moonstonemusicplayer.model.Database.DBPlaylists;
+import com.example.moonstonemusicplayer.model.Database.DBSonglists;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 
 import java.util.ArrayList;
@@ -17,13 +19,13 @@ public class FavoritesManager {
 
   public FavoritesManager(Context baseContext) {
     this.context = baseContext;
-    loadFavoritesFromDB(baseContext);
+    //loadFavoritesFromDB(baseContext);
   }
 
   /** loads local music and adds it to dataSource*/
   public void loadFavoritesFromDB(Context context){
     if(context != null){
-      this.favorites.addAll(DataSourceSingleton.getInstance(context).getAllFavorites());
+      this.favorites.addAll(DBPlaylists.getInstance(context).getAllFavorites());
     }
 
   }

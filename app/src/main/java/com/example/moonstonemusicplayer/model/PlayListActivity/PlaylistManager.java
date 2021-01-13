@@ -8,8 +8,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import com.example.moonstonemusicplayer.model.Database.DBHelper;
-import com.example.moonstonemusicplayer.model.Database.DataSourceSingleton;
+import com.example.moonstonemusicplayer.model.Database.DBSonglists;
 
 
 /**
@@ -104,7 +103,7 @@ public class PlaylistManager {
     }
 
     public void deleteAllSongs(){
-        DataSourceSingleton.getInstance(context).deleteAllSongs();
+        DBSonglists.getInstance(context).deleteAllSongs();
         playList.clear();
         displayedSongList.clear();
     }

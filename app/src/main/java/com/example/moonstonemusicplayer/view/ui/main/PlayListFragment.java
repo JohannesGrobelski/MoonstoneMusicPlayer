@@ -69,7 +69,7 @@ public class PlayListFragment extends Fragment {
     View root = inflater.inflate(R.layout.fragment_playlist, container, false);
 
     lv_playlist = root.findViewById(R.id.lv_playlistSongList);
-    ll_playlistBack =root.findViewById(R.id.ll_back_playlist);
+    ll_playlistBack = root.findViewById(R.id.ll_back_playlist);
 
     playlistFragmentListener = new PlaylistFragmentListener(this);
 

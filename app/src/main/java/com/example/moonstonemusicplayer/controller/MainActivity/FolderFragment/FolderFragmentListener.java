@@ -1,12 +1,18 @@
 package com.example.moonstonemusicplayer.controller.MainActivity.FolderFragment;
 
+import android.app.AlertDialog;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import com.example.moonstonemusicplayer.R;
+import com.example.moonstonemusicplayer.model.Database.DBPlaylists;
+import com.example.moonstonemusicplayer.model.Database.DBSonglists;
 import com.example.moonstonemusicplayer.model.MainActivity.FolderFragment.Folder;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import com.example.moonstonemusicplayer.view.ui.main.FolderFragment;
@@ -19,7 +25,7 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
   private static final String TAG = FolderFragmentListener.class.getSimpleName();
   private static final boolean DEBUG = false;
   private final FolderFragment folderFragment;
-  private FolderListAdapter folderListAdapter;
+  public FolderListAdapter folderListAdapter;
 
   public FolderFragmentListener(FolderFragment folderFragment) {
     this.folderFragment = folderFragment;
@@ -93,16 +99,43 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
   }
 
   public boolean onContextItemSelected(MenuItem item) {
+    AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+    int index = info.position;
+    Song selectedSong = folderFragment.selectedFolder.getChildren_songs()[index];
+
     switch (item.getItemId()){
       case R.id.mi_addToFavorites: {
-awd
+        DBPlaylists.getInstance(folderFragment.getActivity()).addToFavorites(selectedSong);
         break;
       }
       case R.id.mi_addToPlaylist:  {
-        //open Alert Dialog
+        showAlertDialogAddToPlaylists(selectedSong);
         break;
       }
     }
     return true;
   }
+
+  private void showAlertDialogAddToPlaylists(final Song song){
+      final String[] allPlaylistNames = DBPlaylists.getInstance(folderFragment.getActivity()).getAllPlaylistNames();
+
+      LayoutInflater inflater = folderFragment.getLayoutInflater();
+      View dialogView = inflater.inflate(R.layout.add_to_playlist_layout, null);
+      ListView lv_playlist_alert = dialogView.findViewById(R.id.lv_playlists_alert);
+      lv_playlist_alert.setAdapter(new ArrayAdapter<String>(folderFragment.getActivity(),android.R.layout.simple_list_item_1,allPlaylistNames));
+
+      final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(folderFragment.getActivity());
+      dialogBuilder.setView(dialogView);
+      dialogBuilder.setNegativeButton(android.R.string.no,null);
+      dialogBuilder.setTitle("Add Song to a playlist:");
+      dialogBuilder.show();
+
+    lv_playlist_alert.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+      @Override
+      public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        DBPlaylists.getInstance(folderFragment.getActivity()).addToPlaylist(song,allPlaylistNames[position]);
+      }
+    });
+  }
+
 }

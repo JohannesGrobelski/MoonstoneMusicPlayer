@@ -100,6 +100,7 @@ public class FolderFragment extends Fragment {
     folderManager.loadLocalMusicAsFolder(this.getContext());
     selectedFolder = folderManager.getRootFolder();
     initViews();
+
   }
 
   public void deleteAllMusic(){
@@ -115,6 +116,7 @@ public class FolderFragment extends Fragment {
 
     lv_folderList.setOnItemClickListener(folderFragmentListener);
     ll_folder_back.setOnClickListener(folderFragmentListener);
+    folderFragmentListener.folderListAdapter.notifyDataSetChanged();
   }
 
 

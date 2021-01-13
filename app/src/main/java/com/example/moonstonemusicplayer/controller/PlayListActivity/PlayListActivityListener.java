@@ -4,7 +4,6 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
@@ -14,10 +13,13 @@ import android.media.AudioManager;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.SeekBar;
@@ -27,6 +29,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.moonstonemusicplayer.R;
+import com.example.moonstonemusicplayer.model.Database.DBPlaylists;
+import com.example.moonstonemusicplayer.model.Database.DBSonglists;
 import com.example.moonstonemusicplayer.model.PlayListActivity.PlaylistManager;
 import com.example.moonstonemusicplayer.model.PlayListActivity.PlayListModel;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
@@ -463,6 +467,46 @@ public class PlayListActivityListener
 
   }
 
+  public boolean onContextItemSelected(MenuItem item) {
+    AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+    int index = info.position;
+    Song selectedSong = playlistManager.getDisplayedSongList().get(index);
+
+    switch (item.getItemId()){
+      case R.id.mi_addToFavorites: {
+        DBPlaylists.getInstance(playListActivity).addToFavorites(selectedSong);
+        break;
+      }
+      case R.id.mi_addToPlaylist:  {
+        showAlertDialogAddToPlaylists(selectedSong);
+        break;
+      }
+    }
+    return true;
+  }
+
+  private void showAlertDialogAddToPlaylists(final Song song){
+    final String[] allPlaylistNames = DBPlaylists.getInstance(playListActivity).getAllPlaylistNames();
+
+    LayoutInflater inflater = playListActivity.getLayoutInflater();
+    View dialogView = inflater.inflate(R.layout.add_to_playlist_layout, null);
+    ListView lv_playlist_alert = dialogView.findViewById(R.id.lv_playlists_alert);
+    lv_playlist_alert.setAdapter(new ArrayAdapter<String>(playListActivity,android.R.layout.simple_list_item_1,allPlaylistNames));
+
+    final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(playListActivity);
+    dialogBuilder.setView(dialogView);
+    dialogBuilder.setNegativeButton(android.R.string.no,null);
+    dialogBuilder.setTitle("Add Song to a playlist:");
+    dialogBuilder.show();
+
+    lv_playlist_alert.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+      @Override
+      public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        DBPlaylists.getInstance(playListActivity).addToPlaylist(song,allPlaylistNames[position]);
+      }
+    });
+  }
+
   public void onDestroy() {
     if(isServiceBound){
       if(DEBUG)Log.d(TAG,"activity destroyed => destroy service");
@@ -474,6 +518,10 @@ public class PlayListActivityListener
   /** stop service */
   public void onBackPressed() {
     mediaPlayerService.onDestroy();
+  }
+
+  public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+    playListActivity.getMenuInflater().inflate(R.menu.song_context_menu_folderfrag_playlistact,menu);
   }
 
 
