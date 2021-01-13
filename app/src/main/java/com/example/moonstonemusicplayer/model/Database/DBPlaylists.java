@@ -117,9 +117,8 @@ public class DBPlaylists {
         String query = "SELECT * FROM "+DBHelperPlaylists.TABLE_PLAYLISTS+" WHERE "+
             DBHelperPlaylists.COLUMN_PLAYLIST_NAME+" LIKE \'"+playlistname+"\' AND "+
             DBHelperPlaylists.COLUMN_URI+" LIKE \'"+inputSong.getURI()+"\'";
-        List<Song> playlistSongs = getSongListFromQuery(query);
 
-        if(playlistSongs.isEmpty()){
+        if(resultsFromQueryEmtpy(query)){
             //Anlegen von Wertepaaren zur Übergabe in Insert-Methode
             ContentValues values = new ContentValues();
             values.put(DBHelperPlaylists.COLUMN_PLAYLIST_NAME, playlistname);
@@ -181,6 +180,17 @@ public class DBPlaylists {
             DBHelperPlaylists.COLUMN_PLAYLIST_NAME+" LIKE \'"+"%"+searchterm+"%)";
 
         return null;
+    }
+
+    private boolean resultsFromQueryEmtpy(String query){
+        List<Song> SongList = new ArrayList<>();
+        open_readable();
+        //Zeiger auf die Einträge der Tabelle
+        Cursor cursor = database_playlists.rawQuery(query, null);
+        boolean result = cursor.getCount() == 0;
+        cursor.close();
+        close_db();
+        return result;
     }
 
     private List<Song> getSongListFromQuery(String query) {
