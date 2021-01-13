@@ -25,8 +25,8 @@ public class PlaylistManager {
     public PlaylistManager(Context baseContext, Song[] playlist) {
         this.context = baseContext;
 
-        playList = Arrays.asList(playlist);
-        displayedSongList = Arrays.asList(playlist);
+        playList = new ArrayList<>(Arrays.asList(playlist));
+        displayedSongList = new ArrayList<>(Arrays.asList(playlist));
     }
 
 
@@ -48,14 +48,15 @@ public class PlaylistManager {
 
 
     public void searchSong(String searchterm){
-        displayedSongList.clear();
-        for(Song song: playList){
-            if(song.getName().toLowerCase().contains(searchterm.toLowerCase()))displayedSongList.add(song);
+        this.displayedSongList.clear();
+        for(Song song: playList) {
+            if (song.getName().toLowerCase().contains(searchterm.toLowerCase()))
+                displayedSongList.add(song);
         }
         /*
         intersectPlaylist(DataSourceSingleton.getInstance(context).searchSongs(searchterm));
          */
-        displayedSongList.addAll(playList);
+        //displayedSongList.addAll(playList);
     }
 
 
@@ -106,6 +107,15 @@ public class PlaylistManager {
         DBSonglists.getInstance(context).deleteAllSongs();
         playList.clear();
         displayedSongList.clear();
+    }
+
+    public void sortByDuration() {
+        Collections.sort(displayedSongList, new Comparator<Song>() {
+            @Override
+            public int compare(Song o1, Song o2) {
+                return (int) (o1.getDuration_ms() - o2.getDuration_ms());
+            }
+        });
     }
 
     /*

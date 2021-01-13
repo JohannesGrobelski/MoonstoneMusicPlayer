@@ -52,6 +52,7 @@ public class MainActivityListener implements SearchView.OnQueryTextListener,
       case R.id.mi_loadLocaleAudioFile: {
         if (fragments != null && fragments[1] != null) {
           requestForPermission();
+
           ((FolderFragment) fragments[0]).reloadAllMusic();
 
         } else {

@@ -25,6 +25,9 @@
             <item
                 android:id="@+id/miSortGenre"
                 android:title="sortieren nach Genre" />
+            <item
+                android:id="@+id/miSortDuration"
+                android:title="sortieren nach Länge des Songs" />
         </menu>
     </item>
 </menu>

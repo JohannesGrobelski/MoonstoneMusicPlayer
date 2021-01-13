@@ -108,6 +108,11 @@ public class PlayListActivityListener
         songListAdapter.notifyDataSetChanged();
         break;
       }
+      case R.id.miSortDuration: {
+        playlistManager.sortByDuration();
+        songListAdapter.notifyDataSetChanged();
+        break;
+      }
       case R.id.miSwitchAscDesc: {
         playlistManager.reverseList();
         songListAdapter.notifyDataSetChanged();
