@@ -79,12 +79,6 @@ public class MainActivityListener implements SearchView.OnQueryTextListener,
         //folderManager.getRootFolder().print(0);
         break;
       }
-      case R.id.miDeleteAllAudioFiles: {
-
-        break;
-      }
-
-
       }
           return true;
   }
@@ -111,11 +105,9 @@ public class MainActivityListener implements SearchView.OnQueryTextListener,
   }
 
   @Override
-  public boolean onQueryTextChange(String newText) {
-    /*switch (mainActivity.sec.){
-      case 0:{
-      }
-    }*/
+  public boolean onQueryTextChange(String query) {
+    //search in folderfragment
+    ((FolderFragment) fragments[0]).searchMusic(query);
     return false;
   }
 

@@ -88,11 +88,6 @@ public class PlayListActivityListener
 
   public boolean onOptionsItemSelected(MenuItem item) {
     switch (item.getItemId()){
-      case R.id.miDeleteAllAudioFiles: {
-        playlistManager.deleteAllSongs();
-        songListAdapter.notifyDataSetChanged();
-        break;
-      }
       case R.id.miSortTitle: {
         playlistManager.sortByTitle();
         songListAdapter.notifyDataSetChanged();

@@ -9,9 +9,6 @@
         app:actionViewClass="android.widget.SearchView"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/miDeleteAllAudioFiles"
-        android:title="Alle Songs löschen" />
-    <item
         android:id="@+id/mi_loadLocaleAudioFile"
         android:icon="@android:drawable/ic_popup_sync"
         android:title="Lokale Audio Datein laden"

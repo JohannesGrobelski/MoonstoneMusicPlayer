@@ -113,11 +113,7 @@ public class FolderFragment extends Fragment {
     refreshTask.execute(folderManager);
   }
 
-  public void deleteAllMusic(){
-    folderManager.loadLocalMusicAsFolder();
-    selectedFolder = folderManager.getRootFolder();
-    initViews();
-  }
+
 
   private void initViews(){
     if(DEBUG)Log.d(TAG, "rootFolder: "+selectedFolder.toString());
@@ -179,6 +175,21 @@ public class FolderFragment extends Fragment {
   public boolean onContextItemSelected(@NonNull MenuItem item) {
     return folderFragmentListener.onContextItemSelected(item);
   }
+
+  public void searchMusic(String query) {
+    if(!query.isEmpty()){
+      Folder[] matchingFolders = folderManager.getAllFoldersMatchingQuery(query);
+      Song[] matchingSongs = folderManager.getAllSongsMatchingQuery(query);
+      selectedFolder = new Folder("searchFolder",null,matchingFolders,matchingSongs);
+    } else {
+      selectedFolder = folderManager.getRootFolder();
+    }
+    //refresh adapter
+    folderFragmentListener = new FolderFragmentListener(FolderFragment.this);
+    initViews();
+  }
+
+
 
 
   /** */
