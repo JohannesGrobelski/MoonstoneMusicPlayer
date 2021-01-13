@@ -75,9 +75,13 @@ public class PlayListFragment extends Fragment {
 
     lv_playlist.setOnItemClickListener(playlistFragmentListener);
     ll_playlistBack.setOnClickListener(playlistFragmentListener);
+
     registerForContextMenu(lv_playlist);
+    lv_playlist.setOnCreateContextMenuListener(this);
     return root;
   }
+
+
 
   @Override
   public void onAttach(@NonNull Context context) {
@@ -89,11 +93,4 @@ public class PlayListFragment extends Fragment {
   public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v, @Nullable ContextMenu.ContextMenuInfo menuInfo) {
     playlistFragmentListener.onCreateContextMenu(menu, v, menuInfo);
   }
-
-  @Override
-  public boolean onContextItemSelected(@NonNull MenuItem item) {
-    return playlistFragmentListener.onContextItemSelected(item);
-  }
-
-
 }

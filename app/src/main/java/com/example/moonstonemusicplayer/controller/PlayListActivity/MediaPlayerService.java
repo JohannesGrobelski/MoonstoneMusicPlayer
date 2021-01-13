@@ -1,5 +1,6 @@
 package com.example.moonstonemusicplayer.controller.PlayListActivity;
 
+import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -30,6 +31,8 @@ public class MediaPlayerService extends Service
                   MediaPlayer.OnInfoListener,
                   MediaPlayer.OnBufferingUpdateListener,
                   AudioManager.OnAudioFocusChangeListener {
+  SongNotification songNotification;
+
   public static final String STARTING_INDEX = "STARTING_INDEX";
   private static final String TAG = MediaPlayerService.class.getSimpleName();
   private static final boolean DEBUG = true;
@@ -75,6 +78,7 @@ public class MediaPlayerService extends Service
       ((LocalBinder) iBinder).boundServiceListener.selectedSong(playListModel.getCurrentSongIndex());
     }
 
+    songNotification.buildNotification(playListModel.getCurrentSong());
   }
 
   //public interface
@@ -135,6 +139,8 @@ public class MediaPlayerService extends Service
       startIndex = intent.getIntExtra(STARTING_INDEX,0);
       if(DEBUG)Log.d(TAG,"starting song: "+startIndex);
     }
+
+    songNotification = new SongNotification(getApplicationContext());
 
     return super.onStartCommand(intent, flags, startId);
   }

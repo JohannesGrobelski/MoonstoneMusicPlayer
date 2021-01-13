@@ -18,9 +18,9 @@ import com.example.moonstonemusicplayer.view.ui.main.PlayListFragment;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PlaylistFragmentListener implements AdapterView.OnItemClickListener, View.OnClickListener {
+public class PlaylistFragmentListener implements AdapterView.OnItemClickListener, View.OnClickListener, View.OnCreateContextMenuListener {
   private static final String TAG = PlaylistFragmentListener.class.getSimpleName();
-  private static final boolean DEBUG = false;
+  private static final boolean DEBUG = true;
   public static final String PLAYLISTINDEXEXTRA = "playlistextra";
 
   private PlayListFragment playListFragment;
@@ -88,29 +88,20 @@ public class PlaylistFragmentListener implements AdapterView.OnItemClickListener
     if(playListFragment.playlistListManager.getCurrentPlaylist() != null){
       //create menu item with groupid to distinguish between fragments
       menu.add(1, 11, 0, "delete from playlist");
-    }
-  }
-
-  public boolean onContextItemSelected(MenuItem item) {
-    if(item.getGroupId() == 1){
-      switch (item.getItemId()){
-        case 11: {
+      menu.getItem(0).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+        @Override
+        /** onContextItemSelected(MenuItem item) doesnt work*/
+        public boolean onMenuItemClick(MenuItem item) {
           AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
           int index = info.position;
           Song song = playListFragment.playlistListManager.getCurrentPlaylist().getPlaylist().get(index);
           String playlistName = playListFragment.playlistListManager.getCurrentPlaylist().getName();
-          Log.d("delFromPlaylist",playlistName+" - "+song.getName());
-
-        /*
-        DBPlaylists.getInstance(playListFragment.getContext()).deleteFromPlaylist(
-            ,
-
-        );
-         */
-          break;
+          DBPlaylists.getInstance(playListFragment.getContext()).deleteFromPlaylist(song,playlistName);
+          return false;
         }
-      }
+      });
     }
-    return true;
   }
+
+
 }

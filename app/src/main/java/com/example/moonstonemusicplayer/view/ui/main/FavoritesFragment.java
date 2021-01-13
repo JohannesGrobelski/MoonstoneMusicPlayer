@@ -4,10 +4,12 @@ import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -76,6 +78,7 @@ public class FavoritesFragment extends Fragment {
 
     lv_favorites = rootView.findViewById(R.id.lv_favorites);
     favoriteFragmentListener = new FavoriteFragmentListener(this);
+    registerForContextMenu(lv_favorites);
 
     lv_favorites.setOnItemClickListener(favoriteFragmentListener);
     return rootView;
@@ -85,5 +88,10 @@ public class FavoritesFragment extends Fragment {
   public void onAttach(@NonNull Context context) {
     super.onAttach(context);
     favoritesManager = new FavoritesManager(context);
+  }
+
+  @Override
+  public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v, @Nullable ContextMenu.ContextMenuInfo menuInfo) {
+    favoriteFragmentListener.onCreateContextMenu(menu, v, menuInfo);
   }
 }

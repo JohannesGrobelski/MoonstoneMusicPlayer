@@ -7,7 +7,6 @@ import androidx.appcompat.widget.Toolbar;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,7 +22,6 @@ import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.MainActivity.FavoritesFragment.FavoriteFragmentListener;
 import com.example.moonstonemusicplayer.controller.MainActivity.PlaylistFragment.PlaylistFragmentListener;
 import com.example.moonstonemusicplayer.controller.PlayListActivity.PlayListActivityListener;
-import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.Playlist;
 import com.example.moonstonemusicplayer.view.ui.main.FolderFragment;
 
 import static com.example.moonstonemusicplayer.controller.MainActivity.FavoritesFragment.FavoriteFragmentListener.FAVORITELISTEXTRA;
@@ -51,16 +49,16 @@ public class PlayListActivity extends AppCompatActivity {
     setContentView(R.layout.activity_playlist);
 
     lv_songlist = findViewById(R.id.lv_songlist);
-    btn_prev = findViewById( R.id.btn_prev);
-    btn_play_pause = findViewById( R.id.btn_play_pause);
-    btn_next = findViewById( R.id.btn_next);
+    btn_prev = findViewById( R.id.notification_btn_prev);
+    btn_play_pause = findViewById( R.id.notification_btn_play_pause);
+    btn_next = findViewById( R.id.notification_btn_next);
     btn_shuffle = findViewById( R.id.btn_shuffle);
     btn_repeat = findViewById( R.id.btn_repeat);
 
     seekBar = findViewById(R.id.seekBar);
     tv_seekbar_progress = findViewById(R.id.tv_seekbar_progress);
     tv_seekbar_max = findViewById(R.id.tv_seekbar_max);
-    tv_title = findViewById(R.id.tv_name);
+    tv_title = findViewById(R.id.notification_tv_name);
     tv_artist = findViewById(R.id.tv_artist);
     LL_MusicControlls = findViewById(R.id.LL_MusicControlls);
 

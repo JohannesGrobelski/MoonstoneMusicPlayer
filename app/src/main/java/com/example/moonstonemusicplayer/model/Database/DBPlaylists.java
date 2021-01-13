@@ -100,9 +100,9 @@ public class DBPlaylists {
         open_writable();
 
         //Song-Objekt in DB einfügen und ID zurückbekommen
-        long insertID = database_playlists.delete(DBHelperPlaylists.TABLE_PLAYLISTS,
-            DBHelperPlaylists.COLUMN_PLAYLIST_NAME+" = "+playlistname+" AND "+
-                       DBHelperPlaylists.COLUMN_URI+" = "+song.getURI()+")",null);
+        database_playlists.delete(DBHelperPlaylists.TABLE_PLAYLISTS,
+            DBHelperPlaylists.COLUMN_PLAYLIST_NAME+" = \'"+playlistname+"\' AND "+
+                       DBHelperPlaylists.COLUMN_URI+" = \'"+song.getURI()+"\'",null);
 
         //datenbank schließen und rückgabe des Songobjekts
         close_db();

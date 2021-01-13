@@ -30,7 +30,6 @@ import androidx.core.content.ContextCompat;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.model.Database.DBPlaylists;
-import com.example.moonstonemusicplayer.model.Database.DBSonglists;
 import com.example.moonstonemusicplayer.model.PlayListActivity.PlaylistManager;
 import com.example.moonstonemusicplayer.model.PlayListActivity.PlayListModel;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
@@ -148,10 +147,10 @@ public class PlayListActivityListener
   /** implements music controll: play/pause, next/prev*/
   public void onClick(View v) {
     switch (v.getId()){
-      case R.id.btn_prev:
+      case R.id.notification_btn_prev:
         prevSong();
         break;
-      case R.id.btn_play_pause:
+      case R.id.notification_btn_play_pause:
         if(isServiceBound){
           if (mediaPlayerService.isPlayingMusic()) {
             pauseAudio();
@@ -160,7 +159,7 @@ public class PlayListActivityListener
           }
         }
         break;
-      case R.id.btn_next:
+      case R.id.notification_btn_next:
         nextSong();
         break;
       case R.id.btn_shuffle:{
