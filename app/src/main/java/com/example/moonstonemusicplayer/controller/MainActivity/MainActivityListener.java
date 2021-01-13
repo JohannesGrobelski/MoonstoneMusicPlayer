@@ -1,6 +1,8 @@
 package com.example.moonstonemusicplayer.controller.MainActivity;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.util.Log;
 import android.view.Menu;
@@ -52,9 +54,25 @@ public class MainActivityListener implements SearchView.OnQueryTextListener,
       case R.id.mi_loadLocaleAudioFile: {
         if (fragments != null && fragments[1] != null) {
           requestForPermission();
-
-          ((FolderFragment) fragments[0]).reloadAllMusic();
-
+          //show alert dialog before refreshing audio files
+          AlertDialog alertDialog = new AlertDialog.Builder(mainActivity)
+              .setTitle("Reloads local audio files.")
+              .setMessage("This can take a few minutes.")
+              .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                  ((FolderFragment) fragments[0]).reloadAllMusic();
+                }
+              })
+              .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                  //abort
+                }
+              })
+          .create();
+          alertDialog.show();
+          break;
         } else {
           Log.e(TAG, "fragment null");
         }
@@ -65,36 +83,7 @@ public class MainActivityListener implements SearchView.OnQueryTextListener,
 
         break;
       }
-      /*
-      case R.id.mi_loadLocaleAudioFile: {
-        if(requestForPermission()){
-          AlertDialog alertDialog = new AlertDialog.Builder(mainActivity)
-                  .setTitle("Lädt lokale Audiodatein neu ein.")
-                  .setMessage("Dies kann einige Minuten dauern.")
-                  .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                      RefreshTask refreshTask = new RefreshTask(new PlayListActivityListener.RefreshTaskListener() {
-                        @Override
-                        public void onCompletion() {
-                          //songListAdapter.notifyDataSetChanged();
-                        }
-                      });
-                      //refreshTask.execute(mainActivity);
-                    }
-                  })
-                  .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                      //abort
-                    }
-                  })
-                  .create();
-          alertDialog.show();
-                  break;
 
-        }
-       */
 
       }
           return true;

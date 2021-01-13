@@ -2,20 +2,23 @@ package com.example.moonstonemusicplayer.controller.PlayListActivity;
 
 import android.os.AsyncTask;
 
+import com.example.moonstonemusicplayer.model.MainActivity.FolderFragment.FolderManager;
 import com.example.moonstonemusicplayer.model.PlayListActivity.PlaylistManager;
+import com.example.moonstonemusicplayer.view.ui.main.FolderFragment;
 
-public class RefreshTask extends AsyncTask<PlaylistManager,Void,Void> {
-  private PlaylistManager PlaylistManager;
-  private PlayListActivityListener.RefreshTaskListener refreshTaskListener;
+/** loads local music and messages per folderfragment listener*/
+public class RefreshTask extends AsyncTask<FolderManager,Void,Void> {
+  private FolderManager folderManager;
+  private FolderFragment.RefreshTaskListener refreshTaskListener;
 
-  public RefreshTask(PlayListActivityListener.RefreshTaskListener refreshTaskListener){
+  public RefreshTask(FolderFragment.RefreshTaskListener refreshTaskListener){
     this.refreshTaskListener = refreshTaskListener;
   }
 
   @Override
-  protected Void doInBackground(PlaylistManager... playlistManagers) {
-    this.PlaylistManager = playlistManagers[0];
-    //TODO: this.MusicManager.loadLocalMusic();
+  protected Void doInBackground(FolderManager... folderManagers) {
+    this.folderManager = folderManagers[0];
+    this.folderManager.loadLocalMusicAsFolder();
     return null;
   }
 

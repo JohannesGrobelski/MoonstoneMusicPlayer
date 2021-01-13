@@ -1,5 +1,6 @@
 package com.example.moonstonemusicplayer.view.ui.main;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,9 +18,11 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.MainActivity.FolderFragment.FolderFragmentListener;
+import com.example.moonstonemusicplayer.controller.PlayListActivity.RefreshTask;
 import com.example.moonstonemusicplayer.model.MainActivity.FolderFragment.Folder;
 import com.example.moonstonemusicplayer.model.MainActivity.FolderFragment.FolderManager;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
@@ -97,15 +100,21 @@ public class FolderFragment extends Fragment {
   }
 
   public void reloadAllMusic(){
-    folderManager.loadLocalMusicAsFolder(this.getContext());
-    selectedFolder = folderManager.getRootFolder();
-
-    folderFragmentListener = new FolderFragmentListener(this);
-    initViews();
+    //refresh per asynctask and dont block ui thread
+    RefreshTask refreshTask = new RefreshTask(new FolderFragment.RefreshTaskListener() {
+      @Override
+      public void onCompletion() {
+        //after completion update selected folder and listview
+        selectedFolder = folderManager.getRootFolder();
+        folderFragmentListener = new FolderFragmentListener(FolderFragment.this);
+        initViews();
+      }
+    });
+    refreshTask.execute(folderManager);
   }
 
   public void deleteAllMusic(){
-    folderManager.loadLocalMusicAsFolder(this.getContext());
+    folderManager.loadLocalMusicAsFolder();
     selectedFolder = folderManager.getRootFolder();
     initViews();
   }
@@ -169,5 +178,11 @@ public class FolderFragment extends Fragment {
   @Override
   public boolean onContextItemSelected(@NonNull MenuItem item) {
     return folderFragmentListener.onContextItemSelected(item);
+  }
+
+
+  /** */
+  public interface RefreshTaskListener {
+    public void onCompletion();
   }
 }

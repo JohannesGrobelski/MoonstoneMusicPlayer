@@ -3,6 +3,7 @@ package com.example.moonstonemusicplayer.model.MainActivity.FolderFragment;
 import android.content.Context;
 import android.util.Log;
 
+import com.example.moonstonemusicplayer.controller.PlayListActivity.RefreshTask;
 import com.example.moonstonemusicplayer.model.PlayListActivity.LocalSongLoader;
 
 import java.io.File;
@@ -22,7 +23,7 @@ public class FolderManager {
   }
 
   /** loads local music and adds it to dataSource*/
-  public void loadLocalMusicAsFolder(Context context){
+  public void loadLocalMusicAsFolder(){
     //deleteAllSongs();//TODO: dont delete db but only local files
     if(context != null){
       File[] externalFileDirs = context.getExternalMediaDirs(); //getExternalMediaDirs actually does get both internal and external sdcards

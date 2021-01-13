@@ -563,8 +563,5 @@ public class PlayListActivityListener
     public void transferPlayListFromActivityToService();
   }
 
-  /** */
-  public interface RefreshTaskListener {
-    public void onCompletion();
-  }
+
 }
