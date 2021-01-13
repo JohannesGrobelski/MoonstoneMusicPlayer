@@ -20,7 +20,7 @@ public class PlaylistListManager {
 
   public PlaylistListManager(Context baseContext) {
     this.context = baseContext;
-    //loadPlaylistsFromDB(baseContext);
+    loadPlaylistsFromDB(baseContext);
   }
 
   /** loads local music and adds it to dataSource*/

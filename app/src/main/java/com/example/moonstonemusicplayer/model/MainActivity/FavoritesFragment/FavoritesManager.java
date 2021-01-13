@@ -19,7 +19,7 @@ public class FavoritesManager {
 
   public FavoritesManager(Context baseContext) {
     this.context = baseContext;
-    //loadFavoritesFromDB(baseContext);
+    loadFavoritesFromDB(baseContext);
   }
 
   /** loads local music and adds it to dataSource*/

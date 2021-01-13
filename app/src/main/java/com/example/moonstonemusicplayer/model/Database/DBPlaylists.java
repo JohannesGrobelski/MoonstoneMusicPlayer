@@ -10,12 +10,14 @@ import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.Play
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 public class DBPlaylists {
     private static final String FAVORITES_PLAYLIST_NAME = "FAVORITES_MOONSTONEMUSICPLAYER_32325393434133218379432139324316239844321";
+    private static final String TAG = DBPlaylists.class.getSimpleName();
     private static DBPlaylists instance;
 
     //Angabe Klassenname für spätere LogAusgaben
@@ -73,18 +75,19 @@ public class DBPlaylists {
         //Wenn Cursor beim ersten Eintrag steht
         if (cursor.moveToNext()) {
             do {
-                allPlaylistNames.add(cursor.getString(1));
+                allPlaylistNames.add(cursor.getString(0));
             } while (cursor.moveToNext());
         }
         cursor.close();
         close_db();
-
+        allPlaylistNames.remove(FAVORITES_PLAYLIST_NAME);
         return allPlaylistNames.toArray(new String[allPlaylistNames.size()]);
     }
 
 
     public List<Song> getAllFavorites(){
-        String query = "SELECT * FROM "+DBHelperPlaylists.TABLE_PLAYLISTS;
+        String query = "SELECT * FROM "+DBHelperPlaylists.TABLE_PLAYLISTS
+            +" WHERE "+DBHelperPlaylists.COLUMN_PLAYLIST_NAME+" = \'"+FAVORITES_PLAYLIST_NAME+"\'";
         return getSongListFromQuery(query);
     }
 
@@ -197,9 +200,10 @@ public class DBPlaylists {
     public List<Playlist> getAllPlaylists() {
         List<Playlist> allPlaylists = new ArrayList<>();
         String[] allPlaylistNames = getAllPlaylistNames();
+        Log.d(TAG, Arrays.toString(allPlaylistNames));
         for(String playlistName: allPlaylistNames){
             String query = "SELECT * FROM "+DBHelperPlaylists.TABLE_PLAYLISTS+" WHERE "+
-                DBHelperPlaylists.COLUMN_PLAYLIST_NAME+" = "+playlistName;
+                DBHelperPlaylists.COLUMN_PLAYLIST_NAME+" LIKE \'"+playlistName+"\'";
             List<Song> playlistSongs = getSongListFromQuery(query);
             allPlaylists.add(new Playlist(playlistName,playlistSongs));
         }

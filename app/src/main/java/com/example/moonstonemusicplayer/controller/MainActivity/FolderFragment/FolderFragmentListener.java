@@ -1,6 +1,7 @@
 package com.example.moonstonemusicplayer.controller.MainActivity.FolderFragment;
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -8,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import com.example.moonstonemusicplayer.R;
@@ -84,13 +86,8 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
   public void onClick(View v) {
     if(v.getId() == R.id.ll_back_folder){
       if(folderFragment.selectedFolder != null && folderFragment.selectedFolder.getParent() != null){
-
         folderFragment.selectedFolder = folderFragment.selectedFolder.getParent();
-        if(folderFragment.selectedFolder.getParent() != null){
-          folderFragment.tv_folder_back.setText(folderFragment.selectedFolder.getName());
-        } else {
-          folderFragment.tv_folder_back.setText("...");
-        }
+
         //setAdapter
         setAdapter(folderFragment.selectedFolder);
       }
@@ -120,18 +117,29 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
   }
 
   private void showAlertDialogAddToPlaylists(final Song song){
-      final String[] allPlaylistNames = DBPlaylists.getInstance(folderFragment.getActivity()).getAllPlaylistNames();
+    final String[] allPlaylistNames = DBPlaylists.getInstance(folderFragment.getActivity()).getAllPlaylistNames();
 
-      LayoutInflater inflater = folderFragment.getLayoutInflater();
-      View dialogView = inflater.inflate(R.layout.add_to_playlist_layout, null);
-      ListView lv_playlist_alert = dialogView.findViewById(R.id.lv_playlists_alert);
-      lv_playlist_alert.setAdapter(new ArrayAdapter<String>(folderFragment.getActivity(),android.R.layout.simple_list_item_1,allPlaylistNames));
+    LayoutInflater inflater = folderFragment.getLayoutInflater();
+    View dialogView = inflater.inflate(R.layout.add_to_playlist_layout, null);
+    ListView lv_playlist_alert = dialogView.findViewById(R.id.lv_playlists_alert);
+    final EditText et_addNewPlaylist = dialogView.findViewById(R.id.et_addNewPlaylist);
 
-      final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(folderFragment.getActivity());
-      dialogBuilder.setView(dialogView);
-      dialogBuilder.setNegativeButton(android.R.string.no,null);
-      dialogBuilder.setTitle("Add Song to a playlist:");
-      dialogBuilder.show();
+    lv_playlist_alert.setAdapter(new ArrayAdapter<String>(folderFragment.getActivity(),android.R.layout.simple_list_item_1,allPlaylistNames));
+
+    final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(folderFragment.getActivity());
+    dialogBuilder.setView(dialogView);
+    dialogBuilder.setNegativeButton(android.R.string.no,null);
+    dialogBuilder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialog, int which) {
+        String text = et_addNewPlaylist.getText().toString();
+        if(!text.isEmpty()){
+          DBPlaylists.getInstance(folderFragment.getActivity()).addToPlaylist(song,text);
+        }
+      }
+    });
+    dialogBuilder.setTitle("Add Song to a playlist:");
+    dialogBuilder.show();
 
     lv_playlist_alert.setOnItemClickListener(new AdapterView.OnItemClickListener() {
       @Override

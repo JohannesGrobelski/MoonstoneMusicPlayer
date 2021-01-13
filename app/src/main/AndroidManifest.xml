@@ -22,7 +22,7 @@
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         <activity
             android:name=".view.MainActivity"
-            android:label="@string/title_activity_main"
+            android:label="@string/title_activity_music_player"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -30,7 +30,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".view.PlayListActivity"
-            android:label="@string/title_activity_main"
+            android:label="@string/title_activity_music_player"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
 

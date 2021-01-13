@@ -35,8 +35,8 @@ public class DBHelperPlaylists extends SQLiteOpenHelper {
 
     //Variablen für die Tabellenspalten
     public static final String COLUMN_ID = "_id";
-    public static final String COLUMN_PLAYLIST_NAME = "Name";
-    public static final String COLUMN_SONG_NAME = "Name";
+    public static final String COLUMN_PLAYLIST_NAME = "PlaylistName";
+    public static final String COLUMN_SONG_NAME = "SongName";
     public static final String COLUMN_ARTIST = "Artist";
     public static final String COLUMN_URI = "Uri";
     public static final String COLUMN_DURATION = "Duration";
