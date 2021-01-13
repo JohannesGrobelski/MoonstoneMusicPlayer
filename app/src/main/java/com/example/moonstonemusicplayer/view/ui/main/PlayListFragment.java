@@ -2,13 +2,10 @@ package com.example.moonstonemusicplayer.view.ui.main;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
@@ -19,13 +16,7 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.MainActivity.PlaylistFragment.PlaylistFragmentListener;
-import com.example.moonstonemusicplayer.model.MainActivity.FolderFragment.FolderManager;
-import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.Playlist;
 import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.PlaylistListManager;
-import com.example.moonstonemusicplayer.model.PlayListActivity.PlaylistManager;
-import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
-
-import java.util.List;
 
 
 /**

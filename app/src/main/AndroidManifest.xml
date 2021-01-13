@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.moonstonemusicplayer">
 
+
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -34,7 +35,7 @@
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
-        <service android:name=".controller.PlayListActivity.MediaPlayerService" />
+        <service android:name=".controller.PlayListActivity.MediaPlayerService"/>
     </application>
 
 </manifest>

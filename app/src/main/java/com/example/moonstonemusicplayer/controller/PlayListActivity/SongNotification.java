@@ -22,6 +22,7 @@ import com.example.moonstonemusicplayer.view.PlayListActivity;
 import static android.content.Context.NOTIFICATION_SERVICE;
 
 public class SongNotification {
+  public static final String NOTIFICATION_ORDER = "PAUSE";
   public static String CHANNEL_ID = "Moonstone Media Player";
 
   Context context;
@@ -44,11 +45,6 @@ public class SongNotification {
     //icon = context.getResources().getIdentifier("ic_action_refresh_"+choosenTheme, "drawable", context.getPackageName());
     notificationLayout.setInt(R.id.notification_btn_play_pause, "setBackgroundResource", R.drawable.ic_pause_24);
 
-
-    Intent intent = new Intent(context, PlayListActivity.class);
-    // use System.currentTimeMillis() to have a unique ID for the pending intent
-    PendingIntent pIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis(), intent, 0);
-
     // Apply the layouts to the notification
     Builder notificationBuilder = new NotificationCompat.Builder(context, CHANNEL_ID)
         .setSmallIcon(R.drawable.ic_music)
@@ -58,7 +54,6 @@ public class SongNotification {
 
         .setContentTitle(song.getName())
         .setContentText(song.getArtist())
-        .setContentIntent(pIntent)
         .setAutoCancel(true)
         .setSmallIcon(R.mipmap.ic_launcher_round)
         .setPriority(Notification.PRIORITY_MAX);
@@ -74,6 +69,22 @@ public class SongNotification {
       notificationBuilder.setChannelId(CHANNEL_ID);
     }
 
+    setNotificationIntents(notificationLayout,notificationBuilder);
+
     notificationManager.notify(1, notificationBuilder.build());
+  }
+
+
+  private void setNotificationIntents(RemoteViews notificationLayout, Builder notificationBuilder ){
+
+    Intent intent_pause = new Intent(MediaPlayerService.ACTION_NOTIFICATION_ORDER);
+
+    PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 7, intent_pause, 0);
+    context.sendBroadcast(intent_pause);
+
+    notificationLayout.setOnClickPendingIntent(R.id.notification_btn_play_pause,
+        PendingIntent.getBroadcast(context, 0, intent_pause, 0));
+
+    notificationBuilder.setContentIntent(pendingIntent);
   }
 }

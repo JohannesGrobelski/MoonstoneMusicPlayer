@@ -1,9 +1,10 @@
 package com.example.moonstonemusicplayer.controller.PlayListActivity;
 
-import android.app.NotificationManager;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Binder;
@@ -19,6 +20,8 @@ import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import java.io.IOException;
 import java.util.List;
 
+import static com.example.moonstonemusicplayer.controller.PlayListActivity.SongNotification.NOTIFICATION_ORDER;
+
 
 /** MediaPlayerService
  * Plays the List<Song> specified by MusicPlayer.
@@ -31,6 +34,11 @@ public class MediaPlayerService extends Service
                   MediaPlayer.OnInfoListener,
                   MediaPlayer.OnBufferingUpdateListener,
                   AudioManager.OnAudioFocusChangeListener {
+
+  public static final String ACTION_NOTIFICATION_ORDER ="NOTIFICATION_ORDER";
+  private BroadcastReceiver notificationBroadcastReceiver;
+
+
   SongNotification songNotification;
 
   public static final String STARTING_INDEX = "STARTING_INDEX";
@@ -139,10 +147,40 @@ public class MediaPlayerService extends Service
       startIndex = intent.getIntExtra(STARTING_INDEX,0);
       if(DEBUG)Log.d(TAG,"starting song: "+startIndex);
     }
+    if(intent.hasExtra(NOTIFICATION_ORDER)){
+      handleNotificationOrder(intent.getStringExtra(NOTIFICATION_ORDER));
+    }
 
     songNotification = new SongNotification(getApplicationContext());
 
     return super.onStartCommand(intent, flags, startId);
+  }
+
+  @Override
+  public void onCreate() {
+    super.onCreate();
+    final IntentFilter theFilter = new IntentFilter();
+    theFilter.addAction(ACTION_NOTIFICATION_ORDER);
+    this.notificationBroadcastReceiver = new BroadcastReceiver() {
+      @Override
+      public void onReceive(Context context, Intent intent) {
+        Toast.makeText(MediaPlayerService.this,"onReceive",Toast.LENGTH_LONG).show();
+        Log.d(TAG,"onReceive");
+      }
+    };
+    // Registers the receiver so that your service will listen for
+    // broadcasts
+    try {
+      this.registerReceiver(this.notificationBroadcastReceiver, theFilter);
+    } catch (Exception e){
+
+    }
+  }
+
+
+
+  private void handleNotificationOrder(String stringExtra) {
+    Log.d(TAG,NOTIFICATION_ORDER+": "+stringExtra);
   }
 
   @Override
@@ -156,6 +194,9 @@ public class MediaPlayerService extends Service
     }
     stopSelf(); //beende Service
     removeAudioFocus();
+    try {
+      this.unregisterReceiver(this.notificationBroadcastReceiver);
+    }catch (Exception e){}
   }
 
   @Nullable
