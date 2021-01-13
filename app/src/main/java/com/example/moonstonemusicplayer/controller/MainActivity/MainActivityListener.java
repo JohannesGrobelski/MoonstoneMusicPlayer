@@ -1,26 +1,18 @@
 package com.example.moonstonemusicplayer.controller.MainActivity;
 
 import android.Manifest;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.pm.PackageManager;
-import android.os.Debug;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.SearchView;
-import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.moonstonemusicplayer.R;
-import com.example.moonstonemusicplayer.controller.PlayListActivity.PlayListActivityListener;
-import com.example.moonstonemusicplayer.controller.PlayListActivity.RefreshTask;
-import com.example.moonstonemusicplayer.model.MainActivity.FolderFragment.Folder;
-import com.example.moonstonemusicplayer.model.MainActivity.FolderFragment.FolderManager;
 import com.example.moonstonemusicplayer.view.MainActivity;
 import com.example.moonstonemusicplayer.view.ui.main.FolderFragment;
 
@@ -58,7 +50,7 @@ public class MainActivityListener implements SearchView.OnQueryTextListener, Vie
       case R.id.mi_loadLocaleAudioFile: {
         if (fragments != null && fragments[1] != null) {
           requestForPermission();
-          ((FolderFragment) fragments[0]).loadMusicNew();
+          ((FolderFragment) fragments[0]).reloadAllMusic();
 
         } else {
           Log.e(TAG, "fragment null");

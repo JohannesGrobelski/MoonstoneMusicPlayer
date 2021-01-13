@@ -96,11 +96,12 @@ public class FolderFragment extends Fragment {
     if(selectedFolder != null)Log.d(TAG,"loadedMusicFromXML: rootfolder: \n"+selectedFolder.toString());
   }
 
-  public void loadMusicNew(){
+  public void reloadAllMusic(){
     folderManager.loadLocalMusicAsFolder(this.getContext());
     selectedFolder = folderManager.getRootFolder();
-    initViews();
 
+    folderFragmentListener = new FolderFragmentListener(this);
+    initViews();
   }
 
   public void deleteAllMusic(){
@@ -116,7 +117,6 @@ public class FolderFragment extends Fragment {
 
     lv_folderList.setOnItemClickListener(folderFragmentListener);
     ll_folder_back.setOnClickListener(folderFragmentListener);
-    folderFragmentListener.folderListAdapter.notifyDataSetChanged();
   }
 
 
