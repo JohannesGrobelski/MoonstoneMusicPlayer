@@ -84,6 +84,8 @@ public class PlayListActivity extends AppCompatActivity {
     btn_repeat.setOnClickListener(playListActivityListener);
     seekBar.setOnSeekBarChangeListener(playListActivityListener);
 
+    registerForContextMenu(lv_songlist);
+
     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);

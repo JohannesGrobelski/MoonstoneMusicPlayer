@@ -64,7 +64,7 @@ public class SongNotification {
       NotificationChannel channel = new NotificationChannel(
           CHANNEL_ID,
           song.getName(),
-          NotificationManager.IMPORTANCE_HIGH);
+          NotificationManager.IMPORTANCE_DEFAULT);
       notificationManager.createNotificationChannel(channel);
       notificationBuilder.setChannelId(CHANNEL_ID);
     }

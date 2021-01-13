@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
@@ -20,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.SeekBar;
@@ -33,7 +35,9 @@ import com.example.moonstonemusicplayer.model.Database.DBPlaylists;
 import com.example.moonstonemusicplayer.model.PlayListActivity.PlaylistManager;
 import com.example.moonstonemusicplayer.model.PlayListActivity.PlayListModel;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
+import com.example.moonstonemusicplayer.view.MainActivity;
 import com.example.moonstonemusicplayer.view.PlayListActivity;
+import com.example.moonstonemusicplayer.view.ui.main.PlayListFragment;
 
 
 /** MainActivityListener
@@ -466,19 +470,28 @@ public class PlayListActivityListener
 
   }
 
-  public boolean onContextItemSelected(MenuItem item) {
-    AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-    int index = info.position;
-    Song selectedSong = playlistManager.getDisplayedSongList().get(index);
+  public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+    menu.add(0, 1, 0, "add to favorites");
+    menu.add(0, 2, 0, "add to playlist");
+  }
 
-    switch (item.getItemId()){
-      case 1: {
-        DBPlaylists.getInstance(playListActivity).addToFavorites(selectedSong);
-        break;
-      }
-      case 2:  {
-        showAlertDialogAddToPlaylists(selectedSong);
-        break;
+  public boolean onContextItemSelected(MenuItem item) {
+    //only react to context menu in this fragment
+    if(item.getGroupId() == 0){
+      //calculate the index of the song clicked
+      AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+      int index = info.position;
+      Song selectedSong = playlistManager.getDisplayedSongList().get(index);
+
+      switch (item.getItemId()){
+        case 1: {
+          DBPlaylists.getInstance(playListActivity).addToFavorites(selectedSong);
+          break;
+        }
+        case 2:  {
+          showAlertDialogAddToPlaylists(selectedSong);
+          break;
+        }
       }
     }
     return true;
@@ -490,11 +503,22 @@ public class PlayListActivityListener
     LayoutInflater inflater = playListActivity.getLayoutInflater();
     View dialogView = inflater.inflate(R.layout.add_to_playlist_layout, null);
     ListView lv_playlist_alert = dialogView.findViewById(R.id.lv_playlists_alert);
+    final EditText et_addNewPlaylist = dialogView.findViewById(R.id.et_addNewPlaylist);
+
     lv_playlist_alert.setAdapter(new ArrayAdapter<String>(playListActivity,android.R.layout.simple_list_item_1,allPlaylistNames));
 
     final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(playListActivity);
     dialogBuilder.setView(dialogView);
     dialogBuilder.setNegativeButton(android.R.string.no,null);
+    dialogBuilder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialog, int which) {
+        String text = et_addNewPlaylist.getText().toString();
+        if(!text.isEmpty()){
+          DBPlaylists.getInstance(playListActivity).addToPlaylist(song,text);
+        }
+      }
+    });
     dialogBuilder.setTitle("Add Song to a playlist:");
 
     final AlertDialog alertDialog  = dialogBuilder.show();
@@ -521,10 +545,7 @@ public class PlayListActivityListener
     mediaPlayerService.onDestroy();
   }
 
-  public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-    menu.add(0, 1, 0, "add to favorites");
-    menu.add(0, 2, 0, "add to playlist");
-  }
+
 
 
   /** interface used to send messages from service to activity*/
