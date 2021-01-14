@@ -163,14 +163,35 @@ public class LocalSongLoader {
 
   private static Song getSongFromAudioFile(File file){
     String title = file.getName().substring(0, (file.getName().length() - 4));
-    String author = "";
     String URI = Uri.fromFile(file).toString();
+    String genre = "";
+    String author = "";
+    int duration = 0;
 
     MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-      mmr.setDataSource(Uri.fromFile(file).getPath());
-    String durationStr = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-    int duration = Integer.parseInt(durationStr);
-    return new Song(title,author,URI,duration);
+    mmr.setDataSource(Uri.fromFile(file).getPath());
+
+    String meta_durationStr = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+    String meta_author =  mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
+    String meta_genre = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_GENRE);
+    String meta_title = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
+
+    if(meta_title != null && !meta_title.isEmpty() && !meta_title.equals("null")){
+      title = meta_title;
+    }
+    if(meta_genre != null && !meta_genre.isEmpty() && !meta_genre.equals("null")){
+      genre = meta_genre;
+    }
+    if(meta_author != null && !meta_author.isEmpty() && !meta_author.equals("null")){
+      author = meta_author;
+    }
+    if(meta_durationStr != null && !meta_durationStr.isEmpty() && !meta_durationStr.equals("null") && meta_durationStr.matches("[0-9]*")){
+      duration = Integer.parseInt(meta_durationStr);
+    }
+
+
+
+    return new Song(title,author,URI,duration,genre);
   }
 
   private static boolean isSupportedFormat(String filename){

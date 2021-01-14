@@ -19,6 +19,14 @@ public class Song extends Playable {
     this.duration_ms = duration_ms;
   }
 
+  /** "normal" constructor*/
+  public Song(String name, String artist, String URI, int duration_ms, String genre) {
+    super(name,URI);
+    this.artist = artist;
+    this.duration_ms = duration_ms;
+    this.genre = genre;
+  }
+
   /** Constructor for DB*/
   public Song(int ID, String name, String artist, String URI, int duration_ms, int lastPosition, String genre, String lyrics, String meaning) {
     super(name,URI);
@@ -107,5 +115,21 @@ public class Song extends Playable {
 
   public void setMeaning(String meaning) {
     this.meaning = meaning;
+  }
+
+  @Override
+  public String toString() {
+    return "Song{" +
+        "ID=" + ID +
+        ", name='" + getName() + '\'' +
+        ", artist='" + artist + '\'' +
+        ", uri='" + getURI() + '\'' +
+        ", artist='" + artist + '\'' +
+        ", duration_ms=" + duration_ms +
+        ", lastPosition=" + lastPosition +
+        ", genre='" + genre + '\'' +
+        ", lyrics='" + lyrics + '\'' +
+        ", meaning='" + meaning + '\'' +
+        "} " + super.toString();
   }
 }

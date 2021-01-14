@@ -48,11 +48,14 @@ public class SongListAdapter extends ArrayAdapter<Song> {
     TextView tv_title = rowView.findViewById(R.id.tv_name_song);
     TextView tv_artist = rowView.findViewById(R.id.tv_artist_song);
     TextView tv_duration = rowView.findViewById(R.id.tv_duration_song);
+    TextView tv_genre = rowView.findViewById(R.id.tv_genre_song);
 
     //set the views of songRowView
     tv_title.setText(aktuellerSong.getName());
     if(!aktuellerSong.getArtist().isEmpty())tv_artist.setText(aktuellerSong.getArtist());
     else tv_artist.setText("unknown artist");
+    tv_genre.setText(aktuellerSong.getGenre());
+
 
     if(aktuellerSong.getURI().equals(selectedSongUri))ll_song_background.setBackgroundColor(Color.LTGRAY);
     else ll_song_background.setBackgroundColor(Color.WHITE);

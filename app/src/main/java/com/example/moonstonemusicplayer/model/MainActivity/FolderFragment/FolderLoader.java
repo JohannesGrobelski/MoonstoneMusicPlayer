@@ -395,6 +395,8 @@ public class FolderLoader {
       //domsource create
       DOMSource domSource = new DOMSource(document);
 
+      System.out.println(documentToString(document));
+
       // create the xml file
       StreamResult streamResult = new StreamResult(new File(appFileDir+"/"+ xml_filename));
 

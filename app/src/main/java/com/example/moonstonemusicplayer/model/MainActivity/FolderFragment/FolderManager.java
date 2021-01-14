@@ -86,8 +86,10 @@ public class FolderManager {
     if(folder != null){
       if(folder.getChildren_songs() != null) {
         for (Song childSong: folder.getChildren_songs()) {
-          if(childSong.getName().toLowerCase().contains(query.toLowerCase())){
-            inputList.add(childSong);
+          if(childSong.getName().toLowerCase().contains(query.toLowerCase())
+          || childSong.getArtist().toLowerCase().contains(query.toLowerCase())
+          || childSong.getGenre().toLowerCase().contains(query.toLowerCase())){
+                inputList.add(childSong);
           }
         }
       }

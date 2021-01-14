@@ -48,8 +48,10 @@ public class FavoritesManager {
   public Song[] getAllSongsMatchingQuery(String query) {
     List<Song> results = new ArrayList<>();
     for(Song song: getFavorites()){
-      if(song.getName().toLowerCase().contains(query.toLowerCase())){
-        results.add(song);
+      if(song.getName().toLowerCase().contains(query.toLowerCase())
+      || song.getArtist().toLowerCase().contains(query.toLowerCase())
+      || song.getGenre().toLowerCase().contains(query.toLowerCase())){
+            results.add(song);
       }
     }
     return results.toArray(new Song[results.size()]);

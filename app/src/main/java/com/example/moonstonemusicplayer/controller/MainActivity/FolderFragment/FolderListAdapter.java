@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -68,12 +69,19 @@ public class FolderListAdapter extends ArrayAdapter<Object> {
     }
 
     if(aktuellerSong != null){
+      LinearLayout ll_artist_genre = rowView.findViewById(R.id.ll_artist_genre);
       TextView tv_artist_song = rowView.findViewById(R.id.tv_item_artist);
       TextView tv_duration_song = rowView.findViewById(R.id.item_tv_duration);
+      TextView tv_duration_genre = rowView.findViewById(R.id.tv_item_genre);
+
+      ll_artist_genre.setVisibility(View.VISIBLE);
       tv_artist_song.setVisibility(View.VISIBLE);
       tv_duration_song.setVisibility(View.VISIBLE);
+      tv_duration_genre.setVisibility(View.VISIBLE);
+
       tv_artist_song.setText(aktuellerSong.getArtist());
       if(aktuellerSong.getArtist().isEmpty())tv_artist_song.setText("unknown artist");
+      tv_duration_genre.setText(aktuellerSong.getGenre());
       tv_duration_song.setText(aktuellerSong.getDurationString());
     }
 
