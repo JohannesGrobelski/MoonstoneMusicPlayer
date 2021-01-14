@@ -10,7 +10,9 @@ import android.widget.AdapterView;
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.MainActivity.PlaylistFragment.PlaylistListAdapter;
 import com.example.moonstonemusicplayer.model.Database.DBPlaylists;
+import com.example.moonstonemusicplayer.model.MainActivity.FavoritesFragment.FavoritesManager;
 import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.Playlist;
+import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.PlaylistListManager;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import com.example.moonstonemusicplayer.view.PlayListActivity;
 import com.example.moonstonemusicplayer.view.ui.main.FavoritesFragment;
@@ -71,7 +73,7 @@ public class FavoriteFragmentListener implements AdapterView.OnItemClickListener
     //only show context menu if clicked on song
     if(favoritesFragment.favoritesManager.getFavorites() != null){
       //create menu item with groupid to distinguish between fragments
-      menu.add(2, 21, 0, "delete from playlist");
+      menu.add(2, 21, 0, "delete from favorites");
       menu.getItem(0).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
         @Override
         /** onContextItemSelected(MenuItem item) doesnt work*/
@@ -80,6 +82,10 @@ public class FavoriteFragmentListener implements AdapterView.OnItemClickListener
           int index = info.position;
           Song song = favoritesFragment.favoritesManager.getFavorites().get(index);
           DBPlaylists.getInstance(favoritesFragment.getContext()).deleteFromFavorites(song);
+
+          favoritesFragment.favoritesManager = new FavoritesManager(favoritesFragment.getContext());
+          setAdapter(favoritesFragment.favoritesManager.getFavorites());
+
           return false;
         }
       });
