@@ -118,8 +118,15 @@ public class PlaylistFragmentListener implements AdapterView.OnItemClickListener
           AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
           int index = info.position;
           Playlist playlist = playListFragment.playlistListManager.getPlaylists().get(index);
+
           DBPlaylists.getInstance(playListFragment.getContext()).deletePlaylist(playlist);
-          playListFragment.playlistListManager.deletePlaylist(playlist);
+
+          playListFragment.playlistListManager = new PlaylistListManager(playListFragment.getContext());
+          playListFragment.playlistListManager.setCurrentPlaylist(null);
+
+          List<Object> songs = new ArrayList<>();
+          songs.addAll(playListFragment.playlistListManager.getAllPlaylists());
+          setAdapter(songs);
 
           return false;
         }
