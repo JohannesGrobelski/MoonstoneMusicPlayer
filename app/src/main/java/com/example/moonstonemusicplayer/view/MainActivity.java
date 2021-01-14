@@ -27,15 +27,14 @@ public class MainActivity extends AppCompatActivity {
 
   public SectionsPagerAdapter sectionsPagerAdapter;
   TabLayout tabs;
-
+  public ViewPager viewPager;
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
     sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
 
-
-    ViewPager viewPager = findViewById(R.id.view_pager);
+    viewPager = findViewById(R.id.view_pager_main);
     viewPager.setAdapter(sectionsPagerAdapter);
     TabLayout tabs = findViewById(R.id.mainactivity_tabs);
     tabs.setupWithViewPager(viewPager);

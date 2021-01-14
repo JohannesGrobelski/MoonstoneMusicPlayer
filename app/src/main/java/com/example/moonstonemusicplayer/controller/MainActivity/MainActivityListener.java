@@ -16,7 +16,9 @@ import androidx.fragment.app.Fragment;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.view.MainActivity;
+import com.example.moonstonemusicplayer.view.ui.main.FavoritesFragment;
 import com.example.moonstonemusicplayer.view.ui.main.FolderFragment;
+import com.example.moonstonemusicplayer.view.ui.main.PlayListFragment;
 import com.google.android.material.tabs.TabLayout;
 
 public class MainActivityListener implements SearchView.OnQueryTextListener,
@@ -106,8 +108,27 @@ public class MainActivityListener implements SearchView.OnQueryTextListener,
 
   @Override
   public boolean onQueryTextChange(String query) {
-    //search in folderfragment
-    ((FolderFragment) fragments[0]).searchMusic(query);
+    //search in different fragments
+
+    //Fragment currentFragment = mainActivity.getSupportFragmentManager().findFragmentById(R.id.view_pager_main);
+    int currentItem = mainActivity.viewPager.getCurrentItem();
+    switch(currentItem){
+      case 0: {
+        Log.v(TAG, "search the current fragment FolderFragment");
+        ((FolderFragment) fragments[0]).searchMusic(query);
+        break;
+      }
+      case 1: {
+        Log.v(TAG, "search the current fragment PlaylistFragment");
+        ((PlayListFragment) fragments[1]).searchMusic(query);
+        break;
+      }
+      case 2: {
+        Log.v(TAG, "search the current fragment FavoritesFragment");
+        ((FavoritesFragment) fragments[2]).searchMusic(query);
+        break;
+      }
+    }
     return false;
   }
 

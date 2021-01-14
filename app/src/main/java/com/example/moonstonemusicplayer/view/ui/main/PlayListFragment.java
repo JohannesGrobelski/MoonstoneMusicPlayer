@@ -15,8 +15,16 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.example.moonstonemusicplayer.R;
+import com.example.moonstonemusicplayer.controller.MainActivity.FolderFragment.FolderFragmentListener;
 import com.example.moonstonemusicplayer.controller.MainActivity.PlaylistFragment.PlaylistFragmentListener;
+import com.example.moonstonemusicplayer.model.MainActivity.FolderFragment.Folder;
+import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.Playlist;
 import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.PlaylistListManager;
+import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -83,5 +91,22 @@ public class PlayListFragment extends Fragment {
   @Override
   public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v, @Nullable ContextMenu.ContextMenuInfo menuInfo) {
     playlistFragmentListener.onCreateContextMenu(menu, v, menuInfo);
+  }
+
+  public void searchMusic(String query) {
+    if(!query.isEmpty()){
+      Playlist[] matchingPlaylists = playlistListManager.getAllPlaylistsMatchingQuery(query);
+      Song[] matchingSongs = playlistListManager.getAllSongsMatchingQuery(query);
+
+      List<Object> searchResults = new ArrayList<>();
+      searchResults.addAll(Arrays.asList(matchingPlaylists));
+      searchResults.addAll(Arrays.asList(matchingSongs));
+
+      playlistFragmentListener.setAdapter(searchResults);
+    } else {
+      List<Object> allPlaylists = new ArrayList<>();
+      allPlaylists.addAll(playlistListManager.getAllPlaylists());
+      playlistFragmentListener.setAdapter(allPlaylists);
+    }
   }
 }

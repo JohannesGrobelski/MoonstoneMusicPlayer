@@ -53,7 +53,7 @@ public class PlaylistFragmentListener implements AdapterView.OnItemClickListener
     }
   }
 
-  private void setAdapter(List<Object> itemList){
+  public void setAdapter(List<Object> itemList){
     playlistListAdapter = new PlaylistListAdapter(playListFragment.getContext(),itemList);
     playListFragment.lv_playlist.setAdapter(playlistListAdapter);
   }

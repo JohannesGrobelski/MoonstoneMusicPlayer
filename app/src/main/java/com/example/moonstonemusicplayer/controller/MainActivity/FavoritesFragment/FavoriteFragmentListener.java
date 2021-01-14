@@ -47,7 +47,7 @@ public class FavoriteFragmentListener implements AdapterView.OnItemClickListener
     }
   }
 
-  private void setAdapter(List<Song> itemList){
+  public void setAdapter(List<Song> itemList){
     favoriteListAdapter = new FavoriteListAdapter(favoritesFragment.getContext(),itemList);
     favoritesFragment.lv_favorites.setAdapter(favoriteListAdapter);
   }

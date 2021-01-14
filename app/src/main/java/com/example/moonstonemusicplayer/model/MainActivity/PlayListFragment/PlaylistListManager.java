@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.example.moonstonemusicplayer.model.Database.DBPlaylists;
 import com.example.moonstonemusicplayer.model.Database.DBSonglists;
+import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,5 +58,27 @@ public class PlaylistListManager {
 
   public void setCurrentPlaylist(Playlist currentPlaylist) {
     this.currentPlaylist = currentPlaylist;
+  }
+
+  public Playlist[] getAllPlaylistsMatchingQuery(String query) {
+    List<Playlist> result = new ArrayList<>();
+    for(Playlist playlist: getAllPlaylists()){
+      if(playlist.getName().toLowerCase().contains(query.toLowerCase())){
+        result.add(playlist);
+      }
+    }
+    return result.toArray(new Playlist[result.size()]);
+  }
+
+  public Song[] getAllSongsMatchingQuery(String query) {
+    List<Song> result = new ArrayList<>();
+    for(Playlist playlist: getAllPlaylists()){
+      for(Song song: playlist.getPlaylist()) {
+        if(song.getName().toLowerCase().contains(query.toLowerCase())){
+          result.add(song);
+        }
+      }
+    }
+    return result.toArray(new Song[result.size()]);
   }
 }

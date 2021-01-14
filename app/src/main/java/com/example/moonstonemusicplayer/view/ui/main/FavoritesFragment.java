@@ -20,6 +20,12 @@ import com.example.moonstonemusicplayer.controller.MainActivity.FavoritesFragmen
 import com.example.moonstonemusicplayer.controller.MainActivity.FavoritesFragment.FavoriteListAdapter;
 import com.example.moonstonemusicplayer.model.MainActivity.FavoritesFragment.FavoritesManager;
 import com.example.moonstonemusicplayer.model.MainActivity.FolderFragment.FolderManager;
+import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.Playlist;
+import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -100,5 +106,14 @@ public class FavoritesFragment extends Fragment {
   public void onResume() {
     super.onResume();
     favoriteFragmentListener.onResume();
+  }
+
+  public void searchMusic(String query) {
+    if(!query.isEmpty()){
+      Song[] matchingSongs = favoritesManager.getAllSongsMatchingQuery(query);
+      favoriteFragmentListener.setAdapter(Arrays.asList(matchingSongs));
+    } else {
+      favoriteFragmentListener.setAdapter(favoritesManager.getFavorites());
+    }
   }
 }
