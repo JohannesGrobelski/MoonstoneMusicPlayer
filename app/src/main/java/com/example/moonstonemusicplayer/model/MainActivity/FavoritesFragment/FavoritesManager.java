@@ -9,6 +9,9 @@ import com.example.moonstonemusicplayer.model.Database.DBSonglists;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class FavoritesManager {
@@ -57,5 +60,41 @@ public class FavoritesManager {
     favorites.clear();
     favorites.addAll(favorites_backup);
     return favorites;
+  }
+
+  public void sortSongsByDuration() {
+    Collections.sort(favorites, new Comparator<Song>() {
+      @Override
+      public int compare(Song o1, Song o2) {
+        return (int) (o1.getDuration_ms() - o2.getDuration_ms());
+      }
+    });
+  }
+
+  public void sortSongsByArtist() {
+    Collections.sort(favorites, new Comparator<Song>() {
+      @Override
+      public int compare(Song o1, Song o2) {
+        return (o1.getArtist().compareTo(o2.getArtist()));
+      }
+    });
+  }
+
+  public void sortFavoritesByName() {
+    Collections.sort(favorites, new Comparator<Song>() {
+      @Override
+      public int compare(Song o1, Song o2) {
+        return (o1.getName().compareTo(o2.getName()));
+      }
+    });
+  }
+
+  public void sortSongsByGenre() {
+    Collections.sort(favorites, new Comparator<Song>() {
+      @Override
+      public int compare(Song o1, Song o2) {
+        return (o1.getGenre().compareTo(o2.getGenre()));
+      }
+    });
   }
 }

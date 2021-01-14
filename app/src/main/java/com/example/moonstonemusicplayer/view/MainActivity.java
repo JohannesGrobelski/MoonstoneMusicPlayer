@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
   public SectionsPagerAdapter sectionsPagerAdapter;
   public ViewPager viewPager;
   TabLayout tabs;
+  public int tabSelected = -1;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -51,14 +52,12 @@ public class MainActivity extends AppCompatActivity {
           @Override
           public void onTabSelected(TabLayout.Tab tab) {
             super.onTabSelected(tab);
-            int numTab = tab.getPosition();
-            //prefs.edit().putInt("numTab", numTab).apply();
-            Log.d(TAG,"tabselected: "+numTab);
-            if(numTab == 1){//
+            tabSelected = tab.getPosition();
+            if(tabSelected == 1){//
               ((PlayListFragment) sectionsPagerAdapter.getFragments()[1])
                   .playlistFragmentListener.reloadPlaylistManager();
             }
-            else if(numTab == 2){//
+            else if(tabSelected == 2){//
               ((FavoritesFragment) sectionsPagerAdapter.getFragments()[2])
                   .favoriteFragmentListener.reloadFavoritesManager();
             }

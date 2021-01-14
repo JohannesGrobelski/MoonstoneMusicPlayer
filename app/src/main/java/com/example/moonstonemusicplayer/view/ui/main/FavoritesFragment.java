@@ -109,11 +109,30 @@ public class FavoritesFragment extends Fragment {
       Song[] matchingSongs = favoritesManager.getAllSongsMatchingQuery(query);
 
       favoritesManager.setFavorites(new ArrayList<Song>(Arrays.asList(matchingSongs)));
-
       favoriteFragmentListener.setAdapter(favoritesManager.getFavorites());
     } else {
       Log.d("search music","empty");
       favoriteFragmentListener.setAdapter(favoritesManager.getAllFavorites());
     }
+  }
+
+  public void sortFavoritesByName() {
+    favoritesManager.sortFavoritesByName();
+    favoriteFragmentListener.setAdapter(favoritesManager.getFavorites());
+  }
+
+  public void sortSongsByArtist() {
+    favoritesManager.sortSongsByArtist();
+    favoriteFragmentListener.setAdapter(favoritesManager.getFavorites());
+  }
+
+  public void sortSongsByDuration() {
+    favoritesManager.sortSongsByDuration();
+    favoriteFragmentListener.setAdapter(favoritesManager.getFavorites());
+  }
+
+  public void sortSongsByGenre() {
+    favoritesManager.sortSongsByGenre();
+    favoriteFragmentListener.setAdapter(favoritesManager.getFavorites());
   }
 }

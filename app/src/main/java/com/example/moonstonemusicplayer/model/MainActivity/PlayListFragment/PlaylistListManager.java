@@ -8,6 +8,9 @@ import com.example.moonstonemusicplayer.model.Database.DBSonglists;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /** saves and loads playlists and contains the current (displayed) playlist in playlistfragment*/
@@ -114,5 +117,55 @@ public class PlaylistListManager {
         playlist.getPlaylist().remove(song);
       }
     }
+  }
+
+  public void sortSongsByGenre() {
+    if(currentPlaylist != null){
+      Collections.sort(currentPlaylist.getPlaylist(), new Comparator<Song>() {
+        @Override
+        public int compare(Song o1, Song o2) {
+          return o1.getGenre().compareTo(o2.getGenre());
+        }
+      });
+    }
+  }
+
+  public void sortSongsByDuration() {
+    if(currentPlaylist != null){
+      Collections.sort(currentPlaylist.getPlaylist(), new Comparator<Song>() {
+        @Override
+        public int compare(Song o1, Song o2) {
+          return (int)(o1.getDuration_ms() - o2.getDuration_ms());
+        }
+      });
+    }
+  }
+
+  public void sortSongsByArtist() {
+    if(currentPlaylist != null){
+      Collections.sort(currentPlaylist.getPlaylist(), new Comparator<Song>() {
+        @Override
+        public int compare(Song o1, Song o2) {
+          return o1.getArtist().compareTo(o2.getArtist());
+        }
+      });
+    }
+  }
+
+  public void sortSongsByName() {
+    if(currentPlaylist != null){
+      Collections.sort(currentPlaylist.getPlaylist(), new Comparator<Song>() {
+        @Override
+        public int compare(Song o1, Song o2) {
+          return o1.getName().compareTo(o2.getName());
+        }
+      });
+    }
+    Collections.sort(playlists, new Comparator<Playlist>() {
+      @Override
+      public int compare(Playlist o1, Playlist o2) {
+        return o1.getName().compareTo(o2.getName());
+      }
+    });
   }
 }

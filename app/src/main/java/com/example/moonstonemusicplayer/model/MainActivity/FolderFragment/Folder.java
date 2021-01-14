@@ -3,6 +3,8 @@ import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class Folder {
@@ -40,6 +42,7 @@ public class Folder {
   public Song[] getChildren_songs() {
     return children_songs;
   }
+
 
   public void setChildren_songs(Song[] children_songs) {
     this.children_songs = children_songs;
@@ -108,4 +111,55 @@ public class Folder {
     }
   }
 
+  public void sortSongsByName() {
+    if(children_songs != null){
+      List<Song> childrenSongs = new ArrayList<>(Arrays.asList(children_songs));
+      Collections.sort(childrenSongs, new Comparator<Song>() {
+        @Override
+        public int compare(Song o1, Song o2) {
+          return o1.getName().compareTo(o2.getName());
+        }
+      });
+      children_songs = childrenSongs.toArray(new Song[childrenSongs.size()]);
+    }
+  }
+
+  public void sortSongsByArtist() {
+    if(children_songs != null){
+      List<Song> childrenSongs = new ArrayList<>(Arrays.asList(children_songs));
+      Collections.sort(childrenSongs, new Comparator<Song>() {
+        @Override
+        public int compare(Song o1, Song o2) {
+          return o1.getArtist().compareTo(o2.getArtist());
+        }
+      });
+      children_songs = childrenSongs.toArray(new Song[childrenSongs.size()]);
+    }
+  }
+
+  public void sortSongsByDuration() {
+    if(children_songs != null){
+      List<Song> childrenSongs = new ArrayList<>(Arrays.asList(children_songs));
+      Collections.sort(childrenSongs, new Comparator<Song>() {
+        @Override
+        public int compare(Song o1, Song o2) {
+          return (int) (o1.getDuration_ms() - o2.getDuration_ms());
+        }
+      });
+      children_songs = childrenSongs.toArray(new Song[childrenSongs.size()]);
+    }
+  }
+
+  public void sortSongsByGenre() {
+    if(children_songs != null){
+      List<Song> childrenSongs = new ArrayList<>(Arrays.asList(children_songs));
+      Collections.sort(childrenSongs, new Comparator<Song>() {
+        @Override
+        public int compare(Song o1, Song o2) {
+          return o1.getGenre().compareTo(o2.getGenre());
+        }
+      });
+      children_songs = childrenSongs.toArray(new Song[childrenSongs.size()]);
+    }
+  }
 }

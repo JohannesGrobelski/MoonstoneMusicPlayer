@@ -77,9 +77,43 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
         }
         //folderManager.getRootFolder().print(0);
         break;
+      } case R.id.miSortNameMain: {
+        int currentItem = mainActivity.viewPager.getCurrentItem();
+        switch(currentItem){
+          case 0: {((FolderFragment) fragments[0]).sortSongsByName(); break;}
+          case 1: {((PlayListFragment) fragments[1]).sortSongsByName();break;}
+          case 2: {((FavoritesFragment) fragments[2]).sortFavoritesByName();break;}
+        }
+        break;
+      } case R.id.miSortArtistMain: {
+        int currentItem = mainActivity.viewPager.getCurrentItem();
+        switch(currentItem){
+          case 0: {((FolderFragment) fragments[0]).sortSongsByArtist(); break;}
+          case 1: {((PlayListFragment) fragments[1]).sortSongsByArtist();break;}
+          case 2: {((FavoritesFragment) fragments[2]).sortSongsByArtist();break;}
+        }
+        break;
+      } case R.id.miSortDurationMain: {
+        int currentItem = mainActivity.viewPager.getCurrentItem();
+        switch(currentItem){
+          case 0: {((FolderFragment) fragments[0]).sortSongsByDuration(); break;}
+          case 1: {((PlayListFragment) fragments[1]).sortSongsByDuration(); break;}
+          case 2: {((FavoritesFragment) fragments[2]).sortSongsByDuration();break;}
+        }
+        break;
+      } case R.id.miSortGenreMain: {
+        int currentItem = mainActivity.viewPager.getCurrentItem();
+        switch(currentItem){
+          case 0: {((FolderFragment) fragments[0]).sortSongsByGenre(); break;}
+          case 1: {((PlayListFragment) fragments[1]).sortSongsByGenre(); break;}
+          case 2: {((FavoritesFragment) fragments[2]).sortSongsByGenre();break;}
+        }
+        break;
       }
+
+
       }
-          return true;
+      return true;
   }
     //songListAdapter.notifyDataSetChanged();
 

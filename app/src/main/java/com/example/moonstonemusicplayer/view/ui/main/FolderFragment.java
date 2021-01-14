@@ -189,7 +189,29 @@ public class FolderFragment extends Fragment {
     initViews();
   }
 
+  public void sortSongsByName() {
+    selectedFolder.sortSongsByName();
+    folderFragmentListener = new FolderFragmentListener(FolderFragment.this);
+    initViews();
+  }
 
+  public void sortSongsByArtist() {
+    selectedFolder.sortSongsByArtist();
+    folderFragmentListener = new FolderFragmentListener(FolderFragment.this);
+    initViews();
+  }
+
+  public void sortSongsByDuration() {
+    selectedFolder.sortSongsByDuration();
+    folderFragmentListener = new FolderFragmentListener(FolderFragment.this);
+    initViews();
+  }
+
+  public void sortSongsByGenre() {
+    selectedFolder.sortSongsByGenre();
+    folderFragmentListener = new FolderFragmentListener(FolderFragment.this);
+    initViews();
+  }
 
 
   /** */

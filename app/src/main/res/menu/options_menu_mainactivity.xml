@@ -13,4 +13,24 @@
         android:icon="@android:drawable/ic_popup_sync"
         android:title="Lokale Audio Datein laden"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/miSortMain"
+        android:title="Songs sortieren">
+
+        <menu>
+            <item
+                android:id="@+id/miSortNameMain"
+                android:title="sortieren nach Name" />
+            <item
+                android:id="@+id/miSortArtistMain"
+                android:title="sortieren nach Künstler" />
+            <item
+                android:id="@+id/miSortGenreMain"
+                android:title="sortieren nach Genre" />
+            <item
+                android:id="@+id/miSortDurationMain"
+                android:title="sortieren nach Länge des Songs" />
+        </menu>
+    </item>
 </menu>

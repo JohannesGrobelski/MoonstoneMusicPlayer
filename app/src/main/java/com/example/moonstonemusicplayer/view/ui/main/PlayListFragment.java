@@ -110,4 +110,40 @@ public class PlayListFragment extends Fragment {
       playlistFragmentListener.setAdapter(allPlaylists);
     }
   }
+
+  public void sortSongsByName() {
+    playlistListManager.sortSongsByName();
+    if(playlistListManager.getCurrentPlaylist() != null){
+      List<Object> songs = new ArrayList<>();
+      songs.addAll(playlistListManager.getCurrentPlaylist().getPlaylist());
+      playlistFragmentListener.setAdapter(songs);
+    }
+  }
+
+  public void sortSongsByArtist() {
+    playlistListManager.sortSongsByArtist();
+    if(playlistListManager.getCurrentPlaylist() != null){
+      List<Object> songs = new ArrayList<>();
+      songs.addAll(playlistListManager.getCurrentPlaylist().getPlaylist());
+      playlistFragmentListener.setAdapter(songs);
+    }
+  }
+
+  public void sortSongsByDuration() {
+    playlistListManager.sortSongsByDuration();
+    if(playlistListManager.getCurrentPlaylist() != null){
+      List<Object> songs = new ArrayList<>();
+      songs.addAll(playlistListManager.getCurrentPlaylist().getPlaylist());
+      playlistFragmentListener.setAdapter(songs);
+    }
+  }
+
+  public void sortSongsByGenre() {
+    playlistListManager.sortSongsByGenre();
+    if(playlistListManager.getCurrentPlaylist() != null){
+      List<Object> songs = new ArrayList<>();
+      songs.addAll(playlistListManager.getCurrentPlaylist().getPlaylist());
+      playlistFragmentListener.setAdapter(songs);
+    }
+  }
 }
