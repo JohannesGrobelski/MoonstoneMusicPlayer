@@ -5,13 +5,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
@@ -35,22 +33,26 @@ public class FavoriteListAdapter extends ArrayAdapter<Song> {
   @Override
   public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
     Song aktuellerSong = songList.get(position);
-    View rowView = convertView;
-    if(convertView == null){
-      rowView = layoutInflater.inflate(R.layout.mainact_song_row_layout, parent, false);
+
+    View rowView;
+    if(convertView != null){
+      rowView = convertView;
+    } else {
+      rowView = layoutInflater.inflate(R.layout.song_row_layout, parent, false);
     }
-    aktuellerSong = ((Song) songList.get(position));
 
     //init the views of songRowView
-    TextView tv_name_song_main = rowView.findViewById(R.id.tv_name_song_main);
-    TextView tv_artist_song_main = rowView.findViewById(R.id.tv_artist_song_main);
-    TextView tv_duration_song_main = rowView.findViewById(R.id.main_tv_duration_song);
+    LinearLayout ll_song_background = rowView.findViewById(R.id.ll_song_background);
+    TextView tv_title = rowView.findViewById(R.id.tv_name_song);
+    TextView tv_artist = rowView.findViewById(R.id.tv_artist_song);
+    TextView tv_duration = rowView.findViewById(R.id.tv_duration_song);
 
-    tv_name_song_main.setText(aktuellerSong.getName());
-    tv_artist_song_main.setText(aktuellerSong.getArtist());
-    if(aktuellerSong.getArtist().isEmpty())tv_artist_song_main.setText("unknown artist");
-    tv_duration_song_main.setText(aktuellerSong.getDurationString());
+    //set the views of songRowView
+    tv_title.setText(aktuellerSong.getName());
+    if(!aktuellerSong.getArtist().isEmpty())tv_artist.setText(aktuellerSong.getArtist());
+    else tv_artist.setText("unknown artist");
 
+    tv_duration.setText(Song.getDurationString((int) aktuellerSong.getDuration_ms()));
     return rowView;
   }
 
