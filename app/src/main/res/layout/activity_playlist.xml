@@ -151,6 +151,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="100dp"
+            android:layout_marginBottom="5dp"
             android:layout_weight="1"
             android:orientation="vertical">
 
@@ -159,30 +160,30 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxLines="1"
                 android:paddingStart="10dp"
                 android:paddingTop="1dp"
                 android:paddingEnd="10dp"
                 android:paddingBottom="1dp"
                 android:text="unknown title"
                 android:textColor="@color/colorPrimary"
-                android:textSize="15sp"
-                android:ellipsize="end"
-                android:maxLines="1"/>
+                android:textSize="15sp" />
 
             <TextView
                 android:id="@+id/tv_artist"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxLines="1"
                 android:paddingStart="10dp"
                 android:paddingTop="1dp"
                 android:paddingEnd="10dp"
                 android:paddingBottom="1dp"
                 android:text="unknown artist"
                 android:textColor="@color/colorPrimary"
-                android:textSize="10sp"
-                android:ellipsize="end"
-                android:maxLines="1"/>
+                android:textSize="10sp" />
         </LinearLayout>
 
     </LinearLayout>

@@ -117,6 +117,9 @@ public class MediaPlayerService extends Service
 
   public boolean mediaPlayerReady(){return (mediaPlayer != null && isPlayingMusic());}
 
+  public boolean mediaPlayerNotNull(){return (mediaPlayer != null);}
+
+
   public boolean isPlayingMusic() {
     if(mediaPlayer != null) return mediaPlayer.isPlaying();
     else return false;
@@ -301,7 +304,12 @@ public class MediaPlayerService extends Service
   }
 
   public Song getCurrentSong() {return playListModel.getCurrentSong();}
-  public void seekTo(int i) {mediaPlayer.seekTo(i);}
+
+  public void seekTo(int i) {
+    if(DEBUG)Log.d(TAG,"seekTo: "+i);
+    mediaPlayer.seekTo(i);
+    resumePosition = i;
+  }
 
   public void playSong(Song song) {
     playListModel.setCurrentSong(song);

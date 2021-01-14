@@ -207,7 +207,7 @@ public class PlayListActivityListener
   /** implements the music controll (seekto): seeks to position in mediaPlayerService*/
   public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
     if(isServiceBound){
-      if(mediaPlayerService.mediaPlayerReady() && fromUser){
+      if(mediaPlayerService.mediaPlayerNotNull() && fromUser){
         seekTo(progress * 1000);
       }
     }
@@ -341,6 +341,7 @@ public class PlayListActivityListener
   }
 
   private void seekTo(int seekPosition){
+    Log.d(TAG,"seekTo: "+seekPosition);
     if(isServiceBound){
       mediaPlayerService.seekTo(seekPosition);
       animateMediaplayerProgressOnSeekbar();
