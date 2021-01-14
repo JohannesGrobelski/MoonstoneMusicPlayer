@@ -1,15 +1,18 @@
 package com.example.moonstonemusicplayer.controller.MainActivity.FavoritesFragment;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.core.widget.ImageViewCompat;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
@@ -38,21 +41,30 @@ public class FavoriteListAdapter extends ArrayAdapter<Song> {
     if(convertView != null){
       rowView = convertView;
     } else {
-      rowView = layoutInflater.inflate(R.layout.song_row_layout, parent, false);
+      rowView = layoutInflater.inflate(R.layout.item_row_layout, parent, false);
     }
 
+
     //init the views of songRowView
-    LinearLayout ll_song_background = rowView.findViewById(R.id.ll_song_background);
-    TextView tv_title = rowView.findViewById(R.id.tv_name_song);
-    TextView tv_artist = rowView.findViewById(R.id.tv_artist_song);
-    TextView tv_duration = rowView.findViewById(R.id.tv_duration_song);
+    TextView tv_playlistSongItem = rowView.findViewById(R.id.tv_item_name);
+    ImageView iv_playlistSongItem = rowView.findViewById(R.id.iv_item);
+    tv_playlistSongItem.setTextColor(context.getResources().getColor(R.color.colorPrimary));
+    iv_playlistSongItem.setColorFilter(ContextCompat.getColor(context, R.color.colorPrimary), android.graphics.PorterDuff.Mode.SRC_IN);
+    ImageViewCompat.setImageTintList(iv_playlistSongItem, ColorStateList.valueOf(ContextCompat.getColor(context, R.color.colorPrimary)));
 
-    //set the views of songRowView
-    tv_title.setText(aktuellerSong.getName());
-    if(!aktuellerSong.getArtist().isEmpty())tv_artist.setText(aktuellerSong.getArtist());
-    else tv_artist.setText("unknown artist");
+    iv_playlistSongItem.setBackground(context.getDrawable(R.drawable.ic_music));
+    tv_playlistSongItem.setText(aktuellerSong.getName());
 
-    tv_duration.setText(Song.getDurationString((int) aktuellerSong.getDuration_ms()));
+    if(aktuellerSong != null){
+      TextView tv_artist_song = rowView.findViewById(R.id.tv_item_artist);
+      TextView tv_duration_song = rowView.findViewById(R.id.item_tv_duration);
+      tv_artist_song.setVisibility(View.VISIBLE);
+      tv_duration_song.setVisibility(View.VISIBLE);
+      tv_artist_song.setText(aktuellerSong.getArtist());
+      if(aktuellerSong.getArtist().isEmpty())tv_artist_song.setText("unknown artist");
+      tv_duration_song.setText(aktuellerSong.getDurationString());
+    }
+
     return rowView;
   }
 

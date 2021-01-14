@@ -54,12 +54,18 @@ public class MainActivity extends AppCompatActivity {
             super.onTabSelected(tab);
             tabSelected = tab.getPosition();
             if(tabSelected == 1){//
-              ((PlayListFragment) sectionsPagerAdapter.getFragments()[1])
-                  .playlistFragmentListener.reloadPlaylistManager();
+              if(sectionsPagerAdapter.getFragments().length == 3
+                  && sectionsPagerAdapter.getFragments()[1] != null){
+                    ((PlayListFragment) sectionsPagerAdapter.getFragments()[1])
+                      .playlistFragmentListener.reloadPlaylistManager();
+              }
             }
             else if(tabSelected == 2){//
-              ((FavoritesFragment) sectionsPagerAdapter.getFragments()[2])
-                  .favoriteFragmentListener.reloadFavoritesManager();
+              if(sectionsPagerAdapter.getFragments().length == 3
+                  && sectionsPagerAdapter.getFragments()[2] != null){
+                    ((FavoritesFragment) sectionsPagerAdapter.getFragments()[2])
+                      .favoriteFragmentListener.reloadFavoritesManager();
+              }
             }
           }
         });

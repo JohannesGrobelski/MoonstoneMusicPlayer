@@ -1,4 +1,4 @@
-package com.example.moonstonemusicplayer.model.PlayListActivity;
+package com.example.moonstonemusicplayer.model.MainActivity;
 
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
@@ -6,11 +6,11 @@ import android.os.Environment;
 import android.util.Log;
 
 import com.example.moonstonemusicplayer.model.MainActivity.FolderFragment.Folder;
+import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Class to load List<Song> from sd-card(s).
@@ -30,11 +30,21 @@ public class LocalSongLoader {
 
     //go through sd-cards and
     List<Folder> childrenList = new ArrayList<>();
+    int sdcard = 0;
     for(String fileDir: fileDirs){
       if(new File(fileDir).exists()){
         Folder child = findAllAudioFilesAsFolder(fileDir,null);
+        if(child == null)continue;
+        if(sdcard==0)child.setName("interner Speicher");
+        else {
+          if(fileDir.length()>2) {
+            child.setName("SD-Karte "+sdcard);
+          }
+          else{child.setName("SD-Karte");}
+        }
         if(child != null)childrenList.add(child);
       }
+      ++sdcard;
     }
     Folder rootFolder = new Folder("root", null, childrenList.toArray(new Folder[childrenList.size()]),null);
 

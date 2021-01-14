@@ -53,7 +53,7 @@ public class FolderListAdapter extends ArrayAdapter<Object> {
 
 
     //init the views of songRowView
-    TextView tv_folderSongItem = rowView.findViewById(R.id.tv_item);
+    TextView tv_folderSongItem = rowView.findViewById(R.id.tv_item_name);
     ImageView iv_folderSongItem = rowView.findViewById(R.id.iv_item);
     tv_folderSongItem.setTextColor(context.getResources().getColor(R.color.colorPrimary));
     iv_folderSongItem.setColorFilter(ContextCompat.getColor(context, R.color.colorPrimary), android.graphics.PorterDuff.Mode.SRC_IN);
@@ -66,6 +66,17 @@ public class FolderListAdapter extends ArrayAdapter<Object> {
       iv_folderSongItem.setBackground(context.getDrawable(R.drawable.ic_music));
       tv_folderSongItem.setText(aktuellerSong.getName());
     }
+
+    if(aktuellerSong != null){
+      TextView tv_artist_song = rowView.findViewById(R.id.tv_item_artist);
+      TextView tv_duration_song = rowView.findViewById(R.id.item_tv_duration);
+      tv_artist_song.setVisibility(View.VISIBLE);
+      tv_duration_song.setVisibility(View.VISIBLE);
+      tv_artist_song.setText(aktuellerSong.getArtist());
+      if(aktuellerSong.getArtist().isEmpty())tv_artist_song.setText("unknown artist");
+      tv_duration_song.setText(aktuellerSong.getDurationString());
+    }
+
     return rowView;
   }
 

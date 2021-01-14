@@ -3,12 +3,10 @@ package com.example.moonstonemusicplayer.model.MainActivity.FolderFragment;
 import android.content.Context;
 import android.util.Log;
 
-import com.example.moonstonemusicplayer.controller.PlayListActivity.RefreshTask;
-import com.example.moonstonemusicplayer.model.PlayListActivity.LocalSongLoader;
+import com.example.moonstonemusicplayer.model.MainActivity.LocalSongLoader;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 
 import java.io.File;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -173,10 +173,6 @@ public class FolderLoader {
     parentNode.appendChild(childSong);
   }
 
-
-
-
-
   /** opens xml file,
    * parses it into String xmlstring
    * and load root Folder from it by calling loadFromXML(xmlstring)
