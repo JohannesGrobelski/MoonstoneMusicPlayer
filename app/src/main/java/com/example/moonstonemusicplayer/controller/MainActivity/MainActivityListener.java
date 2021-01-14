@@ -173,4 +173,23 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
     /*mainActivity.searchView.setIconified(true);
     mainActivity*/
   }
+
+  /**
+   * @return false if nothing was done => normal onBackPressed behavior
+   */
+  public boolean onBackPressed() {
+    int currentItem = mainActivity.viewPager.getCurrentItem();
+    switch(currentItem){
+      case 0: {
+        return ((FolderFragment) fragments[0]).onBackpressed();
+      }
+      case 1: {
+        return ((PlayListFragment) fragments[1]).onBackpressed();
+      }
+      case 2: {
+        return false;
+      }
+    }
+    return false;
+  }
 }

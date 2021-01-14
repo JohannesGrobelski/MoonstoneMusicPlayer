@@ -213,6 +213,10 @@ public class FolderFragment extends Fragment {
     initViews();
   }
 
+  public boolean onBackpressed() {
+    return folderFragmentListener.onBackPressed();
+  }
+
 
   /** */
   public interface RefreshTaskListener {

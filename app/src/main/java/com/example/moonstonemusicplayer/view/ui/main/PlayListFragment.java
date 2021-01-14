@@ -146,4 +146,8 @@ public class PlayListFragment extends Fragment {
       playlistFragmentListener.setAdapter(songs);
     }
   }
+
+  public boolean onBackpressed() {
+    return playlistFragmentListener.onBackpressed();
+  }
 }

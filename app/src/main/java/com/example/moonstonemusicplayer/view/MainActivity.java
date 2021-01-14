@@ -92,7 +92,11 @@ public class MainActivity extends AppCompatActivity {
 
   @Override
   public void onBackPressed() {
-    super.onBackPressed();
+    if(!mainActivityListener.onBackPressed()){
+      super.onBackPressed();
+
+    }
+
   }
 
 

@@ -157,4 +157,15 @@ public class PlaylistFragmentListener implements AdapterView.OnItemClickListener
       }
     }
   }
+
+  public boolean onBackpressed() {
+    if(playListFragment.playlistListManager.getCurrentPlaylist() != null){
+      List<Object> itemList = new ArrayList<>();;
+      itemList.addAll(playListFragment.playlistListManager.getPlaylists());
+      setAdapter(itemList);
+      playListFragment.playlistListManager.setCurrentPlaylist(null);
+      return true;
+    }
+    return false;
+  }
 }

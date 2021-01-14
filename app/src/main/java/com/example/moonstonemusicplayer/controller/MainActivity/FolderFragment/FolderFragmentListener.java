@@ -168,4 +168,14 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
   }
 
 
+  public boolean onBackPressed() {
+    if(folderFragment.selectedFolder != null && folderFragment.selectedFolder.getParent() != null){
+      folderFragment.selectedFolder = folderFragment.selectedFolder.getParent();
+
+      //setAdapter
+      setAdapter(folderFragment.selectedFolder);
+      return true;
+    }
+    return false;
+  }
 }
