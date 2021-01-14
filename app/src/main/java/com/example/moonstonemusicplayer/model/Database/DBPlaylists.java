@@ -170,7 +170,7 @@ public class DBPlaylists {
     public void deletePlaylist(Playlist playlist){
         open_writable();
         database_playlists.delete(DBHelperPlaylists.TABLE_PLAYLISTS,
-                DBHelperPlaylists.COLUMN_PLAYLIST_NAME+ " = "+playlist.getName()
+                DBHelperPlaylists.COLUMN_PLAYLIST_NAME+ " = \'"+playlist.getName()+"\'"
                 ,null);
         close_db();
     }
@@ -178,7 +178,6 @@ public class DBPlaylists {
     private List<Song> searchPlaylist(String searchterm){
         String query = "SELECT * FROM "+ DBHelperPlaylists.TABLE_PLAYLISTS+" WHERE ("+
             DBHelperPlaylists.COLUMN_PLAYLIST_NAME+" LIKE \'"+"%"+searchterm+"%)";
-
         return null;
     }
 

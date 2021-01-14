@@ -26,8 +26,8 @@ public class MainActivity extends AppCompatActivity {
   MainActivityListener mainActivityListener;
 
   public SectionsPagerAdapter sectionsPagerAdapter;
-  TabLayout tabs;
   public ViewPager viewPager;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -39,9 +39,6 @@ public class MainActivity extends AppCompatActivity {
     TabLayout tabs = findViewById(R.id.mainactivity_tabs);
     tabs.setupWithViewPager(viewPager);
     FloatingActionButton fab = findViewById(R.id.fab);
-    tabs = findViewById(R.id.mainactivity_tabs);
-
-    tabs.setOnTabSelectedListener(mainActivityListener);
 
     mainActivityListener = new MainActivityListener(this,sectionsPagerAdapter.getFragments());
 

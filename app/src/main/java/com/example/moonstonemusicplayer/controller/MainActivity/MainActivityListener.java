@@ -21,8 +21,7 @@ import com.example.moonstonemusicplayer.view.ui.main.FolderFragment;
 import com.example.moonstonemusicplayer.view.ui.main.PlayListFragment;
 import com.google.android.material.tabs.TabLayout;
 
-public class MainActivityListener implements SearchView.OnQueryTextListener,
-    View.OnClickListener, SearchView.OnCloseListener, TabLayout.OnTabSelectedListener {
+public class MainActivityListener implements SearchView.OnQueryTextListener {
   private static final boolean DEBUG = true;
   private static final String TAG = MainActivityListener.class.getSimpleName();
 
@@ -46,8 +45,6 @@ public class MainActivityListener implements SearchView.OnQueryTextListener,
     MenuItem searchItem = menu.findItem(R.id.miSearch);
     mainActivity.searchView = (SearchView) searchItem.getActionView();
     mainActivity.searchView.setOnQueryTextListener(this);
-    mainActivity.searchView.setOnSearchClickListener(this);
-    mainActivity.searchView.setOnCloseListener(this);
     return true;
   }
 
@@ -133,50 +130,9 @@ public class MainActivityListener implements SearchView.OnQueryTextListener,
     return false;
   }
 
-  @Override
-  public void onClick(View v) {
 
-  }
 
-  @Override
-  public boolean onClose() {
-    return false;
-  }
 
-  @Override
-  public void onTabSelected(TabLayout.Tab tab) {
-    Log.e(TAG,"selected Tab: "+tab.getPosition());
-    switch (tab.getPosition()) {
-      case 0:
-        Log.e(TAG,"TAB1");
-        break;
-      case 1:
-        Log.e(TAG,"TAB2");
-        break;
-      case 2:
-        Log.e(TAG,"TAB3");
-        break;
-    }
-  }
-
-  @Override
-  public void onTabUnselected(TabLayout.Tab tab) {}
-
-  @Override
-  public void onTabReselected(TabLayout.Tab tab) {
-    Log.e(TAG,"selected Tab: "+tab.getPosition());
-    switch (tab.getPosition()) {
-      case 0:
-        Log.e(TAG,"TAB1");
-        break;
-      case 1:
-        Log.e(TAG,"TAB2");
-        break;
-      case 2:
-        Log.e(TAG,"TAB3");
-        break;
-    }
-  }
 
   /** reset */
   public void onResume() {

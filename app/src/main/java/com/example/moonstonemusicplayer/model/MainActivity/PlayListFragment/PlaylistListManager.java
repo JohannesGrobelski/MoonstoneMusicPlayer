@@ -29,6 +29,8 @@ public class PlaylistListManager {
   /** loads local music and adds it to dataSource*/
   public void loadPlaylistsFromDB(Context context){
     if(context != null){
+      playlists.clear();
+      playlists_backup.clear();
       Log.d(TAG,"loadPlaylistsFromDB");
       this.playlists.addAll(DBPlaylists.getInstance(context).getAllPlaylists());
       this.playlists_backup.addAll(playlists);
@@ -92,5 +94,25 @@ public class PlaylistListManager {
       }
     }
     return result.toArray(new Song[result.size()]);
+  }
+
+
+
+  public void deletePlaylist(Playlist playlist) {
+    playlists_backup.remove(playlist);
+    playlists.remove(playlist);
+  }
+
+  public void deleteFromPlaylist(Song song, String name) {
+    for(Playlist playlist: playlists_backup){
+      if(playlist.name.equals(name)){
+        playlist.getPlaylist().remove(song);
+      }
+    }
+    for(Playlist playlist: playlists){
+      if(playlist.name.equals(name)){
+        playlist.getPlaylist().remove(song);
+      }
+    }
   }
 }

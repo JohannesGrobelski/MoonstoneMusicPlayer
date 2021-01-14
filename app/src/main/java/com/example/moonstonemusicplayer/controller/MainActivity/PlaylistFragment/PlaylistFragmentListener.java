@@ -11,6 +11,7 @@ import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.model.Database.DBPlaylists;
 import com.example.moonstonemusicplayer.model.Database.DBSonglists;
 import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.Playlist;
+import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.PlaylistListManager;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import com.example.moonstonemusicplayer.view.PlayListActivity;
 import com.example.moonstonemusicplayer.view.ui.main.PlayListFragment;
@@ -81,7 +82,7 @@ public class PlaylistFragmentListener implements AdapterView.OnItemClickListener
   }
 
   public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-    //only show context menu if clicked on song
+    //the menu created if a song is clicked on
     if(playListFragment.playlistListManager.getCurrentPlaylist() != null){
       //create menu item with groupid to distinguish between fragments
       menu.add(1, 11, 0, "delete from playlist");
@@ -92,11 +93,38 @@ public class PlaylistFragmentListener implements AdapterView.OnItemClickListener
           AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
           int index = info.position;
           Song song = playListFragment.playlistListManager.getCurrentPlaylist().getPlaylist().get(index);
-          String playlistName = playListFragment.playlistListManager.getCurrentPlaylist().getName();
-          DBPlaylists.getInstance(playListFragment.getContext()).deleteFromPlaylist(song,playlistName);
+          Playlist currentPlaylist = playListFragment.playlistListManager.getCurrentPlaylist();
+          currentPlaylist.getPlaylist().remove(song);
+
+          DBPlaylists.getInstance(playListFragment.getContext()).deleteFromPlaylist(song,
+              playListFragment.playlistListManager.getCurrentPlaylist().getName());
+
+          playListFragment.playlistListManager = new PlaylistListManager(playListFragment.getContext());
+          playListFragment.playlistListManager.setCurrentPlaylist(currentPlaylist);
+
+          List<Object> songs = new ArrayList<>();
+          songs.addAll(currentPlaylist.getPlaylist());
+          setAdapter(songs);
+
           return false;
         }
       });
+    } else {//the menu created if a playlist is clicked on
+      menu.add(1, 12, 0, "delete playlist");
+      menu.getItem(0).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+        @Override
+        /** onContextItemSelected(MenuItem item) doesnt work*/
+        public boolean onMenuItemClick(MenuItem item) {
+          AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+          int index = info.position;
+          Playlist playlist = playListFragment.playlistListManager.getPlaylists().get(index);
+          DBPlaylists.getInstance(playListFragment.getContext()).deletePlaylist(playlist);
+          playListFragment.playlistListManager.deletePlaylist(playlist);
+
+          return false;
+        }
+      });
+
     }
   }
 
