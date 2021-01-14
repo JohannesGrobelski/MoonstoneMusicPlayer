@@ -9,7 +9,7 @@ import android.widget.AdapterView;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.model.Database.DBPlaylists;
-import com.example.moonstonemusicplayer.model.Database.DBSonglists;
+//import com.example.moonstonemusicplayer.model.Database.DBSonglists;
 import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.Playlist;
 import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.PlaylistListManager;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;

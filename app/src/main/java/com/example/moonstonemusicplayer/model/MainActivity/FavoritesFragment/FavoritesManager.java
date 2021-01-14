@@ -3,13 +3,10 @@ package com.example.moonstonemusicplayer.model.MainActivity.FavoritesFragment;
 import android.content.Context;
 import android.util.Log;
 
-import com.example.moonstonemusicplayer.model.Database.DBHelperPlaylists;
 import com.example.moonstonemusicplayer.model.Database.DBPlaylists;
-import com.example.moonstonemusicplayer.model.Database.DBSonglists;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
