@@ -42,7 +42,7 @@ public class FavoritesFragment extends Fragment {
 
   public FavoritesManager favoritesManager;
   FavoriteListAdapter favoriteListAdapter;
-  FavoriteFragmentListener favoriteFragmentListener;
+  public FavoriteFragmentListener favoriteFragmentListener;
 
   public ListView lv_favorites;
 
@@ -102,11 +102,6 @@ public class FavoritesFragment extends Fragment {
     favoriteFragmentListener.onCreateContextMenu(menu, v, menuInfo);
   }
 
-  @Override
-  public void onResume() {
-    super.onResume();
-    favoriteFragmentListener.onResume();
-  }
 
   public void searchMusic(String query) {
     if(!query.isEmpty()){

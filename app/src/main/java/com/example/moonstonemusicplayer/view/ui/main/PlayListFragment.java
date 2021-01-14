@@ -2,6 +2,7 @@ package com.example.moonstonemusicplayer.view.ui.main;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,6 +40,7 @@ public class PlayListFragment extends Fragment {
   public PlaylistListManager playlistListManager;
   public PlaylistFragmentListener playlistFragmentListener;
 
+
   LinearLayout ll_playlistBack;
   public ListView lv_playlist;
 
@@ -59,6 +61,7 @@ public class PlayListFragment extends Fragment {
       index = getArguments().getInt(ARG_SECTION_NUMBER);
     }
     pageViewModel.setIndex(index);
+
   }
 
   @Override
@@ -79,8 +82,6 @@ public class PlayListFragment extends Fragment {
     lv_playlist.setOnCreateContextMenuListener(this);
     return root;
   }
-
-
 
   @Override
   public void onAttach(@NonNull Context context) {

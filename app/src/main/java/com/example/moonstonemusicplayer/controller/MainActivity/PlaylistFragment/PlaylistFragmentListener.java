@@ -136,4 +136,25 @@ public class PlaylistFragmentListener implements AdapterView.OnItemClickListener
   }
 
 
+  public void reloadPlaylistManager() {
+    Log.d("PLaylistsfragment","onResume");
+    if(playListFragment.playlistListManager != null){
+      Playlist currentPlaylist = playListFragment.playlistListManager.getCurrentPlaylist();
+      playListFragment.playlistListManager.loadPlaylistsFromDB(playListFragment.getContext());
+
+      List<Object> currentItems = new ArrayList<>();
+
+      if(currentPlaylist != null){
+        currentPlaylist = playListFragment.playlistListManager.getPlaylist(currentPlaylist.getName());
+        playListFragment.playlistListManager.setCurrentPlaylist(currentPlaylist);
+
+        currentItems.addAll(currentPlaylist.getPlaylist());
+        setAdapter(currentItems);
+        playListFragment.playlistListManager.setCurrentPlaylist(currentPlaylist);
+      } else {
+        currentItems.addAll(playListFragment.playlistListManager.getPlaylists());
+        setAdapter(currentItems);
+      }
+    }
+  }
 }

@@ -4,6 +4,8 @@ import android.os.Bundle;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.MainActivity.MainActivityListener;
+import com.example.moonstonemusicplayer.view.ui.main.FavoritesFragment;
+import com.example.moonstonemusicplayer.view.ui.main.PlayListFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
@@ -22,11 +24,13 @@ import androidx.appcompat.widget.Toolbar;
 import com.example.moonstonemusicplayer.view.ui.main.SectionsPagerAdapter;
 
 public class MainActivity extends AppCompatActivity {
+  private static final String TAG = MainActivity.class.getSimpleName();
   public SearchView searchView;
   MainActivityListener mainActivityListener;
 
   public SectionsPagerAdapter sectionsPagerAdapter;
   public ViewPager viewPager;
+  TabLayout tabs;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -36,11 +40,33 @@ public class MainActivity extends AppCompatActivity {
 
     viewPager = findViewById(R.id.view_pager_main);
     viewPager.setAdapter(sectionsPagerAdapter);
-    TabLayout tabs = findViewById(R.id.mainactivity_tabs);
+    tabs = findViewById(R.id.mainactivity_tabs);
     tabs.setupWithViewPager(viewPager);
     FloatingActionButton fab = findViewById(R.id.fab);
 
     mainActivityListener = new MainActivityListener(this,sectionsPagerAdapter.getFragments());
+
+    tabs.addOnTabSelectedListener(
+        new TabLayout.ViewPagerOnTabSelectedListener(viewPager) {
+          @Override
+          public void onTabSelected(TabLayout.Tab tab) {
+            super.onTabSelected(tab);
+            int numTab = tab.getPosition();
+            //prefs.edit().putInt("numTab", numTab).apply();
+            Log.d(TAG,"tabselected: "+numTab);
+            if(numTab == 1){//
+              ((PlayListFragment) sectionsPagerAdapter.getFragments()[1])
+                  .playlistFragmentListener.reloadPlaylistManager();
+            }
+            else if(numTab == 2){//
+              ((FavoritesFragment) sectionsPagerAdapter.getFragments()[2])
+                  .favoriteFragmentListener.reloadFavoritesManager();
+            }
+          }
+        });
+
+
+
 
     fab.setOnClickListener(new View.OnClickListener() {
       @Override

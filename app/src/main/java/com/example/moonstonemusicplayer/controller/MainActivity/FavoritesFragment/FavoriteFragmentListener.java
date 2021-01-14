@@ -92,9 +92,11 @@ public class FavoriteFragmentListener implements AdapterView.OnItemClickListener
     }
   }
 
-  public void onResume() {
-    favoritesFragment.favoritesManager.loadFavoritesFromDB(favoritesFragment.getContext());
-    List<Song> favoriteList = favoritesFragment.favoritesManager.getFavorites();
-    setAdapter(favoriteList);
+  public void reloadFavoritesManager() {
+    if(favoritesFragment.favoritesManager != null){
+      favoritesFragment.favoritesManager.loadFavoritesFromDB(favoritesFragment.getContext());
+      List<Song> favoriteList = favoritesFragment.favoritesManager.getFavorites();
+      setAdapter(favoriteList);
+    }
   }
 }
