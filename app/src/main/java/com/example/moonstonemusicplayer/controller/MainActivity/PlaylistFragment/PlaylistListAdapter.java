@@ -2,6 +2,7 @@ package com.example.moonstonemusicplayer.controller.MainActivity.PlaylistFragmen
 
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +29,7 @@ public class PlaylistListAdapter extends ArrayAdapter<Object> {
   LayoutInflater layoutInflater;
 
   public PlaylistListAdapter(@NonNull Context context, List<Object> playlistSongList) {
-    super(context, R.layout.item_row_layout,playlistSongList);
+    super(context, R.layout.folder_playlist_row_layout,playlistSongList);
     this.playlistSongList = playlistSongList;
     this.context = context;
     this.layoutInflater = layoutInflater.from(context);
@@ -37,34 +38,47 @@ public class PlaylistListAdapter extends ArrayAdapter<Object> {
   @NonNull
   @Override
   public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-    View rowView;
-    if(convertView != null){
-      rowView = convertView;
-    } else {
-      rowView = layoutInflater.inflate(R.layout.item_row_layout, parent, false);
-    }
+    View rowView = convertView;
+
 
     Song aktuellerSong = null; Playlist aktuellePlaylist = null;
     if(playlistSongList.get(position) instanceof Song){
+      if(convertView == null){
+        rowView = layoutInflater.inflate(R.layout.mainact_song_row_layout, parent, false);
+      }
       aktuellerSong = ((Song) playlistSongList.get(position));
+
+      //init the views of songRowView
+      TextView tv_name_song_main = rowView.findViewById(R.id.tv_name_song_main);
+      TextView tv_artist_song_main = rowView.findViewById(R.id.tv_artist_song_main);
+      TextView tv_duration_song_main = rowView.findViewById(R.id.main_tv_duration_song);
+
+      tv_name_song_main.setText(aktuellerSong.getName());
+      tv_artist_song_main.setText(aktuellerSong.getArtist());
+      if(aktuellerSong.getArtist().isEmpty())tv_artist_song_main.setText("unknown artist");
+      tv_duration_song_main.setText(aktuellerSong.getDurationString());
+
     } else if(playlistSongList.get(position) instanceof Playlist){
+      if(convertView == null){
+        rowView = layoutInflater.inflate(R.layout.folder_playlist_row_layout, parent, false);
+      }
       aktuellePlaylist = ((Playlist) playlistSongList.get(position));
+
+      //init the views of songRowView
+      TextView tv_folderSongItem = rowView.findViewById(R.id.tv_item);
+      ImageView iv_folderSongItem = rowView.findViewById(R.id.iv_folder_playlist);
+      tv_folderSongItem.setTextColor(context.getResources().getColor(R.color.colorPrimary));
+      iv_folderSongItem.setColorFilter(ContextCompat.getColor(context, R.color.colorPrimary), android.graphics.PorterDuff.Mode.SRC_IN);
+      ImageViewCompat.setImageTintList(iv_folderSongItem, ColorStateList.valueOf(ContextCompat.getColor(context, R.color.colorPrimary)));
+
+      if(aktuellePlaylist != null){
+        iv_folderSongItem.setBackground(context.getDrawable(R.drawable.ic_playlist));
+        tv_folderSongItem.setText(aktuellePlaylist.getName());
+      }
+
     } else {return rowView;}
 
-    //init the views of songRowView
-    TextView tv_playlistSongItem = rowView.findViewById(R.id.tv_item);
-    ImageView iv_playlistSongItem = rowView.findViewById(R.id.iv_item);
-    tv_playlistSongItem.setTextColor(context.getResources().getColor(R.color.colorPrimary));
-    iv_playlistSongItem.setColorFilter(ContextCompat.getColor(context, R.color.colorPrimary), android.graphics.PorterDuff.Mode.SRC_IN);
-    ImageViewCompat.setImageTintList(iv_playlistSongItem, ColorStateList.valueOf(ContextCompat.getColor(context, R.color.colorPrimary)));
 
-    if(aktuellePlaylist != null){
-      iv_playlistSongItem.setBackground(context.getDrawable(R.drawable.ic_playlist));
-      tv_playlistSongItem.setText(aktuellePlaylist.getName());
-    } else {
-      iv_playlistSongItem.setBackground(context.getDrawable(R.drawable.ic_music));
-      tv_playlistSongItem.setText(aktuellerSong.getName());
-    }
     return rowView;
   }
 

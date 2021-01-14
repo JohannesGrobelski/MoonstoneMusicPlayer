@@ -27,7 +27,7 @@ public class FolderListAdapter extends ArrayAdapter<Object> {
   LayoutInflater layoutInflater;
 
   public FolderListAdapter(@NonNull Context context, List<Object> folderSongList) {
-    super(context, R.layout.item_row_layout,folderSongList);
+    super(context, R.layout.folder_playlist_row_layout,folderSongList);
     this.folderSongList = folderSongList;
     this.context = context;
     this.layoutInflater = layoutInflater.from(context);
@@ -36,36 +36,44 @@ public class FolderListAdapter extends ArrayAdapter<Object> {
   @NonNull
   @Override
   public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-    View rowView;
-    if(convertView != null){
-      rowView = convertView;
-    } else {
-      rowView = layoutInflater.inflate(R.layout.item_row_layout, parent, false);
-    }
+    View rowView = convertView;
 
     Song aktuellerSong = null; Folder aktuellerFolder = null;
     if(folderSongList.get(position) instanceof Song){
+      if(convertView == null){
+        rowView = layoutInflater.inflate(R.layout.mainact_song_row_layout, parent, false);
+      }
       aktuellerSong = ((Song) folderSongList.get(position));
+
+      //init the views of songRowView
+      TextView tv_name_song_main = rowView.findViewById(R.id.tv_name_song_main);
+      TextView tv_artist_song_main = rowView.findViewById(R.id.tv_artist_song_main);
+      TextView tv_duration_song_main = rowView.findViewById(R.id.main_tv_duration_song);
+
+      tv_name_song_main.setText(aktuellerSong.getName());
+      tv_artist_song_main.setText(aktuellerSong.getArtist());
+      if(aktuellerSong.getArtist().isEmpty())tv_artist_song_main.setText("unknown artist");
+      tv_duration_song_main.setText(aktuellerSong.getDurationString());
+
     } else if(folderSongList.get(position) instanceof Folder){
+      if(convertView == null){
+        rowView = layoutInflater.inflate(R.layout.folder_playlist_row_layout, parent, false);
+      }
       aktuellerFolder = ((Folder) folderSongList.get(position));
+
+      //init the views of songRowView
+      TextView tv_folderSongItem = rowView.findViewById(R.id.tv_item);
+      ImageView iv_folderSongItem = rowView.findViewById(R.id.iv_folder_playlist);
+      tv_folderSongItem.setTextColor(context.getResources().getColor(R.color.colorPrimary));
+      iv_folderSongItem.setColorFilter(ContextCompat.getColor(context, R.color.colorPrimary), android.graphics.PorterDuff.Mode.SRC_IN);
+      ImageViewCompat.setImageTintList(iv_folderSongItem, ColorStateList.valueOf(ContextCompat.getColor(context, R.color.colorPrimary)));
+
+      if(aktuellerFolder != null){
+        iv_folderSongItem.setBackground(context.getDrawable(R.drawable.ic_folder));
+        tv_folderSongItem.setText(aktuellerFolder.getName());
+      }
     } else {return rowView;}
 
-
-
-    //init the views of songRowView
-    TextView tv_folderSongItem = rowView.findViewById(R.id.tv_item);
-    ImageView iv_folderSongItem = rowView.findViewById(R.id.iv_item);
-    tv_folderSongItem.setTextColor(context.getResources().getColor(R.color.colorPrimary));
-    iv_folderSongItem.setColorFilter(ContextCompat.getColor(context, R.color.colorPrimary), android.graphics.PorterDuff.Mode.SRC_IN);
-    ImageViewCompat.setImageTintList(iv_folderSongItem, ColorStateList.valueOf(ContextCompat.getColor(context, R.color.colorPrimary)));
-
-    if(aktuellerFolder != null){
-      iv_folderSongItem.setBackground(context.getDrawable(R.drawable.ic_folder));
-      tv_folderSongItem.setText(aktuellerFolder.getName());
-    } else {
-      iv_folderSongItem.setBackground(context.getDrawable(R.drawable.ic_music));
-      tv_folderSongItem.setText(aktuellerSong.getName());
-    }
     return rowView;
   }
 

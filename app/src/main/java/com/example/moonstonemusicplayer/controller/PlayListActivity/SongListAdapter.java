@@ -54,7 +54,9 @@ public class SongListAdapter extends ArrayAdapter<Song> {
     if(!aktuellerSong.getArtist().isEmpty())tv_artist.setText(aktuellerSong.getArtist());
     else tv_artist.setText("unknown artist");
 
-    if(aktuellerSong.getURI().equals(selectedSongUri))ll_song_background.setBackgroundColor(Color.LTGRAY);
+    if(aktuellerSong.getURI().equals(selectedSongUri)){
+      ll_song_background.setBackgroundColor(context.getResources().getColor(R.color.markerColor));
+    }
     else ll_song_background.setBackgroundColor(Color.WHITE);
 
     tv_duration.setText(Song.getDurationString((int) aktuellerSong.getDuration_ms()));
