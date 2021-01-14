@@ -110,10 +110,15 @@ public class FavoritesFragment extends Fragment {
 
   public void searchMusic(String query) {
     if(!query.isEmpty()){
+      Log.d("search music",query);
       Song[] matchingSongs = favoritesManager.getAllSongsMatchingQuery(query);
-      favoriteFragmentListener.setAdapter(Arrays.asList(matchingSongs));
-    } else {
+
+      favoritesManager.setFavorites(new ArrayList<Song>(Arrays.asList(matchingSongs)));
+
       favoriteFragmentListener.setAdapter(favoritesManager.getFavorites());
+    } else {
+      Log.d("search music","empty");
+      favoriteFragmentListener.setAdapter(favoritesManager.getAllFavorites());
     }
   }
 }

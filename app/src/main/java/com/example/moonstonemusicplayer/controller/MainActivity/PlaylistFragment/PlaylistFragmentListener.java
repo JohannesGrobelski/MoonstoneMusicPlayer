@@ -37,9 +37,6 @@ public class PlaylistFragmentListener implements AdapterView.OnItemClickListener
 
   @Override
   public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-    if(DEBUG)Log.d(TAG,"\n\n\n\n\n");
-
-    //set back text
     Object clickItem = playlistListAdapter.getItem(position);
     if(clickItem != null) {
       if(clickItem instanceof Playlist) {
@@ -62,7 +59,7 @@ public class PlaylistFragmentListener implements AdapterView.OnItemClickListener
   public void onClick(View v) {
     if(v.getId() == R.id.ll_back_playlist){
       List<Object> itemList = new ArrayList<>();;
-      itemList.addAll(playListFragment.playlistListManager.getAllPlaylists());
+      itemList.addAll(playListFragment.playlistListManager.getPlaylists());
       setAdapter(itemList);
       playListFragment.playlistListManager.setCurrentPlaylist(null);
     }

@@ -96,11 +96,11 @@ public class PlayListFragment extends Fragment {
   public void searchMusic(String query) {
     if(!query.isEmpty()){
       Playlist[] matchingPlaylists = playlistListManager.getAllPlaylistsMatchingQuery(query);
-      Song[] matchingSongs = playlistListManager.getAllSongsMatchingQuery(query);
+
+      playlistListManager.setPlaylists(new ArrayList<Playlist>(Arrays.asList(matchingPlaylists)));
 
       List<Object> searchResults = new ArrayList<>();
-      searchResults.addAll(Arrays.asList(matchingPlaylists));
-      searchResults.addAll(Arrays.asList(matchingSongs));
+      searchResults.addAll(playlistListManager.getPlaylists());
 
       playlistFragmentListener.setAdapter(searchResults);
     } else {

@@ -112,6 +112,7 @@ public class MainActivityListener implements SearchView.OnQueryTextListener,
 
     //Fragment currentFragment = mainActivity.getSupportFragmentManager().findFragmentById(R.id.view_pager_main);
     int currentItem = mainActivity.viewPager.getCurrentItem();
+    Log.d("search","in fragment: "+currentItem);
     switch(currentItem){
       case 0: {
         Log.v(TAG, "search the current fragment FolderFragment");
@@ -175,5 +176,11 @@ public class MainActivityListener implements SearchView.OnQueryTextListener,
         Log.e(TAG,"TAB3");
         break;
     }
+  }
+
+  /** reset */
+  public void onResume() {
+    /*mainActivity.searchView.setIconified(true);
+    mainActivity*/
   }
 }

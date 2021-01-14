@@ -19,6 +19,7 @@ public class PlaylistListManager {
 
   private Playlist currentPlaylist;
   private List<Playlist> playlists = new ArrayList<>();
+  private List<Playlist> playlists_backup = new ArrayList<>();
 
   public PlaylistListManager(Context baseContext) {
     this.context = baseContext;
@@ -30,6 +31,7 @@ public class PlaylistListManager {
     if(context != null){
       Log.d(TAG,"loadPlaylistsFromDB");
       this.playlists.addAll(DBPlaylists.getInstance(context).getAllPlaylists());
+      this.playlists_backup.addAll(playlists);
     }
   }
 
@@ -41,6 +43,8 @@ public class PlaylistListManager {
   }
 
   public List<Playlist> getAllPlaylists(){
+    playlists.clear();
+    playlists.addAll(playlists_backup);
     return this.playlists;
   }
 
@@ -58,6 +62,14 @@ public class PlaylistListManager {
 
   public void setCurrentPlaylist(Playlist currentPlaylist) {
     this.currentPlaylist = currentPlaylist;
+  }
+
+  public List<Playlist> getPlaylists() {
+    return playlists;
+  }
+
+  public void setPlaylists(List<Playlist> playlists) {
+    this.playlists = playlists;
   }
 
   public Playlist[] getAllPlaylistsMatchingQuery(String query) {

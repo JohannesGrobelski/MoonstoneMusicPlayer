@@ -72,4 +72,11 @@ public class MainActivity extends AppCompatActivity {
   public void onBackPressed() {
     super.onBackPressed();
   }
+
+
+  @Override
+  protected void onResume() {
+    super.onResume();
+    mainActivityListener.onResume();
+  }
 }
