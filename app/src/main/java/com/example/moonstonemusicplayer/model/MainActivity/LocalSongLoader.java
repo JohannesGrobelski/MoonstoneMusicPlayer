@@ -41,10 +41,10 @@ public class LocalSongLoader {
             child.setName("SD-Karte "+sdcard);
           }
           else{child.setName("SD-Karte");}
-          ++sdcard;
         }
         if(child != null)childrenList.add(child);
       }
+      ++sdcard;
     }
     Folder rootFolder = new Folder("root", null, childrenList.toArray(new Folder[childrenList.size()]),null);
 
