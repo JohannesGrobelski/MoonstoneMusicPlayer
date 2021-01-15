@@ -8,7 +8,8 @@
         android:id="@+id/lv_playlists_alert"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1" >
+        android:layout_margin="5dp"
+        android:layout_weight="1">
 
     </ListView>
 
@@ -16,9 +17,10 @@
         android:id="@+id/et_addNewPlaylist"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="5dp"
         android:layout_weight="1"
         android:ems="10"
-        android:hint="add to new playlist"
+        android:hint="zu neuer Playlist hinzufügen"
         android:inputType="textPersonName" />
 
 </LinearLayout>

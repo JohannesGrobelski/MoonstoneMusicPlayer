@@ -85,7 +85,8 @@ public class PlaylistFragmentListener implements AdapterView.OnItemClickListener
     //the menu created if a song is clicked on
     if(playListFragment.playlistListManager.getCurrentPlaylist() != null){
       //create menu item with groupid to distinguish between fragments
-      menu.add(1, 11, 0, "delete from playlist");
+      //präsentation
+      menu.add(1, 11, 0, "aus Playlist löschen");
       menu.getItem(0).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
         @Override
         /** onContextItemSelected(MenuItem item) doesnt work*/
@@ -110,7 +111,7 @@ public class PlaylistFragmentListener implements AdapterView.OnItemClickListener
         }
       });
     } else {//the menu created if a playlist is clicked on
-      menu.add(1, 12, 0, "delete playlist");
+      menu.add(1, 12, 0, "playlist löschen");
       menu.getItem(0).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
         @Override
         /** onContextItemSelected(MenuItem item) doesnt work*/

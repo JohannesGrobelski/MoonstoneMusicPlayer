@@ -73,7 +73,7 @@ public class FavoriteFragmentListener implements AdapterView.OnItemClickListener
     //only show context menu if clicked on song
     if(favoritesFragment.favoritesManager.getFavorites() != null){
       //create menu item with groupid to distinguish between fragments
-      menu.add(2, 21, 0, "delete from favorites");
+      menu.add(2, 21, 0, "aus Favoiten löschen");
       menu.getItem(0).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
         @Override
         /** onContextItemSelected(MenuItem item) doesnt work*/

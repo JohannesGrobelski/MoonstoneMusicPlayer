@@ -21,7 +21,7 @@ public class LocalSongLoader {
 
   /** find all Audiofiles in externalDirs and create a List<Song> from these files*/
   public static Folder findAllAudioFilesAsFolderInDir(File[] externalFilesDir){
-    //System.getenv("SECONDARY_STORAGE");
+    //projektpräsentation: System.getenv("SECONDARY_STORAGE");
     String[] fileDirs = new String[externalFilesDir.length];
     for(int i=0; i<fileDirs.length; i++){
       fileDirs[i] = externalFilesDir[i].getAbsolutePath().replace("/Android/media/com.example.moonstonemusicplayer","");
@@ -48,7 +48,7 @@ public class LocalSongLoader {
     }
     Folder rootFolder = new Folder("root", null, childrenList.toArray(new Folder[childrenList.size()]),null);
 
-    Log.d(TAG,rootFolder.toString());
+    if(DEBUG)Log.d(TAG,rootFolder.toString());
     rootFolder.setParentsBelow();
     return rootFolder;
   }

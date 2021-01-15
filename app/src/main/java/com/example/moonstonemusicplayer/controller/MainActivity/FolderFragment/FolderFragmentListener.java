@@ -101,8 +101,8 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
     //only show context menu if clicked on song
     if(folderFragment.selectedFolder.getChildren_folders() == null
     ||(folderFragment.selectedFolder.getChildren_folders().length <= clickedPosition)){
-        menu.add(0, 1, 0, "add to favorites");
-        menu.add(0, 2, 0, "add to playlist");
+        menu.add(0, 1, 0, "zu Favoriten hinzufügen");
+        menu.add(0, 2, 0, "zu Playlists hinzufügen");
     }
   }
 
@@ -157,7 +157,7 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
         }
       }
     });
-    dialogBuilder.setTitle("Add Song to a playlist:");
+    dialogBuilder.setTitle("Füge den Song einer Playlist hinzu \noder erstelle eine neue.");
 
     final AlertDialog alertDialog  = dialogBuilder.show();
 
