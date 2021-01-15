@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.MainActivity.FavoritesFragment.FavoriteFragmentListener;
+import com.example.moonstonemusicplayer.controller.MainActivity.FolderFragment.FolderFragmentListener;
 import com.example.moonstonemusicplayer.controller.MainActivity.PlaylistFragment.PlaylistFragmentListener;
 import com.example.moonstonemusicplayer.controller.PlayListActivity.PlayListActivityListener;
 import com.example.moonstonemusicplayer.view.ui.main.FolderFragment;
@@ -65,7 +66,7 @@ public class PlayListActivity extends AppCompatActivity {
     int song_index = 0;
     if(getIntent().hasExtra(FolderFragment.FOLDERSONGINDEXEXTRA)){
       song_index = getIntent().getIntExtra(FolderFragment.FOLDERSONGINDEXEXTRA,0);
-      playListActivityListener = new PlayListActivityListener(this,FolderFragment.getFolderSonglist(),song_index);
+      playListActivityListener = new PlayListActivityListener(this, FolderFragmentListener.getFolderSonglist(),song_index);
     }
     else if(getIntent().hasExtra(FAVORITELISTEXTRA)){
       song_index = getIntent().getIntExtra(FAVORITELISTEXTRA,0);
@@ -123,10 +124,7 @@ public class PlayListActivity extends AppCompatActivity {
   }
 
 
-  public void setArtist(String artist){
-    if(artist.isEmpty()) tv_artist.setText("unknown artist");
-    else tv_artist.setText(artist);
-  }
+
 
   @Override
   protected void onDestroy() {

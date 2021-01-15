@@ -1,8 +1,4 @@
-package com.example.moonstonemusicplayer.utility;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.safety.Whitelist;
+package com.example.libfolder.notused;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -76,14 +72,15 @@ public class GooglesearchLyrics {
    * @return return text without html tags
    */
   private static String html2text(String html) {
-    if(html==null) return html;
+    /*if(html==null) return html;
     Document document = Jsoup.parse(html);
     document.outputSettings(new Document.OutputSettings().prettyPrint(false));//makes html() preserve linebreaks and spacing
     //replace all <br> and <p> with linebreaks
     document.select("br").append("\\n");
     document.select("p").prepend("\\n\\n");
     String s = document.html().replaceAll("\\\\n", "\n");
-    return Jsoup.clean(s, "", Whitelist.none(), new Document.OutputSettings().prettyPrint(false));
+    return Jsoup.clean(s, "", Whitelist.none(), new Document.OutputSettings().prettyPrint(false));*/
+    return "";
   }
 
   /**

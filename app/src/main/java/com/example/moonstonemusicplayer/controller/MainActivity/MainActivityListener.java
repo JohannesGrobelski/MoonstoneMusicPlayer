@@ -7,7 +7,6 @@ import android.content.pm.PackageManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.SearchView;
 
 import androidx.core.app.ActivityCompat;
@@ -19,7 +18,6 @@ import com.example.moonstonemusicplayer.view.MainActivity;
 import com.example.moonstonemusicplayer.view.ui.main.FavoritesFragment;
 import com.example.moonstonemusicplayer.view.ui.main.FolderFragment;
 import com.example.moonstonemusicplayer.view.ui.main.PlayListFragment;
-import com.google.android.material.tabs.TabLayout;
 
 public class MainActivityListener implements SearchView.OnQueryTextListener {
   private static final boolean DEBUG = true;
@@ -82,7 +80,7 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
         switch(currentItem){
           case 0: {((FolderFragment) fragments[0]).sortSongsByName(); break;}
           case 1: {((PlayListFragment) fragments[1]).sortSongsByName();break;}
-          case 2: {((FavoritesFragment) fragments[2]).sortFavoritesByName();break;}
+          case 2: {((FavoritesFragment) fragments[2]).sortSongsByName();break;}
         }
         break;
       } case R.id.miSortArtistMain: {
@@ -165,14 +163,6 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
   }
 
 
-
-
-
-  /** reset */
-  public void onResume() {
-    /*mainActivity.searchView.setIconified(true);
-    mainActivity*/
-  }
 
   /**
    * @return false if nothing was done => normal onBackPressed behavior

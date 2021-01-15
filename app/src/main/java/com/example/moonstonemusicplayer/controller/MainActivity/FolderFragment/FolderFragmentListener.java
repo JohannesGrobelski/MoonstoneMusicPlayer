@@ -2,6 +2,7 @@ package com.example.moonstonemusicplayer.controller.MainActivity.FolderFragment;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -17,6 +18,7 @@ import com.example.moonstonemusicplayer.model.Database.DBPlaylists;
 import com.example.moonstonemusicplayer.model.MainActivity.FolderFragment.Folder;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import com.example.moonstonemusicplayer.view.MainActivity;
+import com.example.moonstonemusicplayer.view.PlayListActivity;
 import com.example.moonstonemusicplayer.view.ui.main.FolderFragment;
 import com.example.moonstonemusicplayer.view.ui.main.PlayListFragment;
 
@@ -27,8 +29,9 @@ import java.util.List;
 public class FolderFragmentListener implements AdapterView.OnItemClickListener, View.OnClickListener {
   private static final String TAG = FolderFragmentListener.class.getSimpleName();
   private static final boolean DEBUG = false;
+  private static Song[] FolderSonglist;
   private final FolderFragment folderFragment;
-  public FolderListAdapter folderListAdapter;
+  private FolderListAdapter folderListAdapter;
 
   public FolderFragmentListener(FolderFragment folderFragment) {
     this.folderFragment = folderFragment;
@@ -67,7 +70,7 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
       if(folderFragment.selectedFolder.getChildren_folders() != null){
         song_index -= folderFragment.selectedFolder.getChildren_folders().length; //folders are always written before songs
       }
-      folderFragment.startFolderSonglist(playlist,song_index);
+      startFolderSonglist(playlist,song_index, folderFragment);
     }
   }
 
@@ -177,5 +180,20 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
       return true;
     }
     return false;
+  }
+
+  public void startFolderSonglist(Song[] playlist, int song_index, FolderFragment folderFragment){
+    FolderSonglist = playlist.clone();
+    Intent intent = new Intent(folderFragment.getActivity(), PlayListActivity.class);
+
+    intent.putExtra(FolderFragment.FOLDERSONGINDEXEXTRA,song_index);
+    folderFragment.startActivity(intent);
+  }
+
+
+  public static Song[] getFolderSonglist(){
+    Song[] playlistCopy = FolderFragmentListener.FolderSonglist.clone();
+    FolderFragmentListener.FolderSonglist = null;
+    return playlistCopy;
   }
 }

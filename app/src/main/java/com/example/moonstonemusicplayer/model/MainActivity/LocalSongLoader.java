@@ -20,7 +20,7 @@ public class LocalSongLoader {
   private static final boolean DEBUG = false;
 
   /** find all Audiofiles in externalDirs and create a List<Song> from these files*/
-  public static Folder findAllAudioFilesAsFolder(File[] externalFilesDir){
+  public static Folder findAllAudioFilesAsFolderInDir(File[] externalFilesDir){
     //System.getenv("SECONDARY_STORAGE");
     String[] fileDirs = new String[externalFilesDir.length];
     for(int i=0; i<fileDirs.length; i++){
@@ -33,7 +33,7 @@ public class LocalSongLoader {
     int sdcard = 0;
     for(String fileDir: fileDirs){
       if(new File(fileDir).exists()){
-        Folder child = findAllAudioFilesAsFolder(fileDir,null);
+        Folder child = findAllAudioFilesAsFolderInDir(fileDir,null);
         if(child == null)continue;
         if(sdcard==0)child.setName("interner Speicher");
         else {
@@ -54,22 +54,22 @@ public class LocalSongLoader {
   }
 
   /** recursive */
-  private static Folder findAllAudioFilesAsFolder(String directory, Folder parentFolder){
-    if(DEBUG)Log.d(TAG,"findAllAudioFilesAsFolder FILE: "+directory);
+  private static Folder findAllAudioFilesAsFolderInDir(String directory, Folder parentFolder){
+    if(DEBUG)Log.d(TAG,"findAllAudioFilesAsFolderInDir FILE: "+directory);
     try {
       File file = new File(directory );
       if(file.exists()) {
         if(file.isDirectory()) {
           if(file.getAbsolutePath().endsWith("Android")){
-            if(DEBUG)Log.d(TAG,"findAllAudioFilesAsFolder isAndroid: "+file.getAbsolutePath());
+            if(DEBUG)Log.d(TAG,"findAllAudioFilesAsFolderInDir isAndroid: "+file.getAbsolutePath());
             return null; //throws null pointer exception; cannot enter without root
           }
           if(file.listFiles() != null){
             List<Folder> children_folder = new ArrayList<>();
             List<Song> children_song = new ArrayList<>();
             for (File childFile: file.listFiles()) { //gehe durch Kinder
-              if(DEBUG)Log.d(TAG,"findAllAudioFilesAsFolder TEST: "+childFile.getAbsolutePath());
-              Folder child_folder = findAllAudioFilesAsFolder(childFile.getAbsolutePath(), parentFolder);
+              if(DEBUG)Log.d(TAG,"findAllAudioFilesAsFolderInDir TEST: "+childFile.getAbsolutePath());
+              Folder child_folder = findAllAudioFilesAsFolderInDir(childFile.getAbsolutePath(), parentFolder);
               if(child_folder != null){//child is a directory
                 children_folder.add(child_folder);
               } else {//child is not a dir, might be a song-file?
@@ -79,36 +79,36 @@ public class LocalSongLoader {
               }
             }
             if(!(children_folder.isEmpty() && children_song.isEmpty())){ //directory is not empty
-              if(DEBUG)Log.d(TAG,"findAllAudioFilesAsFolder: save"+file.getName()+" "+children_folder.size()+" "+children_song.size());
+              if(DEBUG)Log.d(TAG,"findAllAudioFilesAsFolderInDir: save"+file.getName()+" "+children_folder.size()+" "+children_song.size());
               return new Folder(file.getName(),
                   parentFolder,
                   children_folder.toArray(new Folder[children_folder.size()]),
                   children_song.toArray(new Song[children_song.size()])
               );
             } else {
-              if(DEBUG)Log.e(TAG,"findAllAudioFilesAsFolder empty Dir: "+file.getAbsolutePath());
+              if(DEBUG)Log.e(TAG,"findAllAudioFilesAsFolderInDir empty Dir: "+file.getAbsolutePath());
             }
           } else {
-            if(DEBUG)Log.e(TAG,"findAllAudioFilesAsFolder list files is null: "+file.getName());
+            if(DEBUG)Log.e(TAG,"findAllAudioFilesAsFolderInDir list files is null: "+file.getName());
             return null;
           }
         } else { //file is not a directory
-          if(DEBUG)Log.e(TAG,"findAllAudioFilesAsFolder file is not a dir: "+file.getName());
+          if(DEBUG)Log.e(TAG,"findAllAudioFilesAsFolderInDir file is not a dir: "+file.getName());
           return null;
         }
       } else{ //file does not exist
-        if(DEBUG)Log.e(TAG,"findAllAudioFilesAsFolder file does not exist: "+file.getName());
+        if(DEBUG)Log.e(TAG,"findAllAudioFilesAsFolderInDir file does not exist: "+file.getName());
         return null;
       }
     } catch (Exception e){
-      if(DEBUG)Log.e(TAG,"findAllAudioFilesAsFolder error: "+e.getMessage());
-      if(DEBUG)Log.e(TAG, "findAllAudioFilesAsFolder error: "+String.valueOf(e.getCause()));
+      if(DEBUG)Log.e(TAG,"findAllAudioFilesAsFolderInDir error: "+e.getMessage());
+      if(DEBUG)Log.e(TAG, "findAllAudioFilesAsFolderInDir error: "+String.valueOf(e.getCause()));
     }
     return null;
   }
 
   /** find all Audiofiles in externalDirs and create a List<Song> from these files*/
-  public static List<Song> findAllAudioFiles(File[] externalFilesDir){
+  public static List<Song> findAllAudioFilesInDir(File[] externalFilesDir){
       List<Song> result = new ArrayList<>();
 
       //System.getenv("SECONDARY_STORAGE");
@@ -118,13 +118,13 @@ public class LocalSongLoader {
         if(DEBUG)Log.d("SongManager",fileDirs[i]+" "+new File(fileDirs[i]).exists());
       }
       for(String fileDir: fileDirs){
-        if(new File(fileDir).exists())result.addAll(findAllAudioFiles(fileDir,null));
+        if(new File(fileDir).exists())result.addAll(findAllAudioFilesInDir(fileDir,null));
       }
       return result;
   }
 
-  private static List<Song> findAllAudioFiles(String directory, List<Song> localAudioFiles){
-    if(DEBUG)Log.d("SongManager","findAllAudioFiles");
+  private static List<Song> findAllAudioFilesInDir(String directory, List<Song> localAudioFiles){
+    if(DEBUG)Log.d("SongManager","findAllAudioFilesInDir");
     if(localAudioFiles == null){
       localAudioFiles = new ArrayList<>();
     }
@@ -136,7 +136,7 @@ public class LocalSongLoader {
         if(file.getAbsolutePath().endsWith("Android"))return localAudioFiles; //throws null pointer exception; cannot enter without root
         if(file.listFiles() != null){
           for (File childFile: file.listFiles()) {
-            findAllAudioFiles(childFile.getAbsolutePath(),localAudioFiles);
+            findAllAudioFilesInDir(childFile.getAbsolutePath(),localAudioFiles);
           }
         }
       } else{

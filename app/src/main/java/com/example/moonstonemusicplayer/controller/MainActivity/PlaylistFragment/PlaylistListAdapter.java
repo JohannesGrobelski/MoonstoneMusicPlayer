@@ -25,8 +25,8 @@ import java.util.List;
 public class PlaylistListAdapter extends ArrayAdapter<Object> {
 
   private List<Object> playlistSongList;
-  Context context;
-  LayoutInflater layoutInflater;
+  private Context context;
+  private LayoutInflater layoutInflater;
 
   public PlaylistListAdapter(@NonNull Context context, List<Object> playlistSongList) {
     super(context, R.layout.item_row_layout,playlistSongList);

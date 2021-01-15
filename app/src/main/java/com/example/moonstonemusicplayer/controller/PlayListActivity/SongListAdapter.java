@@ -21,8 +21,8 @@ public class SongListAdapter extends ArrayAdapter<Song> {
   private List<Song> songList;
   private String selectedSongUri = "";
 
-  Context context;
-  LayoutInflater layoutInflater;
+  private Context context;
+  private LayoutInflater layoutInflater;
 
   public SongListAdapter(@NonNull Context context, List<Song> songList) {
     super(context, R.layout.song_row_layout,songList);

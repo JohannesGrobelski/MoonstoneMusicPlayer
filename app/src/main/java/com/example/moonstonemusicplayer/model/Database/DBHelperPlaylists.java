@@ -10,13 +10,13 @@ import androidx.annotation.NonNull;
 public class DBHelperPlaylists extends SQLiteOpenHelper {
 
     /**
-     *  Map playlistname to song
+     *  Table maps playlistname to song
      *
-     *     playlistname | song_name | ...
-     *     -------------+--------
-     *     rock         | alpha ...
-     *     rock         | waf
-     *     metal        | bfmv 1
+     *     playlistname | song_name | song_artist ...
+     *     -------------+-----------
+     *     rock         | alpha     |  ...
+     *     rock         | waf       |
+     *     bach         | basf      |
      *     ....
      */
 

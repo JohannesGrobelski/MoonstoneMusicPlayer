@@ -36,12 +36,9 @@ public class FavoritesFragment extends Fragment {
 
   // TODO: Rename parameter arguments, choose names that match
   // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-  private static final String ARG_SECTION_NUMBER = "section_number";
   private static final String TAG = FavoritesFragment.class.getSimpleName();
-  private PageViewModel pageViewModel;
 
   public FavoritesManager favoritesManager;
-  FavoriteListAdapter favoriteListAdapter;
   public FavoriteFragmentListener favoriteFragmentListener;
 
   public ListView lv_favorites;
@@ -60,21 +57,12 @@ public class FavoritesFragment extends Fragment {
   // TODO: Rename and change types and number of parameters
   public static FavoritesFragment newInstance(int index) {
     FavoritesFragment fragment = new FavoritesFragment();
-    Bundle bundle = new Bundle();
-    bundle.putInt(ARG_SECTION_NUMBER, index);
-    fragment.setArguments(bundle);
     return fragment;
   }
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    pageViewModel = ViewModelProviders.of(this).get(PageViewModel.class);
-    int index = 1;
-    if (getArguments() != null) {
-      index = getArguments().getInt(ARG_SECTION_NUMBER);
-    }
-    pageViewModel.setIndex(index);
   }
 
   @Override
@@ -116,7 +104,7 @@ public class FavoritesFragment extends Fragment {
     }
   }
 
-  public void sortFavoritesByName() {
+  public void sortSongsByName() {
     favoritesManager.sortFavoritesByName();
     favoriteFragmentListener.setAdapter(favoritesManager.getFavorites());
   }

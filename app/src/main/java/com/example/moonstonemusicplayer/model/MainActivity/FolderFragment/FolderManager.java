@@ -29,10 +29,10 @@ public class FolderManager {
     //deleteAllSongs();//TODO: dont delete db but only local files
     if(context != null){
       File[] externalFileDirs = context.getExternalMediaDirs(); //getExternalMediaDirs actually does get both internal and external sdcards
-      this.rootFolder = LocalSongLoader.findAllAudioFilesAsFolder(externalFileDirs);
+      this.rootFolder = LocalSongLoader.findAllAudioFilesAsFolderInDir(externalFileDirs);
       FolderLoader.saveIntoXML(this.rootFolder,context.getFilesDir().getAbsolutePath());
     }
-    //dataSource.insertSongList(LocalSongLoader.findAllAudioFiles(externalFileDirs));
+    //dataSource.insertSongList(LocalSongLoader.findAllAudioFilesInDir(externalFileDirs));
     //playList.addAll(dataSource.getAllSong(60000));
   }
 
@@ -44,7 +44,7 @@ public class FolderManager {
     } else {
       Log.e(TAG,"loadSavedMusicAsFolder: context null");
     }
-    //dataSource.insertSongList(LocalSongLoader.findAllAudioFiles(externalFileDirs));
+    //dataSource.insertSongList(LocalSongLoader.findAllAudioFilesInDir(externalFileDirs));
     //playList.addAll(dataSource.getAllSong(60000));
   }
 

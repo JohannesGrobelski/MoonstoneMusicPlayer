@@ -20,8 +20,6 @@ import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import java.io.IOException;
 import java.util.List;
 
-import static com.example.moonstonemusicplayer.controller.PlayListActivity.SongNotification.NOTIFICATION_ORDER;
-
 
 /** MediaPlayerService
  * Plays the List<Song> specified by MusicPlayer.
@@ -38,8 +36,6 @@ public class MediaPlayerService extends Service
   public static final String ACTION_NOTIFICATION_ORDER ="NOTIFICATION_ORDER";
   private BroadcastReceiver notificationBroadcastReceiver;
 
-
-  SongNotification songNotification;
 
   public static final String STARTING_INDEX = "STARTING_INDEX";
   private static final String TAG = MediaPlayerService.class.getSimpleName();
@@ -85,8 +81,6 @@ public class MediaPlayerService extends Service
     if(((LocalBinder) iBinder) != null){
       ((LocalBinder) iBinder).boundServiceListener.selectedSong(playListModel.getCurrentSong().getURI());
     }
-
-    songNotification.buildNotification(playListModel.getCurrentSong());
   }
 
   //public interface
@@ -150,12 +144,6 @@ public class MediaPlayerService extends Service
       startIndex = intent.getIntExtra(STARTING_INDEX,0);
       if(DEBUG)Log.d(TAG,"starting song: "+startIndex);
     }
-    if(intent.hasExtra(NOTIFICATION_ORDER)){
-      handleNotificationOrder(intent.getStringExtra(NOTIFICATION_ORDER));
-    }
-
-    songNotification = new SongNotification(getApplicationContext());
-
     return super.onStartCommand(intent, flags, startId);
   }
 
@@ -178,12 +166,6 @@ public class MediaPlayerService extends Service
     } catch (Exception e){
 
     }
-  }
-
-
-
-  private void handleNotificationOrder(String stringExtra) {
-    Log.d(TAG,NOTIFICATION_ORDER+": "+stringExtra);
   }
 
   @Override

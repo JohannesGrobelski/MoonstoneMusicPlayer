@@ -11,10 +11,10 @@ public class Folder {
   private static final boolean DEBUG = false;
   private static final String TAG = Folder.class.getSimpleName();
 
-  Folder parent;
-  String name;
-  Folder[] children_folders = null;
-  Song[] children_songs = null;
+  private Folder parent;
+  private String name;
+  private Folder[] children_folders = null;
+  private Song[] children_songs = null;
 
   public Folder(String name, Folder parent, Folder[] children_folders, Song[] children_songs) {
     this.parent = parent;

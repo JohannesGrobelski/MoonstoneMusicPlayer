@@ -17,22 +17,18 @@ import java.util.Set;
 
 public class DBPlaylists {
     //favorites is just another playlist
-    private static final String FAVORITES_PLAYLIST_NAME = "FAVORITES_MOONSTONEMUSICPLAYER_32325393434133218379";
+    private static final String FAVORITES_PLAYLIST_NAME = "FAVORITES_MOONSTONEMUSICPLAYER_32325393434133218384916498164861498515687949184994971679";
 
     private static final String TAG = DBPlaylists.class.getSimpleName();
     private static final boolean DEBUG = true;
     private static DBPlaylists instance;
-
-    //Angabe Klassenname für spätere LogAusgaben
-    private static final String LOG_TAG = DBPlaylists.class.getSimpleName();
-    private static final int minSongDuration = 60000;
 
     //Variablendeklaration
     private DBHelperPlaylists DBHelperPlaylists;
     private static SQLiteDatabase database_playlists;
 
 
-    private String[] columns = {
+    private String[] COLUMNS = {
             DBHelperPlaylists.COLUMN_ID,
             DBHelperPlaylists.COLUMN_PLAYLIST_NAME,
             DBHelperPlaylists.COLUMN_SONG_NAME,
@@ -47,24 +43,24 @@ public class DBPlaylists {
 
 
     private DBPlaylists(Context context){
-        Log.d(LOG_TAG,"Unsere DataSource erzeugt den DBHelperPlaylists");
+        Log.d(TAG,"Unsere DataSource erzeugt den DBHelperPlaylists");
         DBHelperPlaylists = new DBHelperPlaylists(context);
     }
 
     private void open_writable(){
-        Log.d(LOG_TAG, "Eine schreibende Referenz auf die DB wird jetzt angefragt.");
+        Log.d(TAG, "Eine schreibende Referenz auf die DB wird jetzt angefragt.");
         database_playlists = DBHelperPlaylists.getWritableDatabase();
-        Log.d(LOG_TAG, "Datenbank-Referenz erhalten, Pfad zur Datenbank: "+ database_playlists.getPath());
+        Log.d(TAG, "Datenbank-Referenz erhalten, Pfad zur Datenbank: "+ database_playlists.getPath());
     }
 
     private void open_readable(){
-        Log.d(LOG_TAG, "Eine lesende Referenz auf die DB wird jetzt angefragt.");
+        Log.d(TAG, "Eine lesende Referenz auf die DB wird jetzt angefragt.");
         database_playlists = DBHelperPlaylists.getReadableDatabase();
-        Log.d(LOG_TAG, "Datenbank-Referenz erhalten, Pfad zur Datenbank: "+ database_playlists.getPath());
+        Log.d(TAG, "Datenbank-Referenz erhalten, Pfad zur Datenbank: "+ database_playlists.getPath());
     }
 
     private void close_db(){
-        Log.d(LOG_TAG, "DB mit hilfe des DBHelperLocalSongss schließen");
+        Log.d(TAG, "DB mit hilfe des DBHelperLocalSongss schließen");
         DBHelperPlaylists.close();
     }
 
@@ -118,7 +114,7 @@ public class DBPlaylists {
             DBHelperPlaylists.COLUMN_PLAYLIST_NAME+" LIKE \'"+playlistname+"\' AND "+
             DBHelperPlaylists.COLUMN_URI+" LIKE \'"+inputSong.getURI()+"\'";
 
-        if(resultsFromQueryEmtpy(query)){
+        if(noResultsFromQuery(query)){
             //Anlegen von Wertepaaren zur Übergabe in Insert-Methode
             ContentValues values = new ContentValues();
             values.put(DBHelperPlaylists.COLUMN_PLAYLIST_NAME, playlistname);
@@ -139,7 +135,7 @@ public class DBPlaylists {
             Log.d(TAG,"add to playlist: "+inputSong.getName()+" "+insertID);
             //Zeiger auf gerade eingefügtes Element
             Cursor cursor = database_playlists.query(DBHelperPlaylists.TABLE_PLAYLISTS,
-                columns,
+                COLUMNS,
                 DBHelperPlaylists.COLUMN_ID + " = " + insertID,
                 null, null, null, null);
 
@@ -181,7 +177,7 @@ public class DBPlaylists {
         return null;
     }
 
-    private boolean resultsFromQueryEmtpy(String query){
+    private boolean noResultsFromQuery(String query){
         List<Song> SongList = new ArrayList<>();
         open_readable();
         //Zeiger auf die Einträge der Tabelle

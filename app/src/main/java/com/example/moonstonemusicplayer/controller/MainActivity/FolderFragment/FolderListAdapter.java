@@ -24,8 +24,8 @@ import java.util.List;
 public class FolderListAdapter extends ArrayAdapter<Object> {
 
   private List<Object> folderSongList;
-  Context context;
-  LayoutInflater layoutInflater;
+  private Context context;
+  private LayoutInflater layoutInflater;
 
   public FolderListAdapter(@NonNull Context context, List<Object> folderSongList) {
     super(context, R.layout.item_row_layout,folderSongList);

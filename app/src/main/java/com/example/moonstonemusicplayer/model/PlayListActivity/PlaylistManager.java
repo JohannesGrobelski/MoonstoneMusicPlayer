@@ -34,7 +34,7 @@ public class PlaylistManager {
     public void loadLocalMusic(){
         deleteAllSongs();//TODO: dont delete db but only local files
         File[] externalFileDirs = context.getExternalMediaDirs(); //getExternalMediaDirs actually does get both internal and external sdcards
-        DataSourceSingleton.getInstance(context).insertSongList(LocalSongLoader.findAllAudioFiles(externalFileDirs));
+        DataSourceSingleton.getInstance(context).insertSongList(LocalSongLoader.findAllAudioFilesInDir(externalFileDirs));
         playList.addAll(DataSourceSingleton.getInstance(context).getAllSong(60000));
         displayedSongList.clear();
         displayedSongList.addAll(playList);
