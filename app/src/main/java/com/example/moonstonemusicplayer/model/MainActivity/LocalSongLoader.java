@@ -179,7 +179,7 @@ public class LocalSongLoader {
       title = meta_title;
     }
     if(meta_genre != null && !meta_genre.isEmpty() && !meta_genre.equals("null")){
-      genre = meta_genre;
+      genre = translateGenre(meta_genre);
     }
     if(meta_author != null && !meta_author.isEmpty() && !meta_author.equals("null")){
       author = meta_author;
@@ -202,5 +202,14 @@ public class LocalSongLoader {
       if(filename.endsWith(ext) || filename.endsWith(ext.toUpperCase()))return true;
     }
     return false;
+  }
+
+  /** translate some english genres to german */
+  private static String translateGenre(String genre){
+    switch(genre.toLowerCase()){
+      case "classical": return "Klassik";
+      case "other": return "Andere";
+      default: return genre;
+    }
   }
 }

@@ -2,9 +2,7 @@
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item
-        android:id="@+id/miSwitchAscDesc"
-        android:title="Reihenfolge umdrehen" />
+
     <item
         android:id="@+id/miSearch"
         android:icon="@android:drawable/ic_menu_search"
@@ -16,6 +14,9 @@
         android:title="Songs sortieren">
 
         <menu>
+            <item
+                android:id="@+id/miSwitchAscDesc"
+                android:title="Reihenfolge umdrehen" />
             <item
                 android:id="@+id/miSortTitle"
                 android:title="sortieren nach Titel" />
