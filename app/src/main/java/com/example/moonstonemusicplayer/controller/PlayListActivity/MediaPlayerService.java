@@ -10,10 +10,13 @@ import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
+import com.example.moonstonemusicplayer.controller.PlayListActivity.Notification.Constants;
+import com.example.moonstonemusicplayer.controller.PlayListActivity.Notification.NotificationService;
 import com.example.moonstonemusicplayer.model.PlayListActivity.PlayListModel;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 
@@ -297,6 +300,8 @@ public class MediaPlayerService extends Service
     playListModel.setCurrentSong(song);
     //Toast.makeText(this,"clicked: "+playListModel.getCurrentSong().getName(),Toast.LENGTH_LONG).show();
     initMediaPlayer();
+
+    startNotificationService();
   }
 
   public void nextSong() {
@@ -346,5 +351,11 @@ public class MediaPlayerService extends Service
       boundServiceListener = listener;
     }
 
+  }
+
+  public void startNotificationService() {
+    Intent serviceIntent = new Intent(MediaPlayerService.this, NotificationService.class);
+    serviceIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
+    startService(serviceIntent);
   }
 }

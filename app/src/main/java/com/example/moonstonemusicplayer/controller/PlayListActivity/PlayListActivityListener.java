@@ -452,7 +452,6 @@ public class PlayListActivityListener
   }
 
   //Permissions
-
   /** requests runtime storage permissions (API>=23) for loading files from sd-card */
   public boolean requestForPermission() {
     int permissionCheck = ContextCompat.checkSelfPermission(playListActivity, Manifest.permission.READ_EXTERNAL_STORAGE);
