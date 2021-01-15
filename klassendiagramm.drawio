@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2021-01-15T09:24:41.856Z" agent="5.0 (Windows)" etag="0K7D349iCMCGlYptlUkp" version="14.2.3" type="github">
+<mxfile host="app.diagrams.net" modified="2021-01-15T09:25:03.891Z" agent="5.0 (Windows)" etag="9tJ8c8O3njP1vsoOvHT4" version="14.2.3" type="github">
   <diagram id="C5RBs43oDa-KdzZeNtuy" name="Page-1">
     <mxGraphModel dx="2351" dy="2370" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -117,7 +117,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="A6s-E-ukSPN_syaUcLGg-2" value="PlayableService" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fontSize=20;strokeWidth=3;strokeColor=#A680B8;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
-          <mxGeometry x="757.75" y="1962" width="220" height="1012" as="geometry" />
+          <mxGeometry x="800" y="1950" width="220" height="1012" as="geometry" />
         </mxCell>
         <mxCell id="5qoIg5QfOp-UZJT98IV1-67" value="&lt;div&gt;&lt;i&gt;&lt;font color=&quot;#000000&quot;&gt;Service that plays an Playable (audio file) with help of MediaPlayer.&lt;/font&gt;&lt;/i&gt;&lt;/div&gt;&lt;div&gt;&lt;i&gt;&lt;font color=&quot;#000000&quot;&gt;Is initiated for one song to play. Communicates to MainActivityListener through boundServiceListener.&lt;br&gt;&lt;/font&gt;&lt;/i&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;aspect=fixed;fontColor=#FF1C1C;align=left;" parent="A6s-E-ukSPN_syaUcLGg-2" vertex="1">
           <mxGeometry y="40" width="220" height="80" as="geometry" />
@@ -598,9 +598,9 @@
         <mxCell id="lzcfJcRa112dsqQVMs5e-90" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontColor=#FF1C1C;endArrow=none;endFill=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="A6s-E-ukSPN_syaUcLGg-3" target="lzcfJcRa112dsqQVMs5e-6" edge="1">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="997.75" y="2121" />
-              <mxPoint x="997.75" y="2998" />
-              <mxPoint x="872.75" y="2998" />
+              <mxPoint x="1030" y="2121" />
+              <mxPoint x="1030" y="2998" />
+              <mxPoint x="873" y="2998" />
             </Array>
           </mxGeometry>
         </mxCell>
