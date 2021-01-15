@@ -167,4 +167,10 @@ public class PlaylistListManager {
       }
     });
   }
+
+  public void reverse(){
+    if(currentPlaylist != null){
+      Collections.reverse(currentPlaylist.getPlaylist());
+    }
+  }
 }

@@ -20,6 +20,9 @@
 
         <menu>
             <item
+                android:id="@+id/miReverseMain"
+                android:title="Reihenfolge umkehren" />
+            <item
                 android:id="@+id/miSortNameMain"
                 android:title="sortieren nach Name" />
             <item

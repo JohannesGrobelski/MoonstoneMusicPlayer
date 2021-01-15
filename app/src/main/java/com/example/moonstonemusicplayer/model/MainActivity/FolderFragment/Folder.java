@@ -162,4 +162,12 @@ public class Folder {
       children_songs = childrenSongs.toArray(new Song[childrenSongs.size()]);
     }
   }
+
+  public void reverse(){
+    if(children_songs != null){
+      List<Song> childrenSongs = new ArrayList<>(Arrays.asList(children_songs));
+      Collections.reverse(childrenSongs);
+      children_songs = childrenSongs.toArray(new Song[childrenSongs.size()]);
+    }
+  }
 }

@@ -107,6 +107,14 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
           case 2: {((FavoritesFragment) fragments[2]).sortSongsByGenre();break;}
         }
         break;
+      }case R.id.miReverseMain: {
+        int currentItem = mainActivity.viewPager.getCurrentItem();
+        switch(currentItem){
+          case 0: {((FolderFragment) fragments[0]).reverse(); break;}
+          case 1: {((PlayListFragment) fragments[1]).reverse(); break;}
+          case 2: {((FavoritesFragment) fragments[2]).reverse();break;}
+        }
+        break;
       }
 
 

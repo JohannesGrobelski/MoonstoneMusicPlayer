@@ -137,4 +137,13 @@ public class PlayListFragment extends Fragment {
   public boolean onBackpressed() {
     return playlistFragmentListener.onBackpressed();
   }
+
+  public void reverse() {
+    playlistListManager.reverse();
+    if(playlistListManager.getCurrentPlaylist() != null){
+      List<Object> songs = new ArrayList<>();
+      songs.addAll(playlistListManager.getCurrentPlaylist().getPlaylist());
+      playlistFragmentListener.setAdapter(songs);
+    }
+  }
 }

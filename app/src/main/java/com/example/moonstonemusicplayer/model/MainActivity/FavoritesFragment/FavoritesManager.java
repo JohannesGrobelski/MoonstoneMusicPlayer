@@ -7,6 +7,7 @@ import com.example.moonstonemusicplayer.model.Database.DBPlaylists;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -93,5 +94,9 @@ public class FavoritesManager {
         return (o1.getGenre().compareTo(o2.getGenre()));
       }
     });
+  }
+
+  public void reverse(){
+    Collections.reverse(favorites);
   }
 }

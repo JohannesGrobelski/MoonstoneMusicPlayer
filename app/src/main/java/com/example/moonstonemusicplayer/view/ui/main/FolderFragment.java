@@ -184,6 +184,12 @@ public class FolderFragment extends Fragment {
     return folderFragmentListener.onBackPressed();
   }
 
+  public void reverse() {
+    selectedFolder.reverse();
+    folderFragmentListener = new FolderFragmentListener(FolderFragment.this);
+    initViews();
+  }
+
 
   /** */
   public interface RefreshTaskListener {

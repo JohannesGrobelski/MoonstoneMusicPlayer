@@ -123,4 +123,9 @@ public class FavoritesFragment extends Fragment {
     favoritesManager.sortSongsByGenre();
     favoriteFragmentListener.setAdapter(favoritesManager.getFavorites());
   }
+
+  public void reverse() {
+    favoritesManager.reverse();
+    favoriteFragmentListener.setAdapter(favoritesManager.getFavorites());
+  }
 }
