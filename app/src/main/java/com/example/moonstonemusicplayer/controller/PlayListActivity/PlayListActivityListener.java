@@ -412,6 +412,16 @@ public class PlayListActivityListener
             playListActivity.seekBar.setProgress(0);
             playListActivity.btn_play_pause.setBackground(playListActivity.getDrawable(R.drawable.ic_play_button));
           }
+
+          @Override
+          public void resumeSong() {
+            playListActivity.btn_play_pause.setBackground(playListActivity.getDrawable(R.drawable.ic_pause));
+          }
+
+          @Override
+          public void pauseSong() {
+            playListActivity.btn_play_pause.setBackground(playListActivity.getDrawable(R.drawable.ic_play_button));
+          }
         });
         Log.d(TAG,"onServiceConnected: binder: "+String.valueOf(binder==null));
         isServiceBound = true;
@@ -561,6 +571,8 @@ public class PlayListActivityListener
     void onAudioFocusChange(int state);
     void transferPlayListFromActivityToService();
     void stopSong();
+    void resumeSong();
+    void pauseSong();
   }
 
 

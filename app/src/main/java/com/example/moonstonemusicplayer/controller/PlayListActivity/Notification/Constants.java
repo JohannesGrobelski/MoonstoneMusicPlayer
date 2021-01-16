@@ -24,7 +24,7 @@ public class Constants {
     BitmapFactory.Options options = new BitmapFactory.Options();
     try {
       bm = BitmapFactory.decodeResource(context.getResources(),
-          R.drawable.ic_folder, options);
+          R.drawable.ic_moonstonemusicplayerlogo, options);
     } catch (Error ee) {
     } catch (Exception e) {
     }

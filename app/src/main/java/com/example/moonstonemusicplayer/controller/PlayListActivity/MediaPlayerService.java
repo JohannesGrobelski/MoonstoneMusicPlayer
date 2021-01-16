@@ -9,7 +9,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.AudioManager;
+import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.Build;
@@ -20,7 +23,6 @@ import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.PlayListActivity.Notification.Constants;
@@ -171,8 +173,10 @@ public class MediaPlayerService extends Service
         Log.i(TAG, "Clicked Play");
         if(mediaPlayer != null && mediaPlayer.isPlaying()) {
           pause();
+          ((LocalBinder) iBinder).boundServiceListener.pauseSong();
         } else {
           resume();
+          ((LocalBinder) iBinder).boundServiceListener.resumeSong();
         }
       } else if (intentAction.equals(Constants.ACTION.NEXT_ACTION)) {
         Toast.makeText(this, "Clicked Next", Toast.LENGTH_SHORT).show();
@@ -400,12 +404,6 @@ public class MediaPlayerService extends Service
     RemoteViews views = new RemoteViews(getPackageName(),R.layout.status_bar);
     RemoteViews bigViews = new RemoteViews(getPackageName(),R.layout.status_bar_expanded);
 
-    // showing default album image
-    views.setViewVisibility(R.id.status_bar_icon, View.VISIBLE);
-    views.setViewVisibility(R.id.status_bar_album_art, View.GONE);
-    bigViews.setImageViewBitmap(R.id.status_bar_album_art,
-        Constants.getDefaultAlbumArt(this));
-
     //setting up the notification intent
     Intent notificationIntent = new Intent(this, MediaPlayerService.class);
     notificationIntent.setAction(Constants.ACTION.MAIN_ACTION);
@@ -459,6 +457,34 @@ public class MediaPlayerService extends Service
     views.setTextViewText(R.id.status_bar_artist_name, playListModel.getCurrentSong().getArtist());
     bigViews.setTextViewText(R.id.status_bar_artist_name, playListModel.getCurrentSong().getArtist());
 
+    //get album image and album (if possible)
+    Bitmap songImage = BitmapFactory.decodeResource(getResources(), R.drawable.ic_moonstonemusicplayerlogo);
+    String albumName = "unknown album";
+
+    try {
+      MediaMetadataRetriever mmr = new MediaMetadataRetriever();
+      mmr.setDataSource(playListModel.getCurrentSong().getURI());
+      String meta_albumName = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
+      if(meta_albumName != null && !meta_albumName.isEmpty() && !meta_albumName.equals("null")){
+        albumName = meta_albumName;
+      }
+    } catch (Exception e) {
+      if(e.getMessage() != null) Log.e(TAG,e.getMessage());
+    }
+    try {
+      MediaMetadataRetriever mmr = new MediaMetadataRetriever();
+      mmr.setDataSource(playListModel.getCurrentSong().getURI());
+      byte[] albumArtBytes = mmr.getEmbeddedPicture();
+      songImage = BitmapFactory.decodeByteArray(albumArtBytes, 0, albumArtBytes.length);
+    } catch (Exception e) {
+      if(e.getMessage() != null) Log.e(TAG,e.getMessage());
+    }
+
+    //views.setImageViewBitmap(R.id.iv_status_bar_album_art, songImage);
+    //bigViews.setImageViewBitmap(R.id.iv_status_bar_album_art, songImage);
+    views.setTextViewText(R.id.status_bar_album_name, albumName);
+    bigViews.setTextViewText(R.id.status_bar_album_name, albumName);
+
 
     Notification.Builder notificationBuilder = new Notification.Builder(this);
     if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -468,12 +494,13 @@ public class MediaPlayerService extends Service
         CharSequence name = getString(R.string.channel_name);
         String description = getString(R.string.channel_description);
         int importance = NotificationManager.IMPORTANCE_DEFAULT;
-        NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
-        channel.setDescription(description);
+        NotificationChannel notificationChannel = new NotificationChannel(CHANNEL_ID, name, importance);
+        notificationChannel.setDescription(description);
+        notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
         // Register the channel with the system; you can't change the importance
         // or other notification behaviors after this
         NotificationManager notificationManager = getSystemService(NotificationManager.class);
-        notificationManager.createNotificationChannel(channel);
+        notificationManager.createNotificationChannel(notificationChannel);
 
         notificationBuilder.setChannelId(CHANNEL_ID);
       }

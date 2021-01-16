@@ -183,7 +183,7 @@ public class LocalSongLoader {
     }
     if(meta_author != null && !meta_author.isEmpty() && !meta_author.equals("null")){
       author = meta_author;
-    }
+    } else {author = "unbekannter Künstler";}
     if(meta_durationStr != null && !meta_durationStr.isEmpty() && !meta_durationStr.equals("null") && meta_durationStr.matches("[0-9]*")){
       duration = Integer.parseInt(meta_durationStr);
     }
