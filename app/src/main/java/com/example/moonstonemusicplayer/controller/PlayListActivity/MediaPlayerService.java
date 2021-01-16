@@ -454,8 +454,10 @@ public class MediaPlayerService extends Service
     //set up the texts in the notification
     views.setTextViewText(R.id.status_bar_track_name, playListModel.getCurrentSong().getName());
     bigViews.setTextViewText(R.id.status_bar_track_name, playListModel.getCurrentSong().getName());
-    views.setTextViewText(R.id.status_bar_artist_name, playListModel.getCurrentSong().getArtist());
-    bigViews.setTextViewText(R.id.status_bar_artist_name, playListModel.getCurrentSong().getArtist());
+    String artist = playListModel.getCurrentSong().getArtist();
+    if(artist.isEmpty())artist = "unknown artist";
+    views.setTextViewText(R.id.status_bar_artist_name, artist);
+    bigViews.setTextViewText(R.id.status_bar_artist_name, artist);
 
     //get album image and album (if possible)
     Bitmap songImage = BitmapFactory.decodeResource(getResources(), R.drawable.ic_moonstonemusicplayerlogo);
