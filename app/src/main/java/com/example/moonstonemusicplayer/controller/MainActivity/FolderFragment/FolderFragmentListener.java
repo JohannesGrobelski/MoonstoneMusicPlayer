@@ -19,8 +19,8 @@ import com.example.moonstonemusicplayer.model.MainActivity.FolderFragment.Folder
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import com.example.moonstonemusicplayer.view.MainActivity;
 import com.example.moonstonemusicplayer.view.PlayListActivity;
-import com.example.moonstonemusicplayer.view.ui.main.FolderFragment;
-import com.example.moonstonemusicplayer.view.ui.main.PlayListFragment;
+import com.example.moonstonemusicplayer.view.mainactivity_fragments.FolderFragment;
+import com.example.moonstonemusicplayer.view.mainactivity_fragments.PlayListFragment;
 
 import java.util.ArrayList;
 import java.util.Arrays;

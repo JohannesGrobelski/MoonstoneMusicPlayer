@@ -1,4 +1,4 @@
-package com.example.moonstonemusicplayer.view.ui.main;
+package com.example.moonstonemusicplayer.view.mainactivity_fragments;
 
 import android.content.Context;
 

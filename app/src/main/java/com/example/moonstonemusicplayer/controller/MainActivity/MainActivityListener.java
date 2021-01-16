@@ -15,9 +15,9 @@ import androidx.fragment.app.Fragment;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.view.MainActivity;
-import com.example.moonstonemusicplayer.view.ui.main.FavoritesFragment;
-import com.example.moonstonemusicplayer.view.ui.main.FolderFragment;
-import com.example.moonstonemusicplayer.view.ui.main.PlayListFragment;
+import com.example.moonstonemusicplayer.view.mainactivity_fragments.FavoritesFragment;
+import com.example.moonstonemusicplayer.view.mainactivity_fragments.FolderFragment;
+import com.example.moonstonemusicplayer.view.mainactivity_fragments.PlayListFragment;
 
 public class MainActivityListener implements SearchView.OnQueryTextListener {
   private static final boolean DEBUG = true;

@@ -35,9 +35,7 @@ import com.example.moonstonemusicplayer.model.Database.DBPlaylists;
 import com.example.moonstonemusicplayer.model.PlayListActivity.PlaylistManager;
 import com.example.moonstonemusicplayer.model.PlayListActivity.PlayListModel;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
-import com.example.moonstonemusicplayer.view.MainActivity;
 import com.example.moonstonemusicplayer.view.PlayListActivity;
-import com.example.moonstonemusicplayer.view.ui.main.PlayListFragment;
 
 
 /** MainActivityListener
@@ -408,6 +406,12 @@ public class PlayListActivityListener
             if(DEBUG)Log.d(TAG,"startMediaPlayerService transfer Playlist: "+ playlistManager.getPlayList().size());
             mediaPlayerService.setPlayList(playlistManager.getPlayList());
           }
+
+          @Override
+          public void stopSong() {
+            playListActivity.seekBar.setProgress(0);
+            playListActivity.btn_play_pause.setBackground(playListActivity.getDrawable(R.drawable.ic_play_button));
+          }
         });
         Log.d(TAG,"onServiceConnected: binder: "+String.valueOf(binder==null));
         isServiceBound = true;
@@ -452,7 +456,6 @@ public class PlayListActivityListener
   }
 
   //Permissions
-
   /** requests runtime storage permissions (API>=23) for loading files from sd-card */
   public boolean requestForPermission() {
     int permissionCheck = ContextCompat.checkSelfPermission(playListActivity, Manifest.permission.READ_EXTERNAL_STORAGE);
@@ -552,11 +555,12 @@ public class PlayListActivityListener
   /** interface used to send messages from service to activity*/
   public interface BoundServiceListener {
 
-    public void onError(int cause);
-    public void selectedSong(String selectedSongUri);
-    public void finishedSong(PlayListModel.REPEATMODE repeatmode);
-    public void onAudioFocusChange(int state);
-    public void transferPlayListFromActivityToService();
+    void onError(int cause);
+    void selectedSong(String selectedSongUri);
+    void finishedSong(PlayListModel.REPEATMODE repeatmode);
+    void onAudioFocusChange(int state);
+    void transferPlayListFromActivityToService();
+    void stopSong();
   }
 
 
