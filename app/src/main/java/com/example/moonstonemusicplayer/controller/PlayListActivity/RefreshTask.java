@@ -3,8 +3,7 @@ package com.example.moonstonemusicplayer.controller.PlayListActivity;
 import android.os.AsyncTask;
 
 import com.example.moonstonemusicplayer.model.MainActivity.FolderFragment.FolderManager;
-import com.example.moonstonemusicplayer.model.PlayListActivity.PlaylistManager;
-import com.example.moonstonemusicplayer.view.ui.main.FolderFragment;
+import com.example.moonstonemusicplayer.view.mainactivity_fragments.FolderFragment;
 
 /** loads local music and messages per folderfragment listener*/
 public class RefreshTask extends AsyncTask<FolderManager,Void,Void> {

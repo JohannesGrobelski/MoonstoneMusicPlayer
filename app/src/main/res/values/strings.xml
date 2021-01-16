@@ -17,4 +17,6 @@
     <string name="cd_previous">Skip backwards</string>
     <string name="cd_play">Play and pause</string>
     <string name="cd_next">Skip forwards</string>
+    <string name="channel_name">MoonstoneMediaPlayerServiceNotification</string>
+    <string name="channel_description">controlls mediaplayerservice</string>
 </resources>

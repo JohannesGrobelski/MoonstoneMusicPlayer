@@ -7,16 +7,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 
-import com.example.moonstonemusicplayer.R;
-import com.example.moonstonemusicplayer.controller.MainActivity.PlaylistFragment.PlaylistListAdapter;
 import com.example.moonstonemusicplayer.model.Database.DBPlaylists;
 import com.example.moonstonemusicplayer.model.MainActivity.FavoritesFragment.FavoritesManager;
-import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.Playlist;
-import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.PlaylistListManager;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import com.example.moonstonemusicplayer.view.PlayListActivity;
-import com.example.moonstonemusicplayer.view.ui.main.FavoritesFragment;
-import com.example.moonstonemusicplayer.view.ui.main.PlayListFragment;
+import com.example.moonstonemusicplayer.view.mainactivity_fragments.FavoritesFragment;
 
 import java.util.ArrayList;
 import java.util.List;

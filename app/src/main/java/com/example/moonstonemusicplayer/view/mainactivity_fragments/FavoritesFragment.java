@@ -1,4 +1,4 @@
-package com.example.moonstonemusicplayer.view.ui.main;
+package com.example.moonstonemusicplayer.view.mainactivity_fragments;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -6,7 +6,6 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProviders;
 
 import android.util.Log;
 import android.view.ContextMenu;
@@ -17,15 +16,11 @@ import android.widget.ListView;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.MainActivity.FavoritesFragment.FavoriteFragmentListener;
-import com.example.moonstonemusicplayer.controller.MainActivity.FavoritesFragment.FavoriteListAdapter;
 import com.example.moonstonemusicplayer.model.MainActivity.FavoritesFragment.FavoritesManager;
-import com.example.moonstonemusicplayer.model.MainActivity.FolderFragment.FolderManager;
-import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.Playlist;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.

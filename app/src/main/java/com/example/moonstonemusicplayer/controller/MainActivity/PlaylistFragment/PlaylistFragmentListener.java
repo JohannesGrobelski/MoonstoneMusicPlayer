@@ -14,7 +14,7 @@ import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.Play
 import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.PlaylistListManager;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import com.example.moonstonemusicplayer.view.PlayListActivity;
-import com.example.moonstonemusicplayer.view.ui.main.PlayListFragment;
+import com.example.moonstonemusicplayer.view.mainactivity_fragments.PlayListFragment;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -4,8 +4,8 @@ import android.os.Bundle;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.MainActivity.MainActivityListener;
-import com.example.moonstonemusicplayer.view.ui.main.FavoritesFragment;
-import com.example.moonstonemusicplayer.view.ui.main.PlayListFragment;
+import com.example.moonstonemusicplayer.view.mainactivity_fragments.FavoritesFragment;
+import com.example.moonstonemusicplayer.view.mainactivity_fragments.PlayListFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
@@ -21,7 +21,7 @@ import android.view.View;
 import android.widget.SearchView;
 
 import androidx.appcompat.widget.Toolbar;
-import com.example.moonstonemusicplayer.view.ui.main.SectionsPagerAdapter;
+import com.example.moonstonemusicplayer.view.mainactivity_fragments.SectionsPagerAdapter;
 
 public class MainActivity extends AppCompatActivity {
   private static final String TAG = MainActivity.class.getSimpleName();

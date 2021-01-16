@@ -23,7 +23,7 @@ import com.example.moonstonemusicplayer.controller.MainActivity.FavoritesFragmen
 import com.example.moonstonemusicplayer.controller.MainActivity.FolderFragment.FolderFragmentListener;
 import com.example.moonstonemusicplayer.controller.MainActivity.PlaylistFragment.PlaylistFragmentListener;
 import com.example.moonstonemusicplayer.controller.PlayListActivity.PlayListActivityListener;
-import com.example.moonstonemusicplayer.view.ui.main.FolderFragment;
+import com.example.moonstonemusicplayer.view.mainactivity_fragments.FolderFragment;
 
 import static com.example.moonstonemusicplayer.controller.MainActivity.FavoritesFragment.FavoriteFragmentListener.FAVORITELISTEXTRA;
 
