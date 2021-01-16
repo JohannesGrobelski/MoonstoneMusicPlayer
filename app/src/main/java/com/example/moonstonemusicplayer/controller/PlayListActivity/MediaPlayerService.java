@@ -17,19 +17,25 @@ import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
+import android.os.PowerManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.PlayListActivity.Notification.Constants;
+import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.Playlist;
 import com.example.moonstonemusicplayer.model.PlayListActivity.PlayListModel;
+import com.example.moonstonemusicplayer.model.PlayListActivity.PlaylistManager;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
+import com.example.moonstonemusicplayer.view.PlayListActivity;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -47,7 +53,7 @@ public class MediaPlayerService extends Service
 
   private static final String CHANNEL_ID = "MoonstoneMediaPlayerServiceChannelID_8941891918918941351";
   Notification statusNotification;
-
+  public static final String FOLDERSONGINDEXEXTRA = "FOLDERSONGINDEXEXTRA";
 
   public static final String ACTION_NOTIFICATION_ORDER ="NOTIFICATION_ORDER";
   private BroadcastReceiver notificationBroadcastReceiver;
@@ -115,7 +121,6 @@ public class MediaPlayerService extends Service
         if(!mediaPlayer.isPlaying())mediaPlayer.start();
       }
     }
-
   }
 
   public void pause() {
@@ -400,14 +405,25 @@ public class MediaPlayerService extends Service
   }
 
   public void showNotification(){
+    // Logic to turn on the screen
+    PowerManager powerManager = (PowerManager) this.getSystemService(POWER_SERVICE);
+    if (!powerManager.isInteractive()){ // if screen is not already on, turn it on (get wake_lock for 10 seconds)
+      PowerManager.WakeLock wl = powerManager.newWakeLock(PowerManager.FULL_WAKE_LOCK |PowerManager.ACQUIRE_CAUSES_WAKEUP |PowerManager.ON_AFTER_RELEASE,"MoonstoneMediaPlayer:MediaPlayerService");
+      wl.acquire(10000);
+      PowerManager.WakeLock wl_cpu = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"MoonstoneMediaPlayer:MediaPlayerService");
+      wl_cpu.acquire(10000);
+    }
+
+
     // Using RemoteViews to bind custom layouts into Notification
     RemoteViews views = new RemoteViews(getPackageName(),R.layout.status_bar);
     RemoteViews bigViews = new RemoteViews(getPackageName(),R.layout.status_bar_expanded);
 
     //setting up the notification intent
-    Intent notificationIntent = new Intent(this, MediaPlayerService.class);
-    notificationIntent.setAction(Constants.ACTION.MAIN_ACTION);
-    notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+    final Intent notificationIntent = new Intent(MediaPlayerService.this, PlayListActivity.class);
+    notificationIntent.setAction(Intent.ACTION_MAIN);
+    notificationIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+    notificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
     PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
         notificationIntent, 0);
 
@@ -433,6 +449,11 @@ public class MediaPlayerService extends Service
     PendingIntent pcloseIntent = PendingIntent.getService(this, 0,
         closeIntent, 0);
 
+
+
+    PendingIntent popenIntent = PendingIntent.getActivity(this, 0,
+        notificationIntent, 0);
+
     //connect views with pending intents
     views.setOnClickPendingIntent(R.id.status_bar_play, pplayIntent);
     bigViews.setOnClickPendingIntent(R.id.status_bar_play, pplayIntent);
@@ -442,6 +463,8 @@ public class MediaPlayerService extends Service
     bigViews.setOnClickPendingIntent(R.id.status_bar_prev, ppreviousIntent);
     views.setOnClickPendingIntent(R.id.status_bar_collapse, pcloseIntent);
     bigViews.setOnClickPendingIntent(R.id.status_bar_collapse, pcloseIntent);
+    views.setOnClickPendingIntent(R.id.iv_status_bar_album_art, popenIntent);
+    bigViews.setOnClickPendingIntent(R.id.iv_status_bar_album_art, popenIntent);
 
     if(mediaPlayer != null && mediaPlayer.isPlaying()) {
       views.setImageViewResource(R.id.status_bar_play, R.drawable.ic_play_button);
@@ -487,7 +510,6 @@ public class MediaPlayerService extends Service
     views.setTextViewText(R.id.status_bar_album_name, albumName);
     bigViews.setTextViewText(R.id.status_bar_album_name, albumName);
 
-
     Notification.Builder notificationBuilder = new Notification.Builder(this);
     if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
       // Create the NotificationChannel, but only on API 26+ because
@@ -511,15 +533,15 @@ public class MediaPlayerService extends Service
       // https://developer.android.com/reference/android/support/v4/app/NotificationCompat.Builder.html#NotificationCompat.Builder(android.content.Context)
     }
 
+    notificationBuilder.setVisibility(Notification.VISIBILITY_PUBLIC);
+
     statusNotification = notificationBuilder.build();
     statusNotification.contentView = views;
     statusNotification.bigContentView = bigViews;
-    statusNotification.flags = Notification.FLAG_ONGOING_EVENT;
+    statusNotification.flags = Notification.FLAG_ONGOING_EVENT | Notification.FLAG_NO_CLEAR;
     statusNotification.icon = R.drawable.ic_moonstonemusicplayerlogo;
     statusNotification.contentIntent = pendingIntent;
 
     startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, statusNotification);
   }
-
-
 }

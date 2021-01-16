@@ -74,4 +74,7 @@ public class PlayListModel {
     return repeatmode;
   }
 
+  public List<Song> getPlaylist() {
+    return playlist;
+  }
 }

@@ -17,15 +17,19 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.MainActivity.FavoritesFragment.FavoriteFragmentListener;
 import com.example.moonstonemusicplayer.controller.MainActivity.FolderFragment.FolderFragmentListener;
 import com.example.moonstonemusicplayer.controller.MainActivity.PlaylistFragment.PlaylistFragmentListener;
+import com.example.moonstonemusicplayer.controller.PlayListActivity.Notification.Constants;
 import com.example.moonstonemusicplayer.controller.PlayListActivity.PlayListActivityListener;
+import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.Playlist;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.FolderFragment;
 
 import static com.example.moonstonemusicplayer.controller.MainActivity.FavoritesFragment.FavoriteFragmentListener.FAVORITELISTEXTRA;
+import static com.example.moonstonemusicplayer.controller.PlayListActivity.MediaPlayerService.FOLDERSONGINDEXEXTRA;
 
 /** MainActivity
   * Defines the Mainscreen auf the app.
@@ -33,6 +37,8 @@ import static com.example.moonstonemusicplayer.controller.MainActivity.Favorites
   * Delegates the creation and management (itemselection) of the optionsmenu to the  {@link PlayListActivityListener}.
 */
 public class PlayListActivity extends AppCompatActivity {
+
+
   private static final String TAG = PlayListActivity.class.getName();
   private static final boolean DEBUG = true;
   PlayListActivityListener playListActivityListener;
@@ -64,18 +70,23 @@ public class PlayListActivity extends AppCompatActivity {
     LL_MusicControlls = findViewById(R.id.LL_MusicControlls);
 
     int song_index = 0;
-    if(getIntent().hasExtra(FolderFragment.FOLDERSONGINDEXEXTRA)){
-      song_index = getIntent().getIntExtra(FolderFragment.FOLDERSONGINDEXEXTRA,0);
-      playListActivityListener = new PlayListActivityListener(this, FolderFragmentListener.getFolderSonglist(),song_index);
+    if(getIntent().hasExtra(FOLDERSONGINDEXEXTRA)) {
+
+    } else {
+      if(getIntent().hasExtra(FolderFragment.FOLDERSONGINDEXEXTRA)){
+        song_index = getIntent().getIntExtra(FolderFragment.FOLDERSONGINDEXEXTRA,0);
+        playListActivityListener = new PlayListActivityListener(this, FolderFragmentListener.getFolderSonglist(),song_index);
+      }
+      else if(getIntent().hasExtra(FAVORITELISTEXTRA)){
+        song_index = getIntent().getIntExtra(FAVORITELISTEXTRA,0);
+        playListActivityListener = new PlayListActivityListener(this, FavoriteFragmentListener.getFavoriteSonglist(),song_index);
+      }
+      else if(getIntent().hasExtra(PlaylistFragmentListener.PLAYLISTINDEXEXTRA)){
+        song_index = getIntent().getIntExtra(PlaylistFragmentListener.PLAYLISTINDEXEXTRA,0);
+        playListActivityListener = new PlayListActivityListener(this, PlaylistFragmentListener.getPlaylistSonglist(),song_index);
+      }
     }
-    else if(getIntent().hasExtra(FAVORITELISTEXTRA)){
-      song_index = getIntent().getIntExtra(FAVORITELISTEXTRA,0);
-      playListActivityListener = new PlayListActivityListener(this, FavoriteFragmentListener.getFavoriteSonglist(),song_index);
-    }
-    else if(getIntent().hasExtra(PlaylistFragmentListener.PLAYLISTINDEXEXTRA)){
-      song_index = getIntent().getIntExtra(PlaylistFragmentListener.PLAYLISTINDEXEXTRA,0);
-      playListActivityListener = new PlayListActivityListener(this,PlaylistFragmentListener.getPlaylistSonglist(),song_index);
-    }
+
 
     lv_songlist.setOnItemClickListener(playListActivityListener);
     btn_shuffle.setOnClickListener(playListActivityListener);
@@ -123,14 +134,12 @@ public class PlayListActivity extends AppCompatActivity {
     return playListActivityListener.onOptionsItemSelected(item);
   }
 
-
-
-
   @Override
   protected void onDestroy() {
     super.onDestroy();
     playListActivityListener.onDestroy();
   }
+
 
   public void hideMusicControlls(){LL_MusicControlls.setVisibility(View.GONE);}
   public void showMusicControlls(){LL_MusicControlls.setVisibility(View.VISIBLE);}

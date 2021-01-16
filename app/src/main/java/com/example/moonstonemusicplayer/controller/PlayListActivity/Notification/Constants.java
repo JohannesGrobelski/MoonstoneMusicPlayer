@@ -8,14 +8,15 @@ import com.example.moonstonemusicplayer.R;
 
 public class Constants {
   public interface ACTION {
-    public static String MAIN_ACTION = "com.marothiatechs.customnotification.action.main";
-    public static String INIT_ACTION = "com.marothiatechs.customnotification.action.init";
-    public static String PREV_ACTION = "com.marothiatechs.customnotification.action.prev";
-    public static String PLAY_ACTION = "com.marothiatechs.customnotification.action.play";
-    public static String NEXT_ACTION = "com.marothiatechs.customnotification.action.next";
-    public static String STARTFOREGROUND_ACTION = "com.marothiatechs.customnotification.action.startforeground";
-    public static String STOPFOREGROUND_ACTION = "com.marothiatechs.customnotification.action.stopforeground";
+    public static String MAIN_ACTION = "com.example.moonstonemusicplayer.action.main";
+    public static String INIT_ACTION = "com.example.moonstonemusicplayer.action.init";
+    public static String PREV_ACTION = "com.example.moonstonemusicplayer.action.prev";
+    public static String PLAY_ACTION = "com.example.moonstonemusicplayer.action.play";
+    public static String NEXT_ACTION = "com.example.moonstonemusicplayer.action.next";
+    public static String STARTFOREGROUND_ACTION = "com.example.moonstonemusicplayer.action.startforeground";
+    public static String STOPFOREGROUND_ACTION = "com.example.moonstonemusicplayer.action.stopforeground";
   }
+
   public interface NOTIFICATION_ID {
     public static int FOREGROUND_SERVICE = 101;
   }
