@@ -153,6 +153,31 @@ public class DBFolder {
     }
 
 
+    public void updateSong(Song song){
+        //öffnen der DB
+        open_writable();
+
+        ContentValues valuesNewSong = new ContentValues();
+        valuesNewSong.put(DBHelperFolder.COLUMN_FOLDER_NAME,  "");
+        valuesNewSong.put(DBHelperFolder.COLUMN_SONG_NAME, song.getName());
+        valuesNewSong.put(DBHelperFolder.COLUMN_PATH,  song.getURI());
+        valuesNewSong.put(DBHelperFolder.COLUMN_ARTIST, song.getArtist());
+        valuesNewSong.put(DBHelperFolder.COLUMN_DURATION, song.getDuration_ms());
+        valuesNewSong.put(DBHelperFolder.COLUMN_LAST_POSITION, song.getLastPosition());
+        valuesNewSong.put(DBHelperFolder.COLUMN_GENRE, song.getGenre());
+        valuesNewSong.put(DBHelperFolder.COLUMN_LYRICS, song.getLyrics());
+        valuesNewSong.put(DBHelperFolder.COLUMN_MEANING, song.getMeaning());
+
+        //Song-Objekt in DB einfügen und ID zurückbekommen
+        database_folder_song_list.update(DBHelperFolder.TABLE_FOLDER_SONGLIST,
+            valuesNewSong,
+            DBHelperFolder.COLUMN_PATH+" = \'"+song.getURI()+"\'",
+            null);
+
+        //datenbank schließen und rückgabe des Songobjekts
+        close_db();
+    }
+
 
     public void deleteSong(Song song){
         //öffnen der DB

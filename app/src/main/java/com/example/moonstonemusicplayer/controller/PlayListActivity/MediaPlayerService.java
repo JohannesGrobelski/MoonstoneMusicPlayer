@@ -5,7 +5,6 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -19,23 +18,19 @@ import android.os.Build;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.util.Log;
-import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.PlayListActivity.Notification.Constants;
-import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.Playlist;
+import com.example.moonstonemusicplayer.model.Database.Folder.DBFolder;
 import com.example.moonstonemusicplayer.model.PlayListActivity.PlayListModel;
-import com.example.moonstonemusicplayer.model.PlayListActivity.PlaylistManager;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import com.example.moonstonemusicplayer.view.PlayListActivity;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -56,7 +51,6 @@ public class MediaPlayerService extends Service
   public static final String FOLDERSONGINDEXEXTRA = "FOLDERSONGINDEXEXTRA";
 
   public static final String ACTION_NOTIFICATION_ORDER ="NOTIFICATION_ORDER";
-  private BroadcastReceiver notificationBroadcastReceiver;
 
 
   public static final String STARTING_INDEX = "STARTING_INDEX";
@@ -72,7 +66,8 @@ public class MediaPlayerService extends Service
 
   private AudioManager audioManager;
   private int startIndex;
-  private int resumePosition = 0;
+  private int resumePosition = -1;
+  private NotificationManager notificationManager;
 
   /** inits mediaplayer and sets Listeners */
   private void initMediaPlayer(){
@@ -98,7 +93,7 @@ public class MediaPlayerService extends Service
     }
     //bereitet MediaPlayer für Wiedergabe vor
     mediaPlayer.prepareAsync();
-    resumePosition = 0;
+    resumePosition = (int) playListModel.getCurrentSong().getLastPosition();
 
     if(((LocalBinder) iBinder) != null){
       ((LocalBinder) iBinder).boundServiceListener.selectedSong(playListModel.getCurrentSong().getURI());
@@ -143,7 +138,17 @@ public class MediaPlayerService extends Service
 
   public int getCurrentPosition() {
     if(mediaPlayerReady())return mediaPlayer.getCurrentPosition();
-    else return -1;
+    else return 0;
+  }
+
+  public void saveSongPosition(Context context){
+    if(mediaPlayer!=null){
+      if(mediaPlayer.getDuration() > (1000*60*15)){
+        if(mediaPlayer!=null)playListModel.getCurrentSong().setLastPosition(mediaPlayer.getCurrentPosition());
+        DBFolder.getInstance(context).updateSong(playListModel.getCurrentSong());
+      }
+    }
+
   }
 
   private void playMedia(){
@@ -205,20 +210,6 @@ public class MediaPlayerService extends Service
     super.onCreate();
     final IntentFilter theFilter = new IntentFilter();
     theFilter.addAction(ACTION_NOTIFICATION_ORDER);
-    this.notificationBroadcastReceiver = new BroadcastReceiver() {
-      @Override
-      public void onReceive(Context context, Intent intent) {
-        Toast.makeText(MediaPlayerService.this,"onReceive",Toast.LENGTH_LONG).show();
-        Log.d(TAG,"onReceive");
-      }
-    };
-    // Registers the receiver so that your service will listen for
-    // broadcasts
-    try {
-      this.registerReceiver(this.notificationBroadcastReceiver, theFilter);
-    } catch (Exception e){
-
-    }
   }
 
   @Override
@@ -232,9 +223,7 @@ public class MediaPlayerService extends Service
     }
     stopSelf(); //beende Service
     removeAudioFocus();
-    try {
-      this.unregisterReceiver(this.notificationBroadcastReceiver);
-    }catch (Exception e){}
+    if(notificationManager != null)notificationManager.cancelAll();
   }
 
   @Nullable
@@ -364,6 +353,7 @@ public class MediaPlayerService extends Service
     initMediaPlayer();
     showNotification();
   }
+
 
   public boolean toogleShuffleMode() {return playListModel.toogleShuffleMode();}
   public PlayListModel.REPEATMODE nextRepeatMode() { return playListModel.nextRepeatMode();}
@@ -511,7 +501,7 @@ public class MediaPlayerService extends Service
     bigViews.setTextViewText(R.id.status_bar_album_name, albumName);
 
     Notification.Builder notificationBuilder = new Notification.Builder(this);
-    NotificationManager notificationManager = getSystemService(NotificationManager.class);
+    notificationManager = getSystemService(NotificationManager.class);
 
     if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
       // Create the NotificationChannel, but only on API 26+ because
