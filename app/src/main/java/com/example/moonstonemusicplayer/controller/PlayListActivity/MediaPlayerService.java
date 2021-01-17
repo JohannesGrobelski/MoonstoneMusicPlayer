@@ -525,7 +525,7 @@ public class MediaPlayerService extends Service
         notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
         // Register the channel with the system; you can't change the importance
         // or other notification behaviors after this
-        notificationManager.createNotificationChannel(channel);
+        notificationManager.createNotificationChannel(notificationChannel);
         notificationBuilder.setChannelId(CHANNEL_ID);
       }
     } else {
