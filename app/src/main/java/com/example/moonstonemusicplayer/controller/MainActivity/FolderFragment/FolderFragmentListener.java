@@ -117,7 +117,7 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
 
       switch (item.getItemId()){
         case 1: {
-          DBPlaylists.getInstance(folderFragment.getActivity()).addToFavorites(selectedSong);
+          DBPlaylists.getInstance(folderFragment.getActivity()).addToFavorites(folderFragment.getContext(),selectedSong);
           break;
         }
         case 2:  {
@@ -153,7 +153,7 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
       public void onClick(DialogInterface dialog, int which) {
         String text = et_addNewPlaylist.getText().toString();
         if(!text.isEmpty()){
-          DBPlaylists.getInstance(folderFragment.getActivity()).addToPlaylist(song,text);
+          DBPlaylists.getInstance(folderFragment.getActivity()).addToPlaylist(folderFragment.getContext(),song,text);
         }
       }
     });
@@ -164,7 +164,7 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
     lv_playlist_alert.setOnItemClickListener(new AdapterView.OnItemClickListener() {
       @Override
       public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        DBPlaylists.getInstance(folderFragment.getActivity()).addToPlaylist(song,allPlaylistNames[position]);
+        DBPlaylists.getInstance(folderFragment.getActivity()).addToPlaylist(folderFragment.getContext(),song,allPlaylistNames[position]);
         alertDialog.dismiss();
       }
     });

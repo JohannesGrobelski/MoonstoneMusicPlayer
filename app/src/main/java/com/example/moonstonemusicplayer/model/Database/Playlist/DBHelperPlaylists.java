@@ -36,28 +36,14 @@ public class DBHelperPlaylists extends SQLiteOpenHelper {
     //Variablen für die Tabellenspalten
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_PLAYLIST_NAME = "PlaylistName";
-    public static final String COLUMN_SONG_NAME = "SongName";
-    public static final String COLUMN_ARTIST = "Artist";
-    public static final String COLUMN_URI = "Uri";
-    public static final String COLUMN_DURATION = "Duration";
-    public static final String COLUMN_LAST_POSITION = "LastPosition";
-    public static final String COLUMN_GENRE = "Genre";
-    public static final String COLUMN_LYRICS = "Lyrics";
-    public static final String COLUMN_MEANING = "Meaning";
+    public static final String COLUMN_SONG_URL = "SongURL";
 
     //Create-Statements
     private static final String SQL_CREATE_TABLE =
             "CREATE TABLE " + TABLE_PLAYLISTS +
                     "(" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     COLUMN_PLAYLIST_NAME + " TEXT NOT NULL, " +
-                    COLUMN_SONG_NAME + " TEXT NOT NULL, " +
-                    COLUMN_ARTIST + " TEXT NOT NULL, "  +
-                    COLUMN_URI + " TEXT NOT NULL, "  +
-                    COLUMN_DURATION + " INT NOT NULL, "  +
-                    COLUMN_LAST_POSITION + " INT NOT NULL, "  +
-                    COLUMN_GENRE + " TEXT NOT NULL, "  +
-                    COLUMN_LYRICS + " TEXT NOT NULL, "  +
-                    COLUMN_MEANING + " TEXT NOT NULL)";
+                    COLUMN_SONG_URL + " TEXT NOT NULL)";
 
 
 
