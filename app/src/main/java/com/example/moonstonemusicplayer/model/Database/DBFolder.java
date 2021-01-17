@@ -95,6 +95,7 @@ public class DBFolder {
     private Folder insertChildrenToRootFolder(Folder parent, Cursor cursor) {
         String path = "";
         do {
+            //read line
             int index = cursor.getInt(0);
             String folderName = cursor.getString(1);
             String songName = cursor.getString(2);
@@ -106,13 +107,19 @@ public class DBFolder {
             String lyrics = cursor.getString(8);
             String meaning = cursor.getString(9);
 
+            //"fix" path by deleting url scheme
             path = path.replace("file://","");
-            //condition: "object is a direct child of parent" not matched
-            while(!path.contains(parent.getPath())
-                   && parent.getParent() != null) {//not the root)
-                        parent = parent.getParent();
+
+            if(!new File(path).exists()){
+                if(DEBUG)Log.d(TAG,"file does not exist: "+path);
+                continue;
             }
 
+            //condition: "object is a direct child of parent" not matched
+            while(!path.contains(parent.getPath()
+                   ) && parent.getParent() != null) {//not the root)
+                        parent = parent.getParent();
+            }
 
             if (!folderName.isEmpty()) {
                 List<Folder> children = new ArrayList<>();
@@ -161,6 +168,19 @@ public class DBFolder {
         //datenbank schließen und rückgabe des Songobjekts
         close_db();
     }
+
+    public void deleteTable(){
+        //öffnen der DB
+        open_writable();
+
+        //Song-Objekt in DB einfügen und ID zurückbekommen
+        database_folder_song_list.delete(DBHelperFolder.TABLE_FOLDER_SONGLIST,
+            null,null);
+
+        //datenbank schließen und rückgabe des Songobjekts
+        close_db();
+    }
+
 
 
     /**
@@ -221,14 +241,7 @@ public class DBFolder {
             Log.d(TAG,"addToFolderSongList error: not a song|folder");
 
         }
-        }
-
-
-
-
-
-
-
+    }
 
 
     public static DBFolder getInstance(Context context){
@@ -237,4 +250,6 @@ public class DBFolder {
         }
         return instance;
     }
+
+
 }

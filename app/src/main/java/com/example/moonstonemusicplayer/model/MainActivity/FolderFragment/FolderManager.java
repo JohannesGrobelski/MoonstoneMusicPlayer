@@ -32,6 +32,7 @@ public class FolderManager {
       File[] externalFileDirs = context.getExternalMediaDirs(); //getExternalMediaDirs actually does get both internal and external sdcards
       this.rootFolder = LocalSongLoader.findAllAudioFilesAsFolderInDir(externalFileDirs);
       //FolderLoader.saveIntoXML(this.rootFolder,context.getFilesDir().getAbsolutePath());
+      DBFolder.getInstance(context).deleteTable();
       DBFolder.getInstance(context).addToFolderSongList(rootFolder);
     }
     //dataSource.insertSongList(LocalSongLoader.findAllAudioFilesInDir(externalFileDirs));
