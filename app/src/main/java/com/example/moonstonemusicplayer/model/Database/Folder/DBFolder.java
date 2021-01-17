@@ -166,6 +166,42 @@ public class DBFolder {
         close_db();
     }
 
+    public Song getSongFromURL(String url){
+        //öffnen der DB
+        open_readable();
+
+        String query = "SELECT * FROM "+DBHelperFolder.TABLE_FOLDER_SONGLIST
+            +" WHERE "+DBHelperFolder.COLUMN_PATH+" = \'"+url+"\'";
+
+        Cursor cursor = database_folder_song_list.rawQuery(query, null);
+        Song song = null;
+        if(cursor.getCount() > 0){
+            cursor.moveToFirst();
+            //read line
+            int index = cursor.getInt(0);
+            String songName = cursor.getString(2);
+            String uri = cursor.getString(3);
+            String artist = cursor.getString(4);
+            int duration = cursor.getInt(5);
+            int lastPosition = cursor.getInt(6);
+            String genre = cursor.getString(7);
+            String lyrics = cursor.getString(8);
+            String meaning = cursor.getString(9);
+            song = new Song(index,songName,artist,uri,duration,lastPosition,genre,lyrics,meaning);
+        }
+
+
+        cursor.close();
+
+        //datenbank schließen und rückgabe des Songobjekts
+        close_db();
+
+
+        return song;
+    }
+
+
+
     public void deleteTable(){
         //öffnen der DB
         open_writable();

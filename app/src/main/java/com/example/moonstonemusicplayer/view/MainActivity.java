@@ -53,14 +53,14 @@ public class MainActivity extends AppCompatActivity {
           public void onTabSelected(TabLayout.Tab tab) {
             super.onTabSelected(tab);
             tabSelected = tab.getPosition();
-            if(tabSelected == 1){//
+            if(tabSelected == 1){//playlist fragment
               if(sectionsPagerAdapter.getFragments().length == 3
                   && sectionsPagerAdapter.getFragments()[1] != null){
                     ((PlayListFragment) sectionsPagerAdapter.getFragments()[1])
                       .playlistFragmentListener.reloadPlaylistManager();
               }
             }
-            else if(tabSelected == 2){//
+            else if(tabSelected == 2){//favorites fragment
               if(sectionsPagerAdapter.getFragments().length == 3
                   && sectionsPagerAdapter.getFragments()[2] != null){
                     ((FavoritesFragment) sectionsPagerAdapter.getFragments()[2])
@@ -69,9 +69,6 @@ public class MainActivity extends AppCompatActivity {
             }
           }
         });
-
-
-
 
     fab.setOnClickListener(new View.OnClickListener() {
       @Override

@@ -27,7 +27,7 @@ public class FavoritesManager {
     if(context != null){
       this.favorites.clear();
       this.favorites_backup.clear();
-      this.favorites.addAll(DBPlaylists.getInstance(context).getAllFavorites());
+      this.favorites.addAll(DBPlaylists.getInstance(context).getAllFavorites(context));
       this.favorites_backup.addAll(favorites);
     }
   }

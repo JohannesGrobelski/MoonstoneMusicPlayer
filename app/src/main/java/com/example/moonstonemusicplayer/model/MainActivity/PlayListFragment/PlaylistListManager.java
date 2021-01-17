@@ -34,7 +34,7 @@ public class PlaylistListManager {
       playlists.clear();
       playlists_backup.clear();
       Log.d(TAG,"loadPlaylistsFromDB");
-      this.playlists.addAll(DBPlaylists.getInstance(context).getAllPlaylists());
+      this.playlists.addAll(DBPlaylists.getInstance(context).getAllPlaylists(context));
       this.playlists_backup.addAll(playlists);
     }
   }

@@ -490,7 +490,7 @@ public class PlayListActivityListener
 
       switch (item.getItemId()){
         case 1: {
-          DBPlaylists.getInstance(playListActivity).addToFavorites(selectedSong);
+          DBPlaylists.getInstance(playListActivity).addToFavorites(playListActivity,selectedSong);
           break;
         }
         case 2:  {
@@ -520,7 +520,7 @@ public class PlayListActivityListener
       public void onClick(DialogInterface dialog, int which) {
         String text = et_addNewPlaylist.getText().toString();
         if(!text.isEmpty()){
-          DBPlaylists.getInstance(playListActivity).addToPlaylist(song,text);
+          DBPlaylists.getInstance(playListActivity).addToPlaylist(playListActivity,song,text);
         }
       }
     });
@@ -531,7 +531,7 @@ public class PlayListActivityListener
     lv_playlist_alert.setOnItemClickListener(new AdapterView.OnItemClickListener() {
       @Override
       public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        DBPlaylists.getInstance(playListActivity).addToPlaylist(song,allPlaylistNames[position]);
+        DBPlaylists.getInstance(playListActivity).addToPlaylist(playListActivity,song,allPlaylistNames[position]);
         alertDialog.dismiss();
       }
     });
