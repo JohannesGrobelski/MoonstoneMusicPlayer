@@ -3,7 +3,7 @@ package com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment;
 import android.content.Context;
 import android.util.Log;
 
-import com.example.moonstonemusicplayer.model.Database.DBPlaylists;
+import com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists;
 //import com.example.moonstonemusicplayer.model.Database.DBSonglists;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 

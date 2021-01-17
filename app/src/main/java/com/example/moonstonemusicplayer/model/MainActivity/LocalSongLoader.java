@@ -164,7 +164,7 @@ public class LocalSongLoader {
 
   private static Song getSongFromAudioFile(File file){
     String title = file.getName().substring(0, (file.getName().length() - 4));
-    String URI = Uri.fromFile(file).toString();
+    String URI = file.getAbsolutePath();//Uri.fromFile(file).toString();
     String genre = "";
     String author = "";
     int duration = 0;

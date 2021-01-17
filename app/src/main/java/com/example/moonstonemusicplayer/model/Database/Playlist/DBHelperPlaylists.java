@@ -1,4 +1,4 @@
-package com.example.moonstonemusicplayer.model.Database;
+package com.example.moonstonemusicplayer.model.Database.Playlist;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

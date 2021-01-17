@@ -1,4 +1,4 @@
-package com.example.moonstonemusicplayer.model.Database;
+package com.example.moonstonemusicplayer.model.Database.Folder;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -7,10 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.example.moonstonemusicplayer.model.MainActivity.FolderFragment.Folder;
-import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.Playlist;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
-
-import org.jsoup.helper.StringUtil;
 
 import java.io.File;
 import java.util.ArrayList;

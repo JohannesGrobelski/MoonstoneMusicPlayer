@@ -1,4 +1,4 @@
-package com.example.moonstonemusicplayer.model.Database;
+package com.example.moonstonemusicplayer.model.Database.Playlist;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -9,6 +9,7 @@ import android.util.Log;
 import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.Playlist;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -208,7 +209,10 @@ public class DBPlaylists {
                 String lyrics = cursor.getString(8);
                 String meaning = cursor.getString(9);
 
-                if(DEBUG)Log.d(TAG,"load Favorites: "+title);
+                if(!new File(uri).exists()){
+                    if(DEBUG)Log.d(TAG,"file does not exist: "+uri);
+                    continue;
+                }
 
                 SongList.add(new Song(index, title, artist, uri, duration, lastPosition, genre, lyrics, meaning));
             } while (cursor.moveToNext());

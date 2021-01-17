@@ -14,7 +14,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 import com.example.moonstonemusicplayer.R;
-import com.example.moonstonemusicplayer.model.Database.DBPlaylists;
+import com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists;
 import com.example.moonstonemusicplayer.model.MainActivity.FolderFragment.Folder;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import com.example.moonstonemusicplayer.view.MainActivity;
