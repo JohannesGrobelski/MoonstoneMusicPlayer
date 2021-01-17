@@ -232,7 +232,7 @@ public class FolderLoader {
 
       if(rootNodeList.getLength() == 1){
         Node root = rootNodeList.item(0);
-        rootFolder = new Folder("root",null,null,null);
+        rootFolder = new Folder("root",null,null,null,null);
 
         List<Folder> children_folders = new ArrayList<>();
         for(int i=0; i<root.getChildNodes().getLength(); i++){ //go through child nodes (sd-cards)
@@ -293,7 +293,7 @@ public class FolderLoader {
       Song[] childSongArray = childrenSongs.toArray(new Song[childrenSongs.size()]);
       if(childrenSongs.size() == 0)childSongArray = null;
 
-      folder = new Folder(name,null,childFolderArray,childSongArray);
+      folder = new Folder(name,null,null,childFolderArray,childSongArray);
 
       if(DEBUG)Log.d(TAG,"getFolderFromNode parsed Folder ("+folder.getName()+"):\n"+folder.toString());
 

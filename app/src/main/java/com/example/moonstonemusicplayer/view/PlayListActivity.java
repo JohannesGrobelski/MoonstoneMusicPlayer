@@ -6,8 +6,10 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.ContextMenu;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -135,4 +137,17 @@ public class PlayListActivity extends AppCompatActivity {
   public void hideMusicControlls(){LL_MusicControlls.setVisibility(View.GONE);}
   public void showMusicControlls(){LL_MusicControlls.setVisibility(View.VISIBLE);}
 
+
+  @Override
+  public boolean onKeyDown(int keyCode, KeyEvent event) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+      return super.onKeyDown(keyCode, event);
+    }
+    switch (keyCode) {
+      case KeyEvent.KEYCODE_MEDIA_PLAY:
+        playListActivityListener.dispatchMediaButtonEvent(event);
+        return true;
+    }
+    return super.onKeyDown(keyCode, event);
+  }
 }

@@ -15,6 +15,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -549,7 +550,13 @@ public class PlayListActivityListener
     mediaPlayerService.onDestroy();
   }
 
-
+  public void dispatchMediaButtonEvent(KeyEvent event) {
+    if(mediaPlayerService.isPlayingMusic()){
+      pauseAudio();
+    } else {
+      resumeAudio();
+    }
+  }
 
 
   /** interface used to send messages from service to activity*/

@@ -3,6 +3,7 @@ package com.example.moonstonemusicplayer.model.MainActivity.FolderFragment;
 import android.content.Context;
 import android.util.Log;
 
+import com.example.moonstonemusicplayer.model.Database.DBFolder;
 import com.example.moonstonemusicplayer.model.MainActivity.LocalSongLoader;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 
@@ -30,7 +31,8 @@ public class FolderManager {
     if(context != null){
       File[] externalFileDirs = context.getExternalMediaDirs(); //getExternalMediaDirs actually does get both internal and external sdcards
       this.rootFolder = LocalSongLoader.findAllAudioFilesAsFolderInDir(externalFileDirs);
-      FolderLoader.saveIntoXML(this.rootFolder,context.getFilesDir().getAbsolutePath());
+      //FolderLoader.saveIntoXML(this.rootFolder,context.getFilesDir().getAbsolutePath());
+      DBFolder.getInstance(context).addToFolderSongList(rootFolder);
     }
     //dataSource.insertSongList(LocalSongLoader.findAllAudioFilesInDir(externalFileDirs));
     //playList.addAll(dataSource.getAllSong(60000));
@@ -40,7 +42,7 @@ public class FolderManager {
   public void loadSavedMusicAsFolder(Context context){
     //deleteAllSongs();//TODO: dont delete db but only local files
     if(context != null){
-      this.rootFolder = FolderLoader.loadFromXML(context);
+      this.rootFolder = DBFolder.getInstance(context).getRootFolder();
     } else {
       Log.e(TAG,"loadSavedMusicAsFolder: context null");
     }

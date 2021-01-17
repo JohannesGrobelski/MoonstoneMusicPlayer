@@ -461,6 +461,8 @@ public class MediaPlayerService extends Service
 
 
     Notification.Builder notificationBuilder = new Notification.Builder(this);
+    NotificationManager notificationManager = getSystemService(NotificationManager.class);
+
     if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
       // Create the NotificationChannel, but only on API 26+ because
       // the NotificationChannel class is new and not in the support library
@@ -472,9 +474,7 @@ public class MediaPlayerService extends Service
         channel.setDescription(description);
         // Register the channel with the system; you can't change the importance
         // or other notification behaviors after this
-        NotificationManager notificationManager = getSystemService(NotificationManager.class);
         notificationManager.createNotificationChannel(channel);
-
         notificationBuilder.setChannelId(CHANNEL_ID);
       }
     } else {
@@ -489,8 +489,9 @@ public class MediaPlayerService extends Service
     statusNotification.icon = R.drawable.ic_moonstonemusicplayerlogo;
     statusNotification.contentIntent = pendingIntent;
 
-    startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, statusNotification);
-  }
+    notificationManager.notify(8888,statusNotification);
+    //startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, statusNotification);
 
+  }
 
 }
