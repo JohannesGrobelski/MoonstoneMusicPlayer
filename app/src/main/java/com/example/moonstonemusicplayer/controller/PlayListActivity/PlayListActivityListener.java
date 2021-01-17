@@ -15,6 +15,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,7 +32,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.moonstonemusicplayer.R;
-import com.example.moonstonemusicplayer.model.Database.DBPlaylists;
+import com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists;
 import com.example.moonstonemusicplayer.model.PlayListActivity.PlaylistManager;
 import com.example.moonstonemusicplayer.model.PlayListActivity.PlayListModel;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
@@ -559,7 +560,13 @@ public class PlayListActivityListener
     mediaPlayerService.onDestroy();
   }
 
-
+  public void dispatchMediaButtonEvent(KeyEvent event) {
+    if(mediaPlayerService.isPlayingMusic()){
+      pauseAudio();
+    } else {
+      resumeAudio();
+    }
+  }
 
 
   /** interface used to send messages from service to activity*/

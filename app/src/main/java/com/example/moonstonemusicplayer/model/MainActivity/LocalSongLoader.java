@@ -35,20 +35,21 @@ public class LocalSongLoader {
       if(new File(fileDir).exists()){
         Folder child = findAllAudioFilesAsFolderInDir(fileDir,null);
         if(child == null)continue;
-        if(sdcard==0)child.setName("interner Speicher");
         else {
-          if(fileDir.length()>1) {
-            child.setName("SD-Karte "+sdcard);
+          child.setPath(fileDir);
+          if(sdcard==0)child.setName("interner Speicher");
+          else {
+            if(fileDir.length()>1) {
+              child.setName("SD-Karte "+sdcard);
+            }
+            else{child.setName("SD-Karte");}
           }
-          else{child.setName("SD-Karte");}
+          childrenList.add(child);
         }
-        if(child != null)childrenList.add(child);
       }
       ++sdcard;
     }
-    Folder rootFolder = new Folder("root", null, childrenList.toArray(new Folder[childrenList.size()]),null);
-
-    if(DEBUG)Log.d(TAG,rootFolder.toString());
+    Folder rootFolder = new Folder("root", "rootpath",null, childrenList.toArray(new Folder[childrenList.size()]),null);
     rootFolder.setParentsBelow();
     return rootFolder;
   }
@@ -81,6 +82,7 @@ public class LocalSongLoader {
             if(!(children_folder.isEmpty() && children_song.isEmpty())){ //directory is not empty
               if(DEBUG)Log.d(TAG,"findAllAudioFilesAsFolderInDir: save"+file.getName()+" "+children_folder.size()+" "+children_song.size());
               return new Folder(file.getName(),
+                  file.getAbsolutePath(),
                   parentFolder,
                   children_folder.toArray(new Folder[children_folder.size()]),
                   children_song.toArray(new Song[children_song.size()])
@@ -162,7 +164,7 @@ public class LocalSongLoader {
 
   private static Song getSongFromAudioFile(File file){
     String title = file.getName().substring(0, (file.getName().length() - 4));
-    String URI = Uri.fromFile(file).toString();
+    String URI = file.getAbsolutePath();//Uri.fromFile(file).toString();
     String genre = "";
     String author = "";
     int duration = 0;

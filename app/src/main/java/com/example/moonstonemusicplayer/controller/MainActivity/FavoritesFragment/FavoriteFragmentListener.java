@@ -7,7 +7,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 
-import com.example.moonstonemusicplayer.model.Database.DBPlaylists;
+import com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists;
 import com.example.moonstonemusicplayer.model.MainActivity.FavoritesFragment.FavoritesManager;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import com.example.moonstonemusicplayer.view.PlayListActivity;

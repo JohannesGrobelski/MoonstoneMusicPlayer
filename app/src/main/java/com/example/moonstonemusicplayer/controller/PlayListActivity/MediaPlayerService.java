@@ -511,6 +511,8 @@ public class MediaPlayerService extends Service
     bigViews.setTextViewText(R.id.status_bar_album_name, albumName);
 
     Notification.Builder notificationBuilder = new Notification.Builder(this);
+    NotificationManager notificationManager = getSystemService(NotificationManager.class);
+
     if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
       // Create the NotificationChannel, but only on API 26+ because
       // the NotificationChannel class is new and not in the support library
@@ -523,9 +525,7 @@ public class MediaPlayerService extends Service
         notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
         // Register the channel with the system; you can't change the importance
         // or other notification behaviors after this
-        NotificationManager notificationManager = getSystemService(NotificationManager.class);
-        notificationManager.createNotificationChannel(notificationChannel);
-
+        notificationManager.createNotificationChannel(channel);
         notificationBuilder.setChannelId(CHANNEL_ID);
       }
     } else {
@@ -541,7 +541,10 @@ public class MediaPlayerService extends Service
     statusNotification.flags = Notification.FLAG_ONGOING_EVENT | Notification.FLAG_NO_CLEAR;
     statusNotification.icon = R.drawable.ic_moonstonemusicplayerlogo;
     statusNotification.contentIntent = pendingIntent;
+    
+    notificationManager.notify(8888,statusNotification);
+    //startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, statusNotification);
 
-    startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, statusNotification);
   }
+
 }

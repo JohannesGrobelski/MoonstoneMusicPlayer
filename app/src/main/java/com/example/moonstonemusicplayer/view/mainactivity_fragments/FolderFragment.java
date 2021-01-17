@@ -147,7 +147,7 @@ public class FolderFragment extends Fragment {
     if(!query.isEmpty()){
       Folder[] matchingFolders = folderManager.getAllFoldersMatchingQuery(query);
       Song[] matchingSongs = folderManager.getAllSongsMatchingQuery(query);
-      selectedFolder = new Folder("searchFolder",null,matchingFolders,matchingSongs);
+      selectedFolder = new Folder("searchFolder",null,null,matchingFolders,matchingSongs);
     } else {
       selectedFolder = folderManager.getRootFolder();
     }

@@ -12,15 +12,17 @@ public class Folder {
   private static final String TAG = Folder.class.getSimpleName();
 
   private Folder parent;
+  private String path;
   private String name;
   private Folder[] children_folders = null;
   private Song[] children_songs = null;
 
-  public Folder(String name, Folder parent, Folder[] children_folders, Song[] children_songs) {
+  public Folder(String name, String path, Folder parent, Folder[] children_folders, Song[] children_songs) {
     this.parent = parent;
     this.name = name;
     this.children_folders = children_folders;
     this.children_songs = children_songs;
+    this.path = path;
   }
 
   public String getName() {
@@ -29,6 +31,14 @@ public class Folder {
 
   public void setName(String name) {
     this.name = name;
+  }
+
+  public String getPath() {
+    return path;
+  }
+
+  public void setPath(String path) {
+    this.path = path;
   }
 
   public Folder[] getChildren_folders() {
