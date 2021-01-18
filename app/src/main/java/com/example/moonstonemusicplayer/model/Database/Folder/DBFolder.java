@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.escapeQueryString;
+
 public class DBFolder {
     //favorites is just another playlist
     private static final String FAVORITES_PLAYLIST_NAME = "FAVORITES_MOONSTONEMUSICPLAYER_32325393434133218384916498164861498515687949184994971679";
@@ -41,24 +43,24 @@ public class DBFolder {
 
 
     private DBFolder(Context context){
-        Log.d(TAG,"Unsere DataSource erzeugt den DBHelperFolder");
+        if(DEBUG)Log.d(TAG,"Unsere DataSource erzeugt den DBHelperFolder");
         DBHelperFolder = new DBHelperFolder(context);
     }
 
     private void open_writable(){
-        Log.d(TAG, "Eine schreibende Referenz auf die DB wird jetzt angefragt.");
+        if(DEBUG)Log.d(TAG, "Eine schreibende Referenz auf die DB wird jetzt angefragt.");
         database_folder_song_list = DBHelperFolder.getWritableDatabase();
-        Log.d(TAG, "Datenbank-Referenz erhalten, Pfad zur Datenbank: "+ database_folder_song_list.getPath());
+        if(DEBUG)Log.d(TAG, "Datenbank-Referenz erhalten, Pfad zur Datenbank: "+ database_folder_song_list.getPath());
     }
 
     private void open_readable(){
-        Log.d(TAG, "Eine lesende Referenz auf die DB wird jetzt angefragt.");
+        if(DEBUG)Log.d(TAG, "Eine lesende Referenz auf die DB wird jetzt angefragt.");
         database_folder_song_list = DBHelperFolder.getReadableDatabase();
-        Log.d(TAG, "Datenbank-Referenz erhalten, Pfad zur Datenbank: "+ database_folder_song_list.getPath());
+        if(DEBUG)Log.d(TAG, "Datenbank-Referenz erhalten, Pfad zur Datenbank: "+ database_folder_song_list.getPath());
     }
 
     private void close_db(){
-        Log.d(TAG, "DB mit hilfe des DBHelperLocalSongss schließen");
+        if(DEBUG)Log.d(TAG, "DB mit hilfe des DBHelperLocalSongss schließen");
         DBHelperFolder.close();
     }
 
@@ -136,7 +138,7 @@ public class DBFolder {
                 if (parent.getChildren_songs() != null) {
                     children = new ArrayList<>(Arrays.asList(parent.getChildren_songs()));
                 }
-                Song song = new Song("file:///"+path, songName, artist,album, genre,duration , lyrics);
+                Song song = new Song(path, songName, artist,album, genre,duration , lyrics);
                 children.add(song);
                 parent.setChildren_songs(children.toArray(new Song[children.size()]));
             } else {
@@ -197,7 +199,7 @@ public class DBFolder {
         open_readable();
 
         String query = "SELECT * FROM "+DBHelperFolder.TABLE_FOLDER_SONGLIST
-            +" WHERE "+DBHelperFolder.COLUMN_PATH+" = \'"+url+"\'";
+            +" WHERE "+DBHelperFolder.COLUMN_PATH+" = \'"+escapeQueryString(url)+"\'";
 
         Cursor cursor = database_folder_song_list.rawQuery(query, null);
         Song song = null;
@@ -263,9 +265,8 @@ public class DBFolder {
         //Anlegen von Wertepaaren zur Übergabe in Insert-Methode
         ContentValues values = new ContentValues();
 
-
         if(folderSong instanceof Folder){
-            Log.d(TAG,"addToFolderSongList Folder: "+((Folder) folderSong).getName());
+            if(DEBUG)Log.d(TAG,"addToFolderSongList Folder: "+((Folder) folderSong).getName());
             values.put(DBHelperFolder.COLUMN_SONG_NAME,  "");
             values.put(DBHelperFolder.COLUMN_FOLDER_NAME,  ((Folder) folderSong).getName());
             values.put(DBHelperFolder.COLUMN_PATH,  ((Folder) folderSong).getPath());
@@ -283,7 +284,11 @@ public class DBFolder {
                 }
             }
         } else if(folderSong instanceof Song){
-            Log.d(TAG,"addToFolderSongList Song: "+((Song) folderSong).getName());
+            if(((Song) folderSong).getURI().contains("deutsch")){
+                values.describeContents();
+            }
+
+            if(DEBUG)Log.d(TAG,"addToFolderSongList Song: "+((Song) folderSong).getName());
             values.put(DBHelperFolder.COLUMN_FOLDER_NAME,  "");
             values.put(DBHelperFolder.COLUMN_SONG_NAME, ((Song) folderSong).getName());
             values.put(DBHelperFolder.COLUMN_PATH,  ((Song) folderSong).getURI());
@@ -295,7 +300,7 @@ public class DBFolder {
 
             database_folder_song_list.insert(DBHelperFolder.TABLE_FOLDER_SONGLIST, null, values);
         } else {
-            Log.d(TAG,"addToFolderSongList error: not a song|folder");
+            if(DEBUG)Log.d(TAG,"addToFolderSongList error: not a song|folder");
 
         }
     }
