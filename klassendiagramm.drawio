@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2021-01-18T15:29:50.459Z" agent="5.0 (Windows)" etag="IfXj77bID2Y-kr6dU54F" version="14.2.3" type="github">
+<mxfile host="app.diagrams.net" modified="2021-01-18T16:52:10.755Z" agent="5.0 (Windows)" etag="AoPeOwGFv3y5-FAjE40a" version="14.2.3" type="github">
   <diagram id="C5RBs43oDa-KdzZeNtuy" name="Page-1">
     <mxGraphModel dx="922" dy="1641" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -1484,7 +1484,7 @@
           <mxGeometry y="229" width="272.25" height="26" as="geometry" />
         </mxCell>
         <mxCell id="JB-gu6_CnYgiH9O66Bkz-0" value="DBFolder" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=60;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fontSize=30;strokeWidth=3;fontColor=#FF1C1C;strokeColor=#FF1C1C;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
-          <mxGeometry x="1280" y="1260" width="340" height="536" as="geometry" />
+          <mxGeometry x="1280" y="1260" width="340" height="614" as="geometry" />
         </mxCell>
         <mxCell id="JB-gu6_CnYgiH9O66Bkz-1" value="FAVORITES_PLAYLIST_NAME" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontColor=#FF1C1C;" parent="JB-gu6_CnYgiH9O66Bkz-0" vertex="1">
           <mxGeometry y="60" width="340" height="26" as="geometry" />
@@ -1542,6 +1542,15 @@
         </mxCell>
         <mxCell id="jZoF8ckbOa86r7h_iSCL-1" value="getAlbumList()::List&lt;Album&gt;" style="text;strokeColor=#82b366;fillColor=#d5e8d4;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="JB-gu6_CnYgiH9O66Bkz-0">
           <mxGeometry y="510" width="340" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="jZoF8ckbOa86r7h_iSCL-148" value="getAllAlbumNames()::List&lt;String&gt;" style="text;strokeColor=#b85450;fillColor=#f8cecc;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="JB-gu6_CnYgiH9O66Bkz-0">
+          <mxGeometry y="536" width="340" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="jZoF8ckbOa86r7h_iSCL-151" value="getAllSongsFromAlbum(String)::List&lt;Song&gt;" style="text;strokeColor=#b85450;fillColor=#f8cecc;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="JB-gu6_CnYgiH9O66Bkz-0">
+          <mxGeometry y="562" width="340" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="jZoF8ckbOa86r7h_iSCL-152" value="getArtistForAlbumName(String)::String" style="text;strokeColor=#b85450;fillColor=#f8cecc;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="JB-gu6_CnYgiH9O66Bkz-0">
+          <mxGeometry y="588" width="340" height="26" as="geometry" />
         </mxCell>
         <mxCell id="JB-gu6_CnYgiH9O66Bkz-24" value="DBHelperFolder" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=33;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;strokeWidth=3;fontSize=20;fontColor=#000000;strokeColor=#FF1C1C;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
           <mxGeometry x="1720" y="1270" width="300" height="637" as="geometry" />
