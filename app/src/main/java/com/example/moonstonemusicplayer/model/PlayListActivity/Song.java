@@ -3,13 +3,11 @@ package com.example.moonstonemusicplayer.model.PlayListActivity;
 import com.example.moonstonemusicplayer.model.Playable;
 
 public class Song extends Playable {
-  int ID = -1;
   String artist = "unknown Artist";
-  int duration_ms = 0;
-  int lastPosition = 0;
+  String album = "";
   String genre = "";
+  int duration_ms = 0;
   String lyrics = "";
-  String meaning = "";
 
 
   /** "normal" constructor*/
@@ -19,39 +17,15 @@ public class Song extends Playable {
     this.duration_ms = duration_ms;
   }
 
-  /** "normal" constructor*/
-  public Song(String name, String artist, String URI, int duration_ms, String genre) {
-    super(name,URI);
-    this.artist = artist;
-    this.duration_ms = duration_ms;
-    this.genre = genre;
-  }
 
-  /** Constructor for DB*/
-  public Song(int ID, String name, String artist, String URI, int duration_ms, int lastPosition, String genre, String lyrics, String meaning) {
-    super(name,URI);
-    this.ID = ID;
+  public Song(String URI, String name, String artist, String album, String genre, int duration_ms, String lyrics) {
+    super(name, URI);
     this.artist = artist;
-    this.duration_ms = duration_ms;
-    this.lastPosition = lastPosition;
+    this.album = album;
     this.genre = genre;
+    this.duration_ms = duration_ms;
     this.lyrics = lyrics;
-    this.meaning = meaning;
   }
-
-
-  public long getLastPosition() { return lastPosition;}
-
-  public void setLastPosition(int lastPosition) {this.lastPosition = lastPosition;}
-
-  public int getID() {
-    return ID;
-  }
-
-  public void setID(int ID) {
-    this.ID = ID;
-  }
-
 
   public String getArtist() {
     return artist;
@@ -109,27 +83,22 @@ public class Song extends Playable {
     this.lyrics = lyrics;
   }
 
-  public String getMeaning() {
-    return meaning;
+  public String getAlbum() {
+    return album;
   }
 
-  public void setMeaning(String meaning) {
-    this.meaning = meaning;
+  public void setAlbum(String album) {
+    this.album = album;
   }
 
   @Override
   public String toString() {
     return "Song{" +
-        "ID=" + ID +
-        ", name='" + getName() + '\'' +
-        ", artist='" + artist + '\'' +
-        ", uri='" + getURI() + '\'' +
-        ", artist='" + artist + '\'' +
-        ", duration_ms=" + duration_ms +
-        ", lastPosition=" + lastPosition +
+        "artist='" + artist + '\'' +
+        ", album='" + album + '\'' +
         ", genre='" + genre + '\'' +
+        ", duration_ms=" + duration_ms +
         ", lyrics='" + lyrics + '\'' +
-        ", meaning='" + meaning + '\'' +
         "} " + super.toString();
   }
 }

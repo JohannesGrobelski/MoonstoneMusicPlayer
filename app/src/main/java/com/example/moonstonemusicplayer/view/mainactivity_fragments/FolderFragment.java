@@ -51,7 +51,7 @@ public class FolderFragment extends Fragment {
   public void onAttach(@NonNull Context context) {
     super.onAttach(context);
     folderManager = new FolderManager(this.getContext());
-    loadMusicAsFolders();
+    //loadMusicAsFolders();
   }
 
   /**
@@ -125,6 +125,7 @@ public class FolderFragment extends Fragment {
       public void onCompletion() {
         //after completion update selected folder and listview
         selectedFolder = folderManager.getRootFolder();
+        System.out.println("rootFolder: "+selectedFolder.toString());
         folderFragmentListener = new FolderFragmentListener(FolderFragment.this);
         initViews();
       }

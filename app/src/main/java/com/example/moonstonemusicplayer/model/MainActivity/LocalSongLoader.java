@@ -17,7 +17,7 @@ import java.util.List;
  */
 public class LocalSongLoader {
   private static final String TAG = LocalSongLoader.class.getSimpleName();
-  private static final boolean DEBUG = false;
+  private static final boolean DEBUG = true;
 
   /** find all Audiofiles in externalDirs and create a List<Song> from these files*/
   public static Folder findAllAudioFilesAsFolderInDir(File[] externalFilesDir){
@@ -25,7 +25,7 @@ public class LocalSongLoader {
     String[] fileDirs = new String[externalFilesDir.length];
     for(int i=0; i<fileDirs.length; i++){
       fileDirs[i] = externalFilesDir[i].getAbsolutePath().replace("/Android/media/com.example.moonstonemusicplayer","");
-      if(DEBUG)Log.d(TAG,fileDirs[i]+" "+new File(fileDirs[i]).exists());
+      if(DEBUG) Log.d(TAG,fileDirs[i]+" "+new File(fileDirs[i]).exists());
     }
 
     //go through sd-cards and
@@ -56,13 +56,11 @@ public class LocalSongLoader {
 
   /** recursive */
   private static Folder findAllAudioFilesAsFolderInDir(String directory, Folder parentFolder){
-    if(DEBUG)Log.d(TAG,"findAllAudioFilesAsFolderInDir FILE: "+directory);
     try {
       File file = new File(directory );
       if(file.exists()) {
         if(file.isDirectory()) {
           if(file.getAbsolutePath().endsWith("Android")){
-            if(DEBUG)Log.d(TAG,"findAllAudioFilesAsFolderInDir isAndroid: "+file.getAbsolutePath());
             return null; //throws null pointer exception; cannot enter without root
           }
           if(file.listFiles() != null){
@@ -72,9 +70,11 @@ public class LocalSongLoader {
               if(DEBUG)Log.d(TAG,"findAllAudioFilesAsFolderInDir TEST: "+childFile.getAbsolutePath());
               Folder child_folder = findAllAudioFilesAsFolderInDir(childFile.getAbsolutePath(), parentFolder);
               if(child_folder != null){//child is a directory
+                if(DEBUG)Log.d(TAG,"findAllAudioFilesAsFolderInDir DIR: "+childFile.getAbsolutePath());
                 children_folder.add(child_folder);
               } else {//child is not a dir, might be a song-file?
                 if (isSupportedFormat(childFile.getName())) {
+                  if(DEBUG)Log.d(TAG,"findAllAudioFilesAsFolderInDir SONG: "+childFile.getAbsolutePath());
                   children_song.add(getSongFromAudioFile(childFile));
                 } else { /* ignore */ }
               }
@@ -88,22 +88,22 @@ public class LocalSongLoader {
                   children_song.toArray(new Song[children_song.size()])
               );
             } else {
-              if(DEBUG)Log.e(TAG,"findAllAudioFilesAsFolderInDir empty Dir: "+file.getAbsolutePath());
+              if(DEBUG)Log.d(TAG, "findAllAudioFilesAsFolderInDir empty folder: "+file.getName());
+
             }
           } else {
-            if(DEBUG)Log.e(TAG,"findAllAudioFilesAsFolderInDir list files is null: "+file.getName());
+            if(DEBUG)Log.e(TAG, "findAllAudioFilesAsFolderInDir listFiles Null: "+file.getName());
             return null;
           }
         } else { //file is not a directory
-          if(DEBUG)Log.e(TAG,"findAllAudioFilesAsFolderInDir file is not a dir: "+file.getName());
+          if(DEBUG)Log.e(TAG, "findAllAudioFilesAsFolderInDir not a dir: "+file.getName());
           return null;
         }
       } else{ //file does not exist
-        if(DEBUG)Log.e(TAG,"findAllAudioFilesAsFolderInDir file does not exist: "+file.getName());
+        if(DEBUG)Log.e(TAG, "findAllAudioFilesAsFolderInDir does not exist: "+file.getName());
         return null;
       }
     } catch (Exception e){
-      if(DEBUG)Log.e(TAG,"findAllAudioFilesAsFolderInDir error: "+e.getMessage());
       if(DEBUG)Log.e(TAG, "findAllAudioFilesAsFolderInDir error: "+String.valueOf(e.getCause()));
     }
     return null;
@@ -112,8 +112,6 @@ public class LocalSongLoader {
   /** find all Audiofiles in externalDirs and create a List<Song> from these files*/
   public static List<Song> findAllAudioFilesInDir(File[] externalFilesDir){
       List<Song> result = new ArrayList<>();
-
-      //System.getenv("SECONDARY_STORAGE");
       String[] fileDirs = new String[externalFilesDir.length];
       for(int i=0; i<fileDirs.length; i++){
         fileDirs[i] = externalFilesDir[i].getAbsolutePath().replace("/Android/media/com.example.moonstonemusicplayer","");
@@ -126,7 +124,6 @@ public class LocalSongLoader {
   }
 
   private static List<Song> findAllAudioFilesInDir(String directory, List<Song> localAudioFiles){
-    if(DEBUG)Log.d("SongManager","findAllAudioFilesInDir");
     if(localAudioFiles == null){
       localAudioFiles = new ArrayList<>();
     }
@@ -142,18 +139,13 @@ public class LocalSongLoader {
           }
         }
       } else{
-        if(DEBUG)Log.d("SongManager","file found: "+file.getAbsolutePath());
         if (isSupportedFormat(file.getName())) {
-          if(DEBUG)Log.d("SongManager","audiofile found: "+file.getAbsolutePath());
           if(!localAudioFiles.contains(getSongFromAudioFile(file))){
-            if(DEBUG)Log.d("SongManager","audiofile added: "+file.getAbsolutePath());
             localAudioFiles.add(getSongFromAudioFile(file));
           }
         }
       }
     } catch (Exception e){
-      if(DEBUG)Log.e("songmanager",e.getMessage());
-      if(DEBUG)Log.e("songmanager", String.valueOf(e.getCause()));
       return localAudioFiles;
     }
     if(directory.equals(Environment.getExternalStorageDirectory().toString())){
@@ -162,44 +154,56 @@ public class LocalSongLoader {
     return localAudioFiles;
   }
 
+  /**
+   * create song from file by extracting metadata
+   * @param file
+   * @return
+   */
   private static Song getSongFromAudioFile(File file){
     String title = file.getName().substring(0, (file.getName().length() - 4));
     String URI = file.getAbsolutePath();//Uri.fromFile(file).toString();
     String genre = "";
-    String author = "";
+    String artist = "";
+    String album = "";
     int duration = 0;
 
     MediaMetadataRetriever mmr = new MediaMetadataRetriever();
     mmr.setDataSource(Uri.fromFile(file).getPath());
 
     String meta_durationStr = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-    String meta_author =  mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
+    String meta_artist =  mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
     String meta_genre = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_GENRE);
     String meta_title = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
+    String meta_album = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
 
     if(meta_title != null && !meta_title.isEmpty() && !meta_title.equals("null")){
       title = meta_title;
     }
+    if(meta_album != null && !meta_album.isEmpty() && !meta_album.equals("null")){
+      album = meta_album;
+    }
     if(meta_genre != null && !meta_genre.isEmpty() && !meta_genre.equals("null")){
       genre = translateGenre(meta_genre);
     }
-    if(meta_author != null && !meta_author.isEmpty() && !meta_author.equals("null")){
-      author = meta_author;
-    } else {author = "unbekannter Künstler";}
+    if(meta_artist != null && !meta_artist.isEmpty() && !meta_artist.equals("null")){
+      artist = meta_artist;
+    } else {artist = "unbekannter Künstler";}
     if(meta_durationStr != null && !meta_durationStr.isEmpty() && !meta_durationStr.equals("null") && meta_durationStr.matches("[0-9]*")){
       duration = Integer.parseInt(meta_durationStr);
     }
 
-
-
-    return new Song(title,author,URI,duration,genre);
+    return new Song(URI,title,artist,album,genre,duration,"");
   }
 
+  /**
+   * returns if {"mp3","3gp","m4a","amr","flac","mkv","ogg","wav"} contains end of filename
+   * @param filename
+   * @return
+   */
   private static boolean isSupportedFormat(String filename){
     String[] supportedExtensions = new String[]{
-        "mp3","3gp","mp4","m4a","amr","flac","mkv","ogg","wav"
+        "mp3","3gp","m4a","amr","flac","mkv","ogg","wav"
     };
-
     for(String ext: supportedExtensions){
       if(filename.endsWith(ext) || filename.endsWith(ext.toUpperCase()))return true;
     }

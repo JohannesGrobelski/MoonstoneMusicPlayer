@@ -33,11 +33,10 @@ public class DBFolder {
             DBHelperFolder.COLUMN_SONG_NAME,
             DBHelperFolder.COLUMN_PATH,
             DBHelperFolder.COLUMN_ARTIST,
+            DBHelperFolder.COLUMN_ALBUM,
             DBHelperFolder.COLUMN_DURATION,
-            DBHelperFolder.COLUMN_LAST_POSITION,
             DBHelperFolder.COLUMN_GENRE,
             DBHelperFolder.COLUMN_LYRICS,
-            DBHelperFolder.COLUMN_MEANING,
     };
 
 
@@ -66,9 +65,9 @@ public class DBFolder {
 
     public Folder getRootFolder(){
         if(DEBUG)Log.d(TAG,"load Favorites");
+        open_readable();
         String query = "SELECT * FROM "+DBHelperFolder.TABLE_FOLDER_SONGLIST;
         Folder rootFolder = null;
-        open_readable();
         //Zeiger auf die Einträge der Tabelle
         Cursor cursor = database_folder_song_list.rawQuery(query, null);
 
@@ -98,11 +97,10 @@ public class DBFolder {
             String songName = cursor.getString(2);
             path = cursor.getString(3);
             String artist = cursor.getString(4);
-            int duration = cursor.getInt(5);
-            int lastPosition = cursor.getInt(6);
-            String genre = cursor.getString(7);
+            String album = cursor.getString(5);
+            String genre = cursor.getString(6);
+            int duration = cursor.getInt(7);
             String lyrics = cursor.getString(8);
-            String meaning = cursor.getString(9);
 
             //"fix" path by deleting url scheme
             path = path.replace("file://","");
@@ -134,7 +132,7 @@ public class DBFolder {
                 if (parent.getChildren_songs() != null) {
                     children = new ArrayList<>(Arrays.asList(parent.getChildren_songs()));
                 }
-                Song song = new Song(index, songName, artist,"file:///"+path, duration, lastPosition, genre, lyrics, meaning);
+                Song song = new Song("file:///"+path, songName, artist,album, genre,duration , lyrics);
                 children.add(song);
                 parent.setChildren_songs(children.toArray(new Song[children.size()]));
             } else {
@@ -162,11 +160,10 @@ public class DBFolder {
         valuesNewSong.put(DBHelperFolder.COLUMN_SONG_NAME, song.getName());
         valuesNewSong.put(DBHelperFolder.COLUMN_PATH,  song.getURI());
         valuesNewSong.put(DBHelperFolder.COLUMN_ARTIST, song.getArtist());
-        valuesNewSong.put(DBHelperFolder.COLUMN_DURATION, song.getDuration_ms());
-        valuesNewSong.put(DBHelperFolder.COLUMN_LAST_POSITION, song.getLastPosition());
+        valuesNewSong.put(DBHelperFolder.COLUMN_ALBUM, song.getAlbum());
         valuesNewSong.put(DBHelperFolder.COLUMN_GENRE, song.getGenre());
+        valuesNewSong.put(DBHelperFolder.COLUMN_DURATION, song.getDuration_ms());
         valuesNewSong.put(DBHelperFolder.COLUMN_LYRICS, song.getLyrics());
-        valuesNewSong.put(DBHelperFolder.COLUMN_MEANING, song.getMeaning());
 
         //Song-Objekt in DB einfügen und ID zurückbekommen
         database_folder_song_list.update(DBHelperFolder.TABLE_FOLDER_SONGLIST,
@@ -207,12 +204,11 @@ public class DBFolder {
             String songName = cursor.getString(2);
             String uri = cursor.getString(3);
             String artist = cursor.getString(4);
+            String album = cursor.getString(5);
+            String genre = cursor.getString(6);
             int duration = cursor.getInt(5);
-            int lastPosition = cursor.getInt(6);
-            String genre = cursor.getString(7);
-            String lyrics = cursor.getString(8);
-            String meaning = cursor.getString(9);
-            song = new Song(index,songName,artist,uri,duration,lastPosition,genre,lyrics,meaning);
+            String lyrics = cursor.getString(7);
+            song = new Song(uri,songName,artist,album,genre,duration,lyrics);
         }
 
 
@@ -288,11 +284,10 @@ public class DBFolder {
             values.put(DBHelperFolder.COLUMN_SONG_NAME, ((Song) folderSong).getName());
             values.put(DBHelperFolder.COLUMN_PATH,  ((Song) folderSong).getURI());
             values.put(DBHelperFolder.COLUMN_ARTIST, ((Song) folderSong).getArtist());
-            values.put(DBHelperFolder.COLUMN_DURATION, ((Song) folderSong).getDuration_ms());
-            values.put(DBHelperFolder.COLUMN_LAST_POSITION, ((Song) folderSong).getLastPosition());
+            values.put(DBHelperFolder.COLUMN_ALBUM, ((Song) folderSong).getAlbum());
             values.put(DBHelperFolder.COLUMN_GENRE, ((Song) folderSong).getGenre());
+            values.put(DBHelperFolder.COLUMN_DURATION, ((Song) folderSong).getDuration_ms());
             values.put(DBHelperFolder.COLUMN_LYRICS, ((Song) folderSong).getLyrics());
-            values.put(DBHelperFolder.COLUMN_MEANING, ((Song) folderSong).getMeaning());
 
             database_folder_song_list.insert(DBHelperFolder.TABLE_FOLDER_SONGLIST, null, values);
         } else {

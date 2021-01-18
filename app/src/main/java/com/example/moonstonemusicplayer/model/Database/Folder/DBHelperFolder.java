@@ -39,11 +39,10 @@ public class DBHelperFolder extends SQLiteOpenHelper {
     public static final String COLUMN_SONG_NAME = "SongName";
     public static final String COLUMN_PATH = "Path";
     public static final String COLUMN_ARTIST = "Artist";
-    public static final String COLUMN_DURATION = "Duration";
-    public static final String COLUMN_LAST_POSITION = "LastPosition";
+    public static final String COLUMN_ALBUM = "Album";
     public static final String COLUMN_GENRE = "Genre";
+    public static final String COLUMN_DURATION = "Duration";
     public static final String COLUMN_LYRICS = "Lyrics";
-    public static final String COLUMN_MEANING = "Meaning";
 
     //Create-Statements
     private static final String SQL_CREATE_TABLE =
@@ -52,12 +51,11 @@ public class DBHelperFolder extends SQLiteOpenHelper {
                     COLUMN_FOLDER_NAME + " TEXT, " +
                     COLUMN_SONG_NAME + " TEXT, " +
                     COLUMN_PATH + " TEXT NOT NULL, " +
-                    COLUMN_ARTIST + " TEXT, "  +
-                    COLUMN_DURATION + " INT, "  +
-                    COLUMN_LAST_POSITION + " INT, "  +
+                    COLUMN_ARTIST + " TEXT, " +
+                    COLUMN_ALBUM + " TEXT, "  +
                     COLUMN_GENRE + " TEXT, "  +
-                    COLUMN_LYRICS + " TEXT, "  +
-                    COLUMN_MEANING + " TEXT)";
+                    COLUMN_DURATION + " INT, "  +
+                    COLUMN_LYRICS + " TEXT)";
 
     //Drop-Statement
     private static final String SQL_DROP = "DROP TABLE IF EXISTS "+ TABLE_FOLDER_SONGLIST;

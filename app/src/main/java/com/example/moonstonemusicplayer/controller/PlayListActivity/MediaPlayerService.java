@@ -93,7 +93,7 @@ public class MediaPlayerService extends Service
     }
     //bereitet MediaPlayer für Wiedergabe vor
     mediaPlayer.prepareAsync();
-    resumePosition = (int) playListModel.getCurrentSong().getLastPosition();
+    resumePosition = 0;
 
     if(((LocalBinder) iBinder) != null){
       ((LocalBinder) iBinder).boundServiceListener.selectedSong(playListModel.getCurrentSong().getURI());
@@ -141,15 +141,7 @@ public class MediaPlayerService extends Service
     else return 0;
   }
 
-  public void saveSongPosition(Context context){
-    if(mediaPlayer!=null){
-      if(mediaPlayer.getDuration() > (1000*60*15)){
-        if(mediaPlayer!=null)playListModel.getCurrentSong().setLastPosition(mediaPlayer.getCurrentPosition());
-        DBFolder.getInstance(context).updateSong(playListModel.getCurrentSong());
-      }
-    }
 
-  }
 
   private void playMedia(){
     if(mediaPlayer != null && !mediaPlayer.isPlaying()){

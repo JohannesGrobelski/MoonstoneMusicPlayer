@@ -273,7 +273,6 @@ public class PlayListActivityListener
 
   private void prevSong(){
     if(isServiceBound){
-      mediaPlayerService.saveSongPosition(playListActivity);
       mediaPlayerService.prevSong();
       playListActivity.btn_play_pause.setBackground(playListActivity.getResources().getDrawable(R.drawable.ic_pause));
       animateMediaplayerProgressOnSeekbar();
@@ -286,7 +285,6 @@ public class PlayListActivityListener
 
   private void nextSong(){
     if(isServiceBound){
-      mediaPlayerService.saveSongPosition(playListActivity);
       mediaPlayerService.nextSong();
       playListActivity.btn_play_pause.setBackground(playListActivity.getResources().getDrawable(R.drawable.ic_pause));
       animateMediaplayerProgressOnSeekbar();
@@ -552,7 +550,6 @@ public class PlayListActivityListener
   public void onDestroy() {
     if(isServiceBound){
       if(DEBUG)Log.d(TAG,"activity destroyed => destroy service");
-      mediaPlayerService.saveSongPosition(playListActivity);
       mediaPlayerService.onDestroy();
       isServiceBound = false;
     }
