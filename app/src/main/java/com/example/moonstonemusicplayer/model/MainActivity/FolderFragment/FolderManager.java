@@ -2,7 +2,10 @@ package com.example.moonstonemusicplayer.model.MainActivity.FolderFragment;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
+import android.widget.Toolbar;
 
+import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.model.Database.Folder.DBFolder;
 import com.example.moonstonemusicplayer.model.MainActivity.LocalSongLoader;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
@@ -38,7 +41,6 @@ public class FolderManager {
     //dataSource.insertSongList(LocalSongLoader.findAllAudioFilesInDir(externalFileDirs));
     //playList.addAll(dataSource.getAllSong(60000));
   }
-
 
   public void loadSavedMusicAsFolder(Context context){
     //deleteAllSongs();//TODO: dont delete db but only local files

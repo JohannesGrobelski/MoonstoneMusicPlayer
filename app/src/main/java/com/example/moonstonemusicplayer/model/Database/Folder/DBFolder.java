@@ -77,9 +77,12 @@ public class DBFolder {
             String folderName = cursor.getString(1);
             String path = cursor.getString(3);
             rootFolder = new Folder(folderName,path,null,null,null);
-            cursor.moveToNext();
 
-            rootFolder = insertChildrenToRootFolder(rootFolder,cursor);
+            if(cursor.getCount() > 1){
+                cursor.moveToNext();
+                rootFolder = insertChildrenToRootFolder(rootFolder,cursor);
+            }
+
         }
 
         cursor.close();
@@ -90,6 +93,7 @@ public class DBFolder {
 
     private Folder insertChildrenToRootFolder(Folder parent, Cursor cursor) {
         String path = "";
+        if(cursor.getColumnCount() != 9 || cursor.getCount() < 2)return parent;
         do {
             //read line
             int index = cursor.getInt(0);

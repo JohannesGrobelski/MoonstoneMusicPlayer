@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.MainActivity.FolderFragment.FolderFragmentListener;
@@ -51,7 +52,7 @@ public class FolderFragment extends Fragment {
   public void onAttach(@NonNull Context context) {
     super.onAttach(context);
     folderManager = new FolderManager(this.getContext());
-    //loadMusicAsFolders();
+    loadMusicAsFolders();
   }
 
   /**
@@ -125,6 +126,12 @@ public class FolderFragment extends Fragment {
       public void onCompletion() {
         //after completion update selected folder and listview
         selectedFolder = folderManager.getRootFolder();
+        if(selectedFolder != null && selectedFolder.getChildren_folders() != null
+        && selectedFolder.getChildren_folders().length > 0){
+
+        } else {
+          Toast.makeText(FolderFragment.this.getContext(), R.string.no_songs_found,Toast.LENGTH_LONG).show();
+        }
         System.out.println("rootFolder: "+selectedFolder.toString());
         folderFragmentListener = new FolderFragmentListener(FolderFragment.this);
         initViews();
@@ -158,27 +165,35 @@ public class FolderFragment extends Fragment {
   }
 
   public void sortSongsByName() {
-    selectedFolder.sortSongsByName();
-    folderFragmentListener = new FolderFragmentListener(FolderFragment.this);
-    initViews();
+    if(selectedFolder != null) {
+      selectedFolder.sortSongsByName();
+      folderFragmentListener = new FolderFragmentListener(FolderFragment.this);
+      initViews();
+    }
   }
 
   public void sortSongsByArtist() {
-    selectedFolder.sortSongsByArtist();
-    folderFragmentListener = new FolderFragmentListener(FolderFragment.this);
-    initViews();
+    if(selectedFolder != null) {
+      selectedFolder.sortSongsByArtist();
+      folderFragmentListener = new FolderFragmentListener(FolderFragment.this);
+      initViews();
+    }
   }
 
   public void sortSongsByDuration() {
-    selectedFolder.sortSongsByDuration();
-    folderFragmentListener = new FolderFragmentListener(FolderFragment.this);
-    initViews();
+    if(selectedFolder != null) {
+      selectedFolder.sortSongsByDuration();
+      folderFragmentListener = new FolderFragmentListener(FolderFragment.this);
+      initViews();
+    }
   }
 
   public void sortSongsByGenre() {
-    selectedFolder.sortSongsByGenre();
-    folderFragmentListener = new FolderFragmentListener(FolderFragment.this);
-    initViews();
+    if(selectedFolder != null) {
+      selectedFolder.sortSongsByGenre();
+      folderFragmentListener = new FolderFragmentListener(FolderFragment.this);
+      initViews();
+    }
   }
 
   public boolean onBackpressed() {
@@ -186,9 +201,12 @@ public class FolderFragment extends Fragment {
   }
 
   public void reverse() {
-    selectedFolder.reverse();
-    folderFragmentListener = new FolderFragmentListener(FolderFragment.this);
-    initViews();
+    if(selectedFolder != null){
+      selectedFolder.reverse();
+      folderFragmentListener = new FolderFragmentListener(FolderFragment.this);
+      initViews();
+    }
+
   }
 
 
