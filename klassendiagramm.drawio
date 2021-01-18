@@ -1,6 +1,6 @@
-<mxfile host="app.diagrams.net" modified="2021-01-18T16:52:10.755Z" agent="5.0 (Windows)" etag="AoPeOwGFv3y5-FAjE40a" version="14.2.3" type="github">
+<mxfile host="app.diagrams.net" modified="2021-01-18T18:08:42.276Z" agent="5.0 (Windows)" etag="uv8OgH50RoKsQLarRF9y" version="14.2.3" type="github">
   <diagram id="C5RBs43oDa-KdzZeNtuy" name="Page-1">
-    <mxGraphModel dx="922" dy="1641" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="3228" dy="2821" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="WIyWlLk6GJQsqaUBKTNV-0" />
         <mxCell id="WIyWlLk6GJQsqaUBKTNV-1" parent="WIyWlLk6GJQsqaUBKTNV-0" />
@@ -1982,7 +1982,7 @@
         <mxCell id="jZoF8ckbOa86r7h_iSCL-110" value="getItem(int)" style="text;strokeColor=#82b366;fillColor=#d5e8d4;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="jZoF8ckbOa86r7h_iSCL-103">
           <mxGeometry y="177" width="234.5" height="26" as="geometry" />
         </mxCell>
-        <mxCell id="jZoF8ckbOa86r7h_iSCL-111" value="ArtistFragmentListener" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;strokeWidth=3;fontSize=20;strokeColor=#A680B8;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+        <mxCell id="jZoF8ckbOa86r7h_iSCL-111" value="AlbumFragmentListener" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;strokeWidth=3;fontSize=20;strokeColor=#A680B8;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
           <mxGeometry x="1987.5" y="808" width="250" height="360" as="geometry" />
         </mxCell>
         <mxCell id="jZoF8ckbOa86r7h_iSCL-112" value="ALBUMINDEXEXTRA::String&#xa;" style="text;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontColor=#00FF00;" vertex="1" parent="jZoF8ckbOa86r7h_iSCL-111">
