@@ -20,4 +20,5 @@
     <string name="channel_name">MoonstoneMediaPlayerServiceNotification</string>
     <string name="channel_description">controlls mediaplayerservice</string>
     <string name="no_songs_found">Keine Songs gefunden!</string>
+    <string name="tab_albums">Alben</string>
 </resources>

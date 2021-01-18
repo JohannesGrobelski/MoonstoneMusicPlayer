@@ -106,8 +106,8 @@ public class DBPlaylists {
 
         //check if song is already in playlist
         String query = "SELECT * FROM "+DBHelperPlaylists.TABLE_PLAYLISTS+" WHERE "+
-            DBHelperPlaylists.COLUMN_PLAYLIST_NAME+" LIKE \'"+escapeQueryString(playlistname)+"\' AND "+
-            DBHelperPlaylists.COLUMN_SONG_PATH+" LIKE \'"+escapeQueryString(inputSong.getPath())+"\'";
+            DBHelperPlaylists.COLUMN_PLAYLIST_NAME+" LIKE \'"+ escapeString(playlistname)+"\' AND "+
+            DBHelperPlaylists.COLUMN_SONG_PATH+" LIKE \'"+ escapeString(inputSong.getPath())+"\'";
 
         if(noResultsFromQuery(query)){
             //Anlegen von Wertepaaren zur Übergabe in Insert-Methode
@@ -161,7 +161,7 @@ public class DBPlaylists {
 
     private List<Song> searchPlaylist(String searchterm){
         String query = "SELECT * FROM "+ DBHelperPlaylists.TABLE_PLAYLISTS+" WHERE ("+
-            DBHelperPlaylists.COLUMN_PLAYLIST_NAME+" LIKE \'"+"%"+escapeQueryString(searchterm)+"%)";
+            DBHelperPlaylists.COLUMN_PLAYLIST_NAME+" LIKE \'"+"%"+ escapeString(searchterm)+"%)";
         return null;
     }
 
@@ -211,7 +211,7 @@ public class DBPlaylists {
         Log.d(TAG, Arrays.toString(allPlaylistNames));
         for(String playlistName: allPlaylistNames){
             String query = "SELECT * FROM "+DBHelperPlaylists.TABLE_PLAYLISTS+" WHERE "+
-                DBHelperPlaylists.COLUMN_PLAYLIST_NAME+" LIKE \'"+escapeQueryString(playlistName)+"\'";
+                DBHelperPlaylists.COLUMN_PLAYLIST_NAME+" LIKE \'"+ escapeString(playlistName)+"\'";
             List<Song> playlistSongs = getSongListFromQuery(context,query);
             allPlaylists.add(new Playlist(playlistName,playlistSongs));
         }
@@ -235,7 +235,7 @@ public class DBPlaylists {
     }
 
 
-    public static String escapeQueryString(String query){
+    public static String escapeString(String query){
         query = query.replace("'","''");
         return query;
     }

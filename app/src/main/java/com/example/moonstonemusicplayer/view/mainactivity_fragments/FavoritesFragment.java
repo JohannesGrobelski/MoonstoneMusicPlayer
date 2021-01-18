@@ -66,7 +66,7 @@ public class FavoritesFragment extends Fragment {
 
     View rootView = inflater.inflate(R.layout.fragment_favorites, container, false);
 
-    lv_favorites = rootView.findViewById(R.id.lv_favorites);
+    lv_favorites = rootView.findViewById(R.id.lv_albums);
     favoriteFragmentListener = new FavoriteFragmentListener(this);
     registerForContextMenu(lv_favorites);
 

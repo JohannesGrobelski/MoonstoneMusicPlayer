@@ -97,9 +97,7 @@ public class MainActivity extends AppCompatActivity {
   public void onBackPressed() {
     if(!mainActivityListener.onBackPressed()){
       super.onBackPressed();
-
     }
-
   }
 
 }

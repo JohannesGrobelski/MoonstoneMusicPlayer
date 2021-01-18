@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import com.example.moonstonemusicplayer.model.MainActivity.AlbumFragment.Album;
+import com.example.moonstonemusicplayer.model.MainActivity.ArtistFragment.Artist;
 import com.example.moonstonemusicplayer.model.MainActivity.FolderFragment.Folder;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 
@@ -14,7 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.escapeQueryString;
+import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.escapeString;
 
 public class DBFolder {
     //favorites is just another playlist
@@ -89,8 +91,22 @@ public class DBFolder {
 
         cursor.close();
         close_db();
-
         return rootFolder;
+    }
+
+    public List<Artist> getArtistList(){
+        return null;
+    }
+
+    /**
+     * @return
+     */
+    public List<Album> getAlbumList(){
+        List<Album> resultAlbumList = new ArrayList<>();
+        for(String albumName: getAllAlbumNames()){
+            resultAlbumList.add(new Album(albumName,getArtistForAlbumName(albumName),getAllSongsFromAlbum(albumName)));
+        }
+        return resultAlbumList;
     }
 
     private Folder insertChildrenToRootFolder(Folder parent, Cursor cursor) {
@@ -199,7 +215,7 @@ public class DBFolder {
         open_readable();
 
         String query = "SELECT * FROM "+DBHelperFolder.TABLE_FOLDER_SONGLIST
-            +" WHERE "+DBHelperFolder.COLUMN_PATH+" = \'"+escapeQueryString(path)+"\'";
+            +" WHERE "+DBHelperFolder.COLUMN_PATH+" = \'"+ escapeString(path)+"\'";
 
         Cursor cursor = database_folder_song_list.rawQuery(query, null);
         Song song = null;
@@ -223,9 +239,87 @@ public class DBFolder {
         //datenbank schließen und rückgabe des Songobjekts
         close_db();
 
-
         return song;
     }
+
+    private List<String> getAllAlbumNames(){
+        List<String> allAlbumNames = new ArrayList<>();
+        open_readable();
+        String query = "SELECT DISTINCT "+DBHelperFolder.COLUMN_ALBUM+" FROM "+DBHelperFolder.TABLE_FOLDER_SONGLIST+
+            " WHERE "+DBHelperFolder.COLUMN_ALBUM+" IS NOT NULL";
+
+        Cursor cursor = database_folder_song_list.rawQuery(query, null);
+        if(cursor.getCount() > 0){
+            cursor.moveToFirst();
+            do {
+                allAlbumNames.add(cursor.getString(0));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        close_db();
+        return allAlbumNames;
+    }
+
+    private List<Song> getAllSongsFromAlbum(String albumName){
+        List<Song> allSongs = new ArrayList<>();
+        //öffnen der DB
+        open_readable();
+
+        String query = "SELECT * FROM "+DBHelperFolder.TABLE_FOLDER_SONGLIST+
+            " WHERE "+DBHelperFolder.COLUMN_ALBUM+" = \'"+escapeString(albumName)+"\'";
+
+        Cursor cursor = database_folder_song_list.rawQuery(query, null);
+        if(cursor.getCount() > 0){
+            cursor.moveToFirst();
+            do {
+                //read line
+                int index = cursor.getInt(0);
+                String songName = cursor.getString(2);
+                String songPath = cursor.getString(3);
+                String artist = cursor.getString(4);
+                String album = cursor.getString(5);
+                String genre = cursor.getString(6);
+                int duration = cursor.getInt(7);
+                String lyrics = cursor.getString(8);
+                allSongs.add(new Song(songPath,songName,artist,album,genre,duration,lyrics));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+
+        //datenbank schließen und rückgabe des Songobjekts
+        close_db();
+
+        return allSongs;
+    }
+
+    /**
+     * Go through songs of that album
+     * and search for an artist entry.
+     * @param albumName
+     * @return
+     */
+    private String getArtistForAlbumName(String albumName){
+        String artistName = "";
+        open_readable();
+        String query = "SELECT "+DBHelperFolder.COLUMN_ARTIST+" FROM "+DBHelperFolder.TABLE_FOLDER_SONGLIST+
+            " WHERE "+DBHelperFolder.COLUMN_ALBUM+" = \'"+escapeString(albumName)+"\'";
+
+        Cursor cursor = database_folder_song_list.rawQuery(query, null);
+        if(cursor.getCount() > 0){
+            cursor.moveToFirst();
+            do {
+                if(!cursor.getString(0).isEmpty()){
+                    artistName = cursor.getString(0);
+                    break;
+                }
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        close_db();
+        return artistName;
+    }
+
+
 
 
 

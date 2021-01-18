@@ -6,7 +6,7 @@
     android:orientation="vertical"
     tools:context=".view.mainactivity_fragments.FavoritesFragment">
     <ListView
-        android:id="@+id/lv_favorites"
+        android:id="@+id/lv_albums"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 </LinearLayout>
