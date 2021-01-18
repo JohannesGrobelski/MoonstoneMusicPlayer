@@ -164,7 +164,7 @@ public class DBFolder {
         ContentValues valuesNewSong = new ContentValues();
         valuesNewSong.put(DBHelperFolder.COLUMN_FOLDER_NAME,  "");
         valuesNewSong.put(DBHelperFolder.COLUMN_SONG_NAME, song.getName());
-        valuesNewSong.put(DBHelperFolder.COLUMN_PATH,  song.getURI());
+        valuesNewSong.put(DBHelperFolder.COLUMN_PATH,  song.getPath());
         valuesNewSong.put(DBHelperFolder.COLUMN_ARTIST, song.getArtist());
         valuesNewSong.put(DBHelperFolder.COLUMN_ALBUM, song.getAlbum());
         valuesNewSong.put(DBHelperFolder.COLUMN_GENRE, song.getGenre());
@@ -174,7 +174,7 @@ public class DBFolder {
         //Song-Objekt in DB einfügen und ID zurückbekommen
         database_folder_song_list.update(DBHelperFolder.TABLE_FOLDER_SONGLIST,
             valuesNewSong,
-            DBHelperFolder.COLUMN_PATH+" = \'"+song.getURI()+"\'",
+            DBHelperFolder.COLUMN_PATH+" = \'"+song.getPath()+"\'",
             null);
 
         //datenbank schließen und rückgabe des Songobjekts
@@ -188,18 +188,18 @@ public class DBFolder {
 
         //Song-Objekt in DB einfügen und ID zurückbekommen
         database_folder_song_list.delete(DBHelperFolder.TABLE_FOLDER_SONGLIST,
-            DBHelperFolder.COLUMN_PATH+" = \'"+song.getURI(),null);
+            DBHelperFolder.COLUMN_PATH+" = \'"+song.getPath(),null);
 
         //datenbank schließen und rückgabe des Songobjekts
         close_db();
     }
 
-    public Song getSongFromURL(String url){
+    public Song getSongFromPath(String path){
         //öffnen der DB
         open_readable();
 
         String query = "SELECT * FROM "+DBHelperFolder.TABLE_FOLDER_SONGLIST
-            +" WHERE "+DBHelperFolder.COLUMN_PATH+" = \'"+escapeQueryString(url)+"\'";
+            +" WHERE "+DBHelperFolder.COLUMN_PATH+" = \'"+escapeQueryString(path)+"\'";
 
         Cursor cursor = database_folder_song_list.rawQuery(query, null);
         Song song = null;
@@ -208,13 +208,13 @@ public class DBFolder {
             //read line
             int index = cursor.getInt(0);
             String songName = cursor.getString(2);
-            String uri = cursor.getString(3);
+            String songPath = cursor.getString(3);
             String artist = cursor.getString(4);
             String album = cursor.getString(5);
             String genre = cursor.getString(6);
-            int duration = cursor.getInt(5);
-            String lyrics = cursor.getString(7);
-            song = new Song(uri,songName,artist,album,genre,duration,lyrics);
+            int duration = cursor.getInt(7);
+            String lyrics = cursor.getString(8);
+            song = new Song(songPath,songName,artist,album,genre,duration,lyrics);
         }
 
 
@@ -284,14 +284,10 @@ public class DBFolder {
                 }
             }
         } else if(folderSong instanceof Song){
-            if(((Song) folderSong).getURI().contains("deutsch")){
-                values.describeContents();
-            }
-
             if(DEBUG)Log.d(TAG,"addToFolderSongList Song: "+((Song) folderSong).getName());
             values.put(DBHelperFolder.COLUMN_FOLDER_NAME,  "");
             values.put(DBHelperFolder.COLUMN_SONG_NAME, ((Song) folderSong).getName());
-            values.put(DBHelperFolder.COLUMN_PATH,  ((Song) folderSong).getURI());
+            values.put(DBHelperFolder.COLUMN_PATH,  ((Song) folderSong).getPath());
             values.put(DBHelperFolder.COLUMN_ARTIST, ((Song) folderSong).getArtist());
             values.put(DBHelperFolder.COLUMN_ALBUM, ((Song) folderSong).getAlbum());
             values.put(DBHelperFolder.COLUMN_GENRE, ((Song) folderSong).getGenre());

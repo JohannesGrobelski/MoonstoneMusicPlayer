@@ -33,7 +33,7 @@ public class DBPlaylists {
     private String[] COLUMNS = {
             DBHelperPlaylists.COLUMN_ID,
             DBHelperPlaylists.COLUMN_PLAYLIST_NAME,
-            DBHelperPlaylists.COLUMN_SONG_URL
+            DBHelperPlaylists.COLUMN_SONG_PATH
     };
 
 
@@ -95,7 +95,7 @@ public class DBPlaylists {
         //Song-Objekt aus Playlist DB löschen
         database_playlists.delete(DBHelperPlaylists.TABLE_PLAYLISTS,
             DBHelperPlaylists.COLUMN_PLAYLIST_NAME+" = \'"+playlistname+"\' AND "+
-                       DBHelperPlaylists.COLUMN_SONG_URL+" = \'"+song.getURI()+"\'",null);
+                       DBHelperPlaylists.COLUMN_SONG_PATH+" = \'"+song.getPath()+"\'",null);
 
         //datenbank schließen und rückgabe des Songobjekts
         close_db();
@@ -107,13 +107,13 @@ public class DBPlaylists {
         //check if song is already in playlist
         String query = "SELECT * FROM "+DBHelperPlaylists.TABLE_PLAYLISTS+" WHERE "+
             DBHelperPlaylists.COLUMN_PLAYLIST_NAME+" LIKE \'"+escapeQueryString(playlistname)+"\' AND "+
-            DBHelperPlaylists.COLUMN_SONG_URL+" LIKE \'"+escapeQueryString(inputSong.getURI())+"\'";
+            DBHelperPlaylists.COLUMN_SONG_PATH+" LIKE \'"+escapeQueryString(inputSong.getPath())+"\'";
 
         if(noResultsFromQuery(query)){
             //Anlegen von Wertepaaren zur Übergabe in Insert-Methode
             ContentValues values = new ContentValues();
             values.put(DBHelperPlaylists.COLUMN_PLAYLIST_NAME, playlistname);
-            values.put(DBHelperPlaylists.COLUMN_SONG_URL, inputSong.getURI());
+            values.put(DBHelperPlaylists.COLUMN_SONG_PATH, inputSong.getPath());
 
             //öffnen der DB
             open_writable();
@@ -194,7 +194,7 @@ public class DBPlaylists {
                     continue;
                 }
 
-                Song song = DBFolder.getInstance(context).getSongFromURL(songURL);
+                Song song = DBFolder.getInstance(context).getSongFromPath(songURL);
 
                 if(song != null)SongList.add(song);
             } while (cursor.moveToNext());
@@ -221,10 +221,10 @@ public class DBPlaylists {
 
     private Song cursorToSong(Context context, Cursor cursor) {
         //get Indexes
-        int idURL = cursor.getColumnIndex(DBHelperPlaylists.COLUMN_SONG_URL);
+        int idPath = cursor.getColumnIndex(DBHelperPlaylists.COLUMN_SONG_PATH);
 
         //create Song from values
-        return DBFolder.getInstance(context).getSongFromURL(cursor.getString(idURL));
+        return DBFolder.getInstance(context).getSongFromPath(cursor.getString(idPath));
     }
 
     public static DBPlaylists getInstance(Context context){

@@ -161,7 +161,7 @@ public class LocalSongLoader {
    */
   private static Song getSongFromAudioFile(File file){
     String title = file.getName().substring(0, (file.getName().length() - 4));
-    String URI = file.getAbsolutePath();//Uri.fromFile(file).toString();
+    String path = file.getAbsolutePath();//Uri.fromFile(file).toString();
     String genre = "";
     String artist = "";
     String album = "";
@@ -192,7 +192,7 @@ public class LocalSongLoader {
       duration = Integer.parseInt(meta_durationStr);
     }
 
-    return new Song(URI,title,artist,album,genre,duration,"");
+    return new Song(path,title,artist,album,genre,duration,"");
   }
 
   /**

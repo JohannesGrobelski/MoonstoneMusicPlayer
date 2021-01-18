@@ -57,7 +57,7 @@ public class SongListAdapter extends ArrayAdapter<Song> {
     tv_genre.setText(aktuellerSong.getGenre());
 
 
-    if(aktuellerSong.getURI().equals(selectedSongUri))ll_song_background.setBackgroundColor(Color.LTGRAY);
+    if(aktuellerSong.getUri().equals(selectedSongUri))ll_song_background.setBackgroundColor(Color.LTGRAY);
     else ll_song_background.setBackgroundColor(Color.WHITE);
 
     tv_duration.setText(Song.getDurationString((int) aktuellerSong.getDuration_ms()));

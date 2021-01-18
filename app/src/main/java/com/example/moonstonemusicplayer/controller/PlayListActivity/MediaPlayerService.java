@@ -86,7 +86,7 @@ public class MediaPlayerService extends Service
     mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
     try {
       //weise Mediendatei der Datenquelle zu
-      mediaPlayer.setDataSource(playListModel.getCurrentSong().getURI());
+      mediaPlayer.setDataSource(playListModel.getCurrentSong().getUri());
     } catch (IOException e) {
       e.printStackTrace();
       stopSelf();
@@ -96,7 +96,7 @@ public class MediaPlayerService extends Service
     resumePosition = 0;
 
     if(((LocalBinder) iBinder) != null){
-      ((LocalBinder) iBinder).boundServiceListener.selectedSong(playListModel.getCurrentSong().getURI());
+      ((LocalBinder) iBinder).boundServiceListener.selectedSong(playListModel.getCurrentSong().getUri());
     }
   }
 
@@ -470,7 +470,7 @@ public class MediaPlayerService extends Service
 
     try {
       MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-      mmr.setDataSource(playListModel.getCurrentSong().getURI());
+      mmr.setDataSource(playListModel.getCurrentSong().getUri());
       String meta_albumName = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
       if(meta_albumName != null && !meta_albumName.isEmpty() && !meta_albumName.equals("null")){
         albumName = meta_albumName;
@@ -480,7 +480,7 @@ public class MediaPlayerService extends Service
     }
     try {
       MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-      mmr.setDataSource(playListModel.getCurrentSong().getURI());
+      mmr.setDataSource(playListModel.getCurrentSong().getUri());
       byte[] albumArtBytes = mmr.getEmbeddedPicture();
       songImage = BitmapFactory.decodeByteArray(albumArtBytes, 0, albumArtBytes.length);
     } catch (Exception e) {

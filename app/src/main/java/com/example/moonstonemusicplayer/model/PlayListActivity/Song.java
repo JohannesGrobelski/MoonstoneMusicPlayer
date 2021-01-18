@@ -1,8 +1,14 @@
 package com.example.moonstonemusicplayer.model.PlayListActivity;
 
-import com.example.moonstonemusicplayer.model.Playable;
+import android.net.Uri;
+import android.util.Log;
 
-public class Song extends Playable {
+import java.io.File;
+
+public class Song {
+  String name;
+  String uri;
+  String path;
   String artist = "unknown Artist";
   String album = "";
   String genre = "";
@@ -10,21 +16,17 @@ public class Song extends Playable {
   String lyrics = "";
 
 
-  /** "normal" constructor*/
-  public Song(String name, String artist, String URI, int duration_ms) {
-    super(name,URI);
-    this.artist = artist;
-    this.duration_ms = duration_ms;
-  }
 
-
-  public Song(String URI, String name, String artist, String album, String genre, int duration_ms, String lyrics) {
-    super(name, URI);
+  public Song(String path, String name, String artist, String album, String genre, int duration_ms, String lyrics) {
+    this.path = path;
+    this.name = name;
     this.artist = artist;
     this.album = album;
     this.genre = genre;
     this.duration_ms = duration_ms;
     this.lyrics = lyrics;
+    this.uri = "file://"+path;//Uri.fromFile(new File(path)).toString();
+
   }
 
   public String getArtist() {
@@ -43,7 +45,7 @@ public class Song extends Playable {
     this.genre = genre;
   }
 
-  public long getDuration_ms() {
+  public int getDuration_ms() {
     return duration_ms;
   }
 
@@ -89,6 +91,22 @@ public class Song extends Playable {
 
   public void setAlbum(String album) {
     this.album = album;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public String getUri() {
+    return uri;
+  }
+
+  public String getPath() {
+    return path;
   }
 
   @Override
