@@ -19,17 +19,14 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.MainActivity.AlbumsFragment.AlbumFragmentListener;
+import com.example.moonstonemusicplayer.controller.MainActivity.ArtistFragment.ArtistFragmentListener;
 import com.example.moonstonemusicplayer.controller.MainActivity.FavoritesFragment.FavoriteFragmentListener;
 import com.example.moonstonemusicplayer.controller.MainActivity.FolderFragment.FolderFragmentListener;
 import com.example.moonstonemusicplayer.controller.MainActivity.PlaylistFragment.PlaylistFragmentListener;
-import com.example.moonstonemusicplayer.controller.PlayListActivity.Notification.Constants;
 import com.example.moonstonemusicplayer.controller.PlayListActivity.PlayListActivityListener;
-import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.Playlist;
-import com.example.moonstonemusicplayer.view.mainactivity_fragments.AlbumFragment;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.FolderFragment;
 
 import static com.example.moonstonemusicplayer.controller.MainActivity.FavoritesFragment.FavoriteFragmentListener.FAVORITELISTEXTRA;
@@ -77,6 +74,7 @@ public class PlayListActivity extends AppCompatActivity {
     if(getIntent().hasExtra(FOLDERSONGINDEXEXTRA)) {
 
     } else {
+      //fetch songlist from fragment that called playlist activity
       if(getIntent().hasExtra(FolderFragment.FOLDERSONGINDEXEXTRA)){
         song_index = getIntent().getIntExtra(FolderFragment.FOLDERSONGINDEXEXTRA,0);
         playListActivityListener = new PlayListActivityListener(this, FolderFragmentListener.getFolderSonglist(),song_index);
@@ -92,6 +90,10 @@ public class PlayListActivity extends AppCompatActivity {
       if(getIntent().hasExtra(AlbumFragmentListener.ALBUMLISTEXTRA)){
         song_index = getIntent().getIntExtra(AlbumFragmentListener.ALBUMLISTEXTRA,0);
         playListActivityListener = new PlayListActivityListener(this, AlbumFragmentListener.getAlbumSonglist(),song_index);
+      }
+      if(getIntent().hasExtra(ArtistFragmentListener.ARTISTALBUMLISTEXTRA)){
+        song_index = getIntent().getIntExtra(ArtistFragmentListener.ARTISTALBUMLISTEXTRA,0);
+        playListActivityListener = new PlayListActivityListener(this, ArtistFragmentListener.getAlbumSonglist(),song_index);
       }
     }
 

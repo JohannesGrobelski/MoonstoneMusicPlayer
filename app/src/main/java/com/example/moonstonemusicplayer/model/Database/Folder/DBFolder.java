@@ -95,8 +95,25 @@ public class DBFolder {
     }
 
     public List<Artist> getArtistList(){
-        return null;
+        List<Artist> resultArtistList = new ArrayList<>();
+        for(String artistName: getAllArtistNames()){
+            resultArtistList.add(new Artist(artistName,getAlbumsFromArtist(artistName)));
+        }
+        return resultArtistList;
     }
+
+    private List<Album> getAlbumsFromArtist(String artistName) {
+        List<Album> allAlbumsFromArtist = new ArrayList<>();
+        for(String albumName: getAllAlbumNamesFromArtist(artistName)){
+            allAlbumsFromArtist.add(new Album(albumName,artistName,getAllSongsFromAlbum(albumName)));
+        }
+        if(!getAllSongsFromAlbum("null").isEmpty()){
+            allAlbumsFromArtist.add(new Album("unknown album",artistName,getAllSongsFromAlbum("null")));
+        }
+
+        return allAlbumsFromArtist;
+    }
+
 
     /**
      * @return
@@ -259,6 +276,43 @@ public class DBFolder {
         close_db();
         return allAlbumNames;
     }
+
+    private List<String> getAllAlbumNamesFromArtist(String artist) {
+        List<String> allAlbumNames = new ArrayList<>();
+        String query = "SELECT DISTINCT "+DBHelperFolder.COLUMN_ALBUM+" FROM "+DBHelperFolder.TABLE_FOLDER_SONGLIST+
+            " WHERE "+DBHelperFolder.COLUMN_ARTIST+" = \'"+escapeString(artist)+"\'";
+
+        Cursor cursor = database_folder_song_list.rawQuery(query, null);
+        if(cursor.getCount() > 0){
+            cursor.moveToFirst();
+            do {
+                allAlbumNames.add(cursor.getString(0));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        close_db();
+        return allAlbumNames;
+    }
+
+
+    private List<String> getAllArtistNames() {
+        List<String> allArtistNames = new ArrayList<>();
+        open_readable();
+        String query = "SELECT DISTINCT "+DBHelperFolder.COLUMN_ARTIST+" FROM "+DBHelperFolder.TABLE_FOLDER_SONGLIST+
+            " WHERE "+DBHelperFolder.COLUMN_ARTIST+" IS NOT NULL";
+
+        Cursor cursor = database_folder_song_list.rawQuery(query, null);
+        if(cursor.getCount() > 0){
+            cursor.moveToFirst();
+            do {
+                allArtistNames.add(cursor.getString(0));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        close_db();
+        return allArtistNames;
+    }
+
 
     private List<Song> getAllSongsFromAlbum(String albumName){
         List<Song> allSongs = new ArrayList<>();

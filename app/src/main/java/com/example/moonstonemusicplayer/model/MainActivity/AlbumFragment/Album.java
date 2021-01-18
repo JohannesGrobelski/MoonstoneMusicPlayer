@@ -5,9 +5,9 @@ import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import java.util.List;
 
 public class Album {
-  String name;
-  String artistName;
-  List<Song> songList;
+  private String name;
+  private String artistName;
+  private List<Song> songList;
 
   public Album(String name, String artistName, List<Song> songList) {
     this.name = name;
@@ -40,10 +40,14 @@ public class Album {
   }
 
   public String getDurationString() {
+    return Song.getDurationString(getDuration());
+  }
+
+  public int getDuration() {
     int duration = 0;
     for(Song song: songList){
       duration += song.getDuration_ms();
     }
-    return Song.getDurationString(duration);
+    return duration;
   }
 }
