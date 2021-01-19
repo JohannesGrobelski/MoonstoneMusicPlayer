@@ -22,4 +22,6 @@
     <string name="no_songs_found">Keine Songs gefunden!</string>
     <string name="tab_albums">Alben</string>
     <string name="tab_artists">Künstler</string>
+    <string name="can_not_play_media_file">Kann die Datei nicht abspielen.</string>
+    <string name="file_does_not_exist">Die angegebene Datei existiert nicht.</string>
 </resources>

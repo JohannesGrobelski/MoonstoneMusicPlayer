@@ -13,11 +13,13 @@ import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.util.Log;
+import android.webkit.URLUtil;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
@@ -30,6 +32,7 @@ import com.example.moonstonemusicplayer.model.PlayListActivity.PlayListModel;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import com.example.moonstonemusicplayer.view.PlayListActivity;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -85,19 +88,29 @@ public class MediaPlayerService extends Service
     //stelle wiedergabe lautstärke auf musik ein
     mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
     try {
-      //weise Mediendatei der Datenquelle zu
-      mediaPlayer.setDataSource(playListModel.getCurrentSong().getUri());
+      if(new File(playListModel.getCurrentSong().getPath()).exists()){
+        //weise Mediendatei der Datenquelle zu
+        String uri = Uri.fromFile(new File(playListModel.getCurrentSong().getPath())).toString();
+        mediaPlayer.setDataSource(uri);
+
+        //bereitet MediaPlayer für Wiedergabe vor
+        mediaPlayer.prepareAsync();
+        resumePosition = 0;
+
+        if(((LocalBinder) iBinder) != null){
+          ((LocalBinder) iBinder).boundServiceListener.selectedSong(playListModel.getCurrentSong().getPath());
+        }
+
+      } else {
+        Toast.makeText(this, getResources().getString(R.string.file_does_not_exist),Toast.LENGTH_LONG).show();
+      }
+
+
     } catch (IOException e) {
       e.printStackTrace();
       stopSelf();
     }
-    //bereitet MediaPlayer für Wiedergabe vor
-    mediaPlayer.prepareAsync();
-    resumePosition = 0;
 
-    if(((LocalBinder) iBinder) != null){
-      ((LocalBinder) iBinder).boundServiceListener.selectedSong(playListModel.getCurrentSong().getUri());
-    }
   }
 
   //public interface
@@ -469,7 +482,8 @@ public class MediaPlayerService extends Service
 
     try {
       MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-      mmr.setDataSource(playListModel.getCurrentSong().getUri());
+      String uri = Uri.fromFile(new File(playListModel.getCurrentSong().getPath())).toString();
+      mmr.setDataSource(uri);
       String meta_albumName = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
       if(meta_albumName != null && !meta_albumName.isEmpty() && !meta_albumName.equals("null")){
         albumName = meta_albumName;
@@ -479,7 +493,8 @@ public class MediaPlayerService extends Service
     }
     try {
       MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-      mmr.setDataSource(playListModel.getCurrentSong().getUri());
+      String uri = Uri.fromFile(new File(playListModel.getCurrentSong().getPath())).toString();
+      mmr.setDataSource(uri);
       byte[] albumArtBytes = mmr.getEmbeddedPicture();
       songImage = BitmapFactory.decodeByteArray(albumArtBytes, 0, albumArtBytes.length);
     } catch (Exception e) {

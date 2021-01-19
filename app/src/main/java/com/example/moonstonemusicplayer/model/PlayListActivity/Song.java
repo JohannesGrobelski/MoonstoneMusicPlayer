@@ -7,7 +7,6 @@ import java.io.File;
 
 public class Song {
   String name;
-  String uri;
   String path;
   String artist = "unknown Artist";
   String album = "";
@@ -25,8 +24,6 @@ public class Song {
     this.genre = genre;
     this.duration_ms = duration_ms;
     this.lyrics = lyrics;
-    this.uri = "file://"+path;//Uri.fromFile(new File(path)).toString();
-
   }
 
   public String getArtist() {
@@ -101,9 +98,6 @@ public class Song {
     this.name = name;
   }
 
-  public String getUri() {
-    return uri;
-  }
 
   public String getPath() {
     return path;

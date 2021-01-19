@@ -27,6 +27,7 @@ public class DBFolder {
     private static final boolean DEBUG = true;
     private static DBFolder instance;
 
+
     //Variablendeklaration
     private DBHelperFolder DBHelperFolder;
     private static SQLiteDatabase database_folder_song_list;
@@ -66,6 +67,7 @@ public class DBFolder {
         if(DEBUG)Log.d(TAG, "DB mit hilfe des DBHelperLocalSongss schließen");
         DBHelperFolder.close();
     }
+
 
 
     public Folder getRootFolder(){

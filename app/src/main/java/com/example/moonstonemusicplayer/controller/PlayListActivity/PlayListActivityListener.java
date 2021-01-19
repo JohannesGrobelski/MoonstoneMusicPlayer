@@ -385,9 +385,9 @@ public class PlayListActivityListener
           @Override public void onError(int cause) { mediaPlayerServiceError(cause);}
 
           @Override
-          public void selectedSong(String selectedSongUri) {
-            if(DEBUG)Log.d(TAG,"song playing: "+selectedSongUri);
-            songListAdapter.setSelectedSongUri(selectedSongUri);
+          public void selectedSong(String selectedSongPath) {
+            if(DEBUG)Log.d(TAG,"song playing: "+selectedSongPath);
+            songListAdapter.setSelectedSongPath(selectedSongPath);
             playListActivity.lv_songlist.invalidateViews();
           }
 
