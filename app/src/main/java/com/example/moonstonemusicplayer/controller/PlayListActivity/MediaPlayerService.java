@@ -399,16 +399,6 @@ public class MediaPlayerService extends Service
   }
 
   public void showNotification(){
-    // Logic to turn on the screen
-    PowerManager powerManager = (PowerManager) this.getSystemService(POWER_SERVICE);
-    if (!powerManager.isInteractive()){ // if screen is not already on, turn it on (get wake_lock for 10 seconds)
-      PowerManager.WakeLock wl = powerManager.newWakeLock(PowerManager.FULL_WAKE_LOCK |PowerManager.ACQUIRE_CAUSES_WAKEUP |PowerManager.ON_AFTER_RELEASE,"MoonstoneMediaPlayer:MediaPlayerService");
-      wl.acquire(10000);
-      PowerManager.WakeLock wl_cpu = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"MoonstoneMediaPlayer:MediaPlayerService");
-      wl_cpu.acquire(10000);
-    }
-
-
     // Using RemoteViews to bind custom layouts into Notification
     RemoteViews views = new RemoteViews(getPackageName(),R.layout.status_bar);
     RemoteViews bigViews = new RemoteViews(getPackageName(),R.layout.status_bar_expanded);
