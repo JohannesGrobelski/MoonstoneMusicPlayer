@@ -125,7 +125,7 @@ public class DBFolder {
         open_readable();
         String query = "SELECT * FROM "+DBHelperFolder.TABLE_FOLDER_SONGLIST
             +" WHERE "+DBHelperFolder.COLUMN_ALBUM+" IS NOT NULL"
-            +" ORDER BY "+DBHelperFolder.COLUMN_ALBUM;
+            +" ORDER BY "+DBHelperFolder.COLUMN_ALBUM+" DESC";
 
         Cursor cursor = database_folder_song_list.rawQuery(query, null);
 

@@ -236,7 +236,6 @@ public class MediaPlayerService extends Service
   public void onCompletion(MediaPlayer mp) {
     if(mediaPlayer != null){
       autoPlay();
-
       if(((LocalBinder) iBinder) != null){
         if(DEBUG)Log.d(TAG,"onCompletion: "+(iBinder != null));
         ((LocalBinder) iBinder).boundServiceListener.finishedSong(playListModel.repeatmode);
