@@ -22,13 +22,13 @@ import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import java.util.List;
 
 /** describes how Albums and the songs in it are displayed in listview*/
-public class AlbumListAdapter extends ArrayAdapter<Object> {
+public class GenreListAdapter extends ArrayAdapter<Object> {
 
   private List<Object> albumSongList;
   private Context context;
   private LayoutInflater layoutInflater;
 
-  public AlbumListAdapter(@NonNull Context context, List<Object> albumSongList) {
+  public GenreListAdapter(@NonNull Context context, List<Object> albumSongList) {
     super(context, R.layout.item_row_layout, albumSongList);
     this.albumSongList = albumSongList;
     this.context = context;
