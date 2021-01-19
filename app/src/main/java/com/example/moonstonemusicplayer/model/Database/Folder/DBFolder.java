@@ -21,8 +21,6 @@ import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylis
 
 public class DBFolder {
     //favorites is just another playlist
-    private static final String FAVORITES_PLAYLIST_NAME = "FAVORITES_MOONSTONEMUSICPLAYER_32325393434133218384916498164861498515687949184994971679";
-
     private static final String TAG = DBFolder.class.getSimpleName();
     private static final boolean DEBUG = true;
     private static DBFolder instance;

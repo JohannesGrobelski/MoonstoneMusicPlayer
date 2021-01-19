@@ -19,7 +19,7 @@ import java.util.Set;
 
 public class DBPlaylists {
     //favorites is just another playlist
-    private static final String FAVORITES_PLAYLIST_NAME = "FAVORITES_MOONSTONEMUSICPLAYER_32325393434133218384916498164861498515687949184994971679";
+    private static final String FAVORITES_PLAYLIST_NAME = "MOONSTONE FAVORITES";
 
     private static final String TAG = DBPlaylists.class.getSimpleName();
     private static final boolean DEBUG = true;
@@ -74,7 +74,6 @@ public class DBPlaylists {
         }
         cursor.close();
         close_db();
-        allPlaylistNames.remove(FAVORITES_PLAYLIST_NAME);
         return allPlaylistNames.toArray(new String[allPlaylistNames.size()]);
     }
 
@@ -85,8 +84,6 @@ public class DBPlaylists {
             +" WHERE "+DBHelperPlaylists.COLUMN_PLAYLIST_NAME+" = \'"+FAVORITES_PLAYLIST_NAME+"\'";
         return getSongListFromQuery(context, query);
     }
-
-
 
     public void deleteFromPlaylist(Song song, String playlistname){
         //öffnen der DB

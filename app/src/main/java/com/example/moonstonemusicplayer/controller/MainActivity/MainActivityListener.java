@@ -16,7 +16,7 @@ import androidx.fragment.app.Fragment;
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.view.MainActivity;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.AlbumFragment;
-import com.example.moonstonemusicplayer.view.mainactivity_fragments.FavoritesFragment;
+import com.example.moonstonemusicplayer.view.mainactivity_fragments.ArtistFragment;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.FolderFragment;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.PlayListFragment;
 
@@ -81,8 +81,9 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
         switch(currentItem){
           case 0: {((FolderFragment) fragments[0]).sortSongsByName(); break;}
           case 1: {((PlayListFragment) fragments[1]).sortSongsByName();break;}
-          case 2: {((FavoritesFragment) fragments[2]).sortSongsByName();break;}
-          case 3: {((AlbumFragment) fragments[3]).sortSongsByName();break;}
+          //case 2: {((FavoritesFragment) fragments[2]).sortSongsByName();break;}
+          case 2: {((AlbumFragment) fragments[2]).sortSongsByName();break;}
+          case 3: {((ArtistFragment) fragments[3]).sortSongsByName();break;}
         }
         break;
       } case R.id.miSortArtistMain: {
@@ -90,8 +91,9 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
         switch(currentItem){
           case 0: {((FolderFragment) fragments[0]).sortSongsByArtist(); break;}
           case 1: {((PlayListFragment) fragments[1]).sortSongsByArtist();break;}
-          case 2: {((FavoritesFragment) fragments[2]).sortSongsByArtist();break;}
-          case 3: {((AlbumFragment) fragments[3]).sortSongsByArtist();break;}
+          //case 2: {((FavoritesFragment) fragments[2]).sortSongsByArtist();break;}
+          case 2: {((AlbumFragment) fragments[2]).sortSongsByArtist();break;}
+          case 3: {((ArtistFragment) fragments[3]).sortSongsByArtist();break;}
         }
         break;
       } case R.id.miSortDurationMain: {
@@ -99,8 +101,9 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
         switch(currentItem){
           case 0: {((FolderFragment) fragments[0]).sortSongsByDuration(); break;}
           case 1: {((PlayListFragment) fragments[1]).sortSongsByDuration(); break;}
-          case 2: {((FavoritesFragment) fragments[2]).sortSongsByDuration();break;}
-          case 3: {((AlbumFragment) fragments[3]).sortSongsByDuration();break;}
+          //case 2: {((FavoritesFragment) fragments[2]).sortSongsByDuration();break;}
+          case 2: {((AlbumFragment) fragments[2]).sortSongsByDuration();break;}
+          case 3: {((ArtistFragment) fragments[3]).sortSongsByDuration();break;}
         }
         break;
       } case R.id.miSortGenreMain: {
@@ -108,8 +111,9 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
         switch(currentItem){
           case 0: {((FolderFragment) fragments[0]).sortSongsByGenre(); break;}
           case 1: {((PlayListFragment) fragments[1]).sortSongsByGenre(); break;}
-          case 2: {((FavoritesFragment) fragments[2]).sortSongsByGenre();break;}
-          case 3: {((AlbumFragment) fragments[3]).sortSongsByGenre();break;}
+          //case 2: {((FavoritesFragment) fragments[2]).sortSongsByGenre();break;}
+          case 2: {((AlbumFragment) fragments[2]).sortSongsByGenre();break;}
+          case 3: {((ArtistFragment) fragments[3]).sortSongsByGenre();break;}
         }
         break;
       }case R.id.miReverseMain: {
@@ -117,8 +121,9 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
         switch(currentItem){
           case 0: {((FolderFragment) fragments[0]).reverse(); break;}
           case 1: {((PlayListFragment) fragments[1]).reverse(); break;}
-          case 2: {((FavoritesFragment) fragments[2]).reverse();break;}
-          case 3: {((AlbumFragment) fragments[3]).reverse();break;}
+          //case 2: {((FavoritesFragment) fragments[2]).reverse();break;}
+          case 2: {((AlbumFragment) fragments[2]).reverse();break;}
+          case 3: {((ArtistFragment) fragments[3]).reverse();break;}
         }
         break;
       }
@@ -167,14 +172,19 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
         ((PlayListFragment) fragments[1]).searchMusic(query);
         break;
       }
-      case 2: {
+     /* case 2: {
         Log.v(TAG, "search the current fragment FavoritesFragment");
         ((FavoritesFragment) fragments[2]).searchMusic(query);
+        break;
+      }*/
+      case 2: {
+        Log.v(TAG, "search the current fragment FavoritesFragment");
+        ((AlbumFragment) fragments[3]).searchMusic(query);
         break;
       }
       case 3: {
         Log.v(TAG, "search the current fragment FavoritesFragment");
-        ((AlbumFragment) fragments[3]).searchMusic(query);
+        ((ArtistFragment) fragments[3]).searchMusic(query);
         break;
       }
     }
