@@ -26,9 +26,11 @@
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/mainactivity_tabs"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="?attr/colorPrimary" />
+            android:layout_gravity="center_horizontal"
+            android:background="?attr/colorPrimary"
+            app:tabMode="scrollable"/>
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.viewpager.widget.ViewPager

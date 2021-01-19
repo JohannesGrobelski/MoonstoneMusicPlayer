@@ -24,10 +24,12 @@ import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.MainActivity.AlbumsFragment.AlbumFragmentListener;
 import com.example.moonstonemusicplayer.controller.MainActivity.ArtistFragment.ArtistFragmentListener;
 import com.example.moonstonemusicplayer.controller.MainActivity.FolderFragment.FolderFragmentListener;
+import com.example.moonstonemusicplayer.controller.MainActivity.GenreFragment.GenreFragmentListener;
 import com.example.moonstonemusicplayer.controller.MainActivity.PlaylistFragment.PlaylistFragmentListener;
 import com.example.moonstonemusicplayer.controller.PlayListActivity.PlayListActivityListener;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.FolderFragment;
 
+import static com.example.moonstonemusicplayer.controller.MainActivity.GenreFragment.GenreFragmentListener.GENRELISTEXTRA;
 import static com.example.moonstonemusicplayer.controller.PlayListActivity.MediaPlayerService.FOLDERSONGINDEXEXTRA;
 
 /** MainActivity
@@ -77,10 +79,10 @@ public class PlayListActivity extends AppCompatActivity {
         song_index = getIntent().getIntExtra(FolderFragment.FOLDERSONGINDEXEXTRA,0);
         playListActivityListener = new PlayListActivityListener(this, FolderFragmentListener.getFolderSonglist(),song_index);
       }
-      /*else if(getIntent().hasExtra(FAVORITELISTEXTRA)){
-        song_index = getIntent().getIntExtra(FAVORITELISTEXTRA,0);
-        playListActivityListener = new PlayListActivityListener(this, FavoriteFragmentListener.getFavoriteSonglist(),song_index);
-      }*/
+      else if(getIntent().hasExtra(GENRELISTEXTRA)){
+        song_index = getIntent().getIntExtra(GENRELISTEXTRA,0);
+        playListActivityListener = new PlayListActivityListener(this, GenreFragmentListener.getGenreSonglist(),song_index);
+      }
       else if(getIntent().hasExtra(PlaylistFragmentListener.PLAYLISTINDEXEXTRA)){
         song_index = getIntent().getIntExtra(PlaylistFragmentListener.PLAYLISTINDEXEXTRA,0);
         playListActivityListener = new PlayListActivityListener(this, PlaylistFragmentListener.getPlaylistSonglist(),song_index);

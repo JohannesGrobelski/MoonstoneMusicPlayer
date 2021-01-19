@@ -10,11 +10,13 @@ import android.util.Log;
 import com.example.moonstonemusicplayer.model.MainActivity.AlbumFragment.Album;
 import com.example.moonstonemusicplayer.model.MainActivity.ArtistFragment.Artist;
 import com.example.moonstonemusicplayer.model.MainActivity.FolderFragment.Folder;
+import com.example.moonstonemusicplayer.model.MainActivity.GenreFragment.Genre;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.escapeString;
@@ -95,6 +97,8 @@ public class DBFolder {
         return rootFolder;
     }
 
+
+
     public List<Artist> getArtistList(){
         List<Artist> resultArtistList = new ArrayList<>();
         List<Album> albumList = getAlbumList();
@@ -166,6 +170,55 @@ public class DBFolder {
         cursor.close();
         close_db();
         return resultAlbumList;
+    }
+
+    public List<Genre> getGenreList() {
+        List<Genre> resultGenreList = new ArrayList<>();
+
+        open_readable();
+        String query = "SELECT * FROM "+DBHelperFolder.TABLE_FOLDER_SONGLIST
+            +" WHERE "+DBHelperFolder.COLUMN_GENRE+" IS NOT NULL"
+            +" ORDER BY "+DBHelperFolder.COLUMN_GENRE+" DESC";
+
+        Cursor cursor = database_folder_song_list.rawQuery(query, null);
+
+        Genre currentGenre = null;
+        String genreName = "";
+
+        if(cursor.getCount() > 0){//table exists
+            //init rootFolder
+            cursor.moveToFirst();
+
+            do {
+                //read line
+                String songName = cursor.getString(2);
+                String path = cursor.getString(3);
+                String artist = cursor.getString(4);
+                String album = cursor.getString(5);
+                String genre = cursor.getString(6);
+                int duration = cursor.getInt(7);
+                String lyrics = cursor.getString(8);
+
+                //new album
+                if(!genre.equals(genreName)){
+                    genreName = genre;
+                    if(currentGenre != null){
+                        resultGenreList.add(currentGenre);
+                    }
+                    currentGenre = new Genre(genreName,new ArrayList<Song>());
+                }
+
+                //add song to current album
+                currentGenre.getSongList().add(new Song(path, songName, artist,album, genre,duration , lyrics));
+
+            } while(cursor.moveToNext());
+        }
+        //add the last album
+        if(!resultGenreList.contains(currentGenre))resultGenreList.add(currentGenre);
+
+        cursor.close();
+        close_db();
+        return resultGenreList;
     }
 
     private Folder insertChildrenToRootFolder(Folder parent, Cursor cursor) {
@@ -421,6 +474,7 @@ public class DBFolder {
         }
         return instance;
     }
+
 
 
 }

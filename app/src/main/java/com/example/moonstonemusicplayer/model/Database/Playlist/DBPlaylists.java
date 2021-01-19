@@ -7,12 +7,14 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.example.moonstonemusicplayer.model.Database.Folder.DBFolder;
+import com.example.moonstonemusicplayer.model.MainActivity.GenreFragment.Genre;
 import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.Playlist;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -58,6 +60,7 @@ public class DBPlaylists {
         Log.d(TAG, "DB mit hilfe des DBHelperLocalSongss schließen");
         DBHelperPlaylists.close();
     }
+
 
     public String[] getAllPlaylistNames() {
         Set<String> allPlaylistNames = new HashSet<>();
@@ -236,4 +239,6 @@ public class DBPlaylists {
         query = query.replace("'","''");
         return query;
     }
+
+
 }
