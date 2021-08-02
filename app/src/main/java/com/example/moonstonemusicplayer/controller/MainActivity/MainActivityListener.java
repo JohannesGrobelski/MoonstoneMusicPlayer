@@ -185,7 +185,7 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
       }*/
       case 2: {
         Log.v(TAG, "search the current fragment FavoritesFragment");
-        ((AlbumFragment) fragments[3]).searchMusic(query);
+        ((AlbumFragment) fragments[2]).searchMusic(query);
         break;
       }
       case 3: {

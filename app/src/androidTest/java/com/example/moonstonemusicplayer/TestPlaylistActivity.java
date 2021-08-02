@@ -5,13 +5,13 @@ import android.view.KeyEvent;
 import android.view.View;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.SearchView;
 import androidx.test.espresso.UiController;
 import androidx.test.espresso.ViewAction;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.example.moonstonemusicplayer.view.MainActivity;
+import com.example.moonstonemusicplayer.view.PlayListActivity;
 import com.google.android.material.tabs.TabLayout;
 
 import org.hamcrest.Matcher;
@@ -39,11 +39,11 @@ import static org.hamcrest.Matchers.allOf;
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
 @RunWith(AndroidJUnit4.class)
-public class TestMainActivity {
+public class TestPlaylistActivity {
 
   @Rule
-  public ActivityScenarioRule<MainActivity> activityRule
-          = new ActivityScenarioRule<>(MainActivity.class);
+  public ActivityScenarioRule<PlayListActivity> activityRule
+          = new ActivityScenarioRule<>(PlayListActivity.class);
 
 
   @Test
@@ -67,41 +67,5 @@ public class TestMainActivity {
   }
 
 
-  /**
-   * Perform the 3 following actions in the search view: clear text, then type string and lastly presses enter
-   * source: https://stackoverflow.com/questions/56134911/how-to-press-on-searchview-the-action-button-in-espresso
-   * @param text the string to be typed into the search view
-   */
-  public void typeSearchViewText(final String text){
-    onView(withId(Resources.getSystem().getIdentifier("search_src_text",
-            "id", "android")))
-            .perform(clearText(),typeText(text))
-            .perform(pressKey(KeyEvent.KEYCODE_ENTER));
-  }
 
-  /**
-   * creates a view action to select tab in tablayout
-   * source: https://stackoverflow.com/questions/49626315/how-to-select-a-specific-tab-position-in-tab-layout-using-espresso-testing
-   * @param tabIndex the index of the tab to select
-   * @return
-   */
-  @NonNull
-  private static ViewAction selectTabAtPosition(final int tabIndex) {
-    return new ViewAction() {
-      @Override
-      public Matcher<View> getConstraints() {
-        return allOf(isDisplayed(), isAssignableFrom(TabLayout.class));
-      }
-      @Override
-      public String getDescription() {
-        return "with tab at index "+ tabIndex;
-      }
-      @Override
-      public void perform(UiController uiController, View view) {
-        TabLayout tabLayout = (TabLayout)view;
-        TabLayout.Tab tabAtIndex = tabLayout.getTabAt(tabIndex);
-        if(tabAtIndex != null)tabAtIndex.select();
-      }
-    };
-  }
 }
