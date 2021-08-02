@@ -1,2 +1,3 @@
 # MoonstoneMusicPlayer
-A music player with that plays locale audiofiles and streams music.
+A music player with to display and play locale audiofiles and streams music.
+Features a notification widget to controll music playback.
