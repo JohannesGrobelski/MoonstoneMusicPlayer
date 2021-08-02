@@ -96,8 +96,6 @@ public class PlayListActivity extends AppCompatActivity {
         playListActivityListener = new PlayListActivityListener(this, ArtistFragmentListener.getAlbumSonglist(),song_index);
       }
     }
-
-
     lv_songlist.setOnItemClickListener(playListActivityListener);
     btn_shuffle.setOnClickListener(playListActivityListener);
     btn_prev.setOnClickListener(playListActivityListener);
@@ -111,6 +109,10 @@ public class PlayListActivity extends AppCompatActivity {
     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
+  }
+
+  public void setPlayListActivityListener(PlayListActivityListener playlistActivityListener){
+    this.playListActivityListener = playlistActivityListener;
   }
 
   @Override

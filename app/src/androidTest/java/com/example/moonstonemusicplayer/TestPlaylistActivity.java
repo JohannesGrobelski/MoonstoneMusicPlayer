@@ -1,15 +1,21 @@
 package com.example.moonstonemusicplayer;
 
+import android.app.Activity;
 import android.content.res.Resources;
+import android.media.audiofx.DynamicsProcessing;
 import android.view.KeyEvent;
 import android.view.View;
 
 import androidx.annotation.NonNull;
+import androidx.test.espresso.NoMatchingViewException;
 import androidx.test.espresso.UiController;
 import androidx.test.espresso.ViewAction;
+import androidx.test.espresso.ViewAssertion;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
+import com.example.moonstonemusicplayer.controller.MainActivity.ArtistFragment.ArtistFragmentListener;
+import com.example.moonstonemusicplayer.controller.PlayListActivity.PlayListActivityListener;
 import com.example.moonstonemusicplayer.view.MainActivity;
 import com.example.moonstonemusicplayer.view.PlayListActivity;
 import com.google.android.material.tabs.TabLayout;
@@ -27,6 +33,7 @@ import static androidx.test.espresso.action.ViewActions.pressKey;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
@@ -48,24 +55,21 @@ public class TestPlaylistActivity {
 
   @Test
   /** click all surface main elements (tabs) */
-  public void updateAndSelectAllTabs() {
-    //update library
-    //Open the overflow menu, open the options menu,
-    openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
-    // Click the item and click OK (button1) in displayed alert dialog
-    onView(withText(R.string.update_library)).perform(click());
-    onView(withId(android.R.id.button1)).perform(click());
-
-    //select all tabs
-    for(int tabId=0; tabId<5; tabId++){
-      onView(withId(R.id.mainactivity_tabs)).perform(selectTabAtPosition(tabId));
-      //search something
-      onView(withId(R.id.miSearch)).perform(click());
-      typeSearchViewText("a random text 3239592395395");
-      //click through hierarchy
-    }
+  public void playSong() {
+    PlayListActivity playListActivity = (PlayListActivity) getCurrentActivity();
+    //init playlistListener with songlist
+    playListActivity.setPlayListActivityListener(new PlayListActivityListener(playListActivity, ,0));
   }
 
-
+  private Activity getCurrentActivity() {
+    final Activity[] activity = new Activity[1];
+    onView(isRoot()).check(new ViewAssertion() {
+      @Override
+      public void check(View view, NoMatchingViewException noViewFoundException) {
+        activity[0] = (Activity) view.getContext();
+      }
+    });
+    return activity[0];
+  }
 
 }
