@@ -10,10 +10,10 @@ import java.util.List;
 public class RadioManager {
 
   private static final String TAG = RadioManager.class.getSimpleName();
-  private Context context;
+  private final Context context;
   //private DataSource dataSource;
 
-  private List<Radio> radiolists = new ArrayList<>();
+  private final List<Radio> radiolists = new ArrayList<>();
 
   public RadioManager(Context baseContext) {
     this.context = baseContext;

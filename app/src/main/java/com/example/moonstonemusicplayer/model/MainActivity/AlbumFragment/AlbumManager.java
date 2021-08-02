@@ -19,7 +19,7 @@ public class AlbumManager {
   private Context context;
   private Album currentAlbum;
   private List<Album> albumList = new ArrayList<>();
-  private List<Album> albumList_backup = new ArrayList<>();
+  private final List<Album> albumList_backup = new ArrayList<>();
 
   public AlbumManager(Context baseContext) {
     loadAlbumsFromDB(baseContext);

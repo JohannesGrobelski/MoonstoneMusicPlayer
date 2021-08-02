@@ -17,7 +17,7 @@ import com.example.moonstonemusicplayer.R;
 import java.util.List;
 
 public class RadioListAdapter extends ArrayAdapter<Radio> {
-  private List<Radio> radiolist;
+  private final List<Radio> radiolist;
 
   Context context;
   LayoutInflater layoutInflater;
@@ -32,7 +32,7 @@ public class RadioListAdapter extends ArrayAdapter<Radio> {
   @NonNull
   @Override
   public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-    Radio aktuellerRadio = radiolist.get(position);
+    Radio currentRadio = radiolist.get(position);
 
     View rowView;
     if(convertView != null){
@@ -46,8 +46,8 @@ public class RadioListAdapter extends ArrayAdapter<Radio> {
     TextView tv_uri = rowView.findViewById(R.id.tv_uri_radio);
 
     //set the views of songRowView
-    tv_title.setText(aktuellerRadio.getName());
-    tv_uri.setText(aktuellerRadio.getURI());
+    tv_title.setText(currentRadio.getName());
+    tv_uri.setText(currentRadio.getURI());
     return rowView;
   }
 

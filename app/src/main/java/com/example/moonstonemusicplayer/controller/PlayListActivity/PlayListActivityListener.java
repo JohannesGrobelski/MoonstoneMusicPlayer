@@ -424,7 +424,7 @@ public class PlayListActivityListener
             playListActivity.btn_play_pause.setBackground(playListActivity.getDrawable(R.drawable.ic_play_button));
           }
         });
-        Log.d(TAG,"onServiceConnected: binder: "+String.valueOf(binder==null));
+        Log.d(TAG,"onServiceConnected: binder: "+ (binder == null));
         isServiceBound = true;
         //transfer data
         if(DEBUG)Log.d(TAG,"startMediaPlayerService transfer Playlist: "+ playlistManager.getPlayList().size());

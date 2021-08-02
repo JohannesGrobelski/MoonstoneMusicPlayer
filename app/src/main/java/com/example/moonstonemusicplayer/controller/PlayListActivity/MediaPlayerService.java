@@ -60,8 +60,8 @@ public class MediaPlayerService extends Service
   private static final String TAG = MediaPlayerService.class.getSimpleName();
   private static final boolean DEBUG = true;
 
-  private final IBinder iBinder = new LocalBinder();;
-  private MediaPlayer mediaPlayer;
+  private final IBinder iBinder = new LocalBinder();
+    private MediaPlayer mediaPlayer;
   private boolean isMediaPlayerPrepared = false;
   private PlayListModel playListModel = null;
 
@@ -171,7 +171,7 @@ public class MediaPlayerService extends Service
   //Listener interface
   @Override
   public int onStartCommand(Intent intent, int flags, int startId) {
-    Log.d(TAG,"onStartCommand: binder: "+String.valueOf(iBinder==null));
+    Log.d(TAG,"onStartCommand: binder: "+ (iBinder == null));
     if(intent.hasExtra(STARTING_INDEX)){
       startIndex = intent.getIntExtra(STARTING_INDEX,0);
       if(DEBUG)Log.d(TAG,"starting song: "+startIndex);
@@ -234,7 +234,7 @@ public class MediaPlayerService extends Service
   @Nullable
   @Override
   public IBinder onBind(Intent intent) {
-    Log.d(TAG,"onBind: binder: "+String.valueOf(iBinder==null));
+    Log.d(TAG,"onBind: binder: "+ (iBinder == null));
     return iBinder;
   }
 

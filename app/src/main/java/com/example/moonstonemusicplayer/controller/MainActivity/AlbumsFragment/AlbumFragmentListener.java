@@ -20,7 +20,7 @@ public class AlbumFragmentListener implements AdapterView.OnItemClickListener, V
   private static final boolean DEBUG = false;
   public static final String ALBUMLISTEXTRA = "albumlistextra";
 
-  private AlbumFragment albumFragment;
+  private final AlbumFragment albumFragment;
   private GenreListAdapter genreListAdapter;
 
   private static List<Song> AlbumSongList;

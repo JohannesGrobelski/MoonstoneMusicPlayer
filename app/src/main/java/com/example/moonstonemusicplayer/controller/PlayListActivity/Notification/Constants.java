@@ -8,17 +8,17 @@ import com.example.moonstonemusicplayer.R;
 
 public class Constants {
   public interface ACTION {
-    public static String MAIN_ACTION = "com.example.moonstonemusicplayer.action.main";
-    public static String INIT_ACTION = "com.example.moonstonemusicplayer.action.init";
-    public static String PREV_ACTION = "com.example.moonstonemusicplayer.action.prev";
-    public static String PLAY_ACTION = "com.example.moonstonemusicplayer.action.play";
-    public static String NEXT_ACTION = "com.example.moonstonemusicplayer.action.next";
-    public static String STARTFOREGROUND_ACTION = "com.example.moonstonemusicplayer.action.startforeground";
-    public static String STOPFOREGROUND_ACTION = "com.example.moonstonemusicplayer.action.stopforeground";
+    String MAIN_ACTION = "com.example.moonstonemusicplayer.action.main";
+    String INIT_ACTION = "com.example.moonstonemusicplayer.action.init";
+    String PREV_ACTION = "com.example.moonstonemusicplayer.action.prev";
+    String PLAY_ACTION = "com.example.moonstonemusicplayer.action.play";
+    String NEXT_ACTION = "com.example.moonstonemusicplayer.action.next";
+    String STARTFOREGROUND_ACTION = "com.example.moonstonemusicplayer.action.startforeground";
+    String STOPFOREGROUND_ACTION = "com.example.moonstonemusicplayer.action.stopforeground";
   }
 
   public interface NOTIFICATION_ID {
-    public static int FOREGROUND_SERVICE = 101;
+    int FOREGROUND_SERVICE = 101;
   }
   public static Bitmap getDefaultAlbumArt(Context context) {
     Bitmap bm = null;

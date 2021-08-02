@@ -16,12 +16,12 @@ import java.util.List;
 public class PlaylistListManager {
 
   private static final String TAG = PlaylistListManager.class.getSimpleName();
-  private Context context;
+  private final Context context;
   //private DataSource dataSource;
 
   private Playlist currentPlaylist;
   private List<Playlist> playlists = new ArrayList<>();
-  private List<Playlist> playlists_backup = new ArrayList<>();
+  private final List<Playlist> playlists_backup = new ArrayList<>();
 
   public PlaylistListManager(Context baseContext) {
     this.context = baseContext;

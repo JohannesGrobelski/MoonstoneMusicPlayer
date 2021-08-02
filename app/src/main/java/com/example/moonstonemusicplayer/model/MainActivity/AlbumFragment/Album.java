@@ -1,13 +1,18 @@
 package com.example.moonstonemusicplayer.model.MainActivity.AlbumFragment;
 
+import com.example.moonstonemusicplayer.model.MainActivity.GenreFragment.Genre;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Album {
   private String name;
   private String artistName;
   private List<Song> songList;
+
+  public static Album emptyAlbum = new Album("","",new ArrayList<Song>());
+
 
   public Album(String name, String artistName, List<Song> songList) {
     this.name = name;

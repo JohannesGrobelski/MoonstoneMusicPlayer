@@ -23,15 +23,15 @@ import java.util.List;
 
 public class FolderListAdapter extends ArrayAdapter<Object> {
 
-  private List<Object> folderSongList;
-  private Context context;
-  private LayoutInflater layoutInflater;
+  private final List<Object> folderSongList;
+  private final Context context;
+  private final LayoutInflater layoutInflater;
 
   public FolderListAdapter(@NonNull Context context, List<Object> folderSongList) {
     super(context, R.layout.item_row_layout,folderSongList);
     this.folderSongList = folderSongList;
     this.context = context;
-    this.layoutInflater = layoutInflater.from(context);
+    this.layoutInflater = LayoutInflater.from(context);
   }
 
   @NonNull
@@ -44,11 +44,11 @@ public class FolderListAdapter extends ArrayAdapter<Object> {
       rowView = layoutInflater.inflate(R.layout.item_row_layout, parent, false);
     }
 
-    Song aktuellerSong = null; Folder aktuellerFolder = null;
+    Song currentSong = null; Folder currentFolder = null;
     if(folderSongList.get(position) instanceof Song){
-      aktuellerSong = ((Song) folderSongList.get(position));
+      currentSong = ((Song) folderSongList.get(position));
     } else if(folderSongList.get(position) instanceof Folder){
-      aktuellerFolder = ((Folder) folderSongList.get(position));
+      currentFolder = ((Folder) folderSongList.get(position));
     } else {return rowView;}
 
 
@@ -60,15 +60,15 @@ public class FolderListAdapter extends ArrayAdapter<Object> {
     iv_folderSongItem.setColorFilter(ContextCompat.getColor(context, R.color.colorPrimary), android.graphics.PorterDuff.Mode.SRC_IN);
     ImageViewCompat.setImageTintList(iv_folderSongItem, ColorStateList.valueOf(ContextCompat.getColor(context, R.color.colorPrimary)));
 
-    if(aktuellerFolder != null){
+    if(currentFolder != null){
       iv_folderSongItem.setBackground(context.getDrawable(R.drawable.ic_folder));
-      tv_folderSongItem.setText(aktuellerFolder.getName());
+      tv_folderSongItem.setText(currentFolder.getName());
     } else {
       iv_folderSongItem.setBackground(context.getDrawable(R.drawable.ic_music));
-      tv_folderSongItem.setText(aktuellerSong.getName());
+      tv_folderSongItem.setText(currentSong.getName());
     }
 
-    if(aktuellerSong != null){
+    if(currentSong != null){
       LinearLayout ll_artist_genre = rowView.findViewById(R.id.ll_artist_genre);
       TextView tv_artist_song = rowView.findViewById(R.id.tv_item_artist);
       TextView tv_duration_song = rowView.findViewById(R.id.item_tv_duration);
@@ -79,10 +79,10 @@ public class FolderListAdapter extends ArrayAdapter<Object> {
       tv_duration_song.setVisibility(View.VISIBLE);
       tv_duration_genre.setVisibility(View.VISIBLE);
 
-      tv_artist_song.setText(aktuellerSong.getArtist());
-      if(aktuellerSong.getArtist().isEmpty())tv_artist_song.setText("unknown artist");
-      tv_duration_genre.setText(aktuellerSong.getGenre());
-      tv_duration_song.setText(aktuellerSong.getDurationString());
+      tv_artist_song.setText(currentSong.getArtist());
+      if(currentSong.getArtist().isEmpty())tv_artist_song.setText("unknown artist");
+      tv_duration_genre.setText(currentSong.getGenre());
+      tv_duration_song.setText(currentSong.getDurationString());
     }
 
     return rowView;

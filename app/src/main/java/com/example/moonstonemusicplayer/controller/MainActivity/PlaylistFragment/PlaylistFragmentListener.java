@@ -24,7 +24,7 @@ public class PlaylistFragmentListener implements AdapterView.OnItemClickListener
   private static final boolean DEBUG = true;
   public static final String PLAYLISTINDEXEXTRA = "playlistextra";
 
-  private PlayListFragment playListFragment;
+  private final PlayListFragment playListFragment;
   public PlaylistListAdapter playlistListAdapter;
 
   private static Playlist Playlist;
@@ -41,8 +41,8 @@ public class PlaylistFragmentListener implements AdapterView.OnItemClickListener
     Object clickItem = playlistListAdapter.getItem(position);
     if(clickItem != null) {
       if(clickItem instanceof Playlist) {
-        List<Object> itemList = new ArrayList<>();;
-        itemList.addAll(((Playlist) clickItem).getPlaylist());
+        List<Object> itemList = new ArrayList<>();
+          itemList.addAll(((Playlist) clickItem).getPlaylist());
         setAdapter(itemList);
         playListFragment.playlistListManager.setCurrentPlaylist((Playlist) clickItem);
       } else if(clickItem instanceof Song) {
@@ -59,8 +59,8 @@ public class PlaylistFragmentListener implements AdapterView.OnItemClickListener
   @Override
   public void onClick(View v) {
     if(v.getId() == R.id.ll_back_playlist){
-      List<Object> itemList = new ArrayList<>();;
-      itemList.addAll(playListFragment.playlistListManager.getPlaylists());
+      List<Object> itemList = new ArrayList<>();
+        itemList.addAll(playListFragment.playlistListManager.getPlaylists());
       setAdapter(itemList);
       playListFragment.playlistListManager.setCurrentPlaylist(null);
     }
@@ -163,8 +163,8 @@ public class PlaylistFragmentListener implements AdapterView.OnItemClickListener
 
   public boolean onBackpressed() {
     if(playListFragment.playlistListManager.getCurrentPlaylist() != null){
-      List<Object> itemList = new ArrayList<>();;
-      itemList.addAll(playListFragment.playlistListManager.getPlaylists());
+      List<Object> itemList = new ArrayList<>();
+        itemList.addAll(playListFragment.playlistListManager.getPlaylists());
       setAdapter(itemList);
       playListFragment.playlistListManager.setCurrentPlaylist(null);
       return true;

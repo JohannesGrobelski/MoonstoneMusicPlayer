@@ -17,12 +17,12 @@ import java.util.List;
 public class GenreManager {
 
   private static final String TAG = GenreManager.class.getSimpleName();
-  private Context context;
+  private final Context context;
   //private DataSource dataSource;
 
   private Genre currentGenre;
   private List<Genre> genreList = new ArrayList<>();
-  private List<Genre> genreList_backup = new ArrayList<>();
+  private final List<Genre> genreList_backup = new ArrayList<>();
 
   public GenreManager(Context baseContext) {
     this.context = baseContext;

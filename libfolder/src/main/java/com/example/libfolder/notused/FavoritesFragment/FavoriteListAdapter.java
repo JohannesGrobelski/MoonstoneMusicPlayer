@@ -36,7 +36,7 @@ package com.example.libfolder.notused.FavoritesFragment;
 //  @NonNull
 //  @Override
 //  public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-//    Song aktuellerSong = songList.get(position);
+//    Song currentSong = songList.get(position);
 //
 //    View rowView;
 //    if(convertView != null){
@@ -54,9 +54,9 @@ package com.example.libfolder.notused.FavoritesFragment;
 //    ImageViewCompat.setImageTintList(iv_playlistSongItem, ColorStateList.valueOf(ContextCompat.getColor(context, R.color.colorPrimary)));
 //
 //    iv_playlistSongItem.setBackground(context.getDrawable(R.drawable.ic_music));
-//    tv_playlistSongItem.setText(aktuellerSong.getName());
+//    tv_playlistSongItem.setText(currentSong.getName());
 //
-//    if(aktuellerSong != null){
+//    if(currentSong != null){
 //      LinearLayout ll_artist_genre = rowView.findViewById(R.id.ll_artist_genre);
 //      TextView tv_artist_song = rowView.findViewById(R.id.tv_item_artist);
 //      TextView tv_duration_song = rowView.findViewById(R.id.item_tv_duration);
@@ -67,10 +67,10 @@ package com.example.libfolder.notused.FavoritesFragment;
 //      tv_duration_song.setVisibility(View.VISIBLE);
 //      tv_duration_genre.setVisibility(View.VISIBLE);
 //
-//      tv_artist_song.setText(aktuellerSong.getArtist());
-//      if(aktuellerSong.getArtist().isEmpty())tv_artist_song.setText("unknown artist");
-//      tv_duration_genre.setText(aktuellerSong.getGenre());
-//      tv_duration_song.setText(aktuellerSong.getDurationString());
+//      tv_artist_song.setText(currentSong.getArtist());
+//      if(currentSong.getArtist().isEmpty())tv_artist_song.setText("unknown artist");
+//      tv_duration_genre.setText(currentSong.getGenre());
+//      tv_duration_song.setText(currentSong.getDurationString());
 //    }
 //
 //    return rowView;

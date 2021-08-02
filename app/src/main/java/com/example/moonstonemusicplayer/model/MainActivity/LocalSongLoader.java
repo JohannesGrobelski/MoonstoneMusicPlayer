@@ -104,7 +104,7 @@ public class LocalSongLoader {
         return null;
       }
     } catch (Exception e){
-      if(DEBUG)Log.e(TAG, "findAllAudioFilesAsFolderInDir error: "+String.valueOf(e.getCause()));
+      if(DEBUG)Log.e(TAG, "findAllAudioFilesAsFolderInDir error: "+ e.getCause());
     }
     return null;
   }

@@ -32,6 +32,7 @@ public class GenreFragment extends Fragment {
   // TODO: Rename parameter arguments, choose names that match
   // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
   private static final String TAG = GenreFragment.class.getSimpleName();
+  private static final boolean DEBUG = false;
 
   public GenreManager genreManager;
   public GenreFragmentListener genreFragmentListener;
@@ -66,7 +67,6 @@ public class GenreFragment extends Fragment {
                            Bundle savedInstanceState) {
 
     View rootView = inflater.inflate(R.layout.fragment_albums, container, false);
-
     lv_albums = rootView.findViewById(R.id.lv_albums);
     ll_album_back = rootView.findViewById(R.id.ll_back_album);
 
@@ -86,19 +86,16 @@ public class GenreFragment extends Fragment {
 
   @Override
   public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v, @Nullable ContextMenu.ContextMenuInfo menuInfo) {
-    genreFragmentListener.onCreateContextMenu(menu, v, menuInfo);
-  }
 
+  }
 
   public void searchMusic(String query) {
     if(!query.isEmpty()){
-      Log.d("search music",query);
       Genre[] matchingGenres = genreManager.getAllGenresMatchingQuery(query);
 
       genreManager.setGenreList(new ArrayList<>(Arrays.asList(matchingGenres)));
       genreFragmentListener.setAdapterGenreList(genreManager.getGenreList());
     } else {
-      Log.d("search music","empty");
       genreFragmentListener.setAdapterGenreList((genreManager.getAllGenres()));
     }
   }

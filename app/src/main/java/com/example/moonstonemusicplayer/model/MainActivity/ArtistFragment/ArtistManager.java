@@ -22,7 +22,7 @@ public class ArtistManager {
   private Album currentAlbum = null;
   private List<Album> albumList = new ArrayList<>();
   private List<Artist> artistList = new ArrayList<>();
-  private List<Artist> artistList_backup = new ArrayList<>();
+  private final List<Artist> artistList_backup = new ArrayList<>();
 
   public ArtistManager(Context baseContext) {
     loadArtistsFromDB(baseContext);

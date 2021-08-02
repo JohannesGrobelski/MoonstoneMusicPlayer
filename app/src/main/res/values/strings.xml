@@ -24,5 +24,7 @@
     <string name="tab_artists">Künstler</string>
     <string name="can_not_play_media_file">Kann die Datei nicht abspielen.</string>
     <string name="file_does_not_exist">Die angegebene Datei existiert nicht.</string>
+    <string name="update_library">Lokale Audio Datein laden</string>
+    <string name="reload_local_audio_files">Reloads local audio files.</string>
     <string name="tab_genre">Genres</string>
 </resources>

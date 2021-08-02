@@ -24,15 +24,15 @@ import java.util.List;
 /** describes how playlists and the songs in it are displayed in listview*/
 public class PlaylistListAdapter extends ArrayAdapter<Object> {
 
-  private List<Object> playlistSongList;
-  private Context context;
-  private LayoutInflater layoutInflater;
+  private final List<Object> playlistSongList;
+  private final Context context;
+  private final LayoutInflater layoutInflater;
 
   public PlaylistListAdapter(@NonNull Context context, List<Object> playlistSongList) {
     super(context, R.layout.item_row_layout,playlistSongList);
     this.playlistSongList = playlistSongList;
     this.context = context;
-    this.layoutInflater = layoutInflater.from(context);
+    this.layoutInflater = LayoutInflater.from(context);
   }
 
   @NonNull
@@ -45,9 +45,9 @@ public class PlaylistListAdapter extends ArrayAdapter<Object> {
       rowView = layoutInflater.inflate(R.layout.item_row_layout, parent, false);
     }
 
-    Song aktuellerSong = null; Playlist aktuellePlaylist = null;
+    Song currentSong = null; Playlist aktuellePlaylist = null;
     if(playlistSongList.get(position) instanceof Song){
-      aktuellerSong = ((Song) playlistSongList.get(position));
+      currentSong = ((Song) playlistSongList.get(position));
     } else if(playlistSongList.get(position) instanceof Playlist){
       aktuellePlaylist = ((Playlist) playlistSongList.get(position));
     } else {return rowView;}
@@ -64,10 +64,10 @@ public class PlaylistListAdapter extends ArrayAdapter<Object> {
       tv_playlistSongItem.setText(aktuellePlaylist.getName());
     } else {
       iv_playlistSongItem.setBackground(context.getDrawable(R.drawable.ic_music));
-      tv_playlistSongItem.setText(aktuellerSong.getName());
+      tv_playlistSongItem.setText(currentSong.getName());
     }
 
-    if(aktuellerSong != null){
+    if(currentSong != null){
       LinearLayout ll_artist_genre = rowView.findViewById(R.id.ll_artist_genre);
       TextView tv_artist_song = rowView.findViewById(R.id.tv_item_artist);
       TextView tv_duration_song = rowView.findViewById(R.id.item_tv_duration);
@@ -78,10 +78,10 @@ public class PlaylistListAdapter extends ArrayAdapter<Object> {
       tv_duration_song.setVisibility(View.VISIBLE);
       tv_duration_genre.setVisibility(View.VISIBLE);
 
-      tv_artist_song.setText(aktuellerSong.getArtist());
-      if(aktuellerSong.getArtist().isEmpty())tv_artist_song.setText("unknown artist");
-      tv_duration_genre.setText(aktuellerSong.getGenre());
-      tv_duration_song.setText(aktuellerSong.getDurationString());
+      tv_artist_song.setText(currentSong.getArtist());
+      if(currentSong.getArtist().isEmpty())tv_artist_song.setText("unknown artist");
+      tv_duration_genre.setText(currentSong.getGenre());
+      tv_duration_song.setText(currentSong.getDurationString());
     }
 
     return rowView;

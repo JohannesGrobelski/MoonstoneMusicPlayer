@@ -8,7 +8,7 @@ import com.example.moonstonemusicplayer.view.mainactivity_fragments.FolderFragme
 /** loads local music and messages per folderfragment listener*/
 public class RefreshTask extends AsyncTask<FolderManager,Void,Void> {
   private FolderManager folderManager;
-  private FolderFragment.RefreshTaskListener refreshTaskListener;
+  private final FolderFragment.RefreshTaskListener refreshTaskListener;
 
   public RefreshTask(FolderFragment.RefreshTaskListener refreshTaskListener){
     this.refreshTaskListener = refreshTaskListener;

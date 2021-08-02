@@ -28,14 +28,14 @@ public class DBPlaylists {
     private static DBPlaylists instance;
 
     //Variablendeklaration
-    private DBHelperPlaylists DBHelperPlaylists;
+    private final DBHelperPlaylists DBHelperPlaylists;
     private static SQLiteDatabase database_playlists;
 
 
-    private String[] COLUMNS = {
-            DBHelperPlaylists.COLUMN_ID,
-            DBHelperPlaylists.COLUMN_PLAYLIST_NAME,
-            DBHelperPlaylists.COLUMN_SONG_PATH
+    private final String[] COLUMNS = {
+            com.example.moonstonemusicplayer.model.Database.Playlist.DBHelperPlaylists.COLUMN_ID,
+            com.example.moonstonemusicplayer.model.Database.Playlist.DBHelperPlaylists.COLUMN_PLAYLIST_NAME,
+            com.example.moonstonemusicplayer.model.Database.Playlist.DBHelperPlaylists.COLUMN_SONG_PATH
     };
 
 
@@ -64,7 +64,7 @@ public class DBPlaylists {
 
     public String[] getAllPlaylistNames() {
         Set<String> allPlaylistNames = new HashSet<>();
-        String query = "SELECT "+DBHelperPlaylists.COLUMN_PLAYLIST_NAME+" FROM " + DBHelperPlaylists.TABLE_PLAYLISTS;
+        String query = "SELECT "+ com.example.moonstonemusicplayer.model.Database.Playlist.DBHelperPlaylists.COLUMN_PLAYLIST_NAME +" FROM " + com.example.moonstonemusicplayer.model.Database.Playlist.DBHelperPlaylists.TABLE_PLAYLISTS;
 
         open_readable();
         //Zeiger auf die Einträge der Tabelle
@@ -83,8 +83,8 @@ public class DBPlaylists {
 
     public List<Song> getAllFavorites(Context context){
         if(DEBUG)Log.d(TAG,"load Favorites");
-        String query = "SELECT * FROM "+DBHelperPlaylists.TABLE_PLAYLISTS
-            +" WHERE "+DBHelperPlaylists.COLUMN_PLAYLIST_NAME+" = \'"+FAVORITES_PLAYLIST_NAME+"\'";
+        String query = "SELECT * FROM "+ com.example.moonstonemusicplayer.model.Database.Playlist.DBHelperPlaylists.TABLE_PLAYLISTS
+            +" WHERE "+ com.example.moonstonemusicplayer.model.Database.Playlist.DBHelperPlaylists.COLUMN_PLAYLIST_NAME + " = '" +FAVORITES_PLAYLIST_NAME+ "'";
         return getSongListFromQuery(context, query);
     }
 
@@ -93,9 +93,9 @@ public class DBPlaylists {
         open_writable();
 
         //Song-Objekt aus Playlist DB löschen
-        database_playlists.delete(DBHelperPlaylists.TABLE_PLAYLISTS,
-            DBHelperPlaylists.COLUMN_PLAYLIST_NAME+" = \'"+playlistname+"\' AND "+
-                       DBHelperPlaylists.COLUMN_SONG_PATH+" = \'"+song.getPath()+"\'",null);
+        database_playlists.delete(com.example.moonstonemusicplayer.model.Database.Playlist.DBHelperPlaylists.TABLE_PLAYLISTS,
+            com.example.moonstonemusicplayer.model.Database.Playlist.DBHelperPlaylists.COLUMN_PLAYLIST_NAME + " = '" +playlistname+ "' AND " +
+                    com.example.moonstonemusicplayer.model.Database.Playlist.DBHelperPlaylists.COLUMN_SONG_PATH + " = '" +song.getPath()+ "'",null);
 
         //datenbank schließen und rückgabe des Songobjekts
         close_db();
@@ -105,32 +105,32 @@ public class DBPlaylists {
         if(DEBUG)Log.d(TAG,"add "+inputSong.getName()+" to playlist "+playlistname);
 
         //check if song is already in playlist
-        String query = "SELECT * FROM "+DBHelperPlaylists.TABLE_PLAYLISTS+" WHERE "+
-            DBHelperPlaylists.COLUMN_PLAYLIST_NAME+" LIKE \'"+ escapeString(playlistname)+"\' AND "+
-            DBHelperPlaylists.COLUMN_SONG_PATH+" LIKE \'"+ escapeString(inputSong.getPath())+"\'";
+        String query = "SELECT * FROM "+ com.example.moonstonemusicplayer.model.Database.Playlist.DBHelperPlaylists.TABLE_PLAYLISTS +" WHERE "+
+                com.example.moonstonemusicplayer.model.Database.Playlist.DBHelperPlaylists.COLUMN_PLAYLIST_NAME + " LIKE '" + escapeString(playlistname)+ "' AND " +
+                com.example.moonstonemusicplayer.model.Database.Playlist.DBHelperPlaylists.COLUMN_SONG_PATH + " LIKE '" + escapeString(inputSong.getPath())+ "'";
 
         if(noResultsFromQuery(query)){
             //Anlegen von Wertepaaren zur Übergabe in Insert-Methode
             ContentValues values = new ContentValues();
-            values.put(DBHelperPlaylists.COLUMN_PLAYLIST_NAME, playlistname);
-            values.put(DBHelperPlaylists.COLUMN_SONG_PATH, inputSong.getPath());
+            values.put(com.example.moonstonemusicplayer.model.Database.Playlist.DBHelperPlaylists.COLUMN_PLAYLIST_NAME, playlistname);
+            values.put(com.example.moonstonemusicplayer.model.Database.Playlist.DBHelperPlaylists.COLUMN_SONG_PATH, inputSong.getPath());
 
             //öffnen der DB
             open_writable();
 
             //Song-Objekt in DB einfügen und ID zurückbekommen
-            long insertID = database_playlists.insert(DBHelperPlaylists.TABLE_PLAYLISTS, null, values);
+            long insertID = database_playlists.insert(com.example.moonstonemusicplayer.model.Database.Playlist.DBHelperPlaylists.TABLE_PLAYLISTS, null, values);
             Log.d(TAG,"add to playlist: "+inputSong.getName()+" "+insertID);
             //Zeiger auf gerade eingefügtes Element
-            Cursor cursor = database_playlists.query(DBHelperPlaylists.TABLE_PLAYLISTS,
+            Cursor cursor = database_playlists.query(com.example.moonstonemusicplayer.model.Database.Playlist.DBHelperPlaylists.TABLE_PLAYLISTS,
                 COLUMNS,
-                DBHelperPlaylists.COLUMN_ID + " = " + insertID,
+                com.example.moonstonemusicplayer.model.Database.Playlist.DBHelperPlaylists.COLUMN_ID + " = " + insertID,
                 null, null, null, null);
 
             //Zeiger auf Anfang bringen
             cursor.moveToFirst();
 
-            //aktuelles Element auslesen
+            //current Element auslesen
             Song current = cursorToSong(context,cursor);
 
             //zeiger zerstören
@@ -153,15 +153,15 @@ public class DBPlaylists {
 
     public void deletePlaylist(Playlist playlist){
         open_writable();
-        database_playlists.delete(DBHelperPlaylists.TABLE_PLAYLISTS,
-                DBHelperPlaylists.COLUMN_PLAYLIST_NAME+ " = \'"+playlist.getName()+"\'"
+        database_playlists.delete(com.example.moonstonemusicplayer.model.Database.Playlist.DBHelperPlaylists.TABLE_PLAYLISTS,
+                com.example.moonstonemusicplayer.model.Database.Playlist.DBHelperPlaylists.COLUMN_PLAYLIST_NAME + " = '" +playlist.getName()+ "'"
                 ,null);
         close_db();
     }
 
     private List<Song> searchPlaylist(String searchterm){
-        String query = "SELECT * FROM "+ DBHelperPlaylists.TABLE_PLAYLISTS+" WHERE ("+
-            DBHelperPlaylists.COLUMN_PLAYLIST_NAME+" LIKE \'"+"%"+ escapeString(searchterm)+"%)";
+        String query = "SELECT * FROM "+ com.example.moonstonemusicplayer.model.Database.Playlist.DBHelperPlaylists.TABLE_PLAYLISTS +" WHERE ("+
+                com.example.moonstonemusicplayer.model.Database.Playlist.DBHelperPlaylists.COLUMN_PLAYLIST_NAME + " LIKE '" +"%"+ escapeString(searchterm)+"%)";
         return null;
     }
 
@@ -210,8 +210,8 @@ public class DBPlaylists {
         String[] allPlaylistNames = getAllPlaylistNames();
         Log.d(TAG, Arrays.toString(allPlaylistNames));
         for(String playlistName: allPlaylistNames){
-            String query = "SELECT * FROM "+DBHelperPlaylists.TABLE_PLAYLISTS+" WHERE "+
-                DBHelperPlaylists.COLUMN_PLAYLIST_NAME+" LIKE \'"+ escapeString(playlistName)+"\'";
+            String query = "SELECT * FROM "+ com.example.moonstonemusicplayer.model.Database.Playlist.DBHelperPlaylists.TABLE_PLAYLISTS +" WHERE "+
+                    com.example.moonstonemusicplayer.model.Database.Playlist.DBHelperPlaylists.COLUMN_PLAYLIST_NAME + " LIKE '" + escapeString(playlistName)+ "'";
             List<Song> playlistSongs = getSongListFromQuery(context,query);
             allPlaylists.add(new Playlist(playlistName,playlistSongs));
         }
@@ -221,7 +221,7 @@ public class DBPlaylists {
 
     private Song cursorToSong(Context context, Cursor cursor) {
         //get Indexes
-        int idPath = cursor.getColumnIndex(DBHelperPlaylists.COLUMN_SONG_PATH);
+        int idPath = cursor.getColumnIndex(com.example.moonstonemusicplayer.model.Database.Playlist.DBHelperPlaylists.COLUMN_SONG_PATH);
 
         //create Song from values
         return DBFolder.getInstance(context).getSongFromPath(cursor.getString(idPath));

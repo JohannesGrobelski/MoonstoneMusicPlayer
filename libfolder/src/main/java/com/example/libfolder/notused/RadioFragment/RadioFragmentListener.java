@@ -21,7 +21,7 @@ public class RadioFragmentListener implements AdapterView.OnItemClickListener {
   private static final boolean DEBUG = false;
   public static final String RADIOLISTINDEXEXTRA = "radiolistextra";
 
-  private RadioFragment radioFragment;
+  private final RadioFragment radioFragment;
   private RadioListAdapter radioListAdapter;
 
   private static List<Radio> Radiolist;

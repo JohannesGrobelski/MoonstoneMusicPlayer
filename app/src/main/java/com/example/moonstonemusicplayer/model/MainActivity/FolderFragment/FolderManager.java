@@ -17,7 +17,7 @@ import java.util.List;
 public class FolderManager {
 
   private static final String TAG = FolderManager.class.getSimpleName();
-  private Context context;
+  private final Context context;
   //private DataSource dataSource;
 
   private Folder rootFolder;

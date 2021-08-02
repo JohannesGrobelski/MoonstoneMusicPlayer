@@ -25,15 +25,15 @@ import java.util.List;
 /** describes how Albums and the songs in it are displayed in listview*/
 public class ArtistListAdapter extends ArrayAdapter<Object> {
 
-  private List<Object> artistAlbumSongList;
-  private Context context;
-  private LayoutInflater layoutInflater;
+  private final List<Object> artistAlbumSongList;
+  private final Context context;
+  private final LayoutInflater layoutInflater;
 
   public ArtistListAdapter(@NonNull Context context, List<Object> albumSongList) {
     super(context, R.layout.item_row_layout, albumSongList);
     this.artistAlbumSongList = albumSongList;
     this.context = context;
-    this.layoutInflater = layoutInflater.from(context);
+    this.layoutInflater = LayoutInflater.from(context);
   }
 
   @NonNull
@@ -46,13 +46,13 @@ public class ArtistListAdapter extends ArrayAdapter<Object> {
       rowView = layoutInflater.inflate(R.layout.item_row_layout, parent, false);
     }
 
-    Song aktuellerSong = null; Album aktuellesAlbum = null; Artist aktuellerArtist = null;
+    Song currentSong = null; Album currentAlbum = null; Artist currentArtist = null;
     if(artistAlbumSongList.get(position) instanceof Song){
-      aktuellerSong = ((Song) artistAlbumSongList.get(position));
+      currentSong = ((Song) artistAlbumSongList.get(position));
     } else if(artistAlbumSongList.get(position) instanceof Album){
-      aktuellesAlbum = ((Album) artistAlbumSongList.get(position));
+      currentAlbum = ((Album) artistAlbumSongList.get(position));
     } else if(artistAlbumSongList.get(position) instanceof Artist){
-      aktuellerArtist = ((Artist) artistAlbumSongList.get(position));
+      currentArtist = ((Artist) artistAlbumSongList.get(position));
     } else {return rowView;}
 
     //init the views of songRowView
@@ -62,18 +62,18 @@ public class ArtistListAdapter extends ArrayAdapter<Object> {
     iv_AlbumSongItem.setColorFilter(ContextCompat.getColor(context, R.color.colorPrimary), android.graphics.PorterDuff.Mode.SRC_IN);
     ImageViewCompat.setImageTintList(iv_AlbumSongItem, ColorStateList.valueOf(ContextCompat.getColor(context, R.color.colorPrimary)));
 
-    if(aktuellerArtist != null) {
+    if(currentArtist != null) {
       iv_AlbumSongItem.setBackground(context.getDrawable(R.drawable.ic_artist));
-      tv_AlbumSongItem.setText(aktuellerArtist.getName());
-    } else if(aktuellesAlbum != null){
+      tv_AlbumSongItem.setText(currentArtist.getName());
+    } else if(currentAlbum != null){
       iv_AlbumSongItem.setBackground(context.getDrawable(R.drawable.ic_music_album));
-      tv_AlbumSongItem.setText(aktuellesAlbum.getName());
+      tv_AlbumSongItem.setText(currentAlbum.getName());
     } else {
       iv_AlbumSongItem.setBackground(context.getDrawable(R.drawable.ic_music));
-      tv_AlbumSongItem.setText(aktuellerSong.getName());
+      tv_AlbumSongItem.setText(currentSong.getName());
     }
 
-    if(aktuellerArtist != null) {
+    if(currentArtist != null) {
       LinearLayout ll_artist_genre = rowView.findViewById(R.id.ll_artist_genre);
       TextView tv_artist_song = rowView.findViewById(R.id.tv_item_artist);
       TextView tv_duration_song = rowView.findViewById(R.id.item_tv_duration);
@@ -82,10 +82,10 @@ public class ArtistListAdapter extends ArrayAdapter<Object> {
       tv_artist_song.setVisibility(View.VISIBLE);
       tv_duration_song.setVisibility(View.VISIBLE);
 
-      tv_artist_song.setText(aktuellerArtist.getName());
-      if(aktuellerArtist.getName().isEmpty())tv_artist_song.setText("unknown artist");
-      tv_duration_song.setText(aktuellerArtist.getDurationString());
-    } else if(aktuellesAlbum != null) {
+      tv_artist_song.setText(currentArtist.getName());
+      if(currentArtist.getName().isEmpty())tv_artist_song.setText("unknown artist");
+      tv_duration_song.setText(currentArtist.getDurationString());
+    } else if(currentAlbum != null) {
       LinearLayout ll_artist_genre = rowView.findViewById(R.id.ll_artist_genre);
       TextView tv_artist_song = rowView.findViewById(R.id.tv_item_artist);
       TextView tv_duration_song = rowView.findViewById(R.id.item_tv_duration);
@@ -96,10 +96,10 @@ public class ArtistListAdapter extends ArrayAdapter<Object> {
       tv_duration_song.setVisibility(View.VISIBLE);
 
 
-      tv_artist_song.setText(aktuellesAlbum.getArtistName());
-      if(aktuellesAlbum.getArtistName().isEmpty())tv_artist_song.setText("unknown artist");
-      tv_duration_song.setText(aktuellesAlbum.getDurationString());
-    } else if(aktuellerSong != null){
+      tv_artist_song.setText(currentAlbum.getArtistName());
+      if(currentAlbum.getArtistName().isEmpty())tv_artist_song.setText("unknown artist");
+      tv_duration_song.setText(currentAlbum.getDurationString());
+    } else if(currentSong != null){
       LinearLayout ll_artist_genre = rowView.findViewById(R.id.ll_artist_genre);
       TextView tv_item_artist = rowView.findViewById(R.id.tv_item_artist);
       TextView tv_item_duration = rowView.findViewById(R.id.item_tv_duration);
@@ -110,10 +110,10 @@ public class ArtistListAdapter extends ArrayAdapter<Object> {
       tv_item_duration.setVisibility(View.VISIBLE);
       tv_item_genre.setVisibility(View.VISIBLE);
 
-      tv_item_artist.setText(aktuellerSong.getArtist());
-      if(aktuellerSong.getArtist().isEmpty())tv_item_artist.setText("unknown artist");
-      tv_item_duration.setText(aktuellerSong.getDurationString());
-      tv_item_genre.setText(aktuellerSong.getGenre());
+      tv_item_artist.setText(currentSong.getArtist());
+      if(currentSong.getArtist().isEmpty())tv_item_artist.setText("unknown artist");
+      tv_item_duration.setText(currentSong.getDurationString());
+      tv_item_genre.setText(currentSong.getGenre());
     }
 
     return rowView;

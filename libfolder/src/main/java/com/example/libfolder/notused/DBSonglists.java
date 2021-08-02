@@ -177,7 +177,7 @@ package com.example.libfolder.notused;
 //        //Zeiger auf Anfang bringen
 //        cursor.moveToFirst();
 //
-//        //aktuelles Element auslesen
+//        //current Element auslesen
 //        Song current = cursorToSong(cursor);
 //
 //        //zeiger zerstören

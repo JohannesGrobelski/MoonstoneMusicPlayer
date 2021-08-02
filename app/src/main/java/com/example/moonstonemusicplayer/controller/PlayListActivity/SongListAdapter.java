@@ -18,23 +18,23 @@ import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import java.util.List;
 
 public class SongListAdapter extends ArrayAdapter<Song> {
-  private List<Song> songList;
+  private final List<Song> songList;
   private String selectedSongPath = "";
 
-  private Context context;
-  private LayoutInflater layoutInflater;
+  private final Context context;
+  private final LayoutInflater layoutInflater;
 
   public SongListAdapter(@NonNull Context context, List<Song> songList) {
     super(context, R.layout.song_row_layout,songList);
     this.songList = songList;
     this.context = context;
-    this.layoutInflater = layoutInflater.from(context);
+    this.layoutInflater = LayoutInflater.from(context);
   }
 
   @NonNull
   @Override
   public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-    Song aktuellerSong = songList.get(position);
+    Song currentSong = songList.get(position);
 
     View rowView;
     if(convertView != null){
@@ -51,16 +51,16 @@ public class SongListAdapter extends ArrayAdapter<Song> {
     TextView tv_genre = rowView.findViewById(R.id.tv_genre_song);
 
     //set the views of songRowView
-    tv_title.setText(aktuellerSong.getName());
-    if(!aktuellerSong.getArtist().isEmpty())tv_artist.setText(aktuellerSong.getArtist());
+    tv_title.setText(currentSong.getName());
+    if(!currentSong.getArtist().isEmpty())tv_artist.setText(currentSong.getArtist());
     else tv_artist.setText("unknown artist");
-    tv_genre.setText(aktuellerSong.getGenre());
+    tv_genre.setText(currentSong.getGenre());
 
 
-    if(aktuellerSong.getPath().equals(selectedSongPath))ll_song_background.setBackgroundColor(Color.LTGRAY);
+    if(currentSong.getPath().equals(selectedSongPath))ll_song_background.setBackgroundColor(Color.LTGRAY);
     else ll_song_background.setBackgroundColor(Color.WHITE);
 
-    tv_duration.setText(Song.getDurationString((int) aktuellerSong.getDuration_ms()));
+    tv_duration.setText(Song.getDurationString((int) currentSong.getDuration_ms()));
     return rowView;
   }
 

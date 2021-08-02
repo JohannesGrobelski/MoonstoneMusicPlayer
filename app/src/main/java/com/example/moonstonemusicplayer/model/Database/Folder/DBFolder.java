@@ -29,20 +29,20 @@ public class DBFolder {
 
 
     //Variablendeklaration
-    private DBHelperFolder DBHelperFolder;
+    private final DBHelperFolder DBHelperFolder;
     private static SQLiteDatabase database_folder_song_list;
 
 
-    private String[] COLUMNS = {
-            DBHelperFolder.COLUMN_ID,
-            DBHelperFolder.COLUMN_FOLDER_NAME,
-            DBHelperFolder.COLUMN_SONG_NAME,
-            DBHelperFolder.COLUMN_PATH,
-            DBHelperFolder.COLUMN_ARTIST,
-            DBHelperFolder.COLUMN_ALBUM,
-            DBHelperFolder.COLUMN_DURATION,
-            DBHelperFolder.COLUMN_GENRE,
-            DBHelperFolder.COLUMN_LYRICS,
+    private final String[] COLUMNS = {
+            com.example.moonstonemusicplayer.model.Database.Folder.DBHelperFolder.COLUMN_ID,
+            com.example.moonstonemusicplayer.model.Database.Folder.DBHelperFolder.COLUMN_FOLDER_NAME,
+            com.example.moonstonemusicplayer.model.Database.Folder.DBHelperFolder.COLUMN_SONG_NAME,
+            com.example.moonstonemusicplayer.model.Database.Folder.DBHelperFolder.COLUMN_PATH,
+            com.example.moonstonemusicplayer.model.Database.Folder.DBHelperFolder.COLUMN_ARTIST,
+            com.example.moonstonemusicplayer.model.Database.Folder.DBHelperFolder.COLUMN_ALBUM,
+            com.example.moonstonemusicplayer.model.Database.Folder.DBHelperFolder.COLUMN_DURATION,
+            com.example.moonstonemusicplayer.model.Database.Folder.DBHelperFolder.COLUMN_GENRE,
+            com.example.moonstonemusicplayer.model.Database.Folder.DBHelperFolder.COLUMN_LYRICS,
     };
 
 
@@ -73,7 +73,7 @@ public class DBFolder {
     public Folder getRootFolder(){
         if(DEBUG)Log.d(TAG,"load Favorites");
         open_readable();
-        String query = "SELECT * FROM "+DBHelperFolder.TABLE_FOLDER_SONGLIST;
+        String query = "SELECT * FROM "+ com.example.moonstonemusicplayer.model.Database.Folder.DBHelperFolder.TABLE_FOLDER_SONGLIST;
         Folder rootFolder = null;
         //Zeiger auf die Einträge der Tabelle
         Cursor cursor = database_folder_song_list.rawQuery(query, null);
@@ -89,9 +89,7 @@ public class DBFolder {
                 cursor.moveToNext();
                 rootFolder = insertChildrenToRootFolder(rootFolder,cursor);
             }
-
         }
-
         cursor.close();
         close_db();
         return rootFolder;
@@ -106,16 +104,18 @@ public class DBFolder {
         Artist currentArtist = null;
         String currentArtistName = "";
         for(Album album: albumList){
-            if(!album.getArtistName().equals(currentArtistName)){
-                currentArtistName = album.getArtistName();
-                if(currentArtist != null){
-                    resultArtistList.add(currentArtist);
+            if(album != null){
+                if(!album.getArtistName().equals(currentArtistName)){
+                    currentArtistName = album.getArtistName();
+                    if(currentArtist != null){
+                        resultArtistList.add(currentArtist);
+                    }
+                    currentArtist = new Artist(album.getArtistName(),new ArrayList<Album>());
                 }
-                currentArtist = new Artist(album.getArtistName(),new ArrayList<Album>());
+                if(currentArtist!=null)currentArtist.getAlbumList().add(album);
             }
-            currentArtist.getAlbumList().add(album);
         }
-        if(resultArtistList.contains(currentArtist))resultArtistList.add(currentArtist);
+        if(resultArtistList.contains(currentArtist) && currentArtist != null)resultArtistList.add(currentArtist);
         return resultArtistList;
     }
 
@@ -127,13 +127,13 @@ public class DBFolder {
         List<Album> resultAlbumList = new ArrayList<>();
 
         open_readable();
-        String query = "SELECT * FROM "+DBHelperFolder.TABLE_FOLDER_SONGLIST
-            +" WHERE "+DBHelperFolder.COLUMN_ALBUM+" IS NOT NULL"
-            +" ORDER BY "+DBHelperFolder.COLUMN_ALBUM+" DESC";
+        String query = "SELECT * FROM "+ com.example.moonstonemusicplayer.model.Database.Folder.DBHelperFolder.TABLE_FOLDER_SONGLIST
+            +" WHERE "+ com.example.moonstonemusicplayer.model.Database.Folder.DBHelperFolder.COLUMN_ALBUM +" IS NOT NULL"
+            +" ORDER BY "+ com.example.moonstonemusicplayer.model.Database.Folder.DBHelperFolder.COLUMN_ALBUM +" DESC";
 
         Cursor cursor = database_folder_song_list.rawQuery(query, null);
 
-        Album currentAlbum = null;
+        Album currentAlbum = Album.emptyAlbum;
         String albumName = "";
 
         if(cursor.getCount() > 0){//table exists
@@ -165,7 +165,7 @@ public class DBFolder {
             } while(cursor.moveToNext());
         }
         //add the last album
-        if(!resultAlbumList.contains(currentAlbum))resultAlbumList.add(currentAlbum);
+        if(!resultAlbumList.contains(currentAlbum) && currentAlbum != null)resultAlbumList.add(currentAlbum);
 
         cursor.close();
         close_db();
@@ -176,9 +176,9 @@ public class DBFolder {
         List<Genre> resultGenreList = new ArrayList<>();
 
         open_readable();
-        String query = "SELECT * FROM "+DBHelperFolder.TABLE_FOLDER_SONGLIST
-            +" WHERE "+DBHelperFolder.COLUMN_GENRE+" IS NOT NULL"
-            +" ORDER BY "+DBHelperFolder.COLUMN_GENRE+" DESC";
+        String query = "SELECT * FROM "+ com.example.moonstonemusicplayer.model.Database.Folder.DBHelperFolder.TABLE_FOLDER_SONGLIST
+            +" WHERE "+ com.example.moonstonemusicplayer.model.Database.Folder.DBHelperFolder.COLUMN_GENRE +" IS NOT NULL"
+            +" ORDER BY "+ com.example.moonstonemusicplayer.model.Database.Folder.DBHelperFolder.COLUMN_GENRE +" DESC";
 
         Cursor cursor = database_folder_song_list.rawQuery(query, null);
 
@@ -209,12 +209,12 @@ public class DBFolder {
                 }
 
                 //add song to current album
-                currentGenre.getSongList().add(new Song(path, songName, artist,album, genre,duration , lyrics));
+                if(currentGenre != null)currentGenre.getSongList().add(new Song(path, songName, artist,album, genre,duration , lyrics));
 
             } while(cursor.moveToNext());
         }
         //add the last album
-        if(!resultGenreList.contains(currentGenre))resultGenreList.add(currentGenre);
+        if(!resultGenreList.contains(currentGenre) && currentGenre != null)resultGenreList.add(currentGenre);
 
         cursor.close();
         close_db();
@@ -290,19 +290,19 @@ public class DBFolder {
         open_writable();
 
         ContentValues valuesNewSong = new ContentValues();
-        valuesNewSong.put(DBHelperFolder.COLUMN_FOLDER_NAME,  "");
-        valuesNewSong.put(DBHelperFolder.COLUMN_SONG_NAME, song.getName());
-        valuesNewSong.put(DBHelperFolder.COLUMN_PATH,  song.getPath());
-        valuesNewSong.put(DBHelperFolder.COLUMN_ARTIST, song.getArtist());
-        valuesNewSong.put(DBHelperFolder.COLUMN_ALBUM, song.getAlbum());
-        valuesNewSong.put(DBHelperFolder.COLUMN_GENRE, song.getGenre());
-        valuesNewSong.put(DBHelperFolder.COLUMN_DURATION, song.getDuration_ms());
-        valuesNewSong.put(DBHelperFolder.COLUMN_LYRICS, song.getLyrics());
+        valuesNewSong.put(com.example.moonstonemusicplayer.model.Database.Folder.DBHelperFolder.COLUMN_FOLDER_NAME,  "");
+        valuesNewSong.put(com.example.moonstonemusicplayer.model.Database.Folder.DBHelperFolder.COLUMN_SONG_NAME, song.getName());
+        valuesNewSong.put(com.example.moonstonemusicplayer.model.Database.Folder.DBHelperFolder.COLUMN_PATH,  song.getPath());
+        valuesNewSong.put(com.example.moonstonemusicplayer.model.Database.Folder.DBHelperFolder.COLUMN_ARTIST, song.getArtist());
+        valuesNewSong.put(com.example.moonstonemusicplayer.model.Database.Folder.DBHelperFolder.COLUMN_ALBUM, song.getAlbum());
+        valuesNewSong.put(com.example.moonstonemusicplayer.model.Database.Folder.DBHelperFolder.COLUMN_GENRE, song.getGenre());
+        valuesNewSong.put(com.example.moonstonemusicplayer.model.Database.Folder.DBHelperFolder.COLUMN_DURATION, song.getDuration_ms());
+        valuesNewSong.put(com.example.moonstonemusicplayer.model.Database.Folder.DBHelperFolder.COLUMN_LYRICS, song.getLyrics());
 
         //Song-Objekt in DB einfügen und ID zurückbekommen
-        database_folder_song_list.update(DBHelperFolder.TABLE_FOLDER_SONGLIST,
+        database_folder_song_list.update(com.example.moonstonemusicplayer.model.Database.Folder.DBHelperFolder.TABLE_FOLDER_SONGLIST,
             valuesNewSong,
-            DBHelperFolder.COLUMN_PATH+" = \'"+song.getPath()+"\'",
+            com.example.moonstonemusicplayer.model.Database.Folder.DBHelperFolder.COLUMN_PATH + " = '" +song.getPath()+ "'",
             null);
 
         //datenbank schließen und rückgabe des Songobjekts
@@ -315,8 +315,8 @@ public class DBFolder {
         open_writable();
 
         //Song-Objekt in DB einfügen und ID zurückbekommen
-        database_folder_song_list.delete(DBHelperFolder.TABLE_FOLDER_SONGLIST,
-            DBHelperFolder.COLUMN_PATH+" = \'"+song.getPath(),null);
+        database_folder_song_list.delete(com.example.moonstonemusicplayer.model.Database.Folder.DBHelperFolder.TABLE_FOLDER_SONGLIST,
+            com.example.moonstonemusicplayer.model.Database.Folder.DBHelperFolder.COLUMN_PATH + " = '" +song.getPath(),null);
 
         //datenbank schließen und rückgabe des Songobjekts
         close_db();
@@ -326,8 +326,8 @@ public class DBFolder {
         //öffnen der DB
         open_readable();
 
-        String query = "SELECT * FROM "+DBHelperFolder.TABLE_FOLDER_SONGLIST
-            +" WHERE "+DBHelperFolder.COLUMN_PATH+" = \'"+ escapeString(path)+"\'";
+        String query = "SELECT * FROM "+ com.example.moonstonemusicplayer.model.Database.Folder.DBHelperFolder.TABLE_FOLDER_SONGLIST
+            +" WHERE "+ com.example.moonstonemusicplayer.model.Database.Folder.DBHelperFolder.COLUMN_PATH + " = '" + escapeString(path)+ "'";
 
         Cursor cursor = database_folder_song_list.rawQuery(query, null);
         Song song = null;
@@ -363,8 +363,8 @@ public class DBFolder {
         //öffnen der DB
         open_readable();
 
-        String query = "SELECT * FROM "+DBHelperFolder.TABLE_FOLDER_SONGLIST+
-            " WHERE "+DBHelperFolder.COLUMN_ALBUM+" = \'"+escapeString(albumName)+"\'";
+        String query = "SELECT * FROM "+ com.example.moonstonemusicplayer.model.Database.Folder.DBHelperFolder.TABLE_FOLDER_SONGLIST +
+            " WHERE "+ com.example.moonstonemusicplayer.model.Database.Folder.DBHelperFolder.COLUMN_ALBUM + " = '" +escapeString(albumName)+ "'";
 
         Cursor cursor = database_folder_song_list.rawQuery(query, null);
         if(cursor.getCount() > 0){
@@ -400,7 +400,7 @@ public class DBFolder {
         open_writable();
 
         //Song-Objekt in DB einfügen und ID zurückbekommen
-        database_folder_song_list.delete(DBHelperFolder.TABLE_FOLDER_SONGLIST,
+        database_folder_song_list.delete(com.example.moonstonemusicplayer.model.Database.Folder.DBHelperFolder.TABLE_FOLDER_SONGLIST,
             null,null);
 
         //datenbank schließen und rückgabe des Songobjekts
@@ -433,11 +433,11 @@ public class DBFolder {
 
         if(folderSong instanceof Folder){
             if(DEBUG)Log.d(TAG,"addToFolderSongList Folder: "+((Folder) folderSong).getName());
-            values.put(DBHelperFolder.COLUMN_SONG_NAME,  "");
-            values.put(DBHelperFolder.COLUMN_FOLDER_NAME,  ((Folder) folderSong).getName());
-            values.put(DBHelperFolder.COLUMN_PATH,  ((Folder) folderSong).getPath());
+            values.put(com.example.moonstonemusicplayer.model.Database.Folder.DBHelperFolder.COLUMN_SONG_NAME,  "");
+            values.put(com.example.moonstonemusicplayer.model.Database.Folder.DBHelperFolder.COLUMN_FOLDER_NAME,  ((Folder) folderSong).getName());
+            values.put(com.example.moonstonemusicplayer.model.Database.Folder.DBHelperFolder.COLUMN_PATH,  ((Folder) folderSong).getPath());
 
-            database_folder_song_list.insert(DBHelperFolder.TABLE_FOLDER_SONGLIST, null, values);
+            database_folder_song_list.insert(com.example.moonstonemusicplayer.model.Database.Folder.DBHelperFolder.TABLE_FOLDER_SONGLIST, null, values);
 
             if(((Folder) folderSong).getChildren_folders() != null){
                 for(Folder childFolder: ((Folder) folderSong).getChildren_folders()){
@@ -451,16 +451,16 @@ public class DBFolder {
             }
         } else if(folderSong instanceof Song){
             if(DEBUG)Log.d(TAG,"addToFolderSongList Song: "+((Song) folderSong).getName());
-            values.put(DBHelperFolder.COLUMN_FOLDER_NAME,  "");
-            values.put(DBHelperFolder.COLUMN_SONG_NAME, ((Song) folderSong).getName());
-            values.put(DBHelperFolder.COLUMN_PATH,  ((Song) folderSong).getPath());
-            values.put(DBHelperFolder.COLUMN_ARTIST, ((Song) folderSong).getArtist());
-            values.put(DBHelperFolder.COLUMN_ALBUM, ((Song) folderSong).getAlbum());
-            values.put(DBHelperFolder.COLUMN_GENRE, ((Song) folderSong).getGenre());
-            values.put(DBHelperFolder.COLUMN_DURATION, ((Song) folderSong).getDuration_ms());
-            values.put(DBHelperFolder.COLUMN_LYRICS, ((Song) folderSong).getLyrics());
+            values.put(com.example.moonstonemusicplayer.model.Database.Folder.DBHelperFolder.COLUMN_FOLDER_NAME,  "");
+            values.put(com.example.moonstonemusicplayer.model.Database.Folder.DBHelperFolder.COLUMN_SONG_NAME, ((Song) folderSong).getName());
+            values.put(com.example.moonstonemusicplayer.model.Database.Folder.DBHelperFolder.COLUMN_PATH,  ((Song) folderSong).getPath());
+            values.put(com.example.moonstonemusicplayer.model.Database.Folder.DBHelperFolder.COLUMN_ARTIST, ((Song) folderSong).getArtist());
+            values.put(com.example.moonstonemusicplayer.model.Database.Folder.DBHelperFolder.COLUMN_ALBUM, ((Song) folderSong).getAlbum());
+            values.put(com.example.moonstonemusicplayer.model.Database.Folder.DBHelperFolder.COLUMN_GENRE, ((Song) folderSong).getGenre());
+            values.put(com.example.moonstonemusicplayer.model.Database.Folder.DBHelperFolder.COLUMN_DURATION, ((Song) folderSong).getDuration_ms());
+            values.put(com.example.moonstonemusicplayer.model.Database.Folder.DBHelperFolder.COLUMN_LYRICS, ((Song) folderSong).getLyrics());
 
-            database_folder_song_list.insert(DBHelperFolder.TABLE_FOLDER_SONGLIST, null, values);
+            database_folder_song_list.insert(com.example.moonstonemusicplayer.model.Database.Folder.DBHelperFolder.TABLE_FOLDER_SONGLIST, null, values);
         } else {
             if(DEBUG)Log.d(TAG,"addToFolderSongList error: not a song|folder");
 

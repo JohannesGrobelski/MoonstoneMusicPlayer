@@ -45,7 +45,6 @@
                 android:paddingStart="5dp"
                 android:paddingTop="2dp"
                 android:paddingEnd="5dp"
-                android:text="foldername/songname"
                 android:textColor="@color/colorPrimary" />
 
             <LinearLayout

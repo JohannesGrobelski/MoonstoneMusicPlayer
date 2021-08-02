@@ -16,10 +16,10 @@ import java.util.List;
  * Is only used by the MainActivity.
  */
 public class PlaylistManager {
-    private Context context;
+    private final Context context;
 
 
-    private List<Song> playList; //the songs to be played
+    private final List<Song> playList; //the songs to be played
     private List<Song> displayedSongList = new ArrayList<>(); //the songs to be displayed by
 
     public PlaylistManager(Context baseContext, Song[] playlist) {

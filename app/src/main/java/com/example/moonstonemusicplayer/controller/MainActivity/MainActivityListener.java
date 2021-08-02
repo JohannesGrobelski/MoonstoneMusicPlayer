@@ -26,13 +26,13 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
   private static final String TAG = MainActivityListener.class.getSimpleName();
 
   private final MainActivity mainActivity;
-  private Fragment[] fragments;
+  private final Fragment[] fragments;
 
 
   public MainActivityListener(MainActivity mainActivity,Fragment[] fragments) {
     this.mainActivity = mainActivity;
     this.fragments = fragments;
-    if(DEBUG)Log.d(TAG,"fragments null: "+String.valueOf(fragments==null));
+    if(DEBUG)Log.d(TAG,"fragments null: "+ (fragments == null));
 
     requestForPermission();
   }

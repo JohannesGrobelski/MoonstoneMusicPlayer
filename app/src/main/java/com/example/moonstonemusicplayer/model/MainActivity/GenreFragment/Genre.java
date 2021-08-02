@@ -2,11 +2,14 @@ package com.example.moonstonemusicplayer.model.MainActivity.GenreFragment;
 
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Genre {
   String name = "";
   List<Song> songList;
+
+  public static Genre emptyGenre = new Genre("",new ArrayList<Song>());
 
   public Genre(String name, List<Song> songList) {
     this.name = name;

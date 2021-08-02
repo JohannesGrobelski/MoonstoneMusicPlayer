@@ -212,6 +212,6 @@ public class FolderFragment extends Fragment {
 
   /** */
   public interface RefreshTaskListener {
-    public void onCompletion();
+    void onCompletion();
   }
 }

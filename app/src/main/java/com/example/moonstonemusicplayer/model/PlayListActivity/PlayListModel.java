@@ -7,13 +7,14 @@ import static com.example.moonstonemusicplayer.model.PlayListActivity.PlayListMo
 import static com.example.moonstonemusicplayer.model.PlayListActivity.PlayListModel.REPEATMODE.ALL;
 
 public class PlayListModel {
-  private List<Song> playlist;
+  private final List<Song> playlist;
   private int currentSongIndex = 0;
   boolean shuffleModelOn = false;
   public enum REPEATMODE {
-    NONE, ALL, ONESONG;
-  };
-  public REPEATMODE repeatmode = ALL;
+    NONE, ALL, ONESONG
+  }
+
+    public REPEATMODE repeatmode = ALL;
 
   public PlayListModel(List<Song> playList) {
     this.playlist = playList;
