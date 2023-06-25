@@ -21,11 +21,12 @@ public class LocalSongLoader {
 
   /** find all Audiofiles in externalDirs and create a List<Song> from these files*/
   public static Folder findAllAudioFilesAsFolderInDir(File[] externalFilesDir){
-    //projektpräsentation: System.getenv("SECONDARY_STORAGE");
     String[] fileDirs = new String[externalFilesDir.length];
     for(int i=0; i<fileDirs.length; i++){
       fileDirs[i] = externalFilesDir[i].getAbsolutePath().replace("/Android/media/com.example.moonstonemusicplayer","");
-      if(DEBUG) Log.d(TAG,fileDirs[i]+" "+new File(fileDirs[i]).exists());
+      if(DEBUG){
+        Log.d(TAG,fileDirs[i]+" "+new File(fileDirs[i]).exists());
+      }
     }
 
     //go through sd-cards and
@@ -66,61 +67,80 @@ public class LocalSongLoader {
           if(file.listFiles() != null){
             List<Folder> children_folder = new ArrayList<>();
             List<Song> children_song = new ArrayList<>();
-            for (File childFile: file.listFiles()) { //gehe durch Kinder
-              if(DEBUG)Log.d(TAG,"findAllAudioFilesAsFolderInDir TEST: "+childFile.getAbsolutePath());
-              Folder child_folder = findAllAudioFilesAsFolderInDir(childFile.getAbsolutePath(), parentFolder);
-              if(child_folder != null){//child is a directory
-                if(DEBUG)Log.d(TAG,"findAllAudioFilesAsFolderInDir DIR: "+childFile.getAbsolutePath());
-                children_folder.add(child_folder);
-              } else {//child is not a dir, might be a song-file?
-                if (isSupportedFormat(childFile.getName())) {
-                  if(DEBUG)Log.d(TAG,"findAllAudioFilesAsFolderInDir SONG: "+childFile.getAbsolutePath());
-                  children_song.add(getSongFromAudioFile(childFile));
-                } else { /* ignore */ }
-              }
+            if(file.getAbsoluteFile().toString().equals("/storage/emulated/0/Download")){
+              System.out.println("los!");
             }
-            if(!(children_folder.isEmpty() && children_song.isEmpty())){ //directory is not empty
-              if(DEBUG)Log.d(TAG,"findAllAudioFilesAsFolderInDir: save"+file.getName()+" "+children_folder.size()+" "+children_song.size());
-              return new Folder(file.getName(),
-                  file.getAbsolutePath(),
-                  parentFolder,
-                  children_folder.toArray(new Folder[children_folder.size()]),
-                  children_song.toArray(new Song[children_song.size()])
-              );
-            } else {
-              if(DEBUG)Log.d(TAG, "findAllAudioFilesAsFolderInDir empty folder: "+file.getName());
 
+            try {
+              for (File childFile: file.listFiles()) { //gehe durch Kinder
+                if(DEBUG){
+                  Log.d(TAG,"findAllAudioFilesAsFolderInDir TEST: "+childFile.getAbsolutePath());
+                }
+                Folder child_folder = findAllAudioFilesAsFolderInDir(childFile.getAbsolutePath(), parentFolder);
+                if(child_folder != null){//child is a directory
+                  if(DEBUG){
+                    Log.d(TAG,"findAllAudioFilesAsFolderInDir ADD FOLDER: "+childFile.getAbsolutePath());
+                  }
+                  children_folder.add(child_folder);
+                } else {//child is not a dir, might be a song-file?
+                  if (isSupportedFormat(childFile.getName())) {
+                    if(DEBUG){
+                      Log.d(TAG,"findAllAudioFilesAsFolderInDir ADD SONG: "+childFile.getAbsolutePath());
+                    }
+                    children_song.add(getSongFromAudioFile(childFile));
+                  } else { /* ignore */ }
+                }
+              }
+
+              if(file.getAbsoluteFile().toString().equals("/storage/emulated/0/Download")){
+                System.out.println("los!");
+              }
+              if(!(children_folder.isEmpty() && children_song.isEmpty())){ //directory is not empty
+                if(DEBUG){
+                  Log.d(TAG,"findAllAudioFilesAsFolderInDir: SAVE DIR "+file.getName()+" "+children_folder.size()+" "+children_song.size());
+                }
+                return new Folder(file.getName(),
+                        file.getAbsolutePath(),
+                        parentFolder,
+                        children_folder.toArray(new Folder[children_folder.size()]),
+                        children_song.toArray(new Song[children_song.size()])
+                );
+              } else {
+                if(DEBUG){
+                  Log.d(TAG, "findAllAudioFilesAsFolderInDir empty folder: "+file.getName());
+                }
+              }
+            } catch (Exception e){
+              Log.e(TAG,"findAllAudioFilesAsFolderInDir Exception: "+e);
             }
+
+
+
           } else {
-            if(DEBUG)Log.e(TAG, "findAllAudioFilesAsFolderInDir listFiles Null: "+file.getName());
+            if(DEBUG){
+              //Log.e(TAG, "findAllAudioFilesAsFolderInDir listFiles Null: "+file.getName());
+            }
             return null;
           }
         } else { //file is not a directory
-          if(DEBUG)Log.e(TAG, "findAllAudioFilesAsFolderInDir not a dir: "+file.getName());
+          if(DEBUG){
+            //Log.e(TAG, "findAllAudioFilesAsFolderInDir not a dir: "+file.getName());
+          }
           return null;
         }
       } else{ //file does not exist
-        if(DEBUG)Log.e(TAG, "findAllAudioFilesAsFolderInDir does not exist: "+file.getName());
+        if(DEBUG){
+          //Log.e(TAG, "findAllAudioFilesAsFolderInDir does not exist: "+file.getName());
+        }
         return null;
       }
     } catch (Exception e){
-      if(DEBUG)Log.e(TAG, "findAllAudioFilesAsFolderInDir error: "+ e.getCause());
+      if(DEBUG){
+        //Log.e(TAG, "findAllAudioFilesAsFolderInDir error: "+ e.getCause());
+      }
+      return null;
     }
     return null;
-  }
-
-  /** find all Audiofiles in externalDirs and create a List<Song> from these files*/
-  public static List<Song> findAllAudioFilesInDir(File[] externalFilesDir){
-      List<Song> result = new ArrayList<>();
-      String[] fileDirs = new String[externalFilesDir.length];
-      for(int i=0; i<fileDirs.length; i++){
-        fileDirs[i] = externalFilesDir[i].getAbsolutePath().replace("/Android/media/com.example.moonstonemusicplayer","");
-        if(DEBUG)Log.d("SongManager",fileDirs[i]+" "+new File(fileDirs[i]).exists());
-      }
-      for(String fileDir: fileDirs){
-        if(new File(fileDir).exists())result.addAll(findAllAudioFilesInDir(fileDir,null));
-      }
-      return result;
   }
 
   private static List<Song> findAllAudioFilesInDir(String directory, List<Song> localAudioFiles){
