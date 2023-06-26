@@ -64,63 +64,46 @@ public class LocalSongLoader {
           if(file.getAbsolutePath().endsWith("Android")){
             return null; //throws null pointer exception; cannot enter without root
           }
-          if(file.listFiles() != null){
-            List<Folder> children_folder = new ArrayList<>();
-            List<Song> children_song = new ArrayList<>();
-            if(file.getAbsoluteFile().toString().equals("/storage/emulated/0/Download")){
-              System.out.println("los!");
-            }
-
-            try {
-              for (File childFile: file.listFiles()) { //gehe durch Kinder
-                if(DEBUG){
-                  Log.d(TAG,"findAllAudioFilesAsFolderInDir TEST: "+childFile.getAbsolutePath());
-                }
-                Folder child_folder = findAllAudioFilesAsFolderInDir(childFile.getAbsolutePath(), parentFolder);
-                if(child_folder != null){//child is a directory
-                  if(DEBUG){
-                    Log.d(TAG,"findAllAudioFilesAsFolderInDir ADD FOLDER: "+childFile.getAbsolutePath());
+          List<Folder> child_folders = new ArrayList<>();
+          List<Song> child_songs = new ArrayList<>();
+          //iterate over children and get audio files and child directories
+          try {
+            File[] childFiles = file.listFiles();
+            if(childFiles != null){
+              for (File childFile: childFiles) { //gehe durch Kinder
+                if(childFile == null)continue;
+                if(childFile.isDirectory()){
+                  //if childFile is dir -> turn it into a folder object
+                  Folder child_folder = findAllAudioFilesAsFolderInDir(childFile.getAbsolutePath(), parentFolder);
+                  if(child_folder != null){
+                    child_folders.add(child_folder);
                   }
-                  children_folder.add(child_folder);
-                } else {//child is not a dir, might be a song-file?
-                  if (isSupportedFormat(childFile.getName())) {
-                    if(DEBUG){
-                      Log.d(TAG,"findAllAudioFilesAsFolderInDir ADD SONG: "+childFile.getAbsolutePath());
+                } else {
+                  //if childFile is not dir -> check if it is a song file
+                  if(childFile.isFile()){
+                    if (isSupportedFormat(childFile.getName())) {
+                      Song song = getSongFromAudioFile(childFile);
+                      if(song != null){
+                        child_songs.add(song);
+                      }
                     }
-                    children_song.add(getSongFromAudioFile(childFile));
-                  } else { /* ignore */ }
+                  }
                 }
               }
-
-              if(file.getAbsoluteFile().toString().equals("/storage/emulated/0/Download")){
-                System.out.println("los!");
-              }
-              if(!(children_folder.isEmpty() && children_song.isEmpty())){ //directory is not empty
-                if(DEBUG){
-                  Log.d(TAG,"findAllAudioFilesAsFolderInDir: SAVE DIR "+file.getName()+" "+children_folder.size()+" "+children_song.size());
-                }
-                return new Folder(file.getName(),
-                        file.getAbsolutePath(),
-                        parentFolder,
-                        children_folder.toArray(new Folder[children_folder.size()]),
-                        children_song.toArray(new Song[children_song.size()])
-                );
-              } else {
-                if(DEBUG){
-                  Log.d(TAG, "findAllAudioFilesAsFolderInDir empty folder: "+file.getName());
-                }
-              }
-            } catch (Exception e){
-              Log.e(TAG,"findAllAudioFilesAsFolderInDir Exception: "+e);
+            } else {
+              Log.e(TAG,"findAllAudioFilesAsFolderInDir: CHILDFILES NULL for DIR"+file.getName());
             }
-
-
-
-          } else {
-            if(DEBUG){
-              //Log.e(TAG, "findAllAudioFilesAsFolderInDir listFiles Null: "+file.getName());
+            if(!(child_folders.isEmpty() && child_songs.isEmpty())){ //directory is not empty
+              Log.d(TAG,"Create folder "+file.getName());
+              return new Folder(file.getName(),
+                      file.getAbsolutePath(),
+                      parentFolder,
+                      child_folders.toArray(new Folder[child_folders.size()]),
+                      child_songs.toArray(new Song[child_songs.size()])
+              );
             }
-            return null;
+          } catch (Exception e){
+            Log.e(TAG,"findAllAudioFilesAsFolderInDir Exception: "+e);
           }
         } else { //file is not a directory
           if(DEBUG){
@@ -180,39 +163,49 @@ public class LocalSongLoader {
    * @return
    */
   private static Song getSongFromAudioFile(File file){
-    String title = file.getName().substring(0, (file.getName().length() - 4));
-    String path = file.getAbsolutePath();//Uri.fromFile(file).toString();
-    String genre = "";
-    String artist = "";
-    String album = "";
-    int duration = 0;
+    try {
+      String title = file.getName().substring(0, (file.getName().length() - 4));
+      String path = file.getAbsolutePath();//Uri.fromFile(file).toString();
+      String genre = "";
+      String artist = "";
+      String album = "";
+      int duration = 0;
 
-    MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-    mmr.setDataSource(Uri.fromFile(file).getPath());
+      MediaMetadataRetriever mmr = new MediaMetadataRetriever();
+      try {
+        mmr.setDataSource(Uri.fromFile(file).getPath());
+      } catch (Exception e){
+        Log.e(TAG, e.toString());
+        return null;
+      }
 
-    String meta_durationStr = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-    String meta_artist =  mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
-    String meta_genre = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_GENRE);
-    String meta_title = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
-    String meta_album = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
+      String meta_durationStr = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+      String meta_artist =  mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
+      String meta_genre = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_GENRE);
+      String meta_title = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
+      String meta_album = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
 
-    if(meta_title != null && !meta_title.isEmpty() && !meta_title.equals("null")){
-      title = meta_title;
-    }
-    if(meta_album != null && !meta_album.isEmpty() && !meta_album.equals("null")){
-      album = meta_album;
-    }
-    if(meta_genre != null && !meta_genre.isEmpty() && !meta_genre.equals("null")){
-      genre = translateGenre(meta_genre);
-    }
-    if(meta_artist != null && !meta_artist.isEmpty() && !meta_artist.equals("null")){
-      artist = meta_artist;
-    } else {artist = "unbekannter Künstler";}
-    if(meta_durationStr != null && !meta_durationStr.isEmpty() && !meta_durationStr.equals("null") && meta_durationStr.matches("[0-9]*")){
-      duration = Integer.parseInt(meta_durationStr);
-    }
+      if(meta_title != null && !meta_title.isEmpty() && !meta_title.equals("null")){
+        title = meta_title;
+      }
+      if(meta_album != null && !meta_album.isEmpty() && !meta_album.equals("null")){
+        album = meta_album;
+      }
+      if(meta_genre != null && !meta_genre.isEmpty() && !meta_genre.equals("null")){
+        genre = translateGenre(meta_genre);
+      }
+      if(meta_artist != null && !meta_artist.isEmpty() && !meta_artist.equals("null")){
+        artist = meta_artist;
+      } else {artist = "unbekannter Künstler";}
+      if(meta_durationStr != null && !meta_durationStr.isEmpty() && !meta_durationStr.equals("null") && meta_durationStr.matches("[0-9]*")){
+        duration = Integer.parseInt(meta_durationStr);
+      }
 
-    return new Song(path,title,artist,album,genre,duration,"");
+      return new Song(path,title,artist,album,genre,duration,"");
+    } catch (Exception e){
+      Log.e(TAG, "getSongFromAudioFile Could not parse to a song: "+file.getName()+"; Exception: "+e);
+      return null;
+    }
   }
 
   /**
