@@ -159,7 +159,6 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
         }
         break;
       }
-      return false;
       }
       return true;
   }
