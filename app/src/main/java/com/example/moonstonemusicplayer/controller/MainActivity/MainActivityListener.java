@@ -21,6 +21,14 @@ import com.example.moonstonemusicplayer.view.mainactivity_fragments.FolderFragme
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.GenreFragment;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.PlayListFragment;
 
+/** Init the views from mainactivity and implement actions on them (mostly based on which fragment is active):
+ *  * options menu:
+ *    * define actions for menu items clicked (onOptionsItemSelected)
+ *  * implement a request for runtime storage permissions (requestForPermission)
+ *  * search view:
+ *    * define what happens on input for search view (implementation onQueryTextChange)
+ *  * define what happens if back button is pressed
+ */
 public class MainActivityListener implements SearchView.OnQueryTextListener {
   private static final boolean DEBUG = true;
   private static final String TAG = MainActivityListener.class.getSimpleName();
@@ -29,6 +37,11 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
   private final Fragment[] fragments;
 
 
+  /** Init fields, ask for permissions (@this. requests runtime storage permissions)
+   *
+   * @param mainActivity
+   * @param fragments
+   */
   public MainActivityListener(MainActivity mainActivity,Fragment[] fragments) {
     this.mainActivity = mainActivity;
     this.fragments = fragments;
@@ -37,6 +50,11 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
     requestForPermission();
   }
 
+  /** Init options menu and search view.
+   *
+   * @param menu
+   * @return
+   */
   public boolean onCreateOptionsMenu(Menu menu) {
     //create options menu
     mainActivity.getMenuInflater().inflate(R.menu.options_menu_mainactivity,menu);
@@ -48,6 +66,14 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
     return true;
   }
 
+  /** Define actions that are taken dependend on selected menu item in menu (these include all options across different fragments).
+   *  In all cases there is an action method called in the corresponding fragment.
+   *  Breakdown of the actions taken for a selected option:
+   *  - load locale audio file: create a dialog and a positive response action (Folderfragment reload Allmusic)
+   *  - sort name, artist, duration, genre, reverse: call sort method of fragment
+   * @param item
+   * @return if menu item exists
+   */
   public boolean onOptionsItemSelected(MenuItem item) {
     switch (item.getItemId()) {
       case R.id.mi_loadLocaleAudioFile: {
@@ -121,7 +147,7 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
           case 4: {((GenreFragment) fragments[4]).sortSongsByGenre();break;}
         }
         break;
-      }case R.id.miReverseMain: {
+      } case R.id.miReverseMain: {
         int currentItem = mainActivity.viewPager.getCurrentItem();
         switch(currentItem){
           case 0: {((FolderFragment) fragments[0]).reverse(); break;}
@@ -133,13 +159,10 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
         }
         break;
       }
-
-
+      return false;
       }
       return true;
   }
-    //songListAdapter.notifyDataSetChanged();
-
 
   /** requests runtime storage permissions (API>=23) for loading files from sd-card */
   public boolean requestForPermission() {
@@ -160,6 +183,11 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
     return false;
   }
 
+  /**
+   *
+   * @param query
+   * @return
+   */
   @Override
   public boolean onQueryTextChange(String query) {
     //search in different fragments
