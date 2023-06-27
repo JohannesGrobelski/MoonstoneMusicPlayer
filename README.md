@@ -1,4 +1,4 @@
-Moonstone Music Player
+# Moonstone Music Player
 
 Moonstone Music Player is an Android application that allows users to search for, display, and play songs on their Android devices. It also provides the functionality to create and manage playlists, enabling users to curate their own personalized collections of songs.
 Features
@@ -47,4 +47,4 @@ Acknowledgements
 
 Contact
 
-If you have any questions, suggestions, or feedback regarding the Moonstone Music Player project, please contact the development team at moonstoneplayer@example.com.
+If you have any questions, suggestions, or feedback regarding the Moonstone Music Player project, please contact the developer grobelskijohannes@gmail.com.
