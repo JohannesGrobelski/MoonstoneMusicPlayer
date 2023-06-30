@@ -16,6 +16,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.example.moonstonemusicplayer.controller.MainActivity.ArtistFragment.ArtistFragmentListener;
 import com.example.moonstonemusicplayer.controller.PlayListActivity.PlayListActivityListener;
+import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import com.example.moonstonemusicplayer.view.MainActivity;
 import com.example.moonstonemusicplayer.view.PlayListActivity;
 import com.google.android.material.tabs.TabLayout;
@@ -58,7 +59,7 @@ public class TestPlaylistActivity {
   public void playSong() {
     PlayListActivity playListActivity = (PlayListActivity) getCurrentActivity();
     //init playlistListener with songlist
-    playListActivity.setPlayListActivityListener(new PlayListActivityListener(playListActivity, ,0));
+    playListActivity.setPlayListActivityListener(new PlayListActivityListener(playListActivity, new Song[0] ,0));
   }
 
   private Activity getCurrentActivity() {
