@@ -6,11 +6,11 @@
     android:layout_height="match_parent">
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/iv_song_playing"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_margin="10dp"
-        android:visibility="gone"
+        android:visibility="visible"
         app:srcCompat="@drawable/ic_music" />
 
     <LinearLayout
@@ -45,9 +45,9 @@
                 android:layout_marginTop="2dp"
                 android:layout_marginBottom="2dp"
                 android:layout_weight="1"
-                android:text="artist"
                 android:textColor="@android:color/darker_gray"
-                android:textSize="15sp" />
+                android:textSize="15sp"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/tv_genre_song"
@@ -57,9 +57,9 @@
                 android:layout_marginEnd="10dp"
                 android:layout_marginBottom="2dp"
                 android:maxLines="1"
-                android:text="genre"
                 android:textColor="@android:color/darker_gray"
-                android:textSize="15sp" />
+                android:textSize="15sp"
+                android:visibility="gone" />
         </LinearLayout>
 
     </LinearLayout>
@@ -71,8 +71,8 @@
         android:layout_gravity="center_vertical"
         android:layout_weight="1"
         android:gravity="center_vertical"
-        android:text="3:11"
         android:textAlignment="center"
-        android:textColor="@color/colorPrimary" />
+        android:textColor="@color/colorPrimary"
+        android:visibility="gone" />
 
 </LinearLayout>

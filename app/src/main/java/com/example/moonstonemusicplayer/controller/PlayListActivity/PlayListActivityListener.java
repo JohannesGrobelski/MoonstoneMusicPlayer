@@ -33,10 +33,13 @@ import androidx.core.content.ContextCompat;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists;
+import com.example.moonstonemusicplayer.model.MainActivity.FolderFragment.BrowserManager;
 import com.example.moonstonemusicplayer.model.PlayListActivity.PlaylistManager;
 import com.example.moonstonemusicplayer.model.PlayListActivity.PlayListModel;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import com.example.moonstonemusicplayer.view.PlayListActivity;
+
+import java.io.File;
 
 
 /** MainActivityListener
@@ -76,7 +79,7 @@ public class PlayListActivityListener
            songListAdapter.notifyDataSetChanged();
      */
 
-  public PlayListActivityListener(PlayListActivity playListActivity, Song[] playlist,int starting_song_index) {
+  public PlayListActivityListener(PlayListActivity playListActivity, File[] playlist, int starting_song_index) {
     if(DEBUG)Log.d(TAG,"selected song: "+playlist[starting_song_index].getName());
     this.playListActivity = playListActivity;
     playlistManager = new PlaylistManager(playListActivity.getBaseContext(),playlist);
@@ -87,6 +90,7 @@ public class PlayListActivityListener
 
   public boolean onOptionsItemSelected(MenuItem item) {
     switch (item.getItemId()){
+      /*
       case R.id.miSortTitle: {
         playlistManager.sortByTitle();
         songListAdapter.notifyDataSetChanged();
@@ -112,6 +116,7 @@ public class PlayListActivityListener
         songListAdapter.notifyDataSetChanged();
         break;
       }
+       */
     }
     songListAdapter.notifyDataSetChanged();
     return true;
@@ -256,7 +261,7 @@ public class PlayListActivityListener
   //messages to mediaPlayerService
 
 
-  private void playSong(Song song){
+  private void playSong(File song){
     if(isServiceBound){
       mediaPlayerService.playSong(song);
       playListActivity.btn_play_pause.setBackground(playListActivity.getResources().getDrawable(R.drawable.ic_pause));
@@ -264,7 +269,9 @@ public class PlayListActivityListener
       playListActivity.tv_title.setText(mediaPlayerService.getCurrentSong().getName());
       playListActivity.tv_artist.setText(mediaPlayerService.getCurrentSong().getArtist());
       playListActivity.tv_seekbar_max.setText(mediaPlayerService.getCurrentSong().getDurationString());
-      playListActivity.seekBar.setMax((int) (song.getDuration_ms() / 1000));
+
+      int max = (mediaPlayerService.getCurrentSong().getDuration_ms() / 1000);
+      playListActivity.seekBar.setMax(max);
 
       View view = playListActivity.lv_songlist.getChildAt(mediaPlayerService.getCurrentPosition());
       if(view != null)view.setBackgroundColor(Color.RED);
@@ -429,7 +436,7 @@ public class PlayListActivityListener
         //transfer data
         if(DEBUG)Log.d(TAG,"startMediaPlayerService transfer Playlist: "+ playlistManager.getPlayList().size());
         mediaPlayerService.setPlayList(playlistManager.getPlayList());
-        playSong(mediaPlayerService.getCurrentSong());
+        playSong(mediaPlayerService.getCurrentSongFile());
       }
 
       @Override
@@ -496,9 +503,9 @@ public class PlayListActivityListener
       //calculate the index of the song clicked
       AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
       int index = info.position;
-      Song selectedSong = playlistManager.getDisplayedSongList().get(index);
+      File selectedSong = playlistManager.getDisplayedSongList().get(index);
 
-      switch (item.getItemId()){
+      /*switch (item.getItemId()){
         case 1: {
           DBPlaylists.getInstance(playListActivity).addToFavorites(playListActivity,selectedSong);
           break;
@@ -508,6 +515,8 @@ public class PlayListActivityListener
           break;
         }
       }
+
+       */
     }
     return true;
   }

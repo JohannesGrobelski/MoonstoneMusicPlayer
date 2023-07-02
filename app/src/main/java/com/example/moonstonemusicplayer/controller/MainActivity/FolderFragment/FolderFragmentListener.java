@@ -34,7 +34,7 @@ import java.util.concurrent.ExecutionException;
 public class FolderFragmentListener implements AdapterView.OnItemClickListener, View.OnClickListener {
   private static final String TAG = FolderFragmentListener.class.getSimpleName();
   private static final boolean DEBUG = false;
-  private static Song[] FolderSonglist;
+  private static File[] FolderSonglist;
   private final FolderFragment folderFragment;
   private FolderListAdapter folderListAdapter;
 
@@ -78,12 +78,12 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
           setAdapter(this.selectedFolder);
         } else { //selected Song
 
-          Song[] playlist = BrowserManager.getChildSongs(this.selectedFolder);
+          File[] playlist = BrowserManager.getChildFiles(this.selectedFolder);
           int songPosition = position - BrowserManager.getDirectories(this.selectedFolder).length;
           startFolderSonglist(playlist, songPosition, folderFragment);
         }
       } else {
-        startFolderSonglist(BrowserManager.getSongListFromFileList(displayedItems).toArray(new Song[0]), position, folderFragment);
+        startFolderSonglist(displayedItems.toArray(new File[0]), position, folderFragment);
       }
 
     } catch (Exception e){
@@ -250,7 +250,7 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
     });
   }
 
-  public void startFolderSonglist(Song[] playlist, int song_index, FolderFragment folderFragment){
+  public void startFolderSonglist(File[] playlist, int song_index, FolderFragment folderFragment){
     FolderSonglist = playlist.clone();
     Intent intent = new Intent(folderFragment.getActivity(), PlayListActivity.class);
 
@@ -259,14 +259,14 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
   }
 
 
-  public static Song[] getFolderSonglist(){
+  public static File[] getFolderSonglist(){
     try {
-      Song[] playlistCopy = FolderFragmentListener.FolderSonglist.clone();
+      File[] playlistCopy = FolderFragmentListener.FolderSonglist.clone();
       FolderFragmentListener.FolderSonglist = null;
       return playlistCopy;
     } catch (Exception e){
       Log.e(TAG, e.toString());
-      return new Song[0];
+      return new File[0];
     }
   }
 
