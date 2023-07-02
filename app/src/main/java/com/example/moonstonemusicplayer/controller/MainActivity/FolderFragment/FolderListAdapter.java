@@ -72,9 +72,8 @@ public class FolderListAdapter extends ArrayAdapter<File> {
       iv_folderSongItem.setBackground(ContextCompat.getDrawable(context,R.drawable.ic_music));
 
       //init open song info button
-      ImageButton btn_song_info = rowView.findViewById(R.id.btn_song_info);
-      btn_song_info.setVisibility(View.VISIBLE);
-      btn_song_info.setOnClickListener(new View.OnClickListener() {
+      ImageView iv_item = rowView.findViewById(R.id.iv_item);
+      iv_item.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {
           // Handle button click
