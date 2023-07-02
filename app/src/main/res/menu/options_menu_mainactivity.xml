@@ -8,11 +8,6 @@
         android:title="suche Fahrt"
         app:actionViewClass="android.widget.SearchView"
         app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/mi_loadLocaleAudioFile"
-        android:icon="@android:drawable/ic_popup_sync"
-        android:title="@string/update_library"
-        app:showAsAction="never" />
 
     <item
         android:id="@+id/miSortMain"

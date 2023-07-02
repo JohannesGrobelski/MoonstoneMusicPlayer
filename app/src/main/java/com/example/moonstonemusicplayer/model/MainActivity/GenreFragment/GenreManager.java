@@ -3,7 +3,7 @@ package com.example.moonstonemusicplayer.model.MainActivity.GenreFragment;
 import android.content.Context;
 import android.util.Log;
 
-import com.example.moonstonemusicplayer.model.Database.Folder.DBFolder;
+import com.example.moonstonemusicplayer.model.MainActivity.FolderFragment.BrowserManager;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 
 import java.util.ArrayList;
@@ -32,11 +32,7 @@ public class GenreManager {
   /** loads local music and adds it to dataSource*/
   public void loadGenresFromDB(Context context){
     if(context != null){
-      genreList.clear();
-      genreList_backup.clear();
-      Log.d(TAG,"loadGenresFromDB");
-      this.genreList.addAll(DBFolder.getInstance(context).getGenreList());
-      this.genreList_backup.addAll(genreList);
+      //TODO
     }
   }
 

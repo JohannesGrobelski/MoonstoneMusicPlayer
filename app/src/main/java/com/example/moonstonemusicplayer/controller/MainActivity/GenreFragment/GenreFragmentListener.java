@@ -75,14 +75,6 @@ public class GenreFragmentListener implements AdapterView.OnItemClickListener, V
     return songlistCopy;
   }
 
-  public void reloadGenreManager() {
-    if(genreFragment.genreManager != null){
-      genreFragment.genreManager.loadGenresFromDB(genreFragment.getContext());
-      List<Genre> albumList = genreFragment.genreManager.getGenreList();
-      setAdapterGenreList(albumList);
-    }
-  }
-
   public boolean onBackPressed(){
     if(genreFragment.genreManager.getCurrentGenre() != null){
       genreFragment.genreManager.setCurrentGenre(null);

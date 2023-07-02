@@ -76,34 +76,7 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
    */
   public boolean onOptionsItemSelected(MenuItem item) {
     switch (item.getItemId()) {
-      case R.id.mi_loadLocaleAudioFile: {
-        if (fragments != null && fragments[1] != null) {
-          requestForPermission();
-          //show alert dialog before refreshing audio files
-          AlertDialog alertDialog = new AlertDialog.Builder(mainActivity)
-              .setTitle("Reloads local audio files.")
-              .setMessage("This can take a few minutes.")
-              .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                  ((FolderFragment) fragments[0]).reloadAllMusic();
-                }
-              })
-              .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                  //abort
-                }
-              })
-          .create();
-          alertDialog.show();
-          break;
-        } else {
-          Log.e(TAG, "fragment null");
-        }
-        //folderManager.getRootFolder().print(0);
-        break;
-      } case R.id.miSortNameMain: {
+      case R.id.miSortNameMain: {
         int currentItem = mainActivity.viewPager.getCurrentItem();
         switch(currentItem){
           case 0: {((FolderFragment) fragments[0]).sortSongsByName(); break;}

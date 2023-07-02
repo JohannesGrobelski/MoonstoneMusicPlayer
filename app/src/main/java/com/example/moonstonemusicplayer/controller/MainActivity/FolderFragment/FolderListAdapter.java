@@ -16,9 +16,9 @@ import androidx.core.content.ContextCompat;
 import androidx.core.widget.ImageViewCompat;
 
 import com.example.moonstonemusicplayer.R;
-import com.example.moonstonemusicplayer.model.MainActivity.FolderFragment.Folder;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 
+import java.io.File;
 import java.util.List;
 
 public class FolderListAdapter extends ArrayAdapter<Object> {
@@ -44,14 +44,12 @@ public class FolderListAdapter extends ArrayAdapter<Object> {
       rowView = layoutInflater.inflate(R.layout.item_row_layout, parent, false);
     }
 
-    Song currentSong = null; Folder currentFolder = null;
+    Song currentSong = null; File currentFolder = null;
     if(folderSongList.get(position) instanceof Song){
       currentSong = ((Song) folderSongList.get(position));
-    } else if(folderSongList.get(position) instanceof Folder){
-      currentFolder = ((Folder) folderSongList.get(position));
+    } else if(folderSongList.get(position) instanceof File && ((File) folderSongList.get(position)).isDirectory()){
+      currentFolder = ((File) folderSongList.get(position));
     } else {return rowView;}
-
-
 
     //init the views of songRowView
     TextView tv_folderSongItem = rowView.findViewById(R.id.tv_item_name);
