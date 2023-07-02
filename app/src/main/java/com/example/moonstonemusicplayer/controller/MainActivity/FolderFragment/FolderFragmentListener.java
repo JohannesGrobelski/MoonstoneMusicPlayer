@@ -42,6 +42,8 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
 
   private List<File> displayedItems = new ArrayList<>();
 
+  String searchQuery = "";
+
 
   /** Sets reference to folder fragment and init selectedFolder to rootFolder
    *  i.e. the root folder will be displayed with the adapter
@@ -69,15 +71,21 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
       //get get item clicked
       File itemClicked = displayedItems.get(position);
 
-      if(itemClicked.isDirectory()){ //selected Folder
-        //setAdapter
-        this.selectedFolder = itemClicked;
-        setAdapter(this.selectedFolder);
-      } else { //selected Song
-        Song[] playlist = BrowserManager.getChildSongs(this.selectedFolder);
-        int songPosition = position - BrowserManager.getDirectories(this.selectedFolder).length;
-        startFolderSonglist(playlist, songPosition, folderFragment);
+      if(this.searchQuery.isEmpty()){
+        if(itemClicked.isDirectory()){ //selected Folder
+          //setAdapter
+          this.selectedFolder = itemClicked;
+          setAdapter(this.selectedFolder);
+        } else { //selected Song
+
+          Song[] playlist = BrowserManager.getChildSongs(this.selectedFolder);
+          int songPosition = position - BrowserManager.getDirectories(this.selectedFolder).length;
+          startFolderSonglist(playlist, songPosition, folderFragment);
+        }
+      } else {
+        startFolderSonglist(BrowserManager.getSongListFromFileList(displayedItems).toArray(new Song[0]), position, folderFragment);
       }
+
     } catch (Exception e){
       Log.e(TAG, e.toString());
       Toast.makeText(folderFragment.getContext(), "ERROR: Could not click on item.", Toast.LENGTH_LONG).show();
@@ -89,7 +97,11 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
    * @param folder to be displayed
    */
   private void setAdapter(File folder){
-    this.displayedItems = BrowserManager.getChildren(folder);
+    if(this.searchQuery.isEmpty()){
+      this.displayedItems = BrowserManager.getChildren(folder);
+    } else {
+      this.displayedItems = BrowserManager.getChildrenMatchingQuery(folder, this.searchQuery);
+    }
     this.folderListAdapter = new FolderListAdapter(folderFragment.getContext(),this.displayedItems);
     folderFragment.lv_folderList.setAdapter(folderListAdapter);
   }
@@ -259,9 +271,15 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
   }
 
   public void searchMusic(String query) {
+    this.searchQuery = query;
+    try {
+      //setAdapter
+      setAdapter(this.selectedFolder);
+    } catch (Exception e){
+      Log.e(TAG, e.toString());
+      Toast.makeText(folderFragment.getContext(), "ERROR: Could not click on item.", Toast.LENGTH_LONG).show();
+    }
 
-
-    Toast.makeText(folderFragment.getContext(), "TO BE IMPLEMENTED", Toast.LENGTH_LONG).show();
   }
 
   public void sortSongsByName() {

@@ -60,11 +60,6 @@ public class BrowserManager {
     this.rootFolder = rootFolder;
   }
 
-  public File[] getAllFilesMatchingQuery(String query){
-    List<File> result = new ArrayList<File>();
-    return result.toArray(new File[result.size()]);
-  }
-
   public static List<File> getChildren(File file){
     List<File> songs = new ArrayList<>();
     List<File> children = new ArrayList<>();
@@ -92,6 +87,19 @@ public class BrowserManager {
       children.add(new File(childDirPath));
     }
     children.addAll(songs);
+    return children;
+  }
+
+  public static List<File> getChildrenMatchingQuery(File file, String query){
+    List<File> children = new ArrayList<>();
+
+    if(file != null && file.listFiles() != null){
+      for(File audioFile : BrowserManager.audioFiles){
+        if(audioFile.getAbsolutePath().toLowerCase().contains(query.toLowerCase())){
+          children.add(audioFile);
+        }
+      }
+    }
     return children;
   }
 
@@ -196,6 +204,16 @@ public class BrowserManager {
       Log.e(TAG, "getSongFromAudioFile Could not parse to a song: "+file.getName()+"; Exception: "+e);
       return null;
     }
+  }
+
+  public static List<Song> getSongListFromFileList(List<File> fileList){
+    List<Song> songList = new ArrayList<>();
+    for(File file: fileList){
+      if(!file.isDirectory()){
+        songList.add(getSongFromAudioFile(file));
+      }
+    }
+    return songList;
   }
 
   /**
