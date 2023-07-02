@@ -14,8 +14,10 @@ import java.io.File;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -29,6 +31,8 @@ public class BrowserManager {
 
   private static final String TAG = BrowserManager.class.getSimpleName();
   private final Context context;
+
+
 
   private File rootFolder;
 
@@ -56,10 +60,39 @@ public class BrowserManager {
     this.rootFolder = rootFolder;
   }
 
-
   public File[] getAllFilesMatchingQuery(String query){
     List<File> result = new ArrayList<File>();
     return result.toArray(new File[result.size()]);
+  }
+
+  public static List<File> getChildren(File file){
+    List<File> songs = new ArrayList<>();
+    List<File> children = new ArrayList<>();
+
+    Set<String> childDirPathSet = new HashSet<>();
+    if(file != null && file.listFiles() != null){
+      for(File audioFile : BrowserManager.audioFiles){
+        if(isDirectChildFile(file, audioFile)){
+          songs.add(audioFile);
+        }
+        if(!audioFile.getAbsolutePath().contains(file.getAbsolutePath())
+                || audioFile.getParentFile().equals(file)){
+          continue;
+        } else {
+          //if audio file resides in child directory of file add subdirectory to directories
+          String relPath = audioFile.getAbsolutePath().replace(file.getAbsolutePath()+"/", "");
+          String pathChildDir = file.getAbsolutePath() + "/" + relPath.substring(0,relPath.indexOf("/"));
+          if(!childDirPathSet.contains(pathChildDir)){
+            childDirPathSet.add(pathChildDir);
+          }
+        }
+      }
+    }
+    for(String childDirPath : childDirPathSet){
+      children.add(new File(childDirPath));
+    }
+    children.addAll(songs);
+    return children;
   }
 
   public static File[] getDirectories(File file){
@@ -188,7 +221,6 @@ public class BrowserManager {
       default: return genre;
     }
   }
-
 
   public static List<File> getAllAudioFiles(Context context) {
     List<File> audioFiles = new ArrayList<>();

@@ -25,7 +25,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:descendantFocusability="blocksDescendants">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -103,6 +104,17 @@
             android:textAlignment="center"
             android:textColor="@color/colorPrimary"
             android:visibility="gone" />
+
+        <ImageButton
+            android:id="@+id/btn_song_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/transparent"
+            android:padding="10dp"
+            android:src="@android:drawable/ic_menu_info_details"
+            android:text="info"
+            android:visibility="gone"/>
 
     </LinearLayout>
 

@@ -25,6 +25,7 @@ import com.example.moonstonemusicplayer.view.mainactivity_fragments.FolderFragme
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.PlayListFragment;
 
 import java.io.File;
+import java.io.ObjectStreamException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -88,13 +89,8 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
    * @param folder to be displayed
    */
   private void setAdapter(File folder){
-    List<Object> children = new ArrayList<>();
-    children.addAll(Arrays.asList(BrowserManager.getDirectories(folder)));
-    children.addAll(Arrays.asList(BrowserManager.getChildSongs(folder)));
-    this.displayedItems.clear();
-    this.displayedItems.addAll(Arrays.asList(BrowserManager.getDirectories(folder)));
-    this.displayedItems.addAll(Arrays.asList(BrowserManager.getChildFiles(folder)));
-    this.folderListAdapter = new FolderListAdapter(folderFragment.getContext(),children);
+    this.displayedItems = BrowserManager.getChildren(folder);
+    this.folderListAdapter = new FolderListAdapter(folderFragment.getContext(),this.displayedItems);
     folderFragment.lv_folderList.setAdapter(folderListAdapter);
   }
 
@@ -263,6 +259,8 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
   }
 
   public void searchMusic(String query) {
+
+
     Toast.makeText(folderFragment.getContext(), "TO BE IMPLEMENTED", Toast.LENGTH_LONG).show();
   }
 
