@@ -1,8 +1,6 @@
 package com.example.moonstonemusicplayer.controller.MainActivity;
 
 import android.Manifest;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.util.Log;
 import android.view.Menu;
@@ -63,6 +61,8 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
     MenuItem searchItem = menu.findItem(R.id.miSearch);
     mainActivity.searchView = (SearchView) searchItem.getActionView();
     mainActivity.searchView.setOnQueryTextListener(this);
+
+
     return true;
   }
 
@@ -209,20 +209,36 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
    */
   public boolean onBackPressed() {
     int currentItem = mainActivity.viewPager.getCurrentItem();
-    switch(currentItem){
-      case 0: {
-        return ((FolderFragment) fragments[0]).onBackpressed();
-      }
-      case 1: {
-        return ((PlayListFragment) fragments[1]).onBackpressed();
-      }
-      case 2: {
-        return false;
-      }
-      case 3: {
-        return ((AlbumFragment) fragments[3]).onBackpressed();
+    if (isSearchBarOpen()) {
+      closeSearchBar();
+      return true;
+    } else {
+      switch(currentItem){
+        case 0: {
+          return ((FolderFragment) fragments[0]).onBackpressed();
+        }
+        case 1: {
+          return ((PlayListFragment) fragments[1]).onBackpressed();
+        }
+        case 2: {
+          return false;
+        }
+        case 3: {
+          return ((AlbumFragment) fragments[3]).onBackpressed();
+        }
       }
     }
     return false;
+  }
+
+  private void closeSearchBar() {
+    if(mainActivity.searchView != null) {
+      mainActivity.searchView.setIconified(true);
+      mainActivity.searchView.clearFocus();
+    }
+  }
+
+  private boolean isSearchBarOpen() {
+    return !mainActivity.searchView.isIconified();
   }
 }
