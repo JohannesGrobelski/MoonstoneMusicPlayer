@@ -6,8 +6,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import com.example.moonstonemusicplayer.model.Database.Folder.DBFolder;
-import com.example.moonstonemusicplayer.model.MainActivity.GenreFragment.Genre;
+
+import com.example.moonstonemusicplayer.model.MainActivity.FolderFragment.BrowserManager;
 import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.Playlist;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 
@@ -194,7 +194,7 @@ public class DBPlaylists {
                     continue;
                 }
 
-                Song song = DBFolder.getInstance(context).getSongFromPath(songURL);
+                Song song = BrowserManager.getSongFromPath(songURL);
 
                 if(song != null)SongList.add(song);
             } while (cursor.moveToNext());
@@ -224,7 +224,7 @@ public class DBPlaylists {
         int idPath = cursor.getColumnIndex(com.example.moonstonemusicplayer.model.Database.Playlist.DBHelperPlaylists.COLUMN_SONG_PATH);
 
         //create Song from values
-        return DBFolder.getInstance(context).getSongFromPath(cursor.getString(idPath));
+        return BrowserManager.getSongFromPath(cursor.getString(idPath));
     }
 
     public static DBPlaylists getInstance(Context context){

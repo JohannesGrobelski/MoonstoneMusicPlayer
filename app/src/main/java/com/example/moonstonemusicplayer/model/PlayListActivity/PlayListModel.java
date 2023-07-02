@@ -1,38 +1,46 @@
 package com.example.moonstonemusicplayer.model.PlayListActivity;
 
+import java.io.File;
 import java.util.List;
 
 import static com.example.moonstonemusicplayer.model.PlayListActivity.PlayListModel.REPEATMODE.NONE;
 import static com.example.moonstonemusicplayer.model.PlayListActivity.PlayListModel.REPEATMODE.ONESONG;
 import static com.example.moonstonemusicplayer.model.PlayListActivity.PlayListModel.REPEATMODE.ALL;
 
+import com.example.moonstonemusicplayer.model.MainActivity.FolderFragment.BrowserManager;
+
 public class PlayListModel {
-  private final List<Song> playlist;
+  private final List<File> playlist;
   private int currentSongIndex = 0;
   boolean shuffleModelOn = false;
   public enum REPEATMODE {
     NONE, ALL, ONESONG
   }
 
-    public REPEATMODE repeatmode = ALL;
+  public REPEATMODE repeatmode = ALL;
 
-  public PlayListModel(List<Song> playList) {
+  public PlayListModel(List<File> playList) {
     this.playlist = playList;
   }
 
-  public void setCurrentSong(Song song) {
+  public void setCurrentSong(File song) {
     for(int i=0; i<playlist.size(); i++){
       if(song.equals(playlist.get(i)))currentSongIndex = i;
     }
+  }
+
+  public Song getCurrentSong(){
+    return BrowserManager.getSongFromAudioFile(playlist.get(currentSongIndex));
+  }
+
+  public File getCurrentSongFile(){
+    return playlist.get(currentSongIndex);
   }
 
   public void setCurrentSong(int index) {
     this.currentSongIndex = index;
   }
 
-  public Song getCurrentSong(){
-    return playlist.get(currentSongIndex);
-  }
 
   public int getCurrentSongIndex(){
     return currentSongIndex;
@@ -75,7 +83,7 @@ public class PlayListModel {
     return repeatmode;
   }
 
-  public List<Song> getPlaylist() {
+  public List<File> getPlaylist() {
     return playlist;
   }
 }

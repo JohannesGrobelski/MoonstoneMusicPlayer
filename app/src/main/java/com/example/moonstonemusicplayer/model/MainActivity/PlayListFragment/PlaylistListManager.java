@@ -30,13 +30,13 @@ public class PlaylistListManager {
 
   /** loads local music and adds it to dataSource*/
   public void loadPlaylistsFromDB(Context context){
-    if(context != null){
+    /*if(context != null){
       playlists.clear();
       playlists_backup.clear();
       Log.d(TAG,"loadPlaylistsFromDB");
       this.playlists.addAll(DBPlaylists.getInstance(context).getAllPlaylists(context));
       this.playlists_backup.addAll(playlists);
-    }
+    }*/
   }
 
   public Playlist getPlaylist(String name){

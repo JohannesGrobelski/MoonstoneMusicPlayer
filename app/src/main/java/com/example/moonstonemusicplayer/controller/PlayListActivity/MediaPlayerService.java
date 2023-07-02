@@ -27,7 +27,7 @@ import androidx.annotation.Nullable;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.PlayListActivity.Notification.Constants;
-import com.example.moonstonemusicplayer.model.Database.Folder.DBFolder;
+import com.example.moonstonemusicplayer.model.MainActivity.FolderFragment.BrowserManager;
 import com.example.moonstonemusicplayer.model.PlayListActivity.PlayListModel;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import com.example.moonstonemusicplayer.view.PlayListActivity;
@@ -65,6 +65,8 @@ public class MediaPlayerService extends Service
   private boolean isMediaPlayerPrepared = false;
   private PlayListModel playListModel = null;
 
+  private Song currentSong;
+
   /**/
 
   private AudioManager audioManager;
@@ -88,9 +90,9 @@ public class MediaPlayerService extends Service
     //stelle wiedergabe lautstärke auf musik ein
     mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
     try {
-      if(new File(playListModel.getCurrentSong().getPath()).exists()){
+      if(playListModel.getCurrentSongFile().exists()){
         //weise Mediendatei der Datenquelle zu
-        String uri = Uri.fromFile(new File(playListModel.getCurrentSong().getPath())).toString();
+        String uri = Uri.fromFile(playListModel.getCurrentSongFile()).toString();
         mediaPlayer.setDataSource(uri);
 
         //bereitet MediaPlayer für Wiedergabe vor
@@ -98,7 +100,7 @@ public class MediaPlayerService extends Service
         resumePosition = 0;
 
         if(((LocalBinder) iBinder) != null){
-          ((LocalBinder) iBinder).boundServiceListener.selectedSong(playListModel.getCurrentSong().getPath());
+          ((LocalBinder) iBinder).boundServiceListener.selectedSong(playListModel.getCurrentSongFile().getPath());
         }
 
       } else {
@@ -333,13 +335,16 @@ public class MediaPlayerService extends Service
 
   public Song getCurrentSong() {return playListModel.getCurrentSong();}
 
+
+  public File getCurrentSongFile() {return playListModel.getCurrentSongFile();}
+
   public void seekTo(int i) {
     if(DEBUG)Log.d(TAG,"seekTo: "+i);
     mediaPlayer.seekTo(i);
     resumePosition = i;
   }
 
-  public void playSong(Song song) {
+  public void playSong(File song) {
     playListModel.setCurrentSong(song);
     //Toast.makeText(this,"clicked: "+playListModel.getCurrentSong().getName(),Toast.LENGTH_LONG).show();
     initMediaPlayer();
@@ -366,7 +371,7 @@ public class MediaPlayerService extends Service
   private void autoPlay(){
     switch(playListModel.repeatmode){
       case ONESONG: {
-        playSong(playListModel.getCurrentSong());
+        playSong(playListModel.getCurrentSongFile());
         break;
       }
       case ALL: {
@@ -376,7 +381,7 @@ public class MediaPlayerService extends Service
     }
   }
 
-  public void setPlayList(List<Song> playList) {
+  public void setPlayList(List<File> playList) {
     if(DEBUG)Log.d(TAG,"startMediaPlayerService init Playlist: "+playList.size());
     this.playListModel = new PlayListModel(playList);
     this.playListModel.setCurrentSong(playList.get(startIndex));

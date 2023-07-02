@@ -3,7 +3,6 @@ package com.example.moonstonemusicplayer.model.MainActivity.ArtistFragment;
 import android.content.Context;
 import android.util.Log;
 
-import com.example.moonstonemusicplayer.model.Database.Folder.DBFolder;
 import com.example.moonstonemusicplayer.model.MainActivity.AlbumFragment.Album;
 import com.example.moonstonemusicplayer.model.MainActivity.ArtistFragment.Artist;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
@@ -31,10 +30,7 @@ public class ArtistManager {
   /** loads local music and adds it to dataSource*/
   public void loadArtistsFromDB(Context context){
     if(context != null){
-      this.artistList.clear();
-      this.artistList_backup.clear();
-      this.artistList.addAll(DBFolder.getInstance(context).getArtistList());
-      this.artistList_backup.addAll(artistList);
+      //TODO
     }
   }
 

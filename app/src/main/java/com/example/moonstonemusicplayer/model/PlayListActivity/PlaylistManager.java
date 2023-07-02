@@ -2,6 +2,7 @@ package com.example.moonstonemusicplayer.model.PlayListActivity;
 
 import android.content.Context;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -19,10 +20,10 @@ public class PlaylistManager {
     private final Context context;
 
 
-    private final List<Song> playList; //the songs to be played
-    private List<Song> displayedSongList = new ArrayList<>(); //the songs to be displayed by
+    private final List<File> playList; //the songs to be played
+    private List<File> displayedSongList = new ArrayList<>(); //the songs to be displayed by
 
-    public PlaylistManager(Context baseContext, Song[] playlist) {
+    public PlaylistManager(Context baseContext, File[] playlist) {
         this.context = baseContext;
 
         playList = new ArrayList<>(Arrays.asList(playlist));
@@ -40,16 +41,16 @@ public class PlaylistManager {
         displayedSongList.addAll(playList);
     }*/
 
-    public List<Song> getPlayList(){
+    public List<File> getPlayList(){
         return this.playList;
     }
 
-    public List<Song> getDisplayedSongList(){return this.displayedSongList;}
+    public List<File> getDisplayedSongList(){return this.displayedSongList;}
 
 
     public void searchSong(String searchterm){
         this.displayedSongList.clear();
-        for(Song song: playList) {
+        for(File song: playList) {
             if (song.getName().toLowerCase().contains(searchterm.toLowerCase()))
                 displayedSongList.add(song);
         }
@@ -60,6 +61,7 @@ public class PlaylistManager {
     }
 
 
+    /*
     public void sortByTitle(){
         Collections.sort(displayedSongList, new Comparator<Song>() {
             @Override
@@ -67,10 +69,6 @@ public class PlaylistManager {
                 return (o1.getName().compareTo(o2.getName()));
             }
         });
-        /*
-        intersectPlaylist(DataSourceSingleton.getInstance(context).sortBy(DBHelper.COLUMN_TITLE,"ASC"));
-        displayedSongList.addAll(playList);
-         */
     }
 
     public void sortByArtist(){
@@ -80,10 +78,6 @@ public class PlaylistManager {
                 return (o1.getArtist().compareTo(o2.getArtist()));
             }
         });
-        /*
-        intersectPlaylist(DataSourceSingleton.getInstance(context).sortBy(DBHelper.COLUMN_ARTIST,"ASC"));
-        displayedSongList.addAll(playList);
-         */
     }
 
     public void sortByGenre(){
@@ -93,11 +87,18 @@ public class PlaylistManager {
                 return (o1.getGenre().compareTo(o2.getGenre()));
             }
         });
-        /*
-        intersectPlaylist(DataSourceSingleton.getInstance(context).sortBy(DBHelper.COLUMN_GENRE,"ASC"));
-        displayedSongList.addAll(playList);
-         */
     }
+
+     public void sortByDuration() {
+        Collections.sort(displayedSongList, new Comparator<Song>() {
+            @Override
+            public int compare(Song o1, Song o2) {
+                return (int) (o1.getDuration_ms() - o2.getDuration_ms());
+            }
+        });
+    }
+
+    */
 
     public void reverseList(){
         Collections.reverse(displayedSongList);
@@ -109,14 +110,6 @@ public class PlaylistManager {
         displayedSongList.clear();
     }
 
-    public void sortByDuration() {
-        Collections.sort(displayedSongList, new Comparator<Song>() {
-            @Override
-            public int compare(Song o1, Song o2) {
-                return (int) (o1.getDuration_ms() - o2.getDuration_ms());
-            }
-        });
-    }
 
     /*
     * public void intersectPlaylist(List<Song> input){
