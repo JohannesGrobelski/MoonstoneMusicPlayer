@@ -59,7 +59,7 @@ public class SongListAdapter extends ArrayAdapter<File> {
     TextView tv_title = rowView.findViewById(R.id.tv_name_song);
 
     //set the views of songRowView
-    tv_title.setText(currentSong.getName());
+    tv_title.setText(removeFileType(currentSong.getName()));
 
     if(currentSong.getPath().equals(selectedSongPath))ll_song_background.setBackgroundColor(Color.LTGRAY);
     else ll_song_background.setBackgroundColor(Color.WHITE);
@@ -105,8 +105,7 @@ public class SongListAdapter extends ArrayAdapter<File> {
     TextView durationTextView = popupView.findViewById(R.id.durationTextView);
 
     // Set the song information in the popup
-
-    String title = file.getName().substring(0, (file.getName().length() - 4));
+    String title = removeFileType(file.getName().substring(0, (file.getName().length() - 4)));
     String path = file.getAbsolutePath();//Uri.fromFile(file).toString();
     String genre = "";
     String artist = "";
@@ -152,8 +151,13 @@ public class SongListAdapter extends ArrayAdapter<File> {
     AlertDialog dialog = dialogBuilder.create();
     dialog.show();
   }
-
-
+  public static String removeFileType(String fileName) {
+    int dotIndex = fileName.lastIndexOf(".");
+    if (dotIndex != -1) {
+      return fileName.substring(0, dotIndex);
+    }
+    return fileName;
+  }
 
   /** translate some english genres to german */
   private static String translateGenre(String genre){

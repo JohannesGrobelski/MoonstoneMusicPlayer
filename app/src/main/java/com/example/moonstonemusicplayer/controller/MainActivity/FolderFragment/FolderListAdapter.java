@@ -1,5 +1,7 @@
 package com.example.moonstonemusicplayer.controller.MainActivity.FolderFragment;
 
+import static com.example.moonstonemusicplayer.controller.PlayListActivity.SongListAdapter.removeFileType;
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -34,12 +36,6 @@ public class FolderListAdapter extends ArrayAdapter<File> {
   private final List<File> folderSongList;
   private final Context context;
   private final LayoutInflater layoutInflater;
-
-  private MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-  String meta_durationStr;
-  String meta_artist;
-  String meta_genre;
-  String meta_title;
 
   public FolderListAdapter(@NonNull Context context, List<File> folderSongList) {
     super(context, R.layout.item_row_layout,folderSongList);
@@ -81,7 +77,7 @@ public class FolderListAdapter extends ArrayAdapter<File> {
         }
       });
     }
-    tv_folderSongItem.setText(file.getName());
+    tv_folderSongItem.setText(removeFileType(file.getName()));
 
 
     return rowView;
