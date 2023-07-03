@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -69,6 +70,12 @@ public class PlayListFragment extends Fragment {
   public void onAttach(@NonNull Context context) {
     super.onAttach(context);
     playlistListManager = new PlaylistListManager(this.getContext());
+  }
+
+  @Override
+  public void onResume() {
+    super.onResume();
+    playlistListManager.updateData(this.getContext());
   }
 
   @Override

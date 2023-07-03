@@ -290,9 +290,7 @@ public class BrowserManager {
             null
     );
 
-    if (cursor != null) {
-      cursor.moveToFirst();
-
+    if (cursor != null && cursor.moveToFirst()) {
       // Retrieve the column index for the data column
       int dataIndex = cursor.getColumnIndex(MediaStore.Audio.Media.DATA);
       int titleIndex = cursor.getColumnIndex(MediaStore.Audio.Media.TITLE);

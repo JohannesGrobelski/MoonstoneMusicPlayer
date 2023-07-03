@@ -22,6 +22,8 @@ public class DBPlaylists {
     //favorites is just another playlist
     private static final String FAVORITES_PLAYLIST_NAME = "MOONSTONE FAVORITES";
 
+    private static final String RECENTLY_PLAYED_PLAYLIST_NAME = "RECENTLY PLAYED";
+
     private static final String TAG = DBPlaylists.class.getSimpleName();
     private static final boolean DEBUG = true;
     private static DBPlaylists instance;
@@ -87,6 +89,13 @@ public class DBPlaylists {
         return getSongListFromQuery(context, query);
     }
 
+    public List<Song> getAllRecentlyPlayed(Context context){
+        if(DEBUG)Log.d(TAG,"load Favorites");
+        String query = "SELECT * FROM "+ com.example.moonstonemusicplayer.model.Database.Playlist.DBHelperPlaylists.TABLE_PLAYLISTS
+                +" WHERE "+ com.example.moonstonemusicplayer.model.Database.Playlist.DBHelperPlaylists.COLUMN_PLAYLIST_NAME + " = '" +RECENTLY_PLAYED_PLAYLIST_NAME+ "'";
+        return getSongListFromQuery(context, query);
+    }
+
     public void deleteFromPlaylist(Song song, String playlistname){
         //öffnen der DB
         open_writable();
@@ -144,6 +153,10 @@ public class DBPlaylists {
 
     public void addToFavorites(Context context,Song song){
        addToPlaylist(context,song,FAVORITES_PLAYLIST_NAME);
+    }
+
+    public void addToRecentlyPlayed(Context context,Song song){
+        addToPlaylist(context,song,RECENTLY_PLAYED_PLAYLIST_NAME);
     }
 
     public void deleteFromFavorites(Song song){

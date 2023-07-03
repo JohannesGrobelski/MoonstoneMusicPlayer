@@ -22,6 +22,8 @@ import androidx.annotation.Nullable;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.PlayListActivity.Notification.Constants;
+import com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists;
+import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
 import com.example.moonstonemusicplayer.model.PlayListActivity.PlayListModel;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import com.example.moonstonemusicplayer.view.PlayListActivity;
@@ -338,9 +340,11 @@ public class MediaPlayerService extends Service
     resumePosition = i;
   }
 
-  public void playSong(File song) {
-    playListModel.setCurrentSong(song);
+  public void playSong(File songFile) {
+    playListModel.setCurrentSong(songFile);
     //Toast.makeText(this,"clicked: "+playListModel.getCurrentSong().getName(),Toast.LENGTH_LONG).show();
+    Song song = BrowserManager.getSongFromAudioFile(songFile);
+    DBPlaylists.getInstance(this.getApplicationContext()).addToRecentlyPlayed(this.getApplicationContext(),song);
     initMediaPlayer();
     showNotification();
   }
