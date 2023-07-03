@@ -21,6 +21,7 @@ import androidx.core.content.ContextCompat;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.MainActivity.FolderFragment.FolderListAdapter;
+import com.example.moonstonemusicplayer.model.MainActivity.FolderFragment.BrowserManager;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 
 import java.io.File;
@@ -45,7 +46,7 @@ public class SongListAdapter extends ArrayAdapter<File> {
   @NonNull
   @Override
   public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-    File currentSong = songList.get(position);
+    File currentSongFile = songList.get(position);
 
     View rowView;
     if(convertView != null){
@@ -58,22 +59,29 @@ public class SongListAdapter extends ArrayAdapter<File> {
     LinearLayout ll_song_background = rowView.findViewById(R.id.ll_song_background);
     TextView tv_title = rowView.findViewById(R.id.tv_name_song);
 
+    TextView tv_artist_song = rowView.findViewById(R.id.tv_artist_song);
+    TextView tv_genre_song = rowView.findViewById(R.id.tv_genre_song);
+    TextView tv_duration_song = rowView.findViewById(R.id.tv_duration_song);
+
     //set the views of songRowView
-    tv_title.setText(removeFileType(currentSong.getName()));
+    Song song = BrowserManager.getSongFromAudioFile(currentSongFile);
+    tv_title.setText(song.getName());
+    if(song.getArtist() != null && !song.getArtist().isEmpty()){
+      tv_artist_song.setVisibility(View.VISIBLE);
+      tv_artist_song.setText(song.getArtist());
+    }
+    if(song.getGenre() != null && !song.getGenre().isEmpty()){
+      tv_genre_song.setVisibility(View.VISIBLE);
+      tv_genre_song.setText(song.getGenre());
+    }
+    if(song.getDurationString() != null && !song.getDurationString().isEmpty()){
+      tv_duration_song.setVisibility(View.VISIBLE);
+      tv_duration_song.setText(song.getDurationString());
+    }
 
-    if(currentSong.getPath().equals(selectedSongPath))ll_song_background.setBackgroundColor(Color.LTGRAY);
+
+    if(currentSongFile.getPath().equals(selectedSongPath))ll_song_background.setBackgroundColor(Color.LTGRAY);
     else ll_song_background.setBackgroundColor(Color.WHITE);
-
-    File file = songList.get(position);
-    //init open song info button
-    ImageView iv_song_playing = rowView.findViewById(R.id.iv_song_playing);
-    iv_song_playing.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        // Handle button click
-        showSongInfoPopup(context, file);
-      }
-    });
 
     return rowView;
   }
@@ -86,71 +94,6 @@ public class SongListAdapter extends ArrayAdapter<File> {
     this.selectedSongPath = selectedSongIndex;
   }
 
-  private void showSongInfoPopup(Context context, File file) {
-    View popupView = LayoutInflater.from(context).inflate(R.layout.popup_song_info, null);
-    AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context)
-            .setView(popupView)
-            .setTitle("Song Information")
-            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-              @Override
-              public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-              }
-            });
-
-    TextView titleTextView = popupView.findViewById(R.id.titleTextView);
-    TextView artistTextView = popupView.findViewById(R.id.artistTextView);
-    TextView albumTextView = popupView.findViewById(R.id.albumTextView);
-    TextView genreTextView = popupView.findViewById(R.id.genreTextView);
-    TextView durationTextView = popupView.findViewById(R.id.durationTextView);
-
-    // Set the song information in the popup
-    String title = removeFileType(file.getName().substring(0, (file.getName().length() - 4)));
-    String path = file.getAbsolutePath();//Uri.fromFile(file).toString();
-    String genre = "";
-    String artist = "";
-    String album = "";
-    int duration = 0;
-
-    MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-    try {
-      mmr.setDataSource(Uri.fromFile(file).getPath());
-    } catch (Exception e){
-      Log.e(TAG, e.toString());
-    }
-
-    String meta_durationStr = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-    String meta_artist =  mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
-    String meta_genre = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_GENRE);
-    String meta_title = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
-    String meta_album = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
-
-    if(meta_title != null && !meta_title.isEmpty() && !meta_title.equals("null")){
-      title = meta_title;
-    }
-    if(meta_album != null && !meta_album.isEmpty() && !meta_album.equals("null")){
-      album = meta_album;
-    }
-    if(meta_genre != null && !meta_genre.isEmpty() && !meta_genre.equals("null")){
-      genre = translateGenre(meta_genre);
-    }
-    if(meta_artist != null && !meta_artist.isEmpty() && !meta_artist.equals("null")){
-      artist = meta_artist;
-    } else {artist = "unbekannter Künstler";}
-    if(meta_durationStr != null && !meta_durationStr.isEmpty() && !meta_durationStr.equals("null") && meta_durationStr.matches("[0-9]*")){
-      duration = Integer.parseInt(meta_durationStr);
-    }
-
-
-    titleTextView.setText(title);
-    artistTextView.setText("Artist: " + artist);
-    albumTextView.setText("Album: " + album);
-    genreTextView.setText("Genre: " + genre);
-    durationTextView.setText("Duration: " + duration + " ms");
-
-    AlertDialog dialog = dialogBuilder.create();
-    dialog.show();
-  }
   public static String removeFileType(String fileName) {
     int dotIndex = fileName.lastIndexOf(".");
     if (dotIndex != -1) {

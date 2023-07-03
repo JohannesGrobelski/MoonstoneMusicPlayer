@@ -29,6 +29,8 @@ public class BrowserManager {
   private static BrowserManager instance;
   private static List<File> audioFiles = new ArrayList<>();
 
+  private static Map<File, Song> audioFileSongMap = new HashMap<>();
+
   private static final String TAG = BrowserManager.class.getSimpleName();
   private final Context context;
 
@@ -161,6 +163,16 @@ public class BrowserManager {
    * @return
    */
   public static Song getSongFromAudioFile(File file){
+    if(audioFileSongMap.containsKey(file)){
+      return audioFileSongMap.get(file);
+    } else {
+      Song parsedSong = parseSongFromAudioFile(file);
+      audioFileSongMap.put(file,parsedSong);
+      return parsedSong;
+    }
+  }
+
+  private static Song parseSongFromAudioFile(File file){
     try {
       String title = file.getName().substring(0, (file.getName().length() - 4));
       String path = file.getAbsolutePath();//Uri.fromFile(file).toString();
@@ -240,12 +252,17 @@ public class BrowserManager {
     }
   }
 
-  public static List<File> getAllAudioFiles(Context context) {
+  private static List<File> getAllAudioFiles(Context context) {
     List<File> audioFiles = new ArrayList<>();
 
     // Define the columns to retrieve from the MediaStore
     String[] projection = {
-            MediaStore.Audio.Media.DATA
+            MediaStore.Audio.Media.DATA,
+            MediaStore.Audio.Media.TITLE,
+            MediaStore.Audio.Media.ARTIST,
+            MediaStore.Audio.Media.ALBUM,
+            MediaStore.Audio.Media.GENRE,
+            MediaStore.Audio.Media.DURATION,
     };
 
     // Perform the query using the MediaStore.Audio.Media.EXTERNAL_CONTENT_URI content URI
@@ -258,13 +275,37 @@ public class BrowserManager {
     );
 
     if (cursor != null) {
+      cursor.moveToFirst();
+
       // Retrieve the column index for the data column
       int dataIndex = cursor.getColumnIndex(MediaStore.Audio.Media.DATA);
+      int titleIndex = cursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
+      int artistIndex = cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
+      int albumIndex = cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM);
+      int genreIndex = cursor.getColumnIndex(MediaStore.Audio.Media.GENRE);
+      int durationIndex = cursor.getColumnIndex(MediaStore.Audio.Media.DURATION);
 
       // Iterate through the cursor to retrieve the file paths
       while (cursor.moveToNext()) {
         String filePath = cursor.getString(dataIndex);
-        audioFiles.add(new File(filePath));
+        String name = cursor.getString(titleIndex);
+        String artist = cursor.getString(artistIndex);
+        String album = cursor.getString(albumIndex);
+        String genre = cursor.getString(genreIndex);
+        String durationString = cursor.getString(durationIndex);
+
+        if(filePath == null || filePath.isEmpty()
+        || name == null || name.isEmpty()
+        || durationString == null || durationString.isEmpty())continue;
+
+        int duration_ms = 0;
+        duration_ms = Integer.parseInt(durationString);
+
+        File songFile = new File(filePath);
+        Song song = new Song(filePath,name,artist,album,genre,duration_ms,"");
+
+        audioFiles.add(songFile);
+        audioFileSongMap.put(songFile,song);
       }
 
       // Close the cursor
@@ -279,7 +320,6 @@ public class BrowserManager {
   public static Song getSongFromPath(String songPath){
     return getSongFromAudioFile(new File(songPath));
   }
-
 
 
 

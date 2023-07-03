@@ -25,6 +25,8 @@ import androidx.core.content.ContextCompat;
 import androidx.core.widget.ImageViewCompat;
 
 import com.example.moonstonemusicplayer.R;
+import com.example.moonstonemusicplayer.model.MainActivity.FolderFragment.BrowserManager;
+import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 
 import java.io.File;
 import java.util.List;
@@ -67,6 +69,28 @@ public class FolderListAdapter extends ArrayAdapter<File> {
     } else {
       iv_folderSongItem.setBackground(ContextCompat.getDrawable(context,R.drawable.ic_music));
 
+      TextView tv_item_artist = rowView.findViewById(R.id.tv_item_artist);
+      LinearLayout ll_artist_genre = rowView.findViewById(R.id.ll_artist_genre);
+      TextView tv_item_genre = rowView.findViewById(R.id.tv_item_genre);
+      TextView tv_item_duration = rowView.findViewById(R.id.item_tv_duration);
+
+      Song song = BrowserManager.getSongFromAudioFile(file);
+      if(song.getArtist() != null && !song.getArtist().isEmpty()){
+        ll_artist_genre.setVisibility(View.VISIBLE);
+        tv_item_artist.setVisibility(View.VISIBLE);
+        tv_item_artist.setText(song.getArtist());
+      }
+      if(song.getGenre() != null && !song.getGenre().isEmpty()){
+        ll_artist_genre.setVisibility(View.VISIBLE);
+        tv_item_genre.setVisibility(View.VISIBLE);
+        tv_item_genre.setText(song.getGenre());
+      }
+      if(song.getDurationString() != null && !song.getDurationString().isEmpty()){
+        tv_item_duration.setVisibility(View.VISIBLE);
+        tv_item_duration.setText(song.getDurationString());
+      }
+
+
       //init open song info button
       ImageView iv_item = rowView.findViewById(R.id.iv_item);
       iv_item.setOnClickListener(new View.OnClickListener() {
@@ -102,49 +126,13 @@ public class FolderListAdapter extends ArrayAdapter<File> {
     TextView durationTextView = popupView.findViewById(R.id.durationTextView);
 
     // Set the song information in the popup
+    Song song = BrowserManager.getSongFromAudioFile(file);
 
-    String title = file.getName().substring(0, (file.getName().length() - 4));
-    String path = file.getAbsolutePath();//Uri.fromFile(file).toString();
-    String genre = "";
-    String artist = "";
-    String album = "";
-    int duration = 0;
-
-    MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-    try {
-      mmr.setDataSource(Uri.fromFile(file).getPath());
-    } catch (Exception e){
-      Log.e(TAG, e.toString());
-    }
-
-    String meta_durationStr = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-    String meta_artist =  mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
-    String meta_genre = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_GENRE);
-    String meta_title = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
-    String meta_album = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
-
-    if(meta_title != null && !meta_title.isEmpty() && !meta_title.equals("null")){
-      title = meta_title;
-    }
-    if(meta_album != null && !meta_album.isEmpty() && !meta_album.equals("null")){
-      album = meta_album;
-    }
-    if(meta_genre != null && !meta_genre.isEmpty() && !meta_genre.equals("null")){
-      genre = translateGenre(meta_genre);
-    }
-    if(meta_artist != null && !meta_artist.isEmpty() && !meta_artist.equals("null")){
-      artist = meta_artist;
-    } else {artist = "unbekannter Künstler";}
-    if(meta_durationStr != null && !meta_durationStr.isEmpty() && !meta_durationStr.equals("null") && meta_durationStr.matches("[0-9]*")){
-      duration = Integer.parseInt(meta_durationStr);
-    }
-
-
-    titleTextView.setText(title);
-    artistTextView.setText("Artist: " + artist);
-    albumTextView.setText("Album: " + album);
-    genreTextView.setText("Genre: " + genre);
-    durationTextView.setText("Duration: " + duration + " ms");
+    titleTextView.setText(song.getName());
+    artistTextView.setText("Artist: " + song.getArtist());
+    albumTextView.setText("Album: " + song.getAlbum());
+    genreTextView.setText("Genre: " + song.getGenre());
+    durationTextView.setText("Duration: " + song.getDurationString());
 
     AlertDialog dialog = dialogBuilder.create();
     dialog.show();

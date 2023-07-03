@@ -472,32 +472,10 @@ public class MediaPlayerService extends Service
     bigViews.setTextViewText(R.id.status_bar_artist_name, artist);
 
     //get album image and album (if possible)
-    Bitmap songImage = BitmapFactory.decodeResource(getResources(), R.drawable.ic_moonstonemusicplayerlogo);
     String albumName = "unknown album";
+    Song song = playListModel.getCurrentSong();
+    albumName = song.getAlbum();
 
-    try {
-      MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-      String uri = Uri.fromFile(new File(playListModel.getCurrentSong().getPath())).toString();
-      mmr.setDataSource(uri);
-      String meta_albumName = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
-      if(meta_albumName != null && !meta_albumName.isEmpty() && !meta_albumName.equals("null")){
-        albumName = meta_albumName;
-      }
-    } catch (Exception e) {
-      if(e.getMessage() != null) Log.e(TAG,e.getMessage());
-    }
-    try {
-      MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-      String uri = Uri.fromFile(new File(playListModel.getCurrentSong().getPath())).toString();
-      mmr.setDataSource(uri);
-      byte[] albumArtBytes = mmr.getEmbeddedPicture();
-      songImage = BitmapFactory.decodeByteArray(albumArtBytes, 0, albumArtBytes.length);
-    } catch (Exception e) {
-      if(e.getMessage() != null) Log.e(TAG,e.getMessage());
-    }
-
-    //views.setImageViewBitmap(R.id.iv_status_bar_album_art, songImage);
-    //bigViews.setImageViewBitmap(R.id.iv_status_bar_album_art, songImage);
     views.setTextViewText(R.id.status_bar_album_name, albumName);
     bigViews.setTextViewText(R.id.status_bar_album_name, albumName);
 
