@@ -95,9 +95,6 @@ public class ArtistListAdapter extends ArrayAdapter<Object> {
       tv_artist_song.setVisibility(View.VISIBLE);
       tv_duration_song.setVisibility(View.VISIBLE);
 
-
-      tv_artist_song.setText(currentAlbum.getArtistName());
-      if(currentAlbum.getArtistName().isEmpty())tv_artist_song.setText("unknown artist");
       tv_duration_song.setText(currentAlbum.getDurationString());
     } else if(currentSong != null){
       LinearLayout ll_artist_genre = rowView.findViewById(R.id.ll_artist_genre);

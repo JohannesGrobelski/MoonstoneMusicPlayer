@@ -1,7 +1,6 @@
 package com.example.moonstonemusicplayer.controller.MainActivity.FolderFragment;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.util.Log;
@@ -17,7 +16,7 @@ import android.widget.Toast;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists;
-import com.example.moonstonemusicplayer.model.MainActivity.FolderFragment.BrowserManager;
+import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import com.example.moonstonemusicplayer.view.MainActivity;
 import com.example.moonstonemusicplayer.view.PlayListActivity;
@@ -25,11 +24,8 @@ import com.example.moonstonemusicplayer.view.mainactivity_fragments.FolderFragme
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.PlayListFragment;
 
 import java.io.File;
-import java.io.ObjectStreamException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 public class FolderFragmentListener implements AdapterView.OnItemClickListener, View.OnClickListener {
   private static final String TAG = FolderFragmentListener.class.getSimpleName();

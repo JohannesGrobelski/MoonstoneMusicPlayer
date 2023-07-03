@@ -1,6 +1,5 @@
 package com.example.moonstonemusicplayer.view.mainactivity_fragments;
 
-import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -18,9 +17,6 @@ import android.widget.TextView;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.MainActivity.FolderFragment.FolderFragmentListener;
-import com.example.moonstonemusicplayer.model.MainActivity.FolderFragment.BrowserManager;
-
-import java.io.File;
 
 /**
  * A simple {@link Fragment} subclass.

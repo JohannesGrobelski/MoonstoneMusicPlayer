@@ -5,12 +5,14 @@ import android.util.Log;
 
 import com.example.moonstonemusicplayer.model.MainActivity.AlbumFragment.Album;
 import com.example.moonstonemusicplayer.model.MainActivity.ArtistFragment.Artist;
+import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 public class ArtistManager {
 
@@ -29,8 +31,10 @@ public class ArtistManager {
 
   /** loads local music and adds it to dataSource*/
   public void loadArtistsFromDB(Context context){
-    if(context != null){
-      //TODO
+    Map<String, List<Song>> artistMap = BrowserManager.getArtistListMap();
+    for(String artistName : artistMap.keySet()){
+      Artist artist = new Artist(artistName, artistMap.get(artistName));
+      artistList.add(artist);
     }
   }
 
@@ -40,10 +44,6 @@ public class ArtistManager {
 
   public void setArtistList(List<Artist> artistList) {
     this.artistList = artistList;
-  }
-
-  public void setAlbumList(List<Album> albumList) {
-    this.albumList = albumList;
   }
 
   /** search for artists with name matching the query*/

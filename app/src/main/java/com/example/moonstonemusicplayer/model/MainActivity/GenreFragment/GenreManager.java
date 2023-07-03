@@ -1,15 +1,15 @@
 package com.example.moonstonemusicplayer.model.MainActivity.GenreFragment;
 
 import android.content.Context;
-import android.util.Log;
 
-import com.example.moonstonemusicplayer.model.MainActivity.FolderFragment.BrowserManager;
+import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 //import com.example.moonstonemusicplayer.model.Database.DBSonglists;
 
@@ -26,13 +26,15 @@ public class GenreManager {
 
   public GenreManager(Context baseContext) {
     this.context = baseContext;
-    loadGenresFromDB(baseContext);
+    loadGenresFromDB();
   }
 
   /** loads local music and adds it to dataSource*/
-  public void loadGenresFromDB(Context context){
-    if(context != null){
-      //TODO
+  public void loadGenresFromDB(){
+    Map<String, List<Song>> genreMap = BrowserManager.getGenreListMap();
+    for(String genreName : genreMap.keySet()){
+      Genre genre = new Genre(genreName, genreMap.get(genreName));
+      genreList.add(genre);
     }
   }
 

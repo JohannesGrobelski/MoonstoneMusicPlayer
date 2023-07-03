@@ -76,10 +76,6 @@ public class GenreListAdapter extends ArrayAdapter<Object> {
       ll_artist_genre.setVisibility(View.VISIBLE);
       tv_artist_song.setVisibility(View.VISIBLE);
       tv_duration_song.setVisibility(View.VISIBLE);
-
-
-      tv_artist_song.setText(aktuelleAlbum.getArtistName());
-      if(aktuelleAlbum.getArtistName().isEmpty())tv_artist_song.setText("unknown artist");
       tv_duration_song.setText(aktuelleAlbum.getDurationString());
 
     }

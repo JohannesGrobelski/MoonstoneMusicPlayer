@@ -1,4 +1,4 @@
-package com.example.moonstonemusicplayer.model.MainActivity.FolderFragment;
+package com.example.moonstonemusicplayer.model.MainActivity;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -8,17 +8,17 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 
+import com.example.moonstonemusicplayer.model.MainActivity.AlbumFragment.Album;
+import com.example.moonstonemusicplayer.model.MainActivity.ArtistFragment.Artist;
+import com.example.moonstonemusicplayer.model.MainActivity.GenreFragment.Genre;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 
 import java.io.File;
-import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 /** Singleton
@@ -31,10 +31,14 @@ public class BrowserManager {
 
   private static Map<File, Song> audioFileSongMap = new HashMap<>();
 
+  private static Map<String, List<Song>> genreListMap = new HashMap<>();
+
+  private static Map<String, List<Song>> artistListMap = new HashMap<>();
+
+  private static Map<String, List<Song>> albumListMap = new HashMap<>();
+
   private static final String TAG = BrowserManager.class.getSimpleName();
   private final Context context;
-
-
 
   private File rootFolder;
 
@@ -60,6 +64,18 @@ public class BrowserManager {
 
   public void setRootFolder(File rootFolder) {
     this.rootFolder = rootFolder;
+  }
+
+  public static Map<String, List<Song>> getGenreListMap() {
+    return genreListMap;
+  }
+
+  public static Map<String, List<Song>> getArtistListMap() {
+    return artistListMap;
+  }
+
+  public static Map<String, List<Song>> getAlbumListMap() {
+    return albumListMap;
   }
 
   public static List<File> getChildren(File file){
@@ -306,6 +322,9 @@ public class BrowserManager {
 
         audioFiles.add(songFile);
         audioFileSongMap.put(songFile,song);
+        registerSongForArtistMap(song);
+        registerSongForAlbumMap(song);
+        registerSongForGenreMap(song);
       }
 
       // Close the cursor
@@ -315,6 +334,35 @@ public class BrowserManager {
     return audioFiles;
   }
 
+  private static void registerSongForAlbumMap(Song song){
+    if(song.getAlbum() != null && !song.getAlbum().isEmpty()){
+      String albumName = song.getAlbum();
+      if(!albumListMap.containsKey(albumName)){
+        albumListMap.put(albumName, new ArrayList<>());
+      }
+      albumListMap.get(albumName).add(song);
+    }
+  }
+
+  private static void registerSongForArtistMap(Song song){
+    if(song.getArtist() != null && !song.getArtist().isEmpty()){
+      String artistName = song.getArtist();
+      if(!artistListMap.containsKey(artistName)){
+        artistListMap.put(artistName, new ArrayList<>());
+      }
+      artistListMap.get(artistName).add(song);
+    }
+  }
+
+  private static void registerSongForGenreMap(Song song){
+    if(song.getGenre() != null && !song.getGenre().isEmpty()){
+      String genreName = song.getGenre();
+      if(!genreListMap.containsKey(genreName)){
+        genreListMap.put(genreName, new ArrayList<>());
+      }
+      genreListMap.get(genreName).add(song);
+    }
+  }
 
 
   public static Song getSongFromPath(String songPath){

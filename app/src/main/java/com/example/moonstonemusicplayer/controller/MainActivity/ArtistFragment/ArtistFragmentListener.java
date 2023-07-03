@@ -9,10 +9,8 @@ import android.widget.AdapterView;
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.model.MainActivity.AlbumFragment.Album;
 import com.example.moonstonemusicplayer.model.MainActivity.ArtistFragment.Artist;
-import com.example.moonstonemusicplayer.model.MainActivity.ArtistFragment.ArtistManager;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import com.example.moonstonemusicplayer.view.PlayListActivity;
-import com.example.moonstonemusicplayer.view.mainactivity_fragments.AlbumFragment;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.ArtistFragment;
 
 import java.util.ArrayList;
@@ -47,8 +45,6 @@ public class ArtistFragmentListener implements AdapterView.OnItemClickListener, 
         setAdapterSongList(artistFragment.artistManager.getCurrentAlbum().getSongList());
       } else if(clickItem instanceof Artist){
         artistFragment.artistManager.setCurrentArtist((Artist) clickItem);
-        artistFragment.artistManager.setAlbumList(((Artist) clickItem).getAlbumList());
-        setAdapterAlbumList(artistFragment.artistManager.getCurrentArtist().getAlbumList());
       }
 
       else { Log.e(TAG,"favorite list contains something different than a songs or album");}

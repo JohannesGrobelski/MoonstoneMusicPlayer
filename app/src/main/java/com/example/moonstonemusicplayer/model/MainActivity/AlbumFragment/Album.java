@@ -8,15 +8,13 @@ import java.util.List;
 
 public class Album {
   private String name;
-  private String artistName;
   private List<Song> songList;
 
-  public static Album emptyAlbum = new Album("","",new ArrayList<Song>());
+  public static Album emptyAlbum = new Album("",new ArrayList<Song>());
 
 
-  public Album(String name, String artistName, List<Song> songList) {
+  public Album(String name, List<Song> songList) {
     this.name = name;
-    this.artistName = artistName;
     this.songList = songList;
   }
 
@@ -26,14 +24,6 @@ public class Album {
 
   public void setName(String name) {
     this.name = name;
-  }
-
-  public String getArtistName() {
-    return artistName;
-  }
-
-  public void setArtistName(String artistName) {
-    this.artistName = artistName;
   }
 
   public List<Song> getSongList() {

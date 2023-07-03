@@ -4,12 +4,14 @@ import android.content.Context;
 import android.util.Log;
 
 import com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists;
+import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 public class AlbumManager {
 
@@ -26,8 +28,10 @@ public class AlbumManager {
 
   /** loads local music and adds it to dataSource*/
   public void loadAlbumsFromDB(Context context){
-    if(context != null){
-      //TODO
+    Map<String, List<Song>> albumMap = BrowserManager.getAlbumListMap();
+    for(String albumName : albumMap.keySet()){
+      Album album = new Album(albumName, albumMap.get(albumName));
+      albumList.add(album);
     }
   }
 
@@ -43,8 +47,7 @@ public class AlbumManager {
   public Album[] getAllAlbumsMatchingQuery(String query) {
     List<Album> results = new ArrayList<>();
     for(Album Album: getAlbumList()){
-      if(Album.getName().toLowerCase().contains(query.toLowerCase())
-      || Album.getArtistName().toLowerCase().contains(query.toLowerCase())){
+      if(Album.getName().toLowerCase().contains(query.toLowerCase())){
             results.add(Album);
       }
     }

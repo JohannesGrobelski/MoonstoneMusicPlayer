@@ -7,7 +7,7 @@ import static com.example.moonstonemusicplayer.model.PlayListActivity.PlayListMo
 import static com.example.moonstonemusicplayer.model.PlayListActivity.PlayListModel.REPEATMODE.ONESONG;
 import static com.example.moonstonemusicplayer.model.PlayListActivity.PlayListModel.REPEATMODE.ALL;
 
-import com.example.moonstonemusicplayer.model.MainActivity.FolderFragment.BrowserManager;
+import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
 
 public class PlayListModel {
   private final List<File> playlist;
