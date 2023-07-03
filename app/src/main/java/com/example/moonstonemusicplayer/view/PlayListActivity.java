@@ -75,11 +75,10 @@ public class PlayListActivity extends AppCompatActivity {
 
     } else {
       //fetch songlist from fragment that called playlist activity
-      if(getIntent().hasExtra(FolderFragment.FOLDERSONGINDEXEXTRA)){
-        song_index = getIntent().getIntExtra(FolderFragment.FOLDERSONGINDEXEXTRA,0);
-        playListActivityListener = new PlayListActivityListener(this, FolderFragmentListener.getFolderSonglist(),song_index);
-      }/*
-      else if(getIntent().hasExtra(GENRELISTEXTRA)){
+      if(getIntent().hasExtra(FolderFragment.FOLDERSONGINDEXEXTRA)) {
+        song_index = getIntent().getIntExtra(FolderFragment.FOLDERSONGINDEXEXTRA, 0);
+        playListActivityListener = new PlayListActivityListener(this, FolderFragmentListener.getFolderSonglist(), song_index);
+      } else if(getIntent().hasExtra(GENRELISTEXTRA)){
         song_index = getIntent().getIntExtra(GENRELISTEXTRA,0);
         playListActivityListener = new PlayListActivityListener(this, GenreFragmentListener.getGenreSonglist(),song_index);
       }
@@ -94,7 +93,7 @@ public class PlayListActivity extends AppCompatActivity {
       if(getIntent().hasExtra(ArtistFragmentListener.ARTISTALBUMLISTEXTRA)){
         song_index = getIntent().getIntExtra(ArtistFragmentListener.ARTISTALBUMLISTEXTRA,0);
         playListActivityListener = new PlayListActivityListener(this, ArtistFragmentListener.getAlbumSonglist(),song_index);
-      }*/
+      }
     }
     lv_songlist.setOnItemClickListener(playListActivityListener);
     btn_shuffle.setOnClickListener(playListActivityListener);

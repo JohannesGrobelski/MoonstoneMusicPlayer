@@ -16,6 +16,7 @@ import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import com.example.moonstonemusicplayer.view.PlayListActivity;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.PlayListFragment;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -75,10 +76,12 @@ public class PlaylistFragmentListener implements AdapterView.OnItemClickListener
   }
 
   /** used by playlistactivity to get songs to play*/
-  public static Song[] getPlaylistSonglist(){
-    Song[] playlistCopy = Playlist.getPlaylist().toArray(new Song[Playlist.getPlaylist().size()]);
-    Playlist = null;
-    return playlistCopy;
+  public static File[] getPlaylistSonglist(){
+    List<File> fileList = new ArrayList<>();
+    for(Song song : Playlist.getPlaylist()){
+      fileList.add(new File(song.getPath()));
+    }
+    return fileList.toArray(new File[0]);
   }
 
   public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {

@@ -13,6 +13,7 @@ import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import com.example.moonstonemusicplayer.view.PlayListActivity;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.ArtistFragment;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,12 +40,10 @@ public class ArtistFragmentListener implements AdapterView.OnItemClickListener, 
     Object clickItem = artistListAdapter.getItem(position);
     if(clickItem != null) {
       if(clickItem instanceof Song) {
-        startAlbumSonglist(artistFragment.artistManager.getCurrentAlbum().getSongList(),position);
-      } else if(clickItem instanceof Album){
-        artistFragment.artistManager.setCurrentAlbum((Album) clickItem);
-        setAdapterSongList(artistFragment.artistManager.getCurrentAlbum().getSongList());
+        startAlbumSonglist(artistFragment.artistManager.getCurrentArtist().getSongList(),position);
       } else if(clickItem instanceof Artist){
         artistFragment.artistManager.setCurrentArtist((Artist) clickItem);
+        setAdapterSongList(artistFragment.artistManager.getCurrentArtist().getSongList());
       }
 
       else { Log.e(TAG,"favorite list contains something different than a songs or album");}
@@ -81,10 +80,12 @@ public class ArtistFragmentListener implements AdapterView.OnItemClickListener, 
   }
 
   /** used by playlistactivity to get songs to play*/
-  public static Song[] getAlbumSonglist(){
-    Song[] songlistCopy = AlbumSongList.toArray(new Song[AlbumSongList.size()]);
-    AlbumSongList = null;
-    return songlistCopy;
+  public static File[] getAlbumSonglist(){
+    List<File> fileList = new ArrayList<>();
+    for(Song song : AlbumSongList){
+      fileList.add(new File(song.getPath()));
+    }
+    return fileList.toArray(new File[0]);
   }
 
   public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
