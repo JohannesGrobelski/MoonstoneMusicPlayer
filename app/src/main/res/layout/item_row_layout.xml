@@ -6,9 +6,9 @@
     android:layout_width="match_parent"
     android:layout_height="50dp"
     android:paddingEnd="10dp"
-
     android:descendantFocusability="blocksDescendants"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:theme="@style/Theme.AppCompat.DayNight">
 
     <ImageView
         android:id="@+id/iv_item"
@@ -19,7 +19,6 @@
         android:layout_marginTop="5dp"
         android:layout_marginEnd="5dp"
         android:layout_marginBottom="5dp"
-        android:background="#FFFFFF"
         android:tintMode="src_in"
         app:tint="@color/colorPrimary"
         tools:srcCompat="@drawable/ic_music" />

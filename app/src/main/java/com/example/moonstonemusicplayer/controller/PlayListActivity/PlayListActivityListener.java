@@ -33,11 +33,13 @@ import androidx.core.content.ContextCompat;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists;
+import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
 import com.example.moonstonemusicplayer.model.PlayListActivity.PlaylistManager;
 import com.example.moonstonemusicplayer.model.PlayListActivity.PlayListModel;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import com.example.moonstonemusicplayer.view.PlayListActivity;
 
+import java.io.BufferedReader;
 import java.io.File;
 
 
@@ -502,9 +504,9 @@ public class PlayListActivityListener
       //calculate the index of the song clicked
       AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
       int index = info.position;
-      File selectedSong = playlistManager.getDisplayedSongList().get(index);
-
-      /*switch (item.getItemId()){
+      File selectedSongFile = playlistManager.getDisplayedSongList().get(index);
+      Song selectedSong = BrowserManager.getSongFromAudioFile(selectedSongFile);
+      switch (item.getItemId()){
         case 1: {
           DBPlaylists.getInstance(playListActivity).addToFavorites(playListActivity,selectedSong);
           break;
@@ -514,8 +516,6 @@ public class PlayListActivityListener
           break;
         }
       }
-
-       */
     }
     return true;
   }

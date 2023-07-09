@@ -1,6 +1,7 @@
 package com.example.moonstonemusicplayer.controller.PlayListActivity;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -71,9 +72,17 @@ public class SongListAdapter extends ArrayAdapter<File> {
       tv_duration_song.setText(song.getDurationString());
     }
 
+    int nightModeFlags =
+            getContext().getResources().getConfiguration().uiMode &
+                    Configuration.UI_MODE_NIGHT_MASK;
 
-    if(currentSongFile.getPath().equals(selectedSongPath))ll_song_background.setBackgroundColor(Color.LTGRAY);
-    else ll_song_background.setBackgroundColor(Color.WHITE);
+    if(nightModeFlags == Configuration.UI_MODE_NIGHT_YES){
+      if(currentSongFile.getPath().equals(selectedSongPath))ll_song_background.setBackgroundColor(Color.LTGRAY);
+      else ll_song_background.setBackgroundColor(Color.DKGRAY);
+    } else {
+      if(currentSongFile.getPath().equals(selectedSongPath))ll_song_background.setBackgroundColor(Color.LTGRAY);
+      else ll_song_background.setBackgroundColor(Color.WHITE);
+    }
 
     return rowView;
   }

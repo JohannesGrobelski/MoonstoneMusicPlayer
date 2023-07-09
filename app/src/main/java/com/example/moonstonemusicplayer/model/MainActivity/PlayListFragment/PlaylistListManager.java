@@ -45,6 +45,8 @@ public class PlaylistListManager {
   public void loadPlaylistsFromDB(Context context){
     createRecentlyAddedPlaylist(context);
     createRecentlyPlayedPlaylist(context);
+    //List<Playlist> allPlayLists = DBPlaylists.getInstance(context).getAllPlaylists(context);
+
   }
 
   public Playlist getPlaylist(String name){
