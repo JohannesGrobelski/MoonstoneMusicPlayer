@@ -1,8 +1,12 @@
 package com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment;
 
+import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.RECENTLY_ADDED_PLAYLIST_NAME;
+import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.RECENTLY_PLAYED_PLAYLIST_NAME;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.provider.MediaStore;
+import android.widget.Toast;
 
 //import com.example.moonstonemusicplayer.model.Database.DBSonglists;
 import com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists;
@@ -43,10 +47,21 @@ public class PlaylistListManager {
 
   /** loads local music and adds it to dataSource*/
   public void loadPlaylistsFromDB(Context context){
+    playlists_backup.clear();
+    playlists.clear();
+    List<Playlist> allPlayLists = DBPlaylists.getInstance(context).getAllPlaylists(context);
+    boolean hasRecentlyPlayed = false;
+    for(Playlist playlist : allPlayLists){
+      if(playlist.name.equals(RECENTLY_PLAYED_PLAYLIST_NAME)){
+        hasRecentlyPlayed = true;
+      }
+    }
     createRecentlyAddedPlaylist(context);
-    createRecentlyPlayedPlaylist(context);
-    //List<Playlist> allPlayLists = DBPlaylists.getInstance(context).getAllPlaylists(context);
-
+    if(!hasRecentlyPlayed){
+      createRecentlyPlayedPlaylist(context);
+    }
+    this.playlists_backup.addAll(allPlayLists);
+    playlists.addAll(playlists_backup);
   }
 
   public Playlist getPlaylist(String name){
@@ -185,7 +200,7 @@ public class PlaylistListManager {
   }
 
   private void createRecentlyAddedPlaylist(Context context){
-    Playlist recentlyAddedPlaylist = new Playlist("recently added", new ArrayList<>());
+    Playlist recentlyAddedPlaylist = new Playlist(RECENTLY_ADDED_PLAYLIST_NAME, new ArrayList<>());
 
     List<Song> songList = new ArrayList<>();
 
