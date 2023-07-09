@@ -412,34 +412,34 @@ public class MediaPlayerService extends Service
     notificationIntent.addCategory(Intent.CATEGORY_LAUNCHER);
     notificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
     PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
-        notificationIntent, 0);
+            notificationIntent, PendingIntent.FLAG_IMMUTABLE);
 
 
     //setting up the intents for the actions available in notification: previous, play, next, close
     Intent previousIntent = new Intent(this, MediaPlayerService.class);
     previousIntent.setAction(Constants.ACTION.PREV_ACTION);
     PendingIntent ppreviousIntent = PendingIntent.getService(this, 0,
-        previousIntent, 0);
+            previousIntent, PendingIntent.FLAG_IMMUTABLE);
 
     Intent playIntent = new Intent(this, MediaPlayerService.class);
     playIntent.setAction(Constants.ACTION.PLAY_ACTION);
     PendingIntent pplayIntent = PendingIntent.getService(this, 0,
-        playIntent, 0);
+            playIntent, PendingIntent.FLAG_IMMUTABLE);
 
     Intent nextIntent = new Intent(this, MediaPlayerService.class);
     nextIntent.setAction(Constants.ACTION.NEXT_ACTION);
     PendingIntent pnextIntent = PendingIntent.getService(this, 0,
-        nextIntent, 0);
+            nextIntent, PendingIntent.FLAG_IMMUTABLE);
 
     Intent closeIntent = new Intent(this, MediaPlayerService.class);
     closeIntent.setAction(Constants.ACTION.STOPFOREGROUND_ACTION);
     PendingIntent pcloseIntent = PendingIntent.getService(this, 0,
-        closeIntent, 0);
+            closeIntent, PendingIntent.FLAG_IMMUTABLE);
 
 
 
     PendingIntent popenIntent = PendingIntent.getActivity(this, 0,
-        notificationIntent, 0);
+            notificationIntent, PendingIntent.FLAG_IMMUTABLE);
 
     //connect views with pending intents
     views.setOnClickPendingIntent(R.id.status_bar_play, pplayIntent);

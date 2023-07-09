@@ -282,7 +282,7 @@ public class BrowserManager {
     };
 
     // Perform the query using the MediaStore.Audio.Media.EXTERNAL_CONTENT_URI content URI
-    Cursor cursor = context.getContentResolver().query(
+    Cursor cursor =  context.getContentResolver().query(
             MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
             projection,
             null,
