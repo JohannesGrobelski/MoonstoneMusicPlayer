@@ -25,7 +25,7 @@ public class DBHelperPlaylists extends SQLiteOpenHelper {
     private static final String LOG_TAG = DBHelperPlaylists.class.getSimpleName();
 
     ///Variable für den Datenbanknamen
-    private static final String DB_NAME = "playlists.db3";
+    public static final String DB_NAME = "playlists.db3";
 
     //Variable für die Datenbank-Version (Änderung bei Upgrade => DB neu anlegen)
     private static final int DB_VERSION = 1;
