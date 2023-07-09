@@ -3,7 +3,9 @@ package com.example.moonstonemusicplayer.model.MainActivity.OnlineMusicFragment.
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.util.Pair;
+import android.widget.Toast;
 
 import com.example.moonstonemusicplayer.model.MainActivity.OnlineMusicFragment.VideoModel;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
@@ -23,11 +25,13 @@ import java.util.Properties;
 
 
 public class YoutubeAPIUtil {
+    private final static String TAG = YoutubeAPIUtil.class.getSimpleName();
     private String API_KEY;
 
     private Context context;
 
     public YoutubeAPIUtil(Context context) throws GeneralSecurityException, IOException {
+        this.context = context;
         Properties properties = new Properties();
         AssetManager assetManager = context.getAssets();
 
@@ -48,10 +52,11 @@ public class YoutubeAPIUtil {
         }
     }
 
-    private final HttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
+    private final HttpTransport HTTP_TRANSPORT = new com.google.api.client.http.javanet.NetHttpTransport();
+
     private final JsonFactory JSON_FACTORY = Utils.getDefaultJsonFactory();
 
-    public void searchVideosByKeyword(Context context, String keyword, Callback<List<VideoModel>, Exception> callback) {
+    public void searchVideosByKeyword(String keyword, Callback<List<VideoModel>, Exception> callback) {
         new AsyncTask<Void, Void, Pair<List<VideoModel>, Exception>>() {
             @Override
             protected Pair<List<VideoModel>, Exception> doInBackground(Void... params) {
@@ -82,9 +87,15 @@ public class YoutubeAPIUtil {
     }
 
     private YouTube createYouTubeClient() {
-        return new YouTube.Builder(HTTP_TRANSPORT, JSON_FACTORY, null)
-                .setApplicationName("YoutubeAnalyser")
-                .build();
+        try {
+            return new YouTube.Builder(HTTP_TRANSPORT, JSON_FACTORY, null)
+                    .setApplicationName("YoutubeAnalyser")
+                    .build();
+
+        } catch (Exception e){
+            Log.e(TAG, e.toString());
+            return null;
+        }
     }
 
     private List<VideoModel> mapResponseToVideoModels(List<SearchResult> items) {

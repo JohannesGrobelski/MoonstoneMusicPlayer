@@ -11,11 +11,11 @@
         android:layout_width="match_parent"
         android:layout_height="50dp">
 
-        <TextView
+        <EditText
             android:id="@+id/search_input"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:text="Search ... "
+            android:hint="Search ... "
             app:layout_constraintEnd_toStartOf="@+id/searchButton"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

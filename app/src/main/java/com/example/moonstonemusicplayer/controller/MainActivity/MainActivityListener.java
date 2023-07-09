@@ -214,17 +214,20 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
       return true;
     } else {
       switch(currentItem){
-        case 0: {
-          return ((FolderFragment) fragments[0]).onBackpressed();
-        }
         case 1: {
-          return ((PlayListFragment) fragments[1]).onBackpressed();
+          return ((FolderFragment) fragments[1]).onBackpressed();
         }
         case 2: {
-          return false;
+          return ((PlayListFragment) fragments[2]).onBackpressed();
         }
         case 3: {
-          return ((AlbumFragment) fragments[3]).onBackpressed();
+          return false;
+        }
+        case 4: {
+          return ((ArtistFragment) fragments[4]).onBackpressed();
+        }
+        case 5: {
+          return ((GenreFragment) fragments[5]).onBackpressed();
         }
       }
     }

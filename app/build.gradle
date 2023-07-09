@@ -43,8 +43,8 @@ dependencies {
 
     androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0')
     implementation 'com.github.sapher:youtubedl-java:1.+'
-    implementation 'com.google.api-client:google-api-client:2.2.0'
-    implementation 'com.google.apis:google-api-services-youtube:v3-rev222-1.25.0'
+    implementation 'com.google.api-client:google-api-client:1.1.5'
+    implementation 'com.google.apis:google-api-services-youtube:v3-rev212-1.25.0'
     implementation 'com.squareup.picasso:picasso:2.8'
 
 }

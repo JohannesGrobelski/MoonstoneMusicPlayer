@@ -38,7 +38,7 @@ public class OnlineMusicFragment extends Fragment {
     private static final boolean DEBUG = false;
 
     // TODO: Rename and change types of parameters
-    private EditText searchBar;
+    private EditText search_input;
     private Button searchButton;
     private ListView listView;
 
@@ -78,7 +78,7 @@ public class OnlineMusicFragment extends Fragment {
         super.onCreate(savedInstanceState);
         View rootView = inflater.inflate(R.layout.fragment_online_music, container, false);
 
-        this.searchBar = rootView.findViewById(R.id.searchBar);
+        this.search_input = rootView.findViewById(R.id.search_input);
         this.searchButton = rootView.findViewById(R.id.searchButton);
 
         this.listView = rootView.findViewById(R.id.listViewItems);
@@ -90,13 +90,15 @@ public class OnlineMusicFragment extends Fragment {
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String searchText = searchBar.getText().toString();
+                String searchText = search_input.getText().toString();
                 // Use the searchText for further processing, such as performing a search operation
                 // or passing it to another method for handling.
                 Toast.makeText(OnlineMusicFragment.this.getContext(), "Search Text: "+searchText, Toast.LENGTH_SHORT).show();
 
                 try {
-                    new YoutubeAPIUtil(instance.getContext()).searchVideosByKeyword(instance.getContext(), searchText, (result, error) -> {
+                    Context context = instance.getContext().getApplicationContext();
+                    YoutubeAPIUtil youtubeAPIUtil = new YoutubeAPIUtil(instance.getContext().getApplicationContext());
+                    youtubeAPIUtil.searchVideosByKeyword(searchText, (result, error) -> {
                         if (error != null) {
                             // Handle the exception
                             Toast.makeText(instance.getContext(), "Error for "+searchText, Toast.LENGTH_SHORT).show();
@@ -111,6 +113,7 @@ public class OnlineMusicFragment extends Fragment {
                             adapter.notifyDataSetChanged();
                         }
                     });
+
                 } catch (GeneralSecurityException e) {
                     throw new RuntimeException(e);
                 } catch (IOException e) {
