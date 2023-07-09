@@ -16,6 +16,7 @@ import androidx.annotation.Nullable;
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.model.MainActivity.OnlineMusicFragment.VideoModel;
 import com.example.moonstonemusicplayer.model.MainActivity.OnlineMusicFragment.utils.YouTubeDownloader;
+import com.example.moonstonemusicplayer.view.MainActivity;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -69,8 +70,7 @@ public final class YTVideoListAdapter extends ArrayAdapter {
         downloadSongButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                YouTubeDownloader youTubeDownloader = new YouTubeDownloader(activity);
-                youTubeDownloader.downloadVideo(currentVideoModel.getVideoURL(), currentVideoModel.getTitle());
+               ((MainActivity) activity).downloadSong(currentVideoModel);
             }
         });
 

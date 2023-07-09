@@ -45,7 +45,6 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
     this.fragments = fragments;
     if(DEBUG)Log.d(TAG,"fragments null: "+ (fragments == null));
 
-    requestForPermission();
   }
 
   /** Init options menu and search view.
@@ -136,20 +135,6 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
       return true;
   }
 
-  /** requests runtime storage permissions (API>=23) for loading files from sd-card */
-  public boolean requestForPermission() {
-    int permissionCheck = ContextCompat.checkSelfPermission(mainActivity, Manifest.permission.READ_EXTERNAL_STORAGE);
-    if (!(permissionCheck == PackageManager.PERMISSION_GRANTED)) {
-      if (ActivityCompat.shouldShowRequestPermissionRationale(mainActivity,Manifest.permission.READ_EXTERNAL_STORAGE)) {
-      } else {
-        mainActivity.requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1234);
-      }
-    } else {
-      //Toast.makeText(mainActivity, "Permission (already) Granted!", Toast.LENGTH_SHORT).show();
-    }
-    return permissionCheck == PackageManager.PERMISSION_GRANTED;
-  }
-
   @Override
   public boolean onQueryTextSubmit(String query) {
     return false;
@@ -232,6 +217,10 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
       }
     }
     return false;
+  }
+
+  public Fragment getCurrentFragment(int position){
+    return fragments[position];
   }
 
   private void closeSearchBar() {
