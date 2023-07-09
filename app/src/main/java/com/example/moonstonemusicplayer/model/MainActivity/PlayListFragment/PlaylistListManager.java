@@ -54,6 +54,7 @@ public class PlaylistListManager {
     for(Playlist playlist : allPlayLists){
       if(playlist.name.equals(RECENTLY_PLAYED_PLAYLIST_NAME)){
         hasRecentlyPlayed = true;
+        Collections.reverse(playlist.getPlaylist());
       }
     }
     createRecentlyAddedPlaylist(context);
@@ -266,7 +267,7 @@ public class PlaylistListManager {
   }
 
   private void createRecentlyPlayedPlaylist(Context context){
-    Playlist recentlyPlayedPlaylist = new Playlist("recently played", new ArrayList<>());
+    Playlist recentlyPlayedPlaylist = new Playlist(RECENTLY_PLAYED_PLAYLIST_NAME, new ArrayList<>());
     List<Song> songListRecentlyPlayed = DBPlaylists.getInstance(context).getAllRecentlyPlayed(context);
     for(int i=songListRecentlyPlayed.size()-1; i>=0; i--){
       recentlyPlayedPlaylist.playlist.add(songListRecentlyPlayed.get(i));
