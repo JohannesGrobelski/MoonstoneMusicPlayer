@@ -22,7 +22,8 @@ public class DBPlaylists {
     //favorites is just another playlist
     private static final String FAVORITES_PLAYLIST_NAME = "MOONSTONE FAVORITES";
 
-    private static final String RECENTLY_PLAYED_PLAYLIST_NAME = "RECENTLY PLAYED";
+    public static final String RECENTLY_PLAYED_PLAYLIST_NAME = "RECENTLY PLAYED";
+    public static final String RECENTLY_ADDED_PLAYLIST_NAME = "RECENTLY ADDED";
 
     private static final String TAG = DBPlaylists.class.getSimpleName();
     private static final boolean DEBUG = true;
