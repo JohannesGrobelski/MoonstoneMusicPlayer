@@ -153,14 +153,14 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
     int currentItem = mainActivity.viewPager.getCurrentItem();
     Log.d("search","in fragment: "+currentItem);
     switch(currentItem){
-      case 0: {
+      case 1: {
         Log.v(TAG, "search the current fragment FolderFragment");
-        ((FolderFragment) fragments[0]).searchMusic(query);
+        ((FolderFragment) fragments[1]).searchMusic(query);
         break;
       }
-      case 1: {
-        Log.v(TAG, "search the current fragment PlaylistFragment");
-        ((PlayListFragment) fragments[1]).searchMusic(query);
+      case 2: {
+        Log.v(TAG, "search the current fragment PlayListFragment");
+        ((PlayListFragment) fragments[2]).searchMusic(query);
         break;
       }
      /* case 2: {
@@ -168,19 +168,19 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
         ((FavoritesFragment) fragments[2]).searchMusic(query);
         break;
       }*/
-      case 2: {
-        Log.v(TAG, "search the current fragment FavoritesFragment");
-        ((AlbumFragment) fragments[2]).searchMusic(query);
-        break;
-      }
       case 3: {
-        Log.v(TAG, "search the current fragment FavoritesFragment");
-        ((ArtistFragment) fragments[3]).searchMusic(query);
+        Log.v(TAG, "search the current fragment AlbumFragment");
+        ((AlbumFragment) fragments[3]).searchMusic(query);
         break;
       }
       case 4: {
-        Log.v(TAG, "search the current fragment FavoritesFragment");
-        ((GenreFragment) fragments[4]).searchMusic(query);
+        Log.v(TAG, "search the current fragment ArtistFragment");
+        ((ArtistFragment) fragments[4]).searchMusic(query);
+        break;
+      }
+      case 5: {
+        Log.v(TAG, "search the current fragment GenreFragment");
+        ((GenreFragment) fragments[5]).searchMusic(query);
         break;
       }
     }

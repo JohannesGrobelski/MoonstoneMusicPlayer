@@ -275,7 +275,6 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
       Log.e(TAG, e.toString());
       Toast.makeText(folderFragment.getContext(), "ERROR: Could not click on item.", Toast.LENGTH_LONG).show();
     }
-
   }
 
   public void sortSongsByName() {
