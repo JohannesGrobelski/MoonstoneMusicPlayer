@@ -33,7 +33,7 @@
             app:tabMode="scrollable"/>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.viewpager.widget.ViewPager
+    <com.example.moonstonemusicplayer.view.NonSwipeableViewPager
         android:id="@+id/view_pager_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

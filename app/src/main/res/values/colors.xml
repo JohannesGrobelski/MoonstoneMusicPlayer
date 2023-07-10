@@ -28,5 +28,10 @@
         <color name="black">#ff000000</color>
         <!-- White -->
         <color name="white">#ffffffff</color>
+
+        <color name="red">#ffff0000</color>
+        <color name="blue">#ff0000ff</color>
+
+
 </resources>
 

@@ -10,16 +10,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.core.widget.ImageViewCompat;
 
+import com.daimajia.swipe.SwipeLayout;
 import com.example.moonstonemusicplayer.R;
+import com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists;
 import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 
@@ -59,9 +63,12 @@ public class FolderListAdapter extends ArrayAdapter<File> {
     ImageViewCompat.setImageTintList(iv_folderSongItem, ColorStateList.valueOf(ContextCompat.getColor(context, R.color.colorPrimary)));
 
     File file = folderSongList.get(position);
+    SwipeLayout item_row_swipe_layout = rowView.findViewById(R.id.item_row_swipe_layout);
     if(folderSongList.get(position).isDirectory()){
       iv_folderSongItem.setBackground(ContextCompat.getDrawable(context,R.drawable.ic_folder));
+      item_row_swipe_layout.setSwipeEnabled(false);
     } else {
+      item_row_swipe_layout.setSwipeEnabled(true);
       iv_folderSongItem.setBackground(ContextCompat.getDrawable(context,R.drawable.ic_music));
 
       TextView tv_item_artist = rowView.findViewById(R.id.tv_item_artist);
@@ -95,8 +102,68 @@ public class FolderListAdapter extends ArrayAdapter<File> {
           showSongInfoPopup(context, file);
         }
       });
+
+      //set show mode.
+      item_row_swipe_layout.setShowMode(SwipeLayout.ShowMode.LayDown);
+
+      //add drag edge.(If the BottomView has 'layout_gravity' attribute, this line is unnecessary)
+      item_row_swipe_layout.addDrag(SwipeLayout.DragEdge.Left, rowView.findViewById(R.id.add_to_favorites));
+      item_row_swipe_layout.addDrag(SwipeLayout.DragEdge.Right, rowView.findViewById(R.id.add_to_playlist));
+
+      item_row_swipe_layout.addSwipeListener(new SwipeLayout.SwipeListener() {
+        @Override
+        public void onStartOpen(SwipeLayout layout) {
+
+        }
+
+        @Override
+        public void onOpen(SwipeLayout layout) {
+
+        }
+
+        @Override
+        public void onStartClose(SwipeLayout layout) {
+
+        }
+
+        @Override
+        public void onClose(SwipeLayout layout) {
+
+        }
+
+        @Override
+        public void onUpdate(SwipeLayout layout, int leftOffset, int topOffset) {
+
+        }
+
+        @Override
+        public void onHandRelease(SwipeLayout layout, float xvel, float yvel) {
+
+        }
+      });
+
+      ImageButton add_to_favorites = rowView.findViewById(R.id.add_to_favorites);
+      add_to_favorites.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+          Toast.makeText(context, "Added to favorites: "+song.getName(), Toast.LENGTH_SHORT).show();
+          DBPlaylists.getInstance(context).addToFavorites(context,song);
+          item_row_swipe_layout.close(true);
+        }
+      });
+
+      ImageButton add_to_playlist = rowView.findViewById(R.id.add_to_playlist);
+      add_to_playlist.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+          FolderFragmentListener.showAlertDialogAddToPlaylists(layoutInflater, context, song);
+          item_row_swipe_layout.close(true);
+        }
+      });
+
     }
     tv_folderSongItem.setText(removeFileType(file.getName()));
+
 
 
     return rowView;
