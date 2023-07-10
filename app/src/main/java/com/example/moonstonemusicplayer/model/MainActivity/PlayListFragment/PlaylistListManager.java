@@ -6,7 +6,6 @@ import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylis
 import android.content.Context;
 import android.database.Cursor;
 import android.provider.MediaStore;
-import android.widget.Toast;
 
 //import com.example.moonstonemusicplayer.model.Database.DBSonglists;
 import com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists;

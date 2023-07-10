@@ -76,6 +76,7 @@ public class PlayListFragment extends Fragment {
   public void onResume() {
     super.onResume();
     playlistListManager.updateData(this.getContext());
+    playlistFragmentListener.updateAdapter();
   }
 
   @Override

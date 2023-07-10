@@ -45,7 +45,6 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
     this.fragments = fragments;
     if(DEBUG)Log.d(TAG,"fragments null: "+ (fragments == null));
 
-    requestForPermission();
   }
 
   /** Init options menu and search view.
@@ -136,20 +135,6 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
       return true;
   }
 
-  /** requests runtime storage permissions (API>=23) for loading files from sd-card */
-  public boolean requestForPermission() {
-    int permissionCheck = ContextCompat.checkSelfPermission(mainActivity, Manifest.permission.READ_EXTERNAL_STORAGE);
-    if (!(permissionCheck == PackageManager.PERMISSION_GRANTED)) {
-      if (ActivityCompat.shouldShowRequestPermissionRationale(mainActivity,Manifest.permission.READ_EXTERNAL_STORAGE)) {
-      } else {
-        mainActivity.requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1234);
-      }
-    } else {
-      //Toast.makeText(mainActivity, "Permission (already) Granted!", Toast.LENGTH_SHORT).show();
-    }
-    return permissionCheck == PackageManager.PERMISSION_GRANTED;
-  }
-
   @Override
   public boolean onQueryTextSubmit(String query) {
     return false;
@@ -168,14 +153,14 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
     int currentItem = mainActivity.viewPager.getCurrentItem();
     Log.d("search","in fragment: "+currentItem);
     switch(currentItem){
-      case 0: {
+      case 1: {
         Log.v(TAG, "search the current fragment FolderFragment");
-        ((FolderFragment) fragments[0]).searchMusic(query);
+        ((FolderFragment) fragments[1]).searchMusic(query);
         break;
       }
-      case 1: {
-        Log.v(TAG, "search the current fragment PlaylistFragment");
-        ((PlayListFragment) fragments[1]).searchMusic(query);
+      case 2: {
+        Log.v(TAG, "search the current fragment PlayListFragment");
+        ((PlayListFragment) fragments[2]).searchMusic(query);
         break;
       }
      /* case 2: {
@@ -183,19 +168,19 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
         ((FavoritesFragment) fragments[2]).searchMusic(query);
         break;
       }*/
-      case 2: {
-        Log.v(TAG, "search the current fragment FavoritesFragment");
-        ((AlbumFragment) fragments[2]).searchMusic(query);
-        break;
-      }
       case 3: {
-        Log.v(TAG, "search the current fragment FavoritesFragment");
-        ((ArtistFragment) fragments[3]).searchMusic(query);
+        Log.v(TAG, "search the current fragment AlbumFragment");
+        ((AlbumFragment) fragments[3]).searchMusic(query);
         break;
       }
       case 4: {
-        Log.v(TAG, "search the current fragment FavoritesFragment");
-        ((GenreFragment) fragments[4]).searchMusic(query);
+        Log.v(TAG, "search the current fragment ArtistFragment");
+        ((ArtistFragment) fragments[4]).searchMusic(query);
+        break;
+      }
+      case 5: {
+        Log.v(TAG, "search the current fragment GenreFragment");
+        ((GenreFragment) fragments[5]).searchMusic(query);
         break;
       }
     }
@@ -214,21 +199,28 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
       return true;
     } else {
       switch(currentItem){
-        case 0: {
-          return ((FolderFragment) fragments[0]).onBackpressed();
-        }
         case 1: {
-          return ((PlayListFragment) fragments[1]).onBackpressed();
+          return ((FolderFragment) fragments[1]).onBackpressed();
         }
         case 2: {
-          return false;
+          return ((PlayListFragment) fragments[2]).onBackpressed();
         }
         case 3: {
-          return ((AlbumFragment) fragments[3]).onBackpressed();
+          return false;
+        }
+        case 4: {
+          return ((ArtistFragment) fragments[4]).onBackpressed();
+        }
+        case 5: {
+          return ((GenreFragment) fragments[5]).onBackpressed();
         }
       }
     }
     return false;
+  }
+
+  public Fragment getCurrentFragment(int position){
+    return fragments[position];
   }
 
   private void closeSearchBar() {

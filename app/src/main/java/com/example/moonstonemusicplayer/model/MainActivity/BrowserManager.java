@@ -282,7 +282,7 @@ public class BrowserManager {
     };
 
     // Perform the query using the MediaStore.Audio.Media.EXTERNAL_CONTENT_URI content URI
-    Cursor cursor = context.getContentResolver().query(
+    Cursor cursor =  context.getContentResolver().query(
             MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
             projection,
             null,
@@ -323,6 +323,32 @@ public class BrowserManager {
         registerSongForArtistMap(song);
         registerSongForAlbumMap(song);
         registerSongForGenreMap(song);
+      }
+
+      //add files from Downloads/YTMusic
+      String selectionYTMusic = MediaStore.Files.FileColumns.DATA + " LIKE ?";
+      String[] selectionArgsYTMusic = new String[]{"%/storage/emulated/0/Download/YTMusic%"};
+
+      cursor = context.getContentResolver().query(
+              MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+              projection,
+              selectionYTMusic,
+              selectionArgsYTMusic,
+              null
+      );
+
+      while (cursor.moveToNext()) {
+        String filePath = cursor.getString(dataIndex);
+        File songFile = new File(filePath);
+
+        if(songFile.isFile()){
+          Song song = parseSongFromAudioFile(songFile);
+          audioFiles.add(songFile);
+          audioFileSongMap.put(songFile,song);
+          registerSongForArtistMap(song);
+          registerSongForAlbumMap(song);
+          registerSongForGenreMap(song);
+        }
       }
 
       // Close the cursor

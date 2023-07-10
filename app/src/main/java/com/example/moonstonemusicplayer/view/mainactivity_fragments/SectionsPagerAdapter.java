@@ -18,10 +18,10 @@ import com.example.moonstonemusicplayer.R;
 public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
   @StringRes
-  private static final int[] TAB_TITLES = new int[]{R.string.tab_folders,R.string.tab_playlists,R.string.tab_albums,R.string.tab_artists,R.string.tab_genre};
+  private static final int[] TAB_TITLES = new int[]{R.string.tab_online_music, R.string.tab_folders,R.string.tab_playlists,R.string.tab_albums,R.string.tab_artists,R.string.tab_genre};
   private final Context mContext;
 
-  Fragment[] fragments = new Fragment[5];
+  Fragment[] fragments = new Fragment[6];
 
   public SectionsPagerAdapter(Context context, FragmentManager fm) {
     super(fm);
@@ -33,20 +33,23 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     // getItem is called to instantiate the fragment for the given page.
     // Return a PlaceholderFragment (defined as a static inner class below).
     if(position == 0){
-      fragments[0] = FolderFragment.newInstance(position + 1);
+      fragments[0] = OnlineMusicFragment.newInstance(position + 1);
       return fragments[0];
     } else if(position == 1){
-      fragments[1] = PlayListFragment.newInstance(position + 1);
+      fragments[1] = FolderFragment.newInstance(position + 1);
       return fragments[1];
     } else if(position == 2){
-      fragments[2] = AlbumFragment.newInstance(position + 1);
+      fragments[2] = PlayListFragment.newInstance(position + 1);
       return fragments[2];
     } else if(position == 3){
-      fragments[3] = ArtistFragment.newInstance(position + 1);
+      fragments[3] = AlbumFragment.newInstance(position + 1);
       return fragments[3];
     } else if(position == 4){
-      fragments[4] = GenreFragment.newInstance(position + 1);
+      fragments[4] = ArtistFragment.newInstance(position + 1);
       return fragments[4];
+    } else if(position == 5){
+      fragments[5] = GenreFragment.newInstance(position + 1);
+      return fragments[5];
     }
     return null;
   }

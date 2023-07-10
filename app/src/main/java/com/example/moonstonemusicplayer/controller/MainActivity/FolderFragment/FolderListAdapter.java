@@ -133,8 +133,6 @@ public class FolderListAdapter extends ArrayAdapter<File> {
     dialog.show();
   }
 
-
-
   /** translate some english genres to german */
   private static String translateGenre(String genre){
     switch(genre.toLowerCase()){

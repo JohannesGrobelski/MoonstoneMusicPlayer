@@ -2,6 +2,8 @@
     <string name="app_name">Moonstone Music Player</string>
     <string name="title_activity_music_player">MusicPlayerActivity</string>
     <string name="tab_playlists">Playlists</string>
+    <string name="tab_online_music">Online Music</string>
+
     <string name="tab_folders">Ordner</string>
     <string name="title_activity_main">MainActivity</string>
     <!-- TODO: Remove or change this placeholder text -->
