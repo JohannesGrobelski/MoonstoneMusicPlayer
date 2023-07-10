@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
   MainActivityListener mainActivityListener;
 
   public SectionsPagerAdapter sectionsPagerAdapter;
-  public ViewPager viewPager;
+  public NonSwipeableViewPager viewPager;
   TabLayout tabs;
   public int tabSelected = -1;
 
@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
     sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
 
     viewPager = findViewById(R.id.view_pager_main);
+    viewPager.setSwipeEnabled(false); // Disable swiping
     viewPager.setAdapter(sectionsPagerAdapter);
     viewPager.setCurrentItem(1);
     tabs = findViewById(R.id.mainactivity_tabs);

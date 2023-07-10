@@ -1,65 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/LL_background_item"
+<com.daimajia.swipe.SwipeLayout android:id="@+id/item_row_swipe_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="50dp"
-    android:paddingEnd="10dp"
-    android:descendantFocusability="blocksDescendants"
-    android:orientation="horizontal"
-    android:theme="@style/Theme.AppCompat.DayNight">
+    app:leftEdgeSwipeOffset="100sp"
+    app:rightEdgeSwipeOffset="100sp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <ImageView
-        android:id="@+id/iv_item"
-        android:layout_width="40dp"
-        android:layout_height="match_parent"
-        android:layout_margin="7dp"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="5dp"
-        android:layout_marginBottom="5dp"
-        android:tintMode="src_in"
-        app:tint="@color/colorPrimary"
-        tools:srcCompat="@drawable/ic_music" />
-
-    <LinearLayout
+    <!-- bottom views -->
+    <ImageButton
+        android:src="@drawable/favorites"
+        android:id="@+id/add_to_favorites"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1"
+        android:background="@color/transparent"/>
+
+    <ImageButton
+        android:src="@drawable/playlists"
+        android:id="@+id/add_to_playlist"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/transparent"/>
+
+
+    <!-- surface view -->
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/LL_background_item"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:paddingEnd="10dp"
+        android:descendantFocusability="blocksDescendants"
         android:orientation="horizontal"
-        android:layout_toEndOf="@+id/iv_item">
+        android:theme="@style/Theme.AppCompat.DayNight">
+
+        <ImageView
+            android:id="@+id/iv_item"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:layout_margin="7dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="5dp"
+            android:tintMode="src_in"
+            app:tint="@color/colorPrimary"
+            tools:srcCompat="@drawable/ic_music" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/tv_item_name"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center|center_horizontal|center_vertical"
-                android:layout_weight="1"
-                android:ellipsize="end"
-                android:gravity="center_vertical"
-                android:maxLines="1"
-                android:paddingStart="5dp"
-                android:paddingTop="2dp"
-                android:paddingEnd="5dp"
-                android:textColor="@color/colorPrimary" />
+            android:orientation="horizontal"
+            android:layout_toEndOf="@+id/iv_item">
 
             <LinearLayout
-                android:id="@+id/ll_artist_genre"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:orientation="horizontal"
-                android:visibility="gone">
+                android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/tv_item_artist"
+                    android:id="@+id/tv_item_name"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center|center_horizontal|center_vertical"
@@ -68,56 +71,80 @@
                     android:gravity="center_vertical"
                     android:maxLines="1"
                     android:paddingStart="5dp"
+                    android:paddingTop="2dp"
                     android:paddingEnd="5dp"
-                    android:paddingBottom="2dp"
-                    android:text="artist"
-                    android:textColor="@color/colorPrimary"
-                    android:visibility="gone" />
+                    android:textColor="@color/colorPrimary" />
 
-                <TextView
-                    android:id="@+id/tv_item_genre"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:id="@+id/ll_artist_genre"
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_gravity="center|center_horizontal|center_vertical"
-                    android:ellipsize="end"
-                    android:gravity="center_vertical"
-                    android:maxLines="1"
-                    android:paddingStart="5dp"
-                    android:paddingEnd="15dp"
-                    android:paddingBottom="2dp"
-                    android:textAlignment="textEnd"
-                    android:textColor="@android:color/darker_gray"
-                    android:visibility="gone" />
+                    android:layout_weight="1"
+                    android:orientation="horizontal"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/tv_item_artist"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center|center_horizontal|center_vertical"
+                        android:layout_weight="1"
+                        android:ellipsize="end"
+                        android:gravity="center_vertical"
+                        android:maxLines="1"
+                        android:paddingStart="5dp"
+                        android:paddingEnd="5dp"
+                        android:paddingBottom="2dp"
+                        android:text="artist"
+                        android:textColor="@color/colorPrimary"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/tv_item_genre"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center|center_horizontal|center_vertical"
+                        android:ellipsize="end"
+                        android:gravity="center_vertical"
+                        android:maxLines="1"
+                        android:paddingStart="5dp"
+                        android:paddingEnd="15dp"
+                        android:paddingBottom="2dp"
+                        android:textAlignment="textEnd"
+                        android:textColor="@android:color/darker_gray"
+                        android:visibility="gone" />
+
+                </LinearLayout>
 
             </LinearLayout>
 
+            <TextView
+                android:id="@+id/item_tv_duration"
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center|center_horizontal|center_vertical"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:text="1:11:11"
+                android:textAlignment="center"
+                android:textColor="@color/colorPrimary"
+                android:visibility="gone" />
+
+            <ImageButton
+                android:id="@+id/btn_song_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@color/transparent"
+                android:padding="10dp"
+                android:src="@android:drawable/ic_menu_info_details"
+                android:text="info"
+                android:visibility="gone"/>
+
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/item_tv_duration"
-            android:layout_width="100dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="center|center_horizontal|center_vertical"
-            android:layout_weight="1"
-            android:ellipsize="end"
-            android:gravity="center_vertical"
-            android:maxLines="1"
-            android:text="1:11:11"
-            android:textAlignment="center"
-            android:textColor="@color/colorPrimary"
-            android:visibility="gone" />
+    </RelativeLayout>
 
-        <ImageButton
-            android:id="@+id/btn_song_info"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@color/transparent"
-            android:padding="10dp"
-            android:src="@android:drawable/ic_menu_info_details"
-            android:text="info"
-            android:visibility="gone"/>
-
-    </LinearLayout>
-
-</RelativeLayout>
+</com.daimajia.swipe.SwipeLayout>
