@@ -117,7 +117,6 @@ public class DBPlaylists {
     }
 
 
-
     public Song addToPlaylist(Context context, Song inputSong, String playlistname){
         if(DEBUG)Log.d(TAG,"add "+inputSong.getName()+" to playlist "+playlistname);
 
@@ -172,6 +171,19 @@ public class DBPlaylists {
 
     public void addToFavorites(Context context,Song song){
        addToPlaylist(context,song,FAVORITES_PLAYLIST_NAME);
+    }
+
+    public void removeFromFavorites(Context context, Song song){
+        deleteFromPlaylist(song, FAVORITES_PLAYLIST_NAME);
+    }
+
+    public boolean isInFavorites(Context context, Song song){
+        //check if song is already in playlist
+        String query = "SELECT * FROM "+ TABLE_PLAYLISTS +" WHERE "+
+                com.example.moonstonemusicplayer.model.Database.Playlist.DBHelperPlaylists.COLUMN_PLAYLIST_NAME + " LIKE '" + escapeString(FAVORITES_PLAYLIST_NAME)+ "' AND " +
+                com.example.moonstonemusicplayer.model.Database.Playlist.DBHelperPlaylists.COLUMN_SONG_PATH + " LIKE '" + escapeString(song.getPath())+ "'";
+
+        return !noResultsFromQuery(query);
     }
 
     public void addToRecentlyPlayed(Context context,Song song){

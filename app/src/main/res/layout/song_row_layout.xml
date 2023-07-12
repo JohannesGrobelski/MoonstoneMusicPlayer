@@ -11,8 +11,8 @@
     <!--background layout-->
     <!-- bottom views -->
     <ImageButton
-        android:src="@drawable/favorites"
-        android:id="@+id/add_song_to_favorites"
+        android:src="@drawable/is_not_favorites"
+        android:id="@+id/add_remove_song_favorites"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/transparent"/>

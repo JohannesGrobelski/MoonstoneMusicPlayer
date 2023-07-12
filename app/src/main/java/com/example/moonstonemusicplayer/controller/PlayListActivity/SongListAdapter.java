@@ -94,7 +94,7 @@ public class SongListAdapter extends ArrayAdapter<File> {
     item_row_swipe_layout.setShowMode(SwipeLayout.ShowMode.LayDown);
 
     //add drag edge.(If the BottomView has 'layout_gravity' attribute, this line is unnecessary)
-    item_row_swipe_layout.addDrag(SwipeLayout.DragEdge.Left, rowView.findViewById(R.id.add_song_to_favorites));
+    item_row_swipe_layout.addDrag(SwipeLayout.DragEdge.Left, rowView.findViewById(R.id.add_remove_song_favorites));
     item_row_swipe_layout.addDrag(SwipeLayout.DragEdge.Right, rowView.findViewById(R.id.add_song_to_playlist));
 
     item_row_swipe_layout.addSwipeListener(new SwipeLayout.SwipeListener() {
@@ -129,12 +129,28 @@ public class SongListAdapter extends ArrayAdapter<File> {
       }
     });
 
-    ImageButton add_to_favorites = rowView.findViewById(R.id.add_song_to_favorites);
-    add_to_favorites.setOnClickListener(new View.OnClickListener() {
+    ImageButton add_remove_song_favorites = rowView.findViewById(R.id.add_remove_song_favorites);
+    final boolean[] isInFavorites = {DBPlaylists.getInstance(context).isInFavorites(context, song)};
+    if(isInFavorites[0]){
+      add_remove_song_favorites.setImageResource(R.drawable.is_favorites);
+    } else {
+      add_remove_song_favorites.setImageResource(R.drawable.is_not_favorites);
+    }
+
+    add_remove_song_favorites.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
-        Toast.makeText(context, "Added to favorites: "+song.getName(), Toast.LENGTH_SHORT).show();
-        DBPlaylists.getInstance(context).addToFavorites(context,song);
+        if(isInFavorites[0]){
+          Toast.makeText(context, "Remove from favorites: "+song.getName(), Toast.LENGTH_SHORT).show();
+          DBPlaylists.getInstance(context).removeFromFavorites(context,song);
+          add_remove_song_favorites.setImageResource(R.drawable.is_not_favorites);
+        } else {
+          Toast.makeText(context, "Added to favorites: "+song.getName(), Toast.LENGTH_SHORT).show();
+          DBPlaylists.getInstance(context).addToFavorites(context,song);
+          add_remove_song_favorites.setImageResource(R.drawable.is_favorites);
+        }
+        isInFavorites[0] = !isInFavorites[0];
+
         item_row_swipe_layout.close(true);
       }
     });
