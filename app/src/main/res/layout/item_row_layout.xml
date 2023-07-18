@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.daimajia.swipe.SwipeLayout android:id="@+id/item_row_swipe_layout"
+<com.daimajia.swipe.SwipeLayout
+    android:id="@+id/item_row_swipe_layout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="50dp"
@@ -9,8 +10,8 @@
 
     <!-- bottom views -->
     <ImageButton
-        android:src="@drawable/favorites"
-        android:id="@+id/add_to_favorites"
+        android:src="@drawable/is_not_favorites"
+        android:id="@+id/add_remove_favorites"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/transparent"/>

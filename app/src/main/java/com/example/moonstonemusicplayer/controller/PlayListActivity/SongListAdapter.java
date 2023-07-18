@@ -7,13 +7,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.daimajia.swipe.SwipeLayout;
 import com.example.moonstonemusicplayer.R;
+import com.example.moonstonemusicplayer.controller.MainActivity.FolderFragment.FolderFragmentListener;
+import com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists;
 import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 
@@ -83,6 +88,81 @@ public class SongListAdapter extends ArrayAdapter<File> {
       if(currentSongFile.getPath().equals(selectedSongPath))ll_song_background.setBackgroundColor(Color.LTGRAY);
       else ll_song_background.setBackgroundColor(Color.WHITE);
     }
+
+    SwipeLayout item_row_swipe_layout = rowView.findViewById(R.id.song_row_swipe_layout);
+    item_row_swipe_layout.setSwipeEnabled(true);
+    item_row_swipe_layout.setShowMode(SwipeLayout.ShowMode.LayDown);
+
+    //add drag edge.(If the BottomView has 'layout_gravity' attribute, this line is unnecessary)
+    item_row_swipe_layout.addDrag(SwipeLayout.DragEdge.Left, rowView.findViewById(R.id.add_remove_song_favorites));
+    item_row_swipe_layout.addDrag(SwipeLayout.DragEdge.Right, rowView.findViewById(R.id.add_song_to_playlist));
+
+    item_row_swipe_layout.addSwipeListener(new SwipeLayout.SwipeListener() {
+      @Override
+      public void onStartOpen(SwipeLayout layout) {
+
+      }
+
+      @Override
+      public void onOpen(SwipeLayout layout) {
+
+      }
+
+      @Override
+      public void onStartClose(SwipeLayout layout) {
+
+      }
+
+      @Override
+      public void onClose(SwipeLayout layout) {
+
+      }
+
+      @Override
+      public void onUpdate(SwipeLayout layout, int leftOffset, int topOffset) {
+
+      }
+
+      @Override
+      public void onHandRelease(SwipeLayout layout, float xvel, float yvel) {
+
+      }
+    });
+
+    ImageButton add_remove_song_favorites = rowView.findViewById(R.id.add_remove_song_favorites);
+    final boolean[] isInFavorites = {DBPlaylists.getInstance(context).isInFavorites(context, song)};
+    if(isInFavorites[0]){
+      add_remove_song_favorites.setImageResource(R.drawable.is_favorites);
+    } else {
+      add_remove_song_favorites.setImageResource(R.drawable.is_not_favorites);
+    }
+
+    add_remove_song_favorites.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        if(isInFavorites[0]){
+          Toast.makeText(context, "Remove from favorites: "+song.getName(), Toast.LENGTH_SHORT).show();
+          DBPlaylists.getInstance(context).removeFromFavorites(context,song);
+          add_remove_song_favorites.setImageResource(R.drawable.is_not_favorites);
+        } else {
+          Toast.makeText(context, "Added to favorites: "+song.getName(), Toast.LENGTH_SHORT).show();
+          DBPlaylists.getInstance(context).addToFavorites(context,song);
+          add_remove_song_favorites.setImageResource(R.drawable.is_favorites);
+        }
+        isInFavorites[0] = !isInFavorites[0];
+
+        item_row_swipe_layout.close(true);
+      }
+    });
+
+    ImageButton add_to_playlist = rowView.findViewById(R.id.add_song_to_playlist);
+    add_to_playlist.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        FolderFragmentListener.showAlertDialogAddToPlaylists(layoutInflater, context, song);
+        item_row_swipe_layout.close(true);
+      }
+    });
 
     return rowView;
   }
