@@ -8,6 +8,8 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.media.AudioAttributes;
+import android.media.AudioFocusRequest;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -116,15 +118,16 @@ public class MediaPlayerService extends Service
     if(DEBUG)Log.d(TAG,"resume: "+resumePosition);
     showNotification();
     //setze Wiedergabe fort
-    requestAudioFocus();
     if(mediaPlayer == null)initMediaPlayer();
     else {
-      if(!isMediaPlayerPrepared){//state stop
-        mediaPlayer.prepareAsync();
-      } else {
-        mediaPlayer.seekTo(resumePosition);
-        mediaPlayer.setVolume(1.0f,1.0f);
-        if(!mediaPlayer.isPlaying())mediaPlayer.start();
+      if(requestAudioFocus()){
+        if(!isMediaPlayerPrepared){//state stop
+          mediaPlayer.prepareAsync();
+        } else {
+          mediaPlayer.seekTo(resumePosition);
+          mediaPlayer.setVolume(1.0f,1.0f);
+          if(!mediaPlayer.isPlaying())mediaPlayer.start();
+        }
       }
     }
   }
@@ -155,7 +158,7 @@ public class MediaPlayerService extends Service
 
 
   private void playMedia(){
-    if(mediaPlayer != null && !mediaPlayer.isPlaying()){
+    if(mediaPlayer != null && !mediaPlayer.isPlaying() && requestAudioFocus()){
       mediaPlayer.start();
     }
   }
@@ -213,6 +216,10 @@ public class MediaPlayerService extends Service
     super.onCreate();
     final IntentFilter theFilter = new IntentFilter();
     theFilter.addAction(ACTION_NOTIFICATION_ORDER);
+    //init audiomanager
+    this.audioManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
+    Log.d(TAG,"AudioManager.requestAudioFocus...");
+    requestAudioFocus();
   }
 
   @Override
@@ -296,21 +303,25 @@ public class MediaPlayerService extends Service
     switch (focusState){
       case AudioManager.AUDIOFOCUS_GAIN:
         //setze Wiedergabe fort
+        Toast.makeText(getApplicationContext(), "GAIN audiofocus", Toast.LENGTH_LONG).show();
         resume();
         break;
       case AudioManager.AUDIOFOCUS_LOSS:
         //verlieren Audiofokus verloren und auf unbestimmte Zeit verloren
         if(mediaPlayer.isPlaying()){mediaPlayer.stop(); isMediaPlayerPrepared=false;}
         resumePosition = mediaPlayer.getCurrentPosition();
+        Toast.makeText(getApplicationContext(), "LOST audiofocus", Toast.LENGTH_LONG).show();
         break;
       case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
         //verlieren Audiofokus für kurze,unbestimmte Zeit verloren (z.B. YouTube Wiedergabe gestartet)
         if(mediaPlayer.isPlaying())mediaPlayer.pause();
         resumePosition = mediaPlayer.getCurrentPosition();
+        Toast.makeText(getApplicationContext(), "TRANS LOST audiofocus", Toast.LENGTH_LONG).show();
         break;
       case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
         //verlieren Audiofokus für kurze Zeit (z.B. Klingelton)
         mediaPlayer.setVolume(0.1f,0.1f);
+        Toast.makeText(getApplicationContext(), "TRANS DUCK audiofocus", Toast.LENGTH_LONG).show();
         break;
     }
     if(((LocalBinder) iBinder) != null)((LocalBinder) iBinder).boundServiceListener.onAudioFocusChange(focusState);
@@ -318,8 +329,23 @@ public class MediaPlayerService extends Service
 
   private boolean requestAudioFocus(){
     if(audioManager!=null){
-      audioManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
-      int result = audioManager.requestAudioFocus(this,AudioManager.STREAM_MUSIC,AudioManager.AUDIOFOCUS_GAIN);
+      int result = 0;
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        result = audioManager.requestAudioFocus(new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
+                .setAudioAttributes(
+                        new AudioAttributes.Builder()
+                                .setUsage(AudioAttributes.USAGE_MEDIA)
+                                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                                .build()
+                )
+                .setAcceptsDelayedFocusGain(true)
+                .setOnAudioFocusChangeListener(this).build()
+        );
+      } else {
+        result = audioManager.requestAudioFocus(this,
+                AudioManager.STREAM_MUSIC,
+                AudioManager.AUDIOFOCUS_GAIN);
+      }
       return result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED;
     } else return true;
   }
