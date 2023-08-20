@@ -4,7 +4,7 @@
     <bytecodeTargetLevel target="1.7">
       <module name="lib" target="1.7" />
       <module name="libfolder" target="1.7" />
-      <module name="Moonstone_Music_Player.app" target="11" />
+      <module name="Moonstone_Music_Player.app" target="17" />
     </bytecodeTargetLevel>
   </component>
 </project>

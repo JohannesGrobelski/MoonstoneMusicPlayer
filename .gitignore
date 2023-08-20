@@ -13,4 +13,4 @@
 /captures
 .externalNativeBuild
 .cxx
-/app/src/main/assets/config.properties
+/app/src/main/res/values/api_keys.xml

@@ -21,6 +21,12 @@ Installation
 
     Build and run the project on an Android device or emulator.
 
+    Add a api_keys.xml in the values folder in res. Add the api key like this:
+    '''<?xml version="1.0" encoding="utf-8"?>
+        <resources>
+            <string name="api_key">your_actual_api_key_here</string>
+        </resources>'''
+
 Usage
 
     Launch the Moonstone Music Player app on your Android device.

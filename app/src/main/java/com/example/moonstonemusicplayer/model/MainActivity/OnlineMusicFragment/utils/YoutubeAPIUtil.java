@@ -7,6 +7,7 @@ import android.util.Log;
 import android.util.Pair;
 import android.widget.Toast;
 
+import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.model.MainActivity.OnlineMusicFragment.VideoModel;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.googleapis.util.Utils;
@@ -32,24 +33,8 @@ public class YoutubeAPIUtil {
 
     public YoutubeAPIUtil(Context context) throws GeneralSecurityException, IOException {
         this.context = context;
-        Properties properties = new Properties();
-        AssetManager assetManager = context.getAssets();
 
-        try {
-            // Open the config.properties file
-            InputStream inputStream = assetManager.open("config.properties");
-
-            // Load properties from the input stream
-            properties.load(inputStream);
-
-            // Close the input stream
-            inputStream.close();
-
-            API_KEY = properties.getProperty("yt_api_key");
-        } catch (IOException e) {
-            e.printStackTrace();
-            API_KEY = null;
-        }
+        API_KEY = context.getString(R.string.api_key);
     }
 
     private final HttpTransport HTTP_TRANSPORT = new com.google.api.client.http.javanet.NetHttpTransport();
