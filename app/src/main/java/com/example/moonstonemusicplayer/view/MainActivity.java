@@ -154,6 +154,7 @@ public class MainActivity extends AppCompatActivity {
   private void initYTDL(){
     try {
       YoutubeDL.getInstance().init(this);
+      YoutubeDL.getInstance().updateYoutubeDL(this, YoutubeDL.UpdateChannel._NIGHTLY);
       FFmpeg.getInstance().init(this);
     } catch (YoutubeDLException e) {
       throw new RuntimeException(e);

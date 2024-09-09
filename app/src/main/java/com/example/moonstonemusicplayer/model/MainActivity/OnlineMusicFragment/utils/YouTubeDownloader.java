@@ -40,6 +40,13 @@ public class YouTubeDownloader extends AsyncTask<String, Void, String> {
             request.addOption("-o", youtubeDLDir.getAbsolutePath() + "/%(title)s.%(ext)s");
 
             YoutubeDL.getInstance().execute(request);
+
+            /*
+            YoutubeDLRequest request = new YoutubeDLRequest(videoUrl);
+            request.addOption("-o", "/sdcard/Download/youtubedl-android/%(title)s.%(ext)s");
+            request.addOption("f","bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best")
+            YoutubeDL.getInstance().execute(request)
+             */
         } catch (YoutubeDLException e) {
             Log.e(TAG, "failed to initialize youtubedl-android", e);
         } catch (YoutubeDL.CanceledException e) {

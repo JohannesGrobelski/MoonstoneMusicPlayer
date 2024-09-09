@@ -61,12 +61,12 @@ dependencies {
     //query youtube and display results
     implementation 'com.google.api-client:google-api-client:1.1.5'
     implementation 'com.google.apis:google-api-services-youtube:v3-rev212-1.25.0'
+    implementation 'com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava'
     implementation 'com.squareup.picasso:picasso:2.8' //display thumbnails
 
     //download and convert video to mp3
     implementation 'com.github.yausername.youtubedl-android:library:-SNAPSHOT'
     implementation 'com.github.yausername.youtubedl-android:ffmpeg:-SNAPSHOT'
-    implementation 'com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava'
 
     //swipe layout
     implementation 'com.android.support:recyclerview-v7:21.0.0'
