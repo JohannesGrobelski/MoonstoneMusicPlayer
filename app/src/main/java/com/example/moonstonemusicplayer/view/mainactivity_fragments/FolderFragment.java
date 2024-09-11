@@ -1,9 +1,12 @@
 package com.example.moonstonemusicplayer.view.mainactivity_fragments;
 
+import android.Manifest;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
 import android.view.ContextMenu;
@@ -17,6 +20,8 @@ import android.widget.TextView;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.MainActivity.FolderFragment.FolderFragmentListener;
+
+import java.util.Objects;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -54,6 +59,8 @@ public class FolderFragment extends Fragment {
   public View onCreateView(@NonNull LayoutInflater inflater, //zum Layout verbinden
                            @Nullable ViewGroup container,    //wo das Layout angezeigt wird
                            @Nullable Bundle savedInstanceState) { //falls es gespeicherte Werte gibt
+
+
     //Das Layout verbinden für das Fragment
     View view = inflater.inflate(R.layout.fragment_folder, container, false);
     //Referenz des listviews
@@ -68,6 +75,8 @@ public class FolderFragment extends Fragment {
     //rückgabe des Fragmentviews
     return view;
   }
+
+
 
 
   @Override

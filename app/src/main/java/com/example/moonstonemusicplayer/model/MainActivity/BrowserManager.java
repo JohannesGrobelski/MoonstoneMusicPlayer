@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -47,6 +48,15 @@ public class BrowserManager {
     this.context = baseContext;
     this.rootFolder = Environment.getExternalStorageDirectory();
     audioFiles = getAllAudioFiles(baseContext);
+  }
+
+  public static void reloadFilesInstance(Context context){
+    BrowserManager instance = getInstance(context);
+    instance.reloadFiles(context);
+  }
+
+  private void reloadFiles(Context context){
+    audioFiles = getAllAudioFiles(context);
   }
 
   public static BrowserManager getInstance(Context context){
@@ -271,6 +281,9 @@ public class BrowserManager {
   private static List<File> getAllAudioFiles(Context context) {
     List<File> audioFiles = new ArrayList<>();
 
+    //Some audio may be explicitly marked as not being music
+    String selection = MediaStore.Audio.Media.IS_MUSIC + " != 0";
+
     // Define the columns to retrieve from the MediaStore
     String[] projection = {
             MediaStore.Audio.Media.DATA,
@@ -280,6 +293,13 @@ public class BrowserManager {
             MediaStore.Audio.Media.GENRE,
             MediaStore.Audio.Media.DURATION,
     };
+
+    Uri collection;
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+      collection = MediaStore.Audio.Media.getContentUri(MediaStore.VOLUME_EXTERNAL);
+    } else {
+      collection = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+    }
 
     // Perform the query using the MediaStore.Audio.Media.EXTERNAL_CONTENT_URI content URI
     Cursor cursor =  context.getContentResolver().query(

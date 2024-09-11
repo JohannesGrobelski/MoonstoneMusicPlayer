@@ -1,9 +1,11 @@
 package com.example.moonstonemusicplayer.controller.MainActivity.FolderFragment;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -14,6 +16,8 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import androidx.core.app.ActivityCompat;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists;
@@ -27,6 +31,7 @@ import com.example.moonstonemusicplayer.view.mainactivity_fragments.PlayListFrag
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class FolderFragmentListener implements AdapterView.OnItemClickListener, View.OnClickListener {
   private static final String TAG = FolderFragmentListener.class.getSimpleName();
