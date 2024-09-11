@@ -25,4 +25,28 @@ public class Song extends Audiofile {
     this.lyrics = lyrics;
   }
 
+  public String getSongIdentifier(){
+    return getIdentifier(this.name);
+  }
+
+  public static String getIdentifier(String fileName){
+
+    // Remove the file extension
+    int lastIndexOfDot = fileName.lastIndexOf('.');
+    if (lastIndexOfDot > 0) {
+      fileName = fileName.substring(0, lastIndexOfDot);
+    }
+
+    // Replace spaces with underscores or hyphens (as per your preference)
+    fileName = fileName.replaceAll("\\s+", "_");
+
+    // Remove any non-alphanumeric characters except underscores or hyphens
+    fileName = fileName.replaceAll("[^a-zA-Z0-9_-]", "");
+
+    // Optionally, you could also convert the filename to lowercase for consistency
+    fileName = fileName.toLowerCase();
+
+    return fileName;
+  }
+
 }

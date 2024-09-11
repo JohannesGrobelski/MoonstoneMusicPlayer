@@ -26,8 +26,10 @@ import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.PlayListActivity.Notification.Constants;
 import com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists;
 import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
+import com.example.moonstonemusicplayer.model.PlayListActivity.Audiobook;
 import com.example.moonstonemusicplayer.model.PlayListActivity.PlayListModel;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
+import com.example.moonstonemusicplayer.model.PlaytimePersistence;
 import com.example.moonstonemusicplayer.view.PlayListActivity;
 
 import java.io.File;
@@ -63,7 +65,7 @@ public class MediaPlayerService extends Service
   private PlayListModel playListModel = null;
 
   private Song currentSong;
-
+  private String mediaPlayerCurrentDataSourceUri = "";
   /**/
 
   private AudioManager audioManager;
@@ -91,6 +93,7 @@ public class MediaPlayerService extends Service
         //weise Mediendatei der Datenquelle zu
         String uri = Uri.fromFile(playListModel.getCurrentSongFile()).toString();
         mediaPlayer.setDataSource(uri);
+        mediaPlayerCurrentDataSourceUri = uri;
 
         //bereitet MediaPlayer für Wiedergabe vor
         mediaPlayer.prepareAsync();
@@ -154,8 +157,6 @@ public class MediaPlayerService extends Service
     else return 0;
   }
 
-
-
   private void playMedia(){
     if(mediaPlayer != null && !mediaPlayer.isPlaying() && requestAudioFocus()){
       mediaPlayer.start();
@@ -165,6 +166,9 @@ public class MediaPlayerService extends Service
   private void stopMedia(){
     if(mediaPlayer != null && mediaPlayer.isPlaying()){
       {mediaPlayer.stop(); isMediaPlayerPrepared=false;}
+    }
+    if(playListModel.getCurrentSong() != null && playListModel.getCurrentSong().getDuration_ms() >= Audiobook.AUDIOBOOK_CUTOFF_MS){
+      PlaytimePersistence.savePlaytime(this, mediaPlayerCurrentDataSourceUri, mediaPlayer.getCurrentPosition() / 1000);
     }
   }
 
@@ -287,7 +291,19 @@ public class MediaPlayerService extends Service
     playMedia();
     isMediaPlayerPrepared = true;
     //seekto if player was stopped
-    if(resumePosition != 0)mediaPlayer.seekTo(resumePosition);
+    if(resumePosition != 0){
+      mediaPlayer.seekTo(resumePosition);
+    } else {
+      //get playposition from PlayTimePersistence
+
+      if(playListModel.getCurrentSong() != null && playListModel.getCurrentSong().getDuration_ms() >= Audiobook.AUDIOBOOK_CUTOFF_MS){
+        int playtime = PlaytimePersistence.getPlaytime(this, Uri.fromFile(playListModel.getCurrentSongFile()).toString());
+        if(playtime < playListModel.getCurrentSong().getDuration_ms() / 1000){
+          resumePosition = playtime;
+          mediaPlayer.seekTo(resumePosition * 1000);
+        }
+      }
+    }
     mediaPlayer.setVolume(1.0f,1.0f);
   }
 

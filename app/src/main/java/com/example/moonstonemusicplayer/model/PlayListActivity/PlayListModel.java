@@ -6,6 +6,7 @@ import java.util.List;
 import static com.example.moonstonemusicplayer.model.PlayListActivity.PlayListModel.REPEATMODE.NONE;
 import static com.example.moonstonemusicplayer.model.PlayListActivity.PlayListModel.REPEATMODE.ONESONG;
 import static com.example.moonstonemusicplayer.model.PlayListActivity.PlayListModel.REPEATMODE.ALL;
+import static com.example.moonstonemusicplayer.model.PlayListActivity.Song.getIdentifier;
 
 import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
 
@@ -35,6 +36,10 @@ public class PlayListModel {
 
   public File getCurrentSongFile(){
     return playlist.get(currentSongIndex);
+  }
+
+  public String getFileId(){
+    return getIdentifier(getCurrentSongFile().getName());
   }
 
   public void setCurrentSong(int index) {
