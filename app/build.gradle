@@ -37,6 +37,7 @@ android {
             universalApk true
         }
     }
+    namespace 'com.example.moonstonemusicplayer'
 }
 
 dependencies {
@@ -65,8 +66,8 @@ dependencies {
     implementation 'com.squareup.picasso:picasso:2.8' //display thumbnails
 
     //download and convert video to mp3
-    implementation 'com.github.yausername.youtubedl-android:library:-SNAPSHOT'
-    implementation 'com.github.yausername.youtubedl-android:ffmpeg:-SNAPSHOT'
+    //implementation 'com.github.yausername.youtubedl-android:library:-SNAPSHOT'
+    //implementation 'com.github.yausername.youtubedl-android:ffmpeg:-SNAPSHOT'
 
     //swipe layout
     implementation 'com.android.support:recyclerview-v7:21.0.0'

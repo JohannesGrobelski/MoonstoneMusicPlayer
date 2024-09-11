@@ -30,9 +30,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.SectionsPagerAdapter;
-import com.yausername.ffmpeg.FFmpeg;
-import com.yausername.youtubedl_android.YoutubeDL;
-import com.yausername.youtubedl_android.YoutubeDLException;
 
 public class MainActivity extends AppCompatActivity {
   private static int PERMISSION_REQUEST_CODE = 678;
@@ -87,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
     });
     Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
-    initYTDL();
+    //initYTDL();
   }
 
   @Override
@@ -129,14 +126,10 @@ public class MainActivity extends AppCompatActivity {
 
   public void downloadSong(VideoModel currentVideoModel) {
     if(checkPermissions()){
-      YouTubeDownloader youTubeDownloader = new YouTubeDownloader(this);
-      youTubeDownloader.downloadVideo(currentVideoModel.getVideoURL(), currentVideoModel.getTitle());
+      Toast.makeText(this, "Currently not supported!", Toast.LENGTH_SHORT);
+      //YouTubeDownloader youTubeDownloader = new YouTubeDownloader(this);
+      //youTubeDownloader.downloadVideo(currentVideoModel.getVideoURL(), currentVideoModel.getTitle());
     }
-  }
-
-  public void downloadSongTest(){
-
-
   }
 
   public boolean checkPermissions() {
@@ -152,12 +145,13 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void initYTDL(){
-    try {
+    /*try {
       YoutubeDL.getInstance().init(this);
       YoutubeDL.getInstance().updateYoutubeDL(this, YoutubeDL.UpdateChannel._NIGHTLY);
       FFmpeg.getInstance().init(this);
     } catch (YoutubeDLException e) {
       throw new RuntimeException(e);
     }
+     */
   }
 }

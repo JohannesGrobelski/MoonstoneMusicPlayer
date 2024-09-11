@@ -9,9 +9,9 @@ import android.util.Log;
 import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
-import com.yausername.youtubedl_android.YoutubeDL;
-import com.yausername.youtubedl_android.YoutubeDLException;
-import com.yausername.youtubedl_android.YoutubeDLRequest;
+//import com.yausername.youtubedl_android.YoutubeDL;
+//import com.yausername.youtubedl_android.YoutubeDLException;
+//import com.yausername.youtubedl_android.YoutubeDLRequest;
 
 import com.example.moonstonemusicplayer.view.MainActivity;
 
@@ -29,6 +29,7 @@ public class YouTubeDownloader extends AsyncTask<String, Void, String> {
 
     @Override
     protected String doInBackground(String... params) {
+        /*
         String videoUrl = params[0];
         String title = params[1];
 
@@ -41,12 +42,12 @@ public class YouTubeDownloader extends AsyncTask<String, Void, String> {
 
             YoutubeDL.getInstance().execute(request);
 
-            /*
-            YoutubeDLRequest request = new YoutubeDLRequest(videoUrl);
-            request.addOption("-o", "/sdcard/Download/youtubedl-android/%(title)s.%(ext)s");
-            request.addOption("f","bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best")
-            YoutubeDL.getInstance().execute(request)
-             */
+
+            //YoutubeDLRequest request = new YoutubeDLRequest(videoUrl);
+            //request.addOption("-o", "/sdcard/Download/youtubedl-android/%(title)s.%(ext)s");
+            //request.addOption("f","bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best")
+            //YoutubeDL.getInstance().execute(request)
+
         } catch (YoutubeDLException e) {
             Log.e(TAG, "failed to initialize youtubedl-android", e);
         } catch (YoutubeDL.CanceledException e) {
@@ -55,6 +56,9 @@ public class YouTubeDownloader extends AsyncTask<String, Void, String> {
             throw new RuntimeException(e);
         }
 
+        return "";
+
+         */
         return "";
     }
 
