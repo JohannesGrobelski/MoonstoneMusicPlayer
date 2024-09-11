@@ -23,14 +23,17 @@ import android.widget.TextView;
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.MainActivity.AlbumsFragment.AlbumFragmentListener;
 import com.example.moonstonemusicplayer.controller.MainActivity.ArtistFragment.ArtistFragmentListener;
+import com.example.moonstonemusicplayer.controller.MainActivity.AudiobookFragment.AudiobookFragmentListener;
 import com.example.moonstonemusicplayer.controller.MainActivity.FolderFragment.FolderFragmentListener;
 import com.example.moonstonemusicplayer.controller.MainActivity.GenreFragment.GenreFragmentListener;
 import com.example.moonstonemusicplayer.controller.MainActivity.PlaylistFragment.PlaylistFragmentListener;
 import com.example.moonstonemusicplayer.controller.PlayListActivity.PlayListActivityListener;
+import com.example.moonstonemusicplayer.view.mainactivity_fragments.AudiobookFragment;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.FolderFragment;
 
 import static com.example.moonstonemusicplayer.controller.MainActivity.GenreFragment.GenreFragmentListener.GENRELISTEXTRA;
-import static com.example.moonstonemusicplayer.controller.PlayListActivity.MediaPlayerService.FOLDERSONGINDEXEXTRA;
+import static com.example.moonstonemusicplayer.view.mainactivity_fragments.AudiobookFragment.FOLDERAUDIOBOOKINDEXEXTRA;
+import static com.example.moonstonemusicplayer.view.mainactivity_fragments.FolderFragment.FOLDERSONGINDEXEXTRA;
 
 /** MainActivity
   * Defines the Mainscreen auf the app.
@@ -71,13 +74,16 @@ public class PlayListActivity extends AppCompatActivity {
     LL_MusicControlls = findViewById(R.id.LL_MusicControlls);
 
     int song_index = 0;
-    if(getIntent().hasExtra(FOLDERSONGINDEXEXTRA)) {
+    if(!getIntent().hasExtra(FOLDERSONGINDEXEXTRA) && !getIntent().hasExtra(FOLDERAUDIOBOOKINDEXEXTRA)) {
 
     } else {
       //fetch songlist from fragment that called playlist activity
       if(getIntent().hasExtra(FolderFragment.FOLDERSONGINDEXEXTRA)) {
-        song_index = getIntent().getIntExtra(FolderFragment.FOLDERSONGINDEXEXTRA, 0);
+        song_index = getIntent().getIntExtra(FOLDERSONGINDEXEXTRA, 0);
         playListActivityListener = new PlayListActivityListener(this, FolderFragmentListener.getFolderSonglist(), song_index);
+      } else if(getIntent().hasExtra(AudiobookFragment.FOLDERAUDIOBOOKINDEXEXTRA)) {
+        song_index = getIntent().getIntExtra(FOLDERAUDIOBOOKINDEXEXTRA, 0);
+        playListActivityListener = new PlayListActivityListener(this, AudiobookFragmentListener.getAudiobookAudiobooklist(), song_index);
       } else if(getIntent().hasExtra(GENRELISTEXTRA)){
         song_index = getIntent().getIntExtra(GENRELISTEXTRA,0);
         playListActivityListener = new PlayListActivityListener(this, GenreFragmentListener.getGenreSonglist(),song_index);

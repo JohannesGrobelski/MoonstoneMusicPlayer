@@ -20,11 +20,13 @@ import android.widget.Toast;
 import androidx.core.app.ActivityCompat;
 
 import com.example.moonstonemusicplayer.R;
+import com.example.moonstonemusicplayer.controller.PlayListActivity.MediaPlayerService;
 import com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists;
 import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import com.example.moonstonemusicplayer.view.MainActivity;
 import com.example.moonstonemusicplayer.view.PlayListActivity;
+import com.example.moonstonemusicplayer.view.mainactivity_fragments.AudiobookFragment;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.FolderFragment;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.PlayListFragment;
 
@@ -80,8 +82,8 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
           setAdapter(this.selectedFolder);
         } else { //selected Song
 
-          File[] playlist = BrowserManager.getChildFiles(this.selectedFolder);
-          int songPosition = position - BrowserManager.getDirectories(this.selectedFolder).length;
+          File[] playlist = BrowserManager.getChildFiles(this.selectedFolder, BrowserManager.Filter.SONGS);
+          int songPosition = position - BrowserManager.getDirectories(this.selectedFolder, BrowserManager.Filter.SONGS).length;
           startFolderSonglist(playlist, songPosition, folderFragment);
         }
       } else {
@@ -100,7 +102,7 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
    */
   private void setAdapter(File folder){
     if(this.searchQuery.isEmpty()){
-      this.displayedItems = BrowserManager.getChildren(folder);
+      this.displayedItems = BrowserManager.getChildren(folder, BrowserManager.Filter.SONGS);
     } else {
       this.displayedItems = BrowserManager.getChildrenMatchingQuery(folder, this.searchQuery);
     }
@@ -164,7 +166,7 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
       AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
       int clickedPosition = info.position;
       //only show context menu if clicked on song
-      if((BrowserManager.getDirectories(this.selectedFolder).length <= clickedPosition)){
+      if((BrowserManager.getDirectories(this.selectedFolder, BrowserManager.Filter.SONGS).length <= clickedPosition)){
         menu.add(0, 1, 0, "zu Favoriten hinzufügen");
         menu.add(0, 2, 0, "zu Playlists hinzufügen");
       }
@@ -188,7 +190,7 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
         //calculate the index of the song clicked
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         int index = info.position;
-        index -= BrowserManager.getDirectories(this.selectedFolder).length;
+        index -= BrowserManager.getDirectories(this.selectedFolder, BrowserManager.Filter.SONGS).length;
         Song selectedSong = BrowserManager.getChildSongs(this.selectedFolder)[index];
 
         switch (item.getItemId()){

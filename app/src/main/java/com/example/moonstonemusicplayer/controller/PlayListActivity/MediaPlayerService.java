@@ -49,7 +49,6 @@ public class MediaPlayerService extends Service
 
   private static final String CHANNEL_ID = "MoonstoneMediaPlayerServiceChannelID_8941891918918941351";
   Notification statusNotification;
-  public static final String FOLDERSONGINDEXEXTRA = "FOLDERSONGINDEXEXTRA";
 
   public static final String ACTION_NOTIFICATION_ORDER ="NOTIFICATION_ORDER";
 

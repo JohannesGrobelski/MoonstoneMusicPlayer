@@ -9,9 +9,8 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 
-import com.example.moonstonemusicplayer.model.MainActivity.AlbumFragment.Album;
-import com.example.moonstonemusicplayer.model.MainActivity.ArtistFragment.Artist;
-import com.example.moonstonemusicplayer.model.MainActivity.GenreFragment.Genre;
+import com.example.moonstonemusicplayer.model.PlayListActivity.Audiobook;
+import com.example.moonstonemusicplayer.model.PlayListActivity.Audiofile;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 
 import java.io.File;
@@ -27,10 +26,15 @@ import java.util.Set;
  */
 public class BrowserManager {
 
+  public enum Filter {
+    AUDIOBOOKS, SONGS
+  }
+
   private static BrowserManager instance;
   private static List<File> audioFiles = new ArrayList<>();
 
-  private static Map<File, Song> audioFileSongMap = new HashMap<>();
+  private static Map<File, Song> audiofileSongMap = new HashMap<>();
+  private static Map<File, Audiobook> audioFileAudiobookMap = new HashMap<>();
 
   private static Map<String, List<Song>> genreListMap = new HashMap<>();
 
@@ -88,13 +92,19 @@ public class BrowserManager {
     return albumListMap;
   }
 
-  public static List<File> getChildren(File file){
+  public static List<File> getChildren(File file, Filter filter){
     List<File> songs = new ArrayList<>();
     List<File> children = new ArrayList<>();
 
     Set<String> childDirPathSet = new HashSet<>();
     if(file != null && file.listFiles() != null){
       for(File audioFile : BrowserManager.audioFiles){
+        if(filter == Filter.AUDIOBOOKS && !audioFileAudiobookMap.containsKey(audioFile)){
+          continue;
+        }
+        if(filter == Filter.SONGS && !audiofileSongMap.containsKey(audioFile)){
+          continue;
+        }
         if(isDirectChildFile(file, audioFile)){
           songs.add(audioFile);
         }
@@ -131,7 +141,7 @@ public class BrowserManager {
     return children;
   }
 
-  public static File[] getDirectories(File file){
+  public static File[] getDirectories(File file, Filter filter){
     Set<String> childDirPathSet = new HashSet<>();
     if(file != null && file.listFiles() != null){
       for(File audioFile : BrowserManager.audioFiles){
@@ -140,6 +150,12 @@ public class BrowserManager {
           continue;
         } else {
           //if audio file resides in child directory of file add subdirectory to directories
+          if(filter == Filter.AUDIOBOOKS && !audioFileAudiobookMap.containsKey(audioFile)){
+            continue;
+          }
+          if(filter == Filter.SONGS && !audiofileSongMap.containsKey(audioFile)){
+            continue;
+          }
           String relPath = audioFile.getAbsolutePath().replace(file.getAbsolutePath()+"/", "");
           String pathChildDir = file.getAbsolutePath() + "/" + relPath.substring(0,relPath.indexOf("/"));
           if(!childDirPathSet.contains(pathChildDir)){
@@ -167,10 +183,29 @@ public class BrowserManager {
     return songs.toArray(new Song[songs.size()]);
   }
 
-  public static File[] getChildFiles(File file){
+  public static Audiobook[] getChildAudiobooks(File file){
+    List<Audiobook> audiobooks = new ArrayList<>();
+    if(file != null && file.listFiles() != null){
+      for(File audioFile : BrowserManager.audioFiles){
+        if(isDirectChildFile(file, audioFile) &&
+                parseSongFromAudioFile(file).getDuration_ms() >= Audiobook.AUDIOBOOK_CUTOFF_MS){
+          audiobooks.add(BrowserManager.getAudiobookFromAudioFile(audioFile));
+        }
+      }
+    }
+    return audiobooks.toArray(new Audiobook[audiobooks.size()]);
+  }
+
+  public static File[] getChildFiles(File file, Filter filter){
     List<File> songs = new ArrayList<>();
     for(File audioFile : BrowserManager.audioFiles){
       if(isDirectChildFile(file,audioFile)){
+        if(filter == Filter.AUDIOBOOKS && !audioFileAudiobookMap.containsKey(audioFile)){
+          continue;
+        }
+        if(filter == Filter.SONGS && !audiofileSongMap.containsKey(audioFile)){
+          continue;
+        }
         songs.add(audioFile);
       }
     }
@@ -189,16 +224,34 @@ public class BrowserManager {
    * @return
    */
   public static Song getSongFromAudioFile(File file){
-    if(audioFileSongMap.containsKey(file)){
-      return audioFileSongMap.get(file);
+    if(audiofileSongMap.containsKey(file)){
+      return audiofileSongMap.get(file);
     } else {
-      Song parsedSong = parseSongFromAudioFile(file);
-      audioFileSongMap.put(file,parsedSong);
-      return parsedSong;
+      Audiofile audiofile = parseSongFromAudioFile(file);
+      Song song = new Song(audiofile.getPath(), audiofile.getName(), audiofile.getArtist(), audiofile.getAlbum(), audiofile.getGenre(), audiofile.getDuration_ms(), audiofile.getLyrics());
+      audiofileSongMap.put(file,song);
+      return song;
     }
   }
 
-  private static Song parseSongFromAudioFile(File file){
+  /**
+   * create song from file by extracting metadata
+   * @param file
+   * @return
+   */
+  public static Audiobook getAudiobookFromAudioFile(File file){
+    if(audioFileAudiobookMap.containsKey(file)){
+      return audioFileAudiobookMap.get(file);
+    } else {
+      Audiofile audiofile = parseSongFromAudioFile(file);
+      Audiobook audiobook = new Audiobook(audiofile.getPath(), audiofile.getName(), audiofile.getArtist(), audiofile.getAlbum(), audiofile.getGenre(), audiofile.getDuration_ms(), audiofile.getLyrics());
+      audioFileAudiobookMap.put(file,audiobook);
+      return audiobook;
+    }
+  }
+
+
+  private static Audiofile parseSongFromAudioFile(File file){
     try {
       String title = file.getName().substring(0, (file.getName().length() - 4));
       String path = file.getAbsolutePath();//Uri.fromFile(file).toString();
@@ -237,7 +290,7 @@ public class BrowserManager {
         duration = Integer.parseInt(meta_durationStr);
       }
 
-      return new Song(path,title,artist,album,genre,duration,"");
+      return new Audiofile(path,title,artist,album,genre,duration,"");
     } catch (Exception e){
       Log.e(TAG, "getSongFromAudioFile Could not parse to a song: "+file.getName()+"; Exception: "+e);
       return null;
@@ -336,16 +389,22 @@ public class BrowserManager {
         duration_ms = Integer.parseInt(durationString);
 
         File songFile = new File(filePath);
-        Song song = new Song(filePath,name,artist,album,genre,duration_ms,"");
 
         audioFiles.add(songFile);
-        audioFileSongMap.put(songFile,song);
-        registerSongForArtistMap(song);
-        registerSongForAlbumMap(song);
-        registerSongForGenreMap(song);
+        if(duration_ms >= Audiobook.AUDIOBOOK_CUTOFF_MS){
+          Audiobook audiobook = new Audiobook(filePath,name,artist,album,genre,duration_ms,"");
+          audioFileAudiobookMap.put(songFile,audiobook);
+        } else {
+          Song song = new Song(filePath,name,artist,album,genre,duration_ms,"");
+          registerSongForArtistMap(song);
+          registerSongForAlbumMap(song);
+          registerSongForGenreMap(song);
+          audiofileSongMap.put(songFile,song);
+        }
       }
 
       //add files from Downloads/YTMusic
+      /*
       String selectionYTMusic = MediaStore.Files.FileColumns.DATA + " LIKE ?";
       String[] selectionArgsYTMusic = new String[]{"%/storage/emulated/0/Download/YTMusic%"};
 
@@ -362,14 +421,15 @@ public class BrowserManager {
         File songFile = new File(filePath);
 
         if(songFile.isFile()){
-          Song song = parseSongFromAudioFile(songFile);
+          Song song = (Song) parseSongFromAudioFile(songFile);
           audioFiles.add(songFile);
-          audioFileSongMap.put(songFile,song);
+          audiofileAudiobookMap.put(songFile,song);
           registerSongForArtistMap(song);
           registerSongForAlbumMap(song);
           registerSongForGenreMap(song);
         }
       }
+       */
 
       // Close the cursor
       cursor.close();

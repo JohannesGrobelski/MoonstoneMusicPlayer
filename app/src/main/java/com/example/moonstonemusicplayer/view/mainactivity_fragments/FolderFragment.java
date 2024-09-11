@@ -29,7 +29,8 @@ import java.util.Objects;
  * create an instance of this fragment.
  */
 public class FolderFragment extends Fragment {
-  public static final String FOLDERSONGINDEXEXTRA = "SONG_INDEX";
+  public static final String FOLDERSONGINDEXEXTRA = "FOLDERSONGINDEXEXTRA";
+
   private static final String TAG = FolderFragment.class.getSimpleName();
   private static final boolean DEBUG = false;
   private FolderFragmentListener folderFragmentListener;
