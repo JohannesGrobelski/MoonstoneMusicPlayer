@@ -19,6 +19,7 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.MainActivity.AlbumsFragment.AlbumFragmentListener;
@@ -74,33 +75,34 @@ public class PlayListActivity extends AppCompatActivity {
     LL_MusicControlls = findViewById(R.id.LL_MusicControlls);
 
     int song_index = 0;
-    if(!getIntent().hasExtra(FOLDERSONGINDEXEXTRA) && !getIntent().hasExtra(FOLDERAUDIOBOOKINDEXEXTRA)) {
-
-    } else {
-      //fetch songlist from fragment that called playlist activity
-      if(getIntent().hasExtra(FolderFragment.FOLDERSONGINDEXEXTRA)) {
-        song_index = getIntent().getIntExtra(FOLDERSONGINDEXEXTRA, 0);
-        playListActivityListener = new PlayListActivityListener(this, FolderFragmentListener.getFolderSonglist(), song_index);
-      } else if(getIntent().hasExtra(AudiobookFragment.FOLDERAUDIOBOOKINDEXEXTRA)) {
-        song_index = getIntent().getIntExtra(FOLDERAUDIOBOOKINDEXEXTRA, 0);
-        playListActivityListener = new PlayListActivityListener(this, AudiobookFragmentListener.getAudiobookAudiobooklist(), song_index);
-      } else if(getIntent().hasExtra(GENRELISTEXTRA)){
-        song_index = getIntent().getIntExtra(GENRELISTEXTRA,0);
-        playListActivityListener = new PlayListActivityListener(this, GenreFragmentListener.getGenreSonglist(),song_index);
-      }
-      else if(getIntent().hasExtra(PlaylistFragmentListener.PLAYLISTINDEXEXTRA)){
-        song_index = getIntent().getIntExtra(PlaylistFragmentListener.PLAYLISTINDEXEXTRA,0);
-        playListActivityListener = new PlayListActivityListener(this, PlaylistFragmentListener.getPlaylistSonglist(),song_index);
-      }
-      if(getIntent().hasExtra(AlbumFragmentListener.ALBUMLISTEXTRA)){
-        song_index = getIntent().getIntExtra(AlbumFragmentListener.ALBUMLISTEXTRA,0);
-        playListActivityListener = new PlayListActivityListener(this, AlbumFragmentListener.getAlbumSonglist(),song_index);
-      }
-      if(getIntent().hasExtra(ArtistFragmentListener.ARTISTALBUMLISTEXTRA)){
-        song_index = getIntent().getIntExtra(ArtistFragmentListener.ARTISTALBUMLISTEXTRA,0);
-        playListActivityListener = new PlayListActivityListener(this, ArtistFragmentListener.getAlbumSonglist(),song_index);
-      }
+    //fetch songlist from fragment that called playlist activity
+    if(getIntent().hasExtra(FolderFragment.FOLDERSONGINDEXEXTRA)) {
+      song_index = getIntent().getIntExtra(FOLDERSONGINDEXEXTRA, 0);
+      playListActivityListener = new PlayListActivityListener(this, FolderFragmentListener.getFolderSonglist(), song_index);
+    } else if(getIntent().hasExtra(AudiobookFragment.FOLDERAUDIOBOOKINDEXEXTRA)) {
+      song_index = getIntent().getIntExtra(FOLDERAUDIOBOOKINDEXEXTRA, 0);
+      playListActivityListener = new PlayListActivityListener(this, AudiobookFragmentListener.getAudiobookAudiobooklist(), song_index);
+    } else if(getIntent().hasExtra(GENRELISTEXTRA)){
+      song_index = getIntent().getIntExtra(GENRELISTEXTRA,0);
+      playListActivityListener = new PlayListActivityListener(this, GenreFragmentListener.getGenreSonglist(),song_index);
     }
+    else if(getIntent().hasExtra(PlaylistFragmentListener.PLAYLISTINDEXEXTRA)){
+      song_index = getIntent().getIntExtra(PlaylistFragmentListener.PLAYLISTINDEXEXTRA,0);
+      playListActivityListener = new PlayListActivityListener(this, PlaylistFragmentListener.getPlaylistSonglist(),song_index);
+    }
+    else if(getIntent().hasExtra(AlbumFragmentListener.ALBUMLISTEXTRA)){
+      song_index = getIntent().getIntExtra(AlbumFragmentListener.ALBUMLISTEXTRA,0);
+      playListActivityListener = new PlayListActivityListener(this, AlbumFragmentListener.getAlbumSonglist(),song_index);
+    }
+    else if(getIntent().hasExtra(ArtistFragmentListener.ARTISTALBUMLISTEXTRA)){
+      song_index = getIntent().getIntExtra(ArtistFragmentListener.ARTISTALBUMLISTEXTRA,0);
+      playListActivityListener = new PlayListActivityListener(this, ArtistFragmentListener.getAlbumSonglist(),song_index);
+    } else {
+      //no extras found, missing info -> go back to mainactivity
+      Toast.makeText(this, "Missing Info", Toast.LENGTH_LONG);
+      finish();
+    }
+
     lv_songlist.setOnItemClickListener(playListActivityListener);
     btn_shuffle.setOnClickListener(playListActivityListener);
     btn_prev.setOnClickListener(playListActivityListener);

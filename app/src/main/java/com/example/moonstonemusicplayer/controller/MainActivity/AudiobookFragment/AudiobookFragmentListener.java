@@ -85,7 +85,7 @@ public class AudiobookFragmentListener implements AdapterView.OnItemClickListene
     if(this.searchQuery.isEmpty()){
       this.displayedItems = BrowserManager.getChildren(folder, BrowserManager.Filter.AUDIOBOOKS);
     } else {
-      this.displayedItems = BrowserManager.getChildrenMatchingQuery(folder, this.searchQuery);
+      this.displayedItems = BrowserManager.getChildrenMatchingQuery(folder, this.searchQuery, BrowserManager.Filter.AUDIOBOOKS);
     }
     this.folderListAdapter = new AudiobookListAdapter(audiobookFragment.getContext(),this.displayedItems);
     audiobookFragment.lv_folderList.setAdapter(folderListAdapter);

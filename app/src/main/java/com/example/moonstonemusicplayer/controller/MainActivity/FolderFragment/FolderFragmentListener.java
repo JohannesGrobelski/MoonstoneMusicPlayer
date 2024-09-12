@@ -104,7 +104,7 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
     if(this.searchQuery.isEmpty()){
       this.displayedItems = BrowserManager.getChildren(folder, BrowserManager.Filter.SONGS);
     } else {
-      this.displayedItems = BrowserManager.getChildrenMatchingQuery(folder, this.searchQuery);
+      this.displayedItems = BrowserManager.getChildrenMatchingQuery(folder, this.searchQuery, BrowserManager.Filter.SONGS);
     }
     this.folderListAdapter = new FolderListAdapter(folderFragment.getContext(),this.displayedItems);
     folderFragment.lv_folderList.setAdapter(folderListAdapter);

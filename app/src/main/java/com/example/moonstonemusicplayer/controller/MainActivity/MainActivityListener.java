@@ -11,6 +11,7 @@ import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.view.MainActivity;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.AlbumFragment;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.ArtistFragment;
+import com.example.moonstonemusicplayer.view.mainactivity_fragments.AudiobookFragment;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.FolderFragment;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.GenreFragment;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.PlayListFragment;
@@ -155,8 +156,13 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
         break;
       }
       case 2: {
+        Log.v(TAG, "search the current fragment FolderFragment");
+        ((AudiobookFragment) fragments[2]).searchMusic(query);
+        break;
+      }
+      case 3: {
         Log.v(TAG, "search the current fragment PlayListFragment");
-        ((PlayListFragment) fragments[2]).searchMusic(query);
+        ((PlayListFragment) fragments[3]).searchMusic(query);
         break;
       }
      /* case 2: {
@@ -164,19 +170,19 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
         ((FavoritesFragment) fragments[2]).searchMusic(query);
         break;
       }*/
-      case 3: {
-        Log.v(TAG, "search the current fragment AlbumFragment");
-        ((AlbumFragment) fragments[3]).searchMusic(query);
-        break;
-      }
       case 4: {
-        Log.v(TAG, "search the current fragment ArtistFragment");
-        ((ArtistFragment) fragments[4]).searchMusic(query);
+        Log.v(TAG, "search the current fragment AlbumFragment");
+        ((AlbumFragment) fragments[4]).searchMusic(query);
         break;
       }
       case 5: {
+        Log.v(TAG, "search the current fragment ArtistFragment");
+        ((ArtistFragment) fragments[5]).searchMusic(query);
+        break;
+      }
+      case 6: {
         Log.v(TAG, "search the current fragment GenreFragment");
-        ((GenreFragment) fragments[5]).searchMusic(query);
+        ((GenreFragment) fragments[6]).searchMusic(query);
         break;
       }
     }

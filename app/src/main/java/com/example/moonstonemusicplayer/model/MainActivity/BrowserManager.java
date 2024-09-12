@@ -128,12 +128,18 @@ public class BrowserManager {
     return children;
   }
 
-  public static List<File> getChildrenMatchingQuery(File file, String query){
+  public static List<File> getChildrenMatchingQuery(File file, String query, Filter filter){
     List<File> children = new ArrayList<>();
 
     if(file != null && file.listFiles() != null){
       for(File audioFile : BrowserManager.audioFiles){
         if(audioFile.getAbsolutePath().toLowerCase().contains(query.toLowerCase())){
+          if(filter == Filter.AUDIOBOOKS && !audioFileAudiobookMap.containsKey(audioFile)){
+            continue;
+          }
+          if(filter == Filter.SONGS && !audiofileSongMap.containsKey(audioFile)){
+            continue;
+          }
           children.add(audioFile);
         }
       }
