@@ -256,7 +256,6 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
   public void startFolderSonglist(File[] playlist, int song_index, FolderFragment folderFragment){
     FolderSonglist = playlist.clone();
     Intent intent = new Intent(folderFragment.getActivity(), PlayListActivity.class);
-
     intent.putExtra(FolderFragment.FOLDERSONGINDEXEXTRA,song_index);
     folderFragment.startActivity(intent);
   }

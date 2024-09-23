@@ -12,15 +12,18 @@ import android.media.AudioAttributes;
 import android.media.AudioFocusRequest;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.media.audiofx.Visualizer;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
+import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.PlayListActivity.Notification.Constants;
@@ -249,7 +252,6 @@ public class MediaPlayerService extends Service
   /** wird aufgerufen um den BufferStatus einer Medienresource, die über Netzwerkgestreamt wird anzuzeigen*/
   @Override
   public void onBufferingUpdate(MediaPlayer mp, int percent) {
-
   }
 
   /** wird aufgerufen wenn Medienresource fertig abgespielt wurde*/
@@ -443,10 +445,6 @@ public class MediaPlayerService extends Service
   }
 
   public void showNotification(){
-    // Using RemoteViews to bind custom layouts into Notification
-    RemoteViews views = new RemoteViews(getPackageName(),R.layout.status_bar);
-    RemoteViews bigViews = new RemoteViews(getPackageName(),R.layout.status_bar_expanded);
-
     //setting up the notification intent
     final Intent notificationIntent = new Intent(MediaPlayerService.this, PlayListActivity.class);
     notificationIntent.setAction(Intent.ACTION_MAIN);
@@ -477,10 +475,12 @@ public class MediaPlayerService extends Service
     PendingIntent pcloseIntent = PendingIntent.getService(this, 0,
             closeIntent, PendingIntent.FLAG_IMMUTABLE);
 
-
-
     PendingIntent popenIntent = PendingIntent.getActivity(this, 0,
             notificationIntent, PendingIntent.FLAG_IMMUTABLE);
+
+    // Using RemoteViews to bind custom layouts into Notification
+    RemoteViews views = new RemoteViews(getPackageName(),R.layout.status_bar);
+    RemoteViews bigViews = new RemoteViews(getPackageName(),R.layout.status_bar_expanded);
 
     //connect views with pending intents
     views.setOnClickPendingIntent(R.id.status_bar_play, pplayIntent);
@@ -503,56 +503,53 @@ public class MediaPlayerService extends Service
     }
 
     //set up the texts in the notification
-    views.setTextViewText(R.id.status_bar_track_name, playListModel.getCurrentSong().getName());
-    bigViews.setTextViewText(R.id.status_bar_track_name, playListModel.getCurrentSong().getName());
+    String truncatedSongTitle = playListModel.getCurrentSong() == null ? "test123" : playListModel.getCurrentSong().getName().length() > 15 ? 
+                                                              playListModel.getCurrentSong().getName().substring(0, 15)+"..." : playListModel.getCurrentSong().getName();
+
+    views.setTextViewText(R.id.status_bar_track_name, truncatedSongTitle);
+    bigViews.setTextViewText(R.id.status_bar_track_name, truncatedSongTitle);
     String artist = playListModel.getCurrentSong().getArtist();
-    if(artist.isEmpty())artist = "unknown artist";
+    if(artist.isEmpty() || artist.contains("<unknown>")){
+      views.setViewVisibility(R.id.status_bar_album_name, View.GONE); 
+    } else {
+      views.setViewVisibility(R.id.status_bar_album_name, View.VISIBLE); 
+    }
     views.setTextViewText(R.id.status_bar_artist_name, artist);
     bigViews.setTextViewText(R.id.status_bar_artist_name, artist);
 
     //get album image and album (if possible)
-    String albumName = "unknown album";
     Song song = playListModel.getCurrentSong();
-    albumName = song.getAlbum();
-
-    views.setTextViewText(R.id.status_bar_album_name, albumName);
+    String albumName = song.getAlbum();
     bigViews.setTextViewText(R.id.status_bar_album_name, albumName);
 
-    Notification.Builder notificationBuilder = new Notification.Builder(this);
-    notificationManager = getSystemService(NotificationManager.class);
+    notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-      // Create the NotificationChannel, but only on API 26+ because
-      // the NotificationChannel class is new and not in the support library
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        CharSequence name = getString(R.string.channel_name);
-        String description = getString(R.string.channel_description);
-        int importance = NotificationManager.IMPORTANCE_DEFAULT;
-        NotificationChannel notificationChannel = new NotificationChannel(CHANNEL_ID, name, importance);
-        notificationChannel.setDescription(description);
-        notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
-        // Register the channel with the system; you can't change the importance
-        // or other notification behaviors after this
-        notificationManager.createNotificationChannel(notificationChannel);
-        notificationBuilder.setChannelId(CHANNEL_ID);
-      }
-    } else {
-      // If earlier version channel ID is not used
-      // https://developer.android.com/reference/android/support/v4/app/NotificationCompat.Builder.html#NotificationCompat.Builder(android.content.Context)
-    }
+    //Create a notification channel
+    CharSequence name = getString(R.string.channel_name);
+    String description = getString(R.string.channel_description);
+    int importance = NotificationManager.IMPORTANCE_MAX;
+    NotificationChannel notificationChannel = new NotificationChannel(CHANNEL_ID, name, importance);
+    notificationChannel.setDescription(description);
+    notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+    notificationManager.createNotificationChannel(notificationChannel);
 
+       //build the notification with Builder Pattern 
+    Notification.Builder notificationBuilder = new Notification.Builder(this, CHANNEL_ID);
+    notificationBuilder.setContentTitle(getString(R.string.app_name));
+    notificationBuilder.setContentText(truncatedSongTitle);
+    notificationBuilder.setChannelId(CHANNEL_ID);
     notificationBuilder.setVisibility(Notification.VISIBILITY_PUBLIC);
+    notificationBuilder.setCustomContentView(views);
+    notificationBuilder.setCustomBigContentView(bigViews);
+    notificationBuilder.setSmallIcon(R.drawable.ic_moonstonemusicplayerlogo);
+    notificationBuilder.setWhen(System.currentTimeMillis());
+    notificationBuilder.setAutoCancel(false);
 
     statusNotification = notificationBuilder.build();
-    statusNotification.contentView = views;
-    statusNotification.bigContentView = bigViews;
     statusNotification.flags = Notification.FLAG_ONGOING_EVENT | Notification.FLAG_NO_CLEAR;
-    statusNotification.icon = R.drawable.ic_moonstonemusicplayerlogo;
     statusNotification.contentIntent = pendingIntent;
     
     notificationManager.notify(8888,statusNotification);
     //startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, statusNotification);
-
   }
-
 }

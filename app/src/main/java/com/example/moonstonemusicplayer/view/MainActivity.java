@@ -64,7 +64,6 @@ public class MainActivity extends AppCompatActivity {
 
     mainActivityListener = new MainActivityListener(this,sectionsPagerAdapter.getFragments());
 
-
     tabs.addOnTabSelectedListener(
         new TabLayout.ViewPagerOnTabSelectedListener(viewPager) {
           @Override
