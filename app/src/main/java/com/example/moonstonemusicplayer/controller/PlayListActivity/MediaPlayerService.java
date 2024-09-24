@@ -8,32 +8,37 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.media.AudioAttributes;
 import android.media.AudioFocusRequest;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.media.audiofx.Visualizer;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
+import android.support.v4.media.MediaMetadataCompat;
+import android.support.v4.media.session.MediaSessionCompat;
+import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
-import android.view.View;
-import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.PlayListActivity.Notification.Constants;
+import com.example.moonstonemusicplayer.controller.PlayListActivity.Notification.MediaNotificationManager;
 import com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists;
 import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Audiobook;
 import com.example.moonstonemusicplayer.model.PlayListActivity.PlayListModel;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import com.example.moonstonemusicplayer.model.PlaytimePersistence;
-import com.example.moonstonemusicplayer.view.PlayListActivity;
 
 import java.io.File;
 import java.io.IOException;
@@ -74,7 +79,8 @@ public class MediaPlayerService extends Service
   private AudioManager audioManager;
   private int startIndex;
   private int resumePosition = -1;
-  private NotificationManager notificationManager;
+  private MediaSessionCompat mediaSession;
+  private MediaNotificationManager mediaNotificationManager;
 
   /** inits mediaplayer and sets Listeners */
   private void initMediaPlayer(){
@@ -109,19 +115,15 @@ public class MediaPlayerService extends Service
       } else {
         Toast.makeText(this, getResources().getString(R.string.file_does_not_exist),Toast.LENGTH_LONG).show();
       }
-
-
     } catch (IOException e) {
       e.printStackTrace();
       stopSelf();
     }
-
   }
 
   //public interface
   public void resume() {
     if(DEBUG)Log.d(TAG,"resume: "+resumePosition);
-    showNotification();
     //setze Wiedergabe fort
     if(mediaPlayer == null)initMediaPlayer();
     else {
@@ -132,16 +134,18 @@ public class MediaPlayerService extends Service
           mediaPlayer.seekTo(resumePosition);
           mediaPlayer.setVolume(1.0f,1.0f);
           if(!mediaPlayer.isPlaying())mediaPlayer.start();
+          updatePlaybackState(mediaPlayer.isPlaying() ? PlaybackStateCompat.STATE_PLAYING : PlaybackStateCompat.STATE_PAUSED);
         }
       }
     }
   }
 
   public void pause() {
-    showNotification();
     if(mediaPlayer != null && mediaPlayer.isPlaying()){
       mediaPlayer.pause();
       resumePosition = mediaPlayer.getCurrentPosition();
+      updatePlaybackState(PlaybackStateCompat.STATE_PAUSED);
+      mediaNotificationManager.update(getMediaDataFromCurrentSong(), mediaSession.getController().getPlaybackState(), mediaSession.getSessionToken());
     }
   }
 
@@ -162,57 +166,98 @@ public class MediaPlayerService extends Service
 
   private void playMedia(){
     if(mediaPlayer != null && !mediaPlayer.isPlaying() && requestAudioFocus()){
+      this.mediaNotificationManager = new MediaNotificationManager(this);
       mediaPlayer.start();
+      updatePlaybackState(PlaybackStateCompat.STATE_PLAYING);
+      mediaNotificationManager.update(getMediaDataFromCurrentSong(), mediaSession.getController().getPlaybackState(), mediaSession.getSessionToken());
     }
   }
 
   private void stopMedia(){
     if(mediaPlayer != null && mediaPlayer.isPlaying()){
-      {mediaPlayer.stop(); isMediaPlayerPrepared=false;}
+      mediaPlayer.stop(); isMediaPlayerPrepared=false;
+      updatePlaybackState(PlaybackStateCompat.STATE_STOPPED);
+      mediaNotificationManager.update(getMediaDataFromCurrentSong(), mediaSession.getController().getPlaybackState(), mediaSession.getSessionToken());
     }
     if(playListModel.getCurrentSong() != null && playListModel.getCurrentSong().getDuration_ms() >= Audiobook.AUDIOBOOK_CUTOFF_MS){
       PlaytimePersistence.savePlaytime(this, mediaPlayerCurrentDataSourceUri, mediaPlayer.getCurrentPosition() / 1000);
     }
   }
 
-  //Listener interface
-  @Override
-  public int onStartCommand(Intent intent, int flags, int startId) {
-    Log.d(TAG,"onStartCommand: binder: "+ (iBinder == null));
-    if(intent.hasExtra(STARTING_INDEX)){
-      startIndex = intent.getIntExtra(STARTING_INDEX,0);
-      if(DEBUG)Log.d(TAG,"starting song: "+startIndex);
+  private void updatePlaybackState(int state) {
+    long position = mediaPlayer.getCurrentPosition(); // Get current position after seeking
+
+    PlaybackStateCompat.Builder stateBuilder = new PlaybackStateCompat.Builder()
+            .setState(state, position, 1.0f)
+            .setBufferedPosition(position); // Optional: to show buffered position
+
+    // Set the actions based on the current state
+    if (state == PlaybackStateCompat.STATE_PLAYING) {
+      stateBuilder.setActions(PlaybackStateCompat.ACTION_PLAY_PAUSE |
+              PlaybackStateCompat.ACTION_SKIP_TO_NEXT |
+              PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS |
+              PlaybackStateCompat.ACTION_SEEK_TO);
+    } else if (state == PlaybackStateCompat.STATE_PAUSED) {
+      stateBuilder.setActions(PlaybackStateCompat.ACTION_PLAY |
+              PlaybackStateCompat.ACTION_SKIP_TO_NEXT |
+              PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS |
+              PlaybackStateCompat.ACTION_SEEK_TO);
+    } else {
+      stateBuilder.setActions(PlaybackStateCompat.ACTION_PLAY);
     }
 
+    mediaSession.setPlaybackState(stateBuilder.build());
+  }
+
+  private MediaMetadataCompat getMediaDataFromCurrentSong(){
+    return new MediaMetadataCompat.Builder()
+            .putString(MediaMetadataCompat.METADATA_KEY_TITLE, playListModel.getCurrentSong().getName())
+            .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, playListModel.getCurrentSong().getArtist())
+            .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, playListModel.getCurrentSong().getAlbum())
+            .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, playListModel.getCurrentSong().getDuration_ms())
+            .build();
+  }
+
+  @Override
+  public int onStartCommand(Intent intent, int flags, int startId) {
+    Toast.makeText(this, "onStartCommand", Toast.LENGTH_SHORT).show();
+    if(intent.hasExtra(STARTING_INDEX)){
+      startIndex = intent.getIntExtra(STARTING_INDEX,0);
+    }
     String intentAction = intent.getAction();
     if(intentAction != null){
-      if (intentAction.equals(Constants.ACTION.PREV_ACTION)) {
-        Toast.makeText(this, "Clicked Previous", Toast.LENGTH_SHORT).show();
-        Log.i(TAG, "Clicked Previous");
-        prevSong();
-      } else if (intentAction.equals(Constants.ACTION.PLAY_ACTION)) {//toogles play,resume
-        Toast.makeText(this, "Clicked Play", Toast.LENGTH_SHORT).show();
-        Log.i(TAG, "Clicked Play");
-        if(mediaPlayer != null && mediaPlayer.isPlaying()) {
-          pause();
-          ((LocalBinder) iBinder).boundServiceListener.pauseSong();
-        } else {
-          resume();
-          ((LocalBinder) iBinder).boundServiceListener.resumeSong();
+      // Update the notification to reflect play/pause changes
+        switch (intentAction) {
+            case Constants.ACTION.PREV_ACTION:
+                Toast.makeText(this, "Clicked Previous", Toast.LENGTH_SHORT).show();
+                Log.i(TAG, "Clicked Previous");
+                prevSong();
+                break;
+            case Constants.ACTION.PLAY_ACTION: //toogles play,resume
+                Toast.makeText(this, "Clicked Play", Toast.LENGTH_SHORT).show();
+                Log.i(TAG, "Clicked Play");
+                if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+                    pause();
+                    ((LocalBinder) iBinder).boundServiceListener.pauseSong();
+                } else {
+                    resume();
+                    ((LocalBinder) iBinder).boundServiceListener.resumeSong();
+                }
+                break;
+            case Constants.ACTION.NEXT_ACTION:
+                Toast.makeText(this, "Clicked Next", Toast.LENGTH_SHORT).show();
+                Log.i(TAG, "Clicked Next");
+                nextSong();
+                break;
+            case Constants.ACTION.STOPFOREGROUND_ACTION:
+                Log.i(TAG, "Received Stop Foreground Intent");
+                Toast.makeText(this, "Service Stoped", Toast.LENGTH_SHORT).show();
+                stopForeground(true);
+                stopSelf();
+                stopMedia();
+                ((LocalBinder) iBinder).boundServiceListener.stopSong();
+                break;
         }
-      } else if (intentAction.equals(Constants.ACTION.NEXT_ACTION)) {
-        Toast.makeText(this, "Clicked Next", Toast.LENGTH_SHORT).show();
-        Log.i(TAG, "Clicked Next");
-        nextSong();
-      } else if (intentAction.equals(
-          Constants.ACTION.STOPFOREGROUND_ACTION)) {
-        Log.i(TAG, "Received Stop Foreground Intent");
-        Toast.makeText(this, "Service Stoped", Toast.LENGTH_SHORT).show();
-        stopForeground(true);
-        stopSelf();
-        stopMedia();
-        ((LocalBinder) iBinder).boundServiceListener.stopSong();
-      }
     }
     return super.onStartCommand(intent, flags, startId);
   }
@@ -220,6 +265,11 @@ public class MediaPlayerService extends Service
   @Override
   public void onCreate() {
     super.onCreate();
+    //create mediasession
+    this.mediaSession = new MediaSessionCompat(this, "MediaPlayerService");
+    this.mediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS | MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);     // Optionally set the flags for handling media buttons
+    this.mediaSession.setActive(true); // Set the session as active
+
     final IntentFilter theFilter = new IntentFilter();
     theFilter.addAction(ACTION_NOTIFICATION_ORDER);
     //init audiomanager
@@ -239,7 +289,6 @@ public class MediaPlayerService extends Service
     }
     stopSelf(); //beende Service
     removeAudioFocus();
-    if(notificationManager != null)notificationManager.cancelAll();
   }
 
   @Nullable
@@ -265,6 +314,7 @@ public class MediaPlayerService extends Service
       }
     }
   }
+
 
   /** wird aufgerufen wenn es Fehler gibt */
   @Override
@@ -389,19 +439,20 @@ public class MediaPlayerService extends Service
     Song song = BrowserManager.getSongFromAudioFile(songFile);
     DBPlaylists.getInstance(this.getApplicationContext()).addToRecentlyPlayed(this.getApplicationContext(),song);
     initMediaPlayer();
-    showNotification();
   }
 
   public void nextSong() {
     playListModel.nextSong();
     initMediaPlayer();
-    showNotification();
+    updatePlaybackState(PlaybackStateCompat.STATE_PLAYING); // Update to playing state if playing
+    mediaNotificationManager.update(getMediaDataFromCurrentSong(), mediaSession.getController().getPlaybackState(), mediaSession.getSessionToken());
   }
 
   public void prevSong() {
     playListModel.prevSong();
     initMediaPlayer();
-    showNotification();
+    updatePlaybackState(PlaybackStateCompat.STATE_PLAYING); // Update to playing state if playing
+    mediaNotificationManager.update(getMediaDataFromCurrentSong(), mediaSession.getController().getPlaybackState(), mediaSession.getSessionToken());
   }
 
 
@@ -428,7 +479,6 @@ public class MediaPlayerService extends Service
     this.playListModel.setCurrentSong(playList.get(startIndex));
   }
 
-
   /** used to bind service to activity*/
   public class LocalBinder extends Binder {
     public PlayListActivityListener.BoundServiceListener boundServiceListener;
@@ -441,192 +491,6 @@ public class MediaPlayerService extends Service
     public void setListener(PlayListActivityListener.BoundServiceListener listener) {
       boundServiceListener = listener;
     }
-
   }
-  
-  /** Certainly! Here's the * createMediaNotification() method that *includes media control actions for Play, * Pause, Previous, Next, and Seek. This *method assumes that you're inside a *MediaService class and have a *MediaPlayer instance available.*/
-private Notification createMediaNotification() {
-    // Create intents for media control actions
-    PendingIntent playPauseIntent = PendingIntent.getService(
-        this,
-        0,
-        new Intent(this, YourMediaService.class).setAction("ACTION_PLAY_PAUSE"),
-        PendingIntent.FLAG_UPDATE_CURRENT
-    );
 
-    PendingIntent previousIntent = PendingIntent.getService(
-        this,
-        0,
-        new Intent(this, YourMediaService.class).setAction("ACTION_PREVIOUS"),
-        PendingIntent.FLAG_UPDATE_CURRENT
-    );
-
-    PendingIntent nextIntent = PendingIntent.getService(
-        this,
-        0,
-        new Intent(this, YourMediaService.class).setAction("ACTION_NEXT"),
-        PendingIntent.FLAG_UPDATE_CURRENT
-    );
-
-    PendingIntent seekForwardIntent = PendingIntent.getService(
-        this,
-        0,
-        new Intent(this, YourMediaService.class).setAction("ACTION_SEEK_FORWARD"),
-        PendingIntent.FLAG_UPDATE_CURRENT
-    );
-
-    PendingIntent seekBackwardIntent = PendingIntent.getService(
-        this,
-        0,
-        new Intent(this, YourMediaService.class).setAction("ACTION_SEEK_BACKWARD"),
-        PendingIntent.FLAG_UPDATE_CURRENT
-    );
-    
-       //get album image and album (if possible)
-    Song song = playListModel.getCurrentSong();
-    String albumName = song.getAlbum();
-
-
-    // Determine play/pause icon and action
-    int playPauseIcon = mediaPlayer.isPlaying() ? R.drawable.ic_pause : R.drawable.ic_play_arrow;
-    String playPauseLabel = mediaPlayer.isPlaying() ? "Pause" : "Play";
-    
-    //set up the texts in the notification
-    //set up the texts in the notification
-        String truncatedSongTitle = playListModel.getCurrentSong() == null ? "test123" : playListModel.getCurrentSong().getName().length() > 15 ? 
-                                                                  playListModel.getCurrentSong().getName().substring(0, 15)+"..." : playListModel.getCurrentSong().getName();
-
-    // Build the notification with media controls
-    NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "media_playback_channel")
-        .setSmallIcon(R.drawable.ic_media)  // Notification icon
-        .setContentTitle(truncatedSongTitle)      // Set the media title
-        .setContentText(playListModel.getCurrentSong()      // Set the media artist
-        .setLargeIcon(albumArtBitmap)       // Optional: Album art
-        .addAction(new NotificationCompat.Action(
-            R.drawable.ic_skip_previous, "Previous", previousIntent)) // Previous button
-        .addAction(new NotificationCompat.Action(
-            R.drawable.ic_rewind, "Rewind", seekBackwardIntent))       // Seek backward button
-        .addAction(new NotificationCompat.Action(
-            playPauseIcon, playPauseLabel, playPauseIntent))           // Play/Pause button
-        .addAction(new NotificationCompat.Action(
-            R.drawable.ic_fast_forward, "Forward", seekForwardIntent)) // Seek forward button
-        .addAction(new NotificationCompat.Action(
-            R.drawable.ic_skip_next, "Next", nextIntent))              // Next button
-        .setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
-            .setShowActionsInCompactView(2, 3, 4))  // Show play/pause, forward, and rewind in compact view
-        .setOngoing(true)  // Makes the notification persistent
-        .setPriority(NotificationCompat.PRIORITY_HIGH)  // Set high priority to ensure it's visible
-        .setCategory(NotificationCompat.CATEGORY_TRANSPORT);  // Mark this as a transport control notification
-
-    return builder.build();
-}
-
-  public void showNotification(){
-    //setting up the notification intent
-    final Intent notificationIntent = new Intent(MediaPlayerService.this, PlayListActivity.class);
-    notificationIntent.setAction(Intent.ACTION_MAIN);
-    notificationIntent.addCategory(Intent.CATEGORY_LAUNCHER);
-    notificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-    PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
-            notificationIntent, PendingIntent.FLAG_IMMUTABLE);
-
-
-    //setting up the intents for the actions available in notification: previous, play, next, close
-    Intent previousIntent = new Intent(this, MediaPlayerService.class);
-    previousIntent.setAction(Constants.ACTION.PREV_ACTION);
-    PendingIntent ppreviousIntent = PendingIntent.getService(this, 0,
-            previousIntent, PendingIntent.FLAG_IMMUTABLE);
-
-    Intent playIntent = new Intent(this, MediaPlayerService.class);
-    playIntent.setAction(Constants.ACTION.PLAY_ACTION);
-    PendingIntent pplayIntent = PendingIntent.getService(this, 0,
-            playIntent, PendingIntent.FLAG_IMMUTABLE);
-
-    Intent nextIntent = new Intent(this, MediaPlayerService.class);
-    nextIntent.setAction(Constants.ACTION.NEXT_ACTION);
-    PendingIntent pnextIntent = PendingIntent.getService(this, 0,
-            nextIntent, PendingIntent.FLAG_IMMUTABLE);
-
-    Intent closeIntent = new Intent(this, MediaPlayerService.class);
-    closeIntent.setAction(Constants.ACTION.STOPFOREGROUND_ACTION);
-    PendingIntent pcloseIntent = PendingIntent.getService(this, 0,
-            closeIntent, PendingIntent.FLAG_IMMUTABLE);
-
-    PendingIntent popenIntent = PendingIntent.getActivity(this, 0,
-            notificationIntent, PendingIntent.FLAG_IMMUTABLE);
-
-    // Using RemoteViews to bind custom layouts into Notification
-    RemoteViews views = new RemoteViews(getPackageName(),R.layout.status_bar);
-    RemoteViews bigViews = new RemoteViews(getPackageName(),R.layout.status_bar_expanded);
-
-    //connect views with pending intents
-    views.setOnClickPendingIntent(R.id.status_bar_play, pplayIntent);
-    bigViews.setOnClickPendingIntent(R.id.status_bar_play, pplayIntent);
-    views.setOnClickPendingIntent(R.id.status_bar_next, pnextIntent);
-    bigViews.setOnClickPendingIntent(R.id.status_bar_next, pnextIntent);
-    views.setOnClickPendingIntent(R.id.status_bar_prev, ppreviousIntent);
-    bigViews.setOnClickPendingIntent(R.id.status_bar_prev, ppreviousIntent);
-    views.setOnClickPendingIntent(R.id.status_bar_collapse, pcloseIntent);
-    bigViews.setOnClickPendingIntent(R.id.status_bar_collapse, pcloseIntent);
-    views.setOnClickPendingIntent(R.id.iv_status_bar_album_art, popenIntent);
-    bigViews.setOnClickPendingIntent(R.id.iv_status_bar_album_art, popenIntent);
-
-    if(mediaPlayer != null && mediaPlayer.isPlaying()) {
-      views.setImageViewResource(R.id.status_bar_play, R.drawable.ic_play_button);
-      bigViews.setImageViewResource(R.id.status_bar_play, R.drawable.ic_play_button);
-    } else {
-      views.setImageViewResource(R.id.status_bar_play, R.drawable.ic_pause);
-      bigViews.setImageViewResource(R.id.status_bar_play, R.drawable.ic_pause);
-    }
-
-    //set up the texts in the notification
-    String truncatedSongTitle = playListModel.getCurrentSong() == null ? "test123" : playListModel.getCurrentSong().getName().length() > 15 ? 
-                                                              playListModel.getCurrentSong().getName().substring(0, 15)+"..." : playListModel.getCurrentSong().getName();
-
-    views.setTextViewText(R.id.status_bar_track_name, truncatedSongTitle);
-    bigViews.setTextViewText(R.id.status_bar_track_name, truncatedSongTitle);
-    String artist = playListModel.getCurrentSong().getArtist();
-    if(artist.isEmpty() || artist.contains("<unknown>")){
-      views.setViewVisibility(R.id.status_bar_album_name, View.GONE); 
-    } else {
-      views.setViewVisibility(R.id.status_bar_album_name, View.VISIBLE); 
-    }
-    views.setTextViewText(R.id.status_bar_artist_name, artist);
-    bigViews.setTextViewText(R.id.status_bar_artist_name, artist);
-
-    //get album image and album (if possible)
-    Song song = playListModel.getCurrentSong();
-    String albumName = song.getAlbum();
-    bigViews.setTextViewText(R.id.status_bar_album_name, albumName);
-
-    notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-    //Create a notification channel
-    CharSequence name = getString(R.string.channel_name);
-    String description = getString(R.string.channel_description);
-    int importance = NotificationManager.IMPORTANCE_MAX;
-    NotificationChannel notificationChannel = new NotificationChannel(CHANNEL_ID, name, importance);
-    notificationChannel.setDescription(description);
-    notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
-    notificationManager.createNotificationChannel(notificationChannel);
-
-       //build the notification with Builder Pattern 
-    Notification.Builder notificationBuilder = new Notification.Builder(this, CHANNEL_ID);
-    notificationBuilder.setContentTitle(getString(R.string.app_name));
-    notificationBuilder.setContentText(truncatedSongTitle);
-    notificationBuilder.setChannelId(CHANNEL_ID);
-    notificationBuilder.setVisibility(Notification.VISIBILITY_PUBLIC);
-    notificationBuilder.setCustomContentView(views);
-    notificationBuilder.setCustomBigContentView(bigViews);
-    notificationBuilder.setSmallIcon(R.drawable.ic_moonstonemusicplayerlogo);
-    notificationBuilder.setWhen(System.currentTimeMillis());
-    notificationBuilder.setAutoCancel(false);
-
-    statusNotification = notificationBuilder.build();
-    statusNotification.flags = Notification.FLAG_ONGOING_EVENT | Notification.FLAG_NO_CLEAR;
-    statusNotification.contentIntent = pendingIntent;
-    
-    notificationManager.notify(8888,statusNotification);
-    //startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, statusNotification);
-  }
 }

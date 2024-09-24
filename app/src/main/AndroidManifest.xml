@@ -53,6 +53,16 @@
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
         </service>
+        <receiver android:name=".controller.PlayListActivity.Notification.MediaNotificationManager"
+            android:exported="true"
+            android:permission="TODO">
+            <intent-filter>
+                <action android:name="com.example.android.musicplayercodelab.play" />
+                <action android:name="com.example.android.musicplayercodelab.pause" />
+                <action android:name="com.example.android.musicplayercodelab.next" />
+                <action android:name="com.example.android.musicplayercodelab.prev" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

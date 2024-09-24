@@ -36,7 +36,7 @@ import com.example.moonstonemusicplayer.view.mainactivity_fragments.SectionsPage
 public class MainActivity extends AppCompatActivity {
   private final int PERMISSION_REQUEST_CODE = 678;
   private final int PERMISSION_REQUEST_MEDIA_AUDIO = 679;
-
+  private final int PERMISSION_REQUEST_POST_NOTIFICATION = 680;
 
   private static final String TAG = MainActivity.class.getSimpleName();
   public SearchView searchView;
@@ -91,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
     setSupportActionBar(toolbar);
 
     showMediaAudioPermission();
+    requestPostNotifications();
   }
 
   public void showMediaAudioPermission() {
@@ -158,6 +159,14 @@ public class MainActivity extends AppCompatActivity {
     ActivityCompat.requestPermissions(this,
             new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
             PERMISSION_REQUEST_CODE);
+  }
+
+  public void requestPostNotifications() {
+    if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) 
+    != PackageManager.PERMISSION_GRANTED) {
+      ActivityCompat.requestPermissions(this, 
+        new String[]{Manifest.permission.POST_NOTIFICATIONS}, PERMISSION_REQUEST_POST_NOTIFICATION);
+    }
   }
 
   public void downloadSong(VideoModel currentVideoModel) {
