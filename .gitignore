@@ -2,6 +2,8 @@
 *.iml
 .idea
 .gradle
+.project
+.settings/*
 /local.properties
 /.idea/caches
 /.idea/libraries
@@ -15,3 +17,5 @@
 .externalNativeBuild
 .cxx
 /app/src/main/res/values/api_keys.xml
+/app/bin
+/app/bin/*
