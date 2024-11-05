@@ -1,14 +1,29 @@
 package com.example.moonstonemusicplayer.controller.MainActivity;
 
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
+import android.os.Handler;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.SearchView;
+import android.widget.SeekBar;
+import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 
 import com.example.moonstonemusicplayer.R;
+import com.example.moonstonemusicplayer.controller.PlayListActivity.MediaPlayerService;
+import com.example.moonstonemusicplayer.model.PlayListActivity.Audiobook;
+import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import com.example.moonstonemusicplayer.view.MainActivity;
+import com.example.moonstonemusicplayer.view.PlayListActivity;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.AlbumFragment;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.ArtistFragment;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.AudiobookFragment;
@@ -31,6 +46,33 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
   private final MainActivity mainActivity;
   private final Fragment[] fragments;
 
+  private MediaPlayerService mediaPlayerService;
+  private boolean serviceBound = false;
+
+  // Views for mini player
+  private LinearLayout miniPlayerControls;
+  private TextView miniPlayerTitle;
+  private TextView miniPlayerArtist;
+  private ImageButton miniPlayerPlayPause;
+  private SeekBar miniPlayerSeekBar;
+  private Handler seekBarHandler = new Handler();
+  private Runnable seekBarRunnable;
+
+  // Create ServiceConnection to bind to MediaPlayerService
+  private ServiceConnection serviceConnection = new ServiceConnection() {
+    @Override
+    public void onServiceConnected(ComponentName name, IBinder service) {
+      MediaPlayerService.LocalBinder binder = (MediaPlayerService.LocalBinder) service;
+      mediaPlayerService = binder.getService();
+      serviceBound = true;
+      updatePlayPauseButton(); // Update button state once service is bound
+    }
+
+    @Override
+    public void onServiceDisconnected(ComponentName name) {
+      serviceBound = false;
+    }
+  };
 
   /** Init fields, ask for permissions (@this. requests runtime storage permissions)
    *
@@ -42,6 +84,76 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
     this.fragments = fragments;
     if(DEBUG)Log.d(TAG,"fragments null: "+ (fragments == null));
 
+    initializeMiniPlayerViews();
+
+    // Bind to MediaPlayerService
+    Intent playerIntent = new Intent(mainActivity, MediaPlayerService.class);
+    mainActivity.bindService(playerIntent, serviceConnection, Context.BIND_AUTO_CREATE);
+
+    // Set up play/pause button click listener
+    ImageButton playPauseButton = mainActivity.findViewById(R.id.mini_player_play_pause);
+    playPauseButton.setOnClickListener(v -> handlePlayPause());
+  }
+
+  // Clean up when activity is destroyed
+  public void onDestroy() {
+    stopSeekBarUpdate();
+    if (serviceBound) {
+      mainActivity.unbindService(serviceConnection);
+      serviceBound = false;
+    }
+  }
+
+  public void onResume(){
+    updateMiniPlayerState();
+  }
+
+  // Call this method when returning from PlaylistActivity
+  public void updateMiniPlayerState() {
+    if (serviceBound && mediaPlayerService != null) {
+      // Check if there's a current song
+      Song currentSong = mediaPlayerService.getCurrentSong();
+
+      if (currentSong != null) {
+        // Show controls and update song info
+        miniPlayerControls.setVisibility(View.VISIBLE);
+        miniPlayerTitle.setText(currentSong.getName());
+
+        // Handle artist name
+        String artist = currentSong.getArtist();
+        if (artist != null && !artist.isEmpty() && !artist.contains("<unknown>")) {
+          miniPlayerArtist.setVisibility(View.VISIBLE);
+          miniPlayerArtist.setText(artist);
+        } else {
+          miniPlayerArtist.setVisibility(View.GONE);
+        }
+
+        // Update SeekBar
+        miniPlayerSeekBar.setMax(currentSong.getDuration_ms());
+        miniPlayerSeekBar.setProgress(mediaPlayerService.getCurrentPosition());
+
+        // Start or stop seekbar updates based on playback state
+        if (mediaPlayerService.isPlayingMusic()) {
+          startSeekBarUpdate();
+        } else {
+          stopSeekBarUpdate();
+        }
+
+        // Update play/pause button
+        miniPlayerPlayPause.setImageResource(
+                mediaPlayerService.isPlayingMusic() ?
+                        R.drawable.ic_pause_white :
+                        R.drawable.ic_play_button_white
+        );
+      } else {
+        // No song playing, hide controls
+        miniPlayerControls.setVisibility(View.GONE);
+      }
+    } else {
+      // Service not bound, hide controls
+      miniPlayerControls.setVisibility(View.GONE);
+      miniPlayerControls.setVisibility(View.GONE);
+    }
   }
 
   /** Init options menu and search view.
@@ -230,6 +342,118 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
       mainActivity.searchView.setIconified(true);
       mainActivity.searchView.clearFocus();
     }
+  }
+
+  private void handlePlayPause() {
+    if (serviceBound && mediaPlayerService != null) {
+      if (mediaPlayerService.isPlayingMusic()) {
+        mediaPlayerService.pause();
+      } else {
+        mediaPlayerService.resume();
+      }
+      updatePlayPauseButton();
+    }
+  }
+
+  private void updatePlayPauseButton() {
+    ImageButton playPauseButton = mainActivity.findViewById(R.id.mini_player_play_pause);
+    if (serviceBound && mediaPlayerService != null) {
+      playPauseButton.setImageResource(
+              mediaPlayerService.isPlayingMusic() ?
+                      R.drawable.ic_pause_white :
+                      R.drawable.ic_play_button_white
+      );
+    }
+  }
+
+  private void initializeMiniPlayerViews() {
+    miniPlayerControls = mainActivity.findViewById(R.id.mini_player_controls);
+    miniPlayerTitle = mainActivity.findViewById(R.id.mini_player_title);
+    miniPlayerArtist = mainActivity.findViewById(R.id.mini_player_artist);
+    miniPlayerPlayPause = mainActivity.findViewById(R.id.mini_player_play_pause);
+    miniPlayerSeekBar = mainActivity.findViewById(R.id.mini_player_seekbar);
+
+    // Set click listener for play/pause
+    miniPlayerPlayPause.setOnClickListener(v -> {
+      if (serviceBound && mediaPlayerService != null) {
+        if (mediaPlayerService.isPlayingMusic()) {
+          mediaPlayerService.pause();
+        } else {
+          mediaPlayerService.resume();
+        }
+        updateMiniPlayerState();
+      }
+    });
+
+    // Click on the LinearLayout (except button) to resume PlaylistActivity
+    miniPlayerControls.setOnClickListener(v -> {
+      /*if (serviceBound && mediaPlayerService != null) {
+        Intent intent = new Intent(mainActivity, PlayListActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+
+        // Add required extras based on current playback
+        // We need to determine which fragment's songlist is currently playing
+        // and add the appropriate extra
+        Song currentSong = mediaPlayerService.getCurrentSong();
+        if (currentSong != null) {
+          if (currentSong.getDuration_ms() >= Audiobook.AUDIOBOOK_CUTOFF_MS) {
+            intent.putExtra(AudiobookFragment.FOLDERAUDIOBOOKINDEXEXTRA, 0);
+          } else {
+            intent.putExtra(FolderFragment.FOLDERSONGINDEXEXTRA, 0);
+          }
+        }
+
+        mainActivity.startActivity(intent);
+      }
+
+       */
+    });
+
+
+    // Set up SeekBar change listener
+    miniPlayerSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+      @Override
+      public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        if (fromUser && serviceBound && mediaPlayerService != null) {
+          mediaPlayerService.seekTo(progress);
+        }
+      }
+
+      @Override
+      public void onStartTrackingTouch(SeekBar seekBar) {
+        // Optional: pause updates while user is dragging
+        stopSeekBarUpdate();
+      }
+
+      @Override
+      public void onStopTrackingTouch(SeekBar seekBar) {
+        // Resume updates after user finishes dragging
+        if (serviceBound && mediaPlayerService != null &&
+                mediaPlayerService.isPlayingMusic()) {
+          startSeekBarUpdate();
+        }
+      }
+    });
+  }
+
+  private void startSeekBarUpdate() {
+    seekBarRunnable = new Runnable() {
+      @Override
+      public void run() {
+        if (serviceBound && mediaPlayerService != null) {
+          int currentPosition = mediaPlayerService.getCurrentPosition();
+          miniPlayerSeekBar.setProgress(currentPosition);
+
+          // Update every 1000ms (1 second)
+          seekBarHandler.postDelayed(this, 1000);
+        }
+      }
+    };
+    seekBarHandler.post(seekBarRunnable);
+  }
+
+  private void stopSeekBarUpdate() {
+    seekBarHandler.removeCallbacks(seekBarRunnable);
   }
 
   private boolean isSearchBarOpen() {

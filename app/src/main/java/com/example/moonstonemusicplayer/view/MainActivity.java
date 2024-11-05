@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
     tabs.setupWithViewPager(viewPager);
     FloatingActionButton fab = findViewById(R.id.fab);
 
+
     mainActivityListener = new MainActivityListener(this,sectionsPagerAdapter.getFragments());
 
     tabs.addOnTabSelectedListener(
@@ -91,6 +92,18 @@ public class MainActivity extends AppCompatActivity {
     setSupportActionBar(toolbar);
 
     showMediaAudioPermission();
+  }
+
+  @Override
+  public void onDestroy(){
+      super.onDestroy();
+      mainActivityListener.onDestroy();
+  }
+
+  @Override
+  protected void onResume() {
+    super.onResume();
+    mainActivityListener.onResume();
   }
 
   public void showMediaAudioPermission() {

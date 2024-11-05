@@ -557,15 +557,14 @@ public class PlayListActivityListener
 
   public void onDestroy() {
     if(isServiceBound){
-      if(DEBUG)Log.d(TAG,"activity destroyed => destroy service");
-      mediaPlayerService.onDestroy();
+      //mediaPlayerService.onDestroy();
       isServiceBound = false;
     }
   }
 
   /** stop service */
   public void onBackPressed() {
-    mediaPlayerService.onDestroy();
+    //mediaPlayerService.onDestroy();
   }
 
   public void dispatchMediaButtonEvent(KeyEvent event) {

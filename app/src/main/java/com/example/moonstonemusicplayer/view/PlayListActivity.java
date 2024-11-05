@@ -156,7 +156,9 @@ public class PlayListActivity extends AppCompatActivity {
   @Override
   protected void onDestroy() {
     super.onDestroy();
-    playListActivityListener.onDestroy();
+    if(playListActivityListener != null){
+      playListActivityListener.onDestroy();
+    }
   }
 
 

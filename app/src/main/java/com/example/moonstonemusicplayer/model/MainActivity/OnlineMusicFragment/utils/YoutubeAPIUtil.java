@@ -34,7 +34,7 @@ public class YoutubeAPIUtil {
     public YoutubeAPIUtil(Context context) throws GeneralSecurityException, IOException {
         this.context = context;
 
-        API_KEY = context.getString(R.string.api_key);
+        //API_KEY = context.getString(R.string.api_key);
     }
 
     private final HttpTransport HTTP_TRANSPORT = new com.google.api.client.http.javanet.NetHttpTransport();
