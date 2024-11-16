@@ -36,6 +36,7 @@ import com.example.moonstonemusicplayer.view.mainactivity_fragments.SectionsPage
 public class MainActivity extends AppCompatActivity {
   private final int PERMISSION_REQUEST_CODE = 678;
   private final int PERMISSION_REQUEST_MEDIA_AUDIO = 679;
+  private static final int IMPORT_PLAYLIST_REQUEST_CODE = 680;
 
 
   private static final String TAG = MainActivity.class.getSimpleName();
@@ -163,8 +164,6 @@ public class MainActivity extends AppCompatActivity {
       }
     }
   }
-
-
 
   public void requestWritePermission() {
     // Permission is not granted, request it

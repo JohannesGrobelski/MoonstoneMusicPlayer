@@ -1,9 +1,11 @@
 package com.example.moonstonemusicplayer.controller.MainActivity;
 
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
@@ -15,11 +17,17 @@ import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.fragment.app.Fragment;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.PlayListActivity.MediaPlayerService;
+import com.example.moonstonemusicplayer.controller.PlayListActivity.PlaylistJsonHandler;
+import com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists;
+import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.Playlist;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Audiobook;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import com.example.moonstonemusicplayer.view.MainActivity;
@@ -30,6 +38,18 @@ import com.example.moonstonemusicplayer.view.mainactivity_fragments.AudiobookFra
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.FolderFragment;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.GenreFragment;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.PlayListFragment;
+
+import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.RECENTLY_ADDED_PLAYLIST_NAME;
+import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.RECENTLY_PLAYED_PLAYLIST_NAME;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /** Init the views from mainactivity and implement actions on them (mostly based on which fragment is active):
  *  * options menu:
@@ -57,6 +77,8 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
   private SeekBar miniPlayerSeekBar;
   private Handler seekBarHandler = new Handler();
   private Runnable seekBarRunnable;
+
+  private ActivityResultLauncher<Intent> importPlaylistLauncher;
 
   // Create ServiceConnection to bind to MediaPlayerService
   private ServiceConnection serviceConnection = new ServiceConnection() {
@@ -93,6 +115,16 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
     // Set up play/pause button click listener
     ImageButton playPauseButton = mainActivity.findViewById(R.id.mini_player_play_pause);
     playPauseButton.setOnClickListener(v -> handlePlayPause());
+
+    // Register activity result launcher
+    importPlaylistLauncher = mainActivity.registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+              if (result.getResultCode() == Activity.RESULT_OK) {
+                handleImportPlaylistResult(result.getData());
+              }
+            }
+    );
   }
 
   // Clean up when activity is destroyed
@@ -170,6 +202,13 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
     mainActivity.searchView = (SearchView) searchItem.getActionView();
     mainActivity.searchView.setOnQueryTextListener(this);
 
+    // Show import/export options only when playlist tab is selected
+    MenuItem exportItem = menu.findItem(R.id.action_export_playlists);
+    MenuItem importItem = menu.findItem(R.id.action_import_playlists);
+
+    int tabSelected = mainActivity.viewPager.getCurrentItem();
+    exportItem.setVisible(tabSelected == 1); // 1 is playlist tab
+    importItem.setVisible(tabSelected == 1);
 
     return true;
   }
@@ -186,62 +225,149 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
     switch (item.getItemId()) {
       case R.id.miSortNameMain: {
         int currentItem = mainActivity.viewPager.getCurrentItem();
-        switch(currentItem){
-          case 0: {((FolderFragment) fragments[0]).sortSongsByName(); break;}
-          case 1: {((PlayListFragment) fragments[1]).sortSongsByName();break;}
+        switch (currentItem) {
+          case 0: {
+            ((FolderFragment) fragments[0]).sortSongsByName();
+            break;
+          }
+          case 1: {
+            ((PlayListFragment) fragments[1]).sortSongsByName();
+            break;
+          }
           //case 2: {((FavoritesFragment) fragments[2]).sortSongsByName();break;}
-          case 2: {((AlbumFragment) fragments[2]).sortSongsByName();break;}
-          case 3: {((ArtistFragment) fragments[3]).sortSongsByName();break;}
-          case 4: {((GenreFragment) fragments[4]).sortSongsByName();break;}
+          case 2: {
+            ((AlbumFragment) fragments[2]).sortSongsByName();
+            break;
+          }
+          case 3: {
+            ((ArtistFragment) fragments[3]).sortSongsByName();
+            break;
+          }
+          case 4: {
+            ((GenreFragment) fragments[4]).sortSongsByName();
+            break;
+          }
         }
         break;
-      } case R.id.miSortArtistMain: {
+      }
+      case R.id.miSortArtistMain: {
         int currentItem = mainActivity.viewPager.getCurrentItem();
-        switch(currentItem){
-          case 0: {((FolderFragment) fragments[0]).sortSongsByArtist(); break;}
-          case 1: {((PlayListFragment) fragments[1]).sortSongsByArtist();break;}
+        switch (currentItem) {
+          case 0: {
+            ((FolderFragment) fragments[0]).sortSongsByArtist();
+            break;
+          }
+          case 1: {
+            ((PlayListFragment) fragments[1]).sortSongsByArtist();
+            break;
+          }
           //case 2: {((FavoritesFragment) fragments[2]).sortSongsByArtist();break;}
-          case 2: {((AlbumFragment) fragments[2]).sortSongsByArtist();break;}
-          case 3: {((ArtistFragment) fragments[3]).sortSongsByArtist();break;}
-          case 4: {((GenreFragment) fragments[4]).sortSongsByArtist();break;}
+          case 2: {
+            ((AlbumFragment) fragments[2]).sortSongsByArtist();
+            break;
+          }
+          case 3: {
+            ((ArtistFragment) fragments[3]).sortSongsByArtist();
+            break;
+          }
+          case 4: {
+            ((GenreFragment) fragments[4]).sortSongsByArtist();
+            break;
+          }
         }
         break;
-      } case R.id.miSortDurationMain: {
+      }
+      case R.id.miSortDurationMain: {
         int currentItem = mainActivity.viewPager.getCurrentItem();
-        switch(currentItem){
-          case 0: {((FolderFragment) fragments[0]).sortSongsByDuration(); break;}
-          case 1: {((PlayListFragment) fragments[1]).sortSongsByDuration(); break;}
+        switch (currentItem) {
+          case 0: {
+            ((FolderFragment) fragments[0]).sortSongsByDuration();
+            break;
+          }
+          case 1: {
+            ((PlayListFragment) fragments[1]).sortSongsByDuration();
+            break;
+          }
           //case 2: {((FavoritesFragment) fragments[2]).sortSongsByDuration();break;}
-          case 2: {((AlbumFragment) fragments[2]).sortSongsByDuration();break;}
-          case 3: {((ArtistFragment) fragments[3]).sortSongsByDuration();break;}
-          case 4: {((GenreFragment) fragments[4]).sortSongsByDuration();break;}
+          case 2: {
+            ((AlbumFragment) fragments[2]).sortSongsByDuration();
+            break;
+          }
+          case 3: {
+            ((ArtistFragment) fragments[3]).sortSongsByDuration();
+            break;
+          }
+          case 4: {
+            ((GenreFragment) fragments[4]).sortSongsByDuration();
+            break;
+          }
         }
         break;
-      } case R.id.miSortGenreMain: {
+      }
+      case R.id.miSortGenreMain: {
         int currentItem = mainActivity.viewPager.getCurrentItem();
-        switch(currentItem){
-          case 0: {((FolderFragment) fragments[0]).sortSongsByGenre(); break;}
-          case 1: {((PlayListFragment) fragments[1]).sortSongsByGenre(); break;}
+        switch (currentItem) {
+          case 0: {
+            ((FolderFragment) fragments[0]).sortSongsByGenre();
+            break;
+          }
+          case 1: {
+            ((PlayListFragment) fragments[1]).sortSongsByGenre();
+            break;
+          }
           //case 2: {((FavoritesFragment) fragments[2]).sortSongsByGenre();break;}
-          case 2: {((AlbumFragment) fragments[2]).sortSongsByGenre();break;}
-          case 3: {((ArtistFragment) fragments[3]).sortSongsByGenre();break;}
-          case 4: {((GenreFragment) fragments[4]).sortSongsByGenre();break;}
+          case 2: {
+            ((AlbumFragment) fragments[2]).sortSongsByGenre();
+            break;
+          }
+          case 3: {
+            ((ArtistFragment) fragments[3]).sortSongsByGenre();
+            break;
+          }
+          case 4: {
+            ((GenreFragment) fragments[4]).sortSongsByGenre();
+            break;
+          }
         }
         break;
-      } case R.id.miReverseMain: {
+      }
+      case R.id.miReverseMain: {
         int currentItem = mainActivity.viewPager.getCurrentItem();
-        switch(currentItem){
-          case 0: {((FolderFragment) fragments[0]).reverse(); break;}
-          case 1: {((PlayListFragment) fragments[1]).reverse(); break;}
+        switch (currentItem) {
+          case 0: {
+            ((FolderFragment) fragments[0]).reverse();
+            break;
+          }
+          case 1: {
+            ((PlayListFragment) fragments[1]).reverse();
+            break;
+          }
           //case 2: {((FavoritesFragment) fragments[2]).reverse();break;}
-          case 2: {((AlbumFragment) fragments[2]).reverse();break;}
-          case 3: {((ArtistFragment) fragments[3]).reverse();break;}
-          case 4: {((GenreFragment) fragments[4]).reverse();break;}
+          case 2: {
+            ((AlbumFragment) fragments[2]).reverse();
+            break;
+          }
+          case 3: {
+            ((ArtistFragment) fragments[3]).reverse();
+            break;
+          }
+          case 4: {
+            ((GenreFragment) fragments[4]).reverse();
+            break;
+          }
         }
         break;
       }
+      case R.id.action_import_playlists: {
+        handleImportPlaylists();
+        break;
       }
-      return true;
+      case R.id.action_export_playlists: {
+        handleExportPlaylists();
+        break;
+      }
+    }
+    return true;
   }
 
   @Override
@@ -459,4 +585,77 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
   private boolean isSearchBarOpen() {
     return !mainActivity.searchView.isIconified();
   }
+
+  private void handleExportPlaylists() {
+    try {
+      List<Playlist> playlists = DBPlaylists.getInstance(mainActivity).getAllPlaylists(mainActivity);
+      playlists = playlists.stream().filter(playlist -> !playlist.getName().equals(RECENTLY_ADDED_PLAYLIST_NAME) && !playlist.getName().equals(RECENTLY_PLAYED_PLAYLIST_NAME)).collect(Collectors.toList());
+      PlaylistJsonHandler.exportPlaylists(mainActivity, playlists);
+      Toast.makeText(mainActivity, "Playlists exported successfully", Toast.LENGTH_SHORT).show();
+    } catch (Exception e) {
+      Toast.makeText(mainActivity, "Failed to export playlists", Toast.LENGTH_SHORT).show();
+      Log.e(TAG, "Export failed: " + e.getMessage());
+    }
+  }
+
+  private void handleImportPlaylists() {
+    Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+    intent.setType("application/json");
+    intent.addCategory(Intent.CATEGORY_OPENABLE);
+
+    try {
+      importPlaylistLauncher.launch(
+              Intent.createChooser(intent, "Select playlist file")
+      );
+    } catch (android.content.ActivityNotFoundException ex) {
+      Toast.makeText(mainActivity, "Please install a File Manager.", Toast.LENGTH_SHORT).show();
+    }
+  }
+
+  private void handleImportPlaylistResult(Intent data) {
+    try {
+      Uri uri = data.getData();
+      InputStream inputStream = mainActivity.getContentResolver().openInputStream(uri);
+      File tempFile = createTempFileFromInputStream(inputStream);
+
+      PlaylistJsonHandler.importPlaylists(mainActivity, tempFile);
+      Toast.makeText(mainActivity, "Playlists imported successfully", Toast.LENGTH_SHORT).show();
+
+      // Cleanup temp file
+      tempFile.delete();
+
+      // Reload playlist fragment
+      if (mainActivity.sectionsPagerAdapter.getFragments()[1] instanceof PlayListFragment) {
+        ((PlayListFragment) mainActivity.sectionsPagerAdapter.getFragments()[1])
+                .playlistFragmentListener.reloadPlaylistManager();
+      }
+    } catch (Exception e) {
+      Toast.makeText(mainActivity, "Failed to import playlists", Toast.LENGTH_SHORT).show();
+      Log.e(TAG, "Import failed: " + e.getMessage());
+    }
+  }
+
+
+  private File createTempFileFromInputStream(InputStream inputStream) throws IOException {
+    File tempFile = File.createTempFile("playlist_import", ".json", mainActivity.getCacheDir());
+
+    BufferedInputStream bis = new BufferedInputStream(inputStream);
+    FileOutputStream fos = new FileOutputStream(tempFile);
+    BufferedOutputStream bos = new BufferedOutputStream(fos);
+
+    byte[] buffer = new byte[4096];
+    int count;
+    while ((count = bis.read(buffer)) != -1) {
+      bos.write(buffer, 0, count);
+    }
+
+    bos.flush();
+    bos.close();
+    fos.close();
+    bis.close();
+    inputStream.close();
+
+    return tempFile;
+  }
+
 }

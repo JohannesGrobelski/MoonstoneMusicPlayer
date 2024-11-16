@@ -1,13 +1,11 @@
 apply plugin: 'com.android.application'
 
 android {
-    buildToolsVersion "30.0.3"
-
     defaultConfig {
         applicationId "com.example.moonstonemusicplayer"
         minSdkVersion 29
-        targetSdkVersion 33
-        compileSdk 33
+        targetSdkVersion 34
+        compileSdk 34
         versionCode 1
         versionName "1.0"
 
@@ -39,6 +37,7 @@ android {
     }
     namespace 'com.example.moonstonemusicplayer'
 }
+
 
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
@@ -73,4 +72,10 @@ dependencies {
     implementation 'com.android.support:recyclerview-v7:21.0.0'
     implementation 'com.android.support:support-v4:20.+'
     implementation "com.daimajia.swipelayout:library:1.2.0@aar"
+
+    implementation "androidx.activity:activity:1.8.2"  // Use latest version
+    implementation "androidx.fragment:fragment:1.6.2"  // Use latest version
+
+    // Fix Duplicate class
+    implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.8.0"))
 }

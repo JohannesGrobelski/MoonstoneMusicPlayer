@@ -31,4 +31,23 @@
                 android:title="sortieren nach Länge des Songs" />
         </menu>
     </item>
+
+    <item
+        android:id="@+id/miExportImportPlaylists"
+        android:title="Playlists importieren/exportieren">
+       <menu>
+           <item
+               android:id="@+id/action_export_playlists"
+               android:orderInCategory="100"
+               android:title="Export Playlists"
+               android:visible="false"
+               app:showAsAction="never" />
+           <item
+               android:id="@+id/action_import_playlists"
+               android:orderInCategory="100"
+               android:title="Import Playlists"
+               android:visible="false"
+               app:showAsAction="never" />
+       </menu>
+    </item>
 </menu>
