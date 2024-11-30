@@ -48,8 +48,17 @@ Usage
 
 License
 
-The Moonstone Music Player project is licensed under the MIT License. Feel free to use, modify, and distribute the code within the terms of the license.
-Acknowledgements
+This project is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License - see the LICENSE file for details.
+You are free to:
+
+Share — copy and redistribute the material in any medium or format
+The licensor cannot revoke these freedoms as long as you follow the license terms.
+
+Under the following terms:
+
+Attribution — You must give appropriate credit, provide a link to the license, and indicate if changes were made.
+NonCommercial — You may not use the material for commercial purposes.
+NoDerivatives — If you remix, transform, or build upon the material, you may not distribute the modified material.
 
 Contact
 
