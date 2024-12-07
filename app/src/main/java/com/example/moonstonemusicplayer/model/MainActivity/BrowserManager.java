@@ -102,9 +102,6 @@ public class BrowserManager {
         if(filter == Filter.AUDIOBOOKS && !audioFileAudiobookMap.containsKey(audioFile)){
           continue;
         }
-        if(filter == Filter.SONGS && !audiofileSongMap.containsKey(audioFile)){
-          continue;
-        }
         if(isDirectChildFile(file, audioFile)){
           songs.add(audioFile);
         }
@@ -133,11 +130,8 @@ public class BrowserManager {
 
     if(file != null && file.listFiles() != null){
       for(File audioFile : BrowserManager.audioFiles){
-        if(audioFile.getAbsolutePath().toLowerCase().contains(query.toLowerCase())){
+        if(fileMatchesQuery(query, audioFile)){
           if(filter == Filter.AUDIOBOOKS && !audioFileAudiobookMap.containsKey(audioFile)){
-            continue;
-          }
-          if(filter == Filter.SONGS && !audiofileSongMap.containsKey(audioFile)){
             continue;
           }
           children.add(audioFile);
@@ -157,9 +151,6 @@ public class BrowserManager {
         } else {
           //if audio file resides in child directory of file add subdirectory to directories
           if(filter == Filter.AUDIOBOOKS && !audioFileAudiobookMap.containsKey(audioFile)){
-            continue;
-          }
-          if(filter == Filter.SONGS && !audiofileSongMap.containsKey(audioFile)){
             continue;
           }
           String relPath = audioFile.getAbsolutePath().replace(file.getAbsolutePath()+"/", "");
@@ -207,9 +198,6 @@ public class BrowserManager {
     for(File audioFile : BrowserManager.audioFiles){
       if(isDirectChildFile(file,audioFile)){
         if(filter == Filter.AUDIOBOOKS && !audioFileAudiobookMap.containsKey(audioFile)){
-          continue;
-        }
-        if(filter == Filter.SONGS && !audiofileSongMap.containsKey(audioFile)){
           continue;
         }
         songs.add(audioFile);
@@ -474,6 +462,15 @@ public class BrowserManager {
     }
   }
 
+  private static boolean fileMatchesQuery(String query, File audioFile){
+    /*
+    Song song = getSongFromPath(audioFile.getAbsolutePath());
+    return audioFile.getAbsolutePath().toLowerCase().contains(query.toLowerCase())
+            || song.getName().toLowerCase().contains(query.toLowerCase())
+            || song.getAlbum().toLowerCase().contains(query.toLowerCase());
+     */
+    return audioFile.getAbsolutePath().toLowerCase().contains(query.toLowerCase());
+  }
 
   public static Song getSongFromPath(String songPath){
     return getSongFromAudioFile(new File(songPath));
