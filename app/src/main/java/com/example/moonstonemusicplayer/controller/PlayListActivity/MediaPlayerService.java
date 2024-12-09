@@ -27,6 +27,7 @@ import androidx.core.app.NotificationCompat;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.PlayListActivity.Notification.Constants;
+import com.example.moonstonemusicplayer.model.Database.Playcountlist.DBPlaycountList;
 import com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists;
 import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Audiobook;
@@ -297,7 +298,6 @@ public class MediaPlayerService extends Service
       mediaPlayer.seekTo(resumePosition);
     } else {
       //get playposition from PlayTimePersistence
-
       if(playListModel.getCurrentSong() != null && playListModel.getCurrentSong().getDuration_ms() >= Audiobook.AUDIOBOOK_CUTOFF_MS){
         int playtime = PlaytimePersistence.getPlaytime(this, Uri.fromFile(playListModel.getCurrentSongFile()).toString());
         if(playtime < playListModel.getCurrentSong().getDuration_ms() / 1000){
@@ -390,18 +390,21 @@ public class MediaPlayerService extends Service
     DBPlaylists.getInstance(this.getApplicationContext()).addToRecentlyPlayed(this.getApplicationContext(),song);
     initMediaPlayer();
     showNotification();
+    updatePlaycount(playListModel.getCurrentSong());
   }
 
   public void nextSong() {
     playListModel.nextSong();
     initMediaPlayer();
     showNotification();
+    updatePlaycount(playListModel.getCurrentSong());
   }
 
   public void prevSong() {
     playListModel.prevSong();
     initMediaPlayer();
     showNotification();
+    updatePlaycount(playListModel.getCurrentSong());
   }
 
 
@@ -444,7 +447,11 @@ public class MediaPlayerService extends Service
 
   }
 
-  public void showNotification(){
+  private void updatePlaycount(Song song){
+    DBPlaycountList.getInstance(getApplicationContext()).playedSong(getApplicationContext(),song);
+  }
+
+  private void showNotification(){
     //setting up the notification intent
     final Intent notificationIntent = new Intent(MediaPlayerService.this, PlayListActivity.class);
     notificationIntent.setAction(Intent.ACTION_MAIN);

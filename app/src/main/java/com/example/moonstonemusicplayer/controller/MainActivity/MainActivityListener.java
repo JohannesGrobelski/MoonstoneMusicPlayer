@@ -27,6 +27,7 @@ import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.PlayListActivity.MediaPlayerService;
 import com.example.moonstonemusicplayer.controller.PlayListActivity.PlaylistJsonHandler;
 import com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists;
+import com.example.moonstonemusicplayer.model.Database.PlaylistUtil;
 import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.Playlist;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Audiobook;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
@@ -588,7 +589,7 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
 
   private void handleExportPlaylists() {
     try {
-      List<Playlist> playlists = DBPlaylists.getInstance(mainActivity).getAllPlaylists(mainActivity);
+      List<Playlist> playlists = PlaylistUtil.getAllPlaylists(mainActivity);
       playlists = playlists.stream().filter(playlist -> !playlist.getName().equals(RECENTLY_ADDED_PLAYLIST_NAME) && !playlist.getName().equals(RECENTLY_PLAYED_PLAYLIST_NAME)).collect(Collectors.toList());
       PlaylistJsonHandler.exportPlaylists(mainActivity, playlists);
       Toast.makeText(mainActivity, "Playlists exported successfully", Toast.LENGTH_SHORT).show();

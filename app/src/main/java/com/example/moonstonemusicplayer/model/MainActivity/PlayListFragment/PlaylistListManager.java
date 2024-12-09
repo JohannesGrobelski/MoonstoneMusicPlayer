@@ -9,6 +9,7 @@ import android.provider.MediaStore;
 
 //import com.example.moonstonemusicplayer.model.Database.DBSonglists;
 import com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists;
+import com.example.moonstonemusicplayer.model.Database.PlaylistUtil;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 
 import java.io.File;
@@ -48,7 +49,7 @@ public class PlaylistListManager {
   public void loadPlaylistsFromDB(Context context){
     playlists_backup.clear();
     playlists.clear();
-    List<Playlist> allPlayLists = DBPlaylists.getInstance(context).getAllPlaylists(context);
+    List<Playlist> allPlayLists = PlaylistUtil.getAllPlaylists(context);
     boolean hasRecentlyPlayed = false;
     for(Playlist playlist : allPlayLists){
       if(playlist.name.equals(RECENTLY_PLAYED_PLAYLIST_NAME)){
