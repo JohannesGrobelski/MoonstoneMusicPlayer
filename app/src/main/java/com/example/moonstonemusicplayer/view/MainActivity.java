@@ -1,13 +1,20 @@
 package com.example.moonstonemusicplayer.view;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.MainActivity.MainActivityListener;
+import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
 import com.example.moonstonemusicplayer.model.MainActivity.OnlineMusicFragment.VideoModel;
+import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.Playlist;
+import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.FolderFragment;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.PlayListFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -19,6 +26,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -33,10 +41,14 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.SectionsPagerAdapter;
 
+import java.io.File;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
   private final int PERMISSION_REQUEST_CODE = 678;
   private final int PERMISSION_REQUEST_MEDIA_AUDIO = 679;
   private static final int IMPORT_PLAYLIST_REQUEST_CODE = 680;
+  public static final String SONG_DIRECT_EXTRA = "SONG_DIRECT_EXTRA";
 
 
   private static final String TAG = MainActivity.class.getSimpleName();
@@ -92,6 +104,9 @@ public class MainActivity extends AppCompatActivity {
     Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
 
+    // Handle the intent when the activity is created
+    handleIncomingIntent(getIntent());
+
     showMediaAudioPermission();
   }
 
@@ -106,6 +121,8 @@ public class MainActivity extends AppCompatActivity {
     super.onResume();
     mainActivityListener.onResume();
   }
+
+
 
   public void showMediaAudioPermission() {
     int permissionCheck = ContextCompat.checkSelfPermission(
@@ -235,6 +252,42 @@ public class MainActivity extends AppCompatActivity {
     ft.detach(browserFragment);
     ft.attach(browserFragment);
     ft.commit();
+  }
+
+  private void handleIncomingIntent(android.content.Intent intent) {
+    if (intent != null && Intent.ACTION_VIEW.equals(intent.getAction())) {
+      Uri audioUri = intent.getData(); // Get the URI of the selected file
+
+      String filePath = getRealPathFromURI(this, audioUri);
+      if (filePath != null) {
+        // Launch PlayListActivity with the selected file
+        Toast.makeText(this, "Incoming: "+filePath, Toast.LENGTH_LONG).show();
+        Intent intentPlaylistActivity = new Intent(this, PlayListActivity.class);
+        intentPlaylistActivity.putExtra(SONG_DIRECT_EXTRA,filePath);
+        this.startActivity(intentPlaylistActivity);
+      } else {
+        Toast.makeText(this, "No audio file selected", Toast.LENGTH_SHORT).show();
+      }
+    }
+  }
+
+  private String getRealPathFromURI(Context context, Uri uri) {
+    Cursor cursor = null;
+    try {
+      String[] proj = {MediaStore.MediaColumns.DATA};
+      cursor = context.getContentResolver().query(uri, proj, null, null, null);
+      if (cursor != null && cursor.moveToFirst()) {
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+        return cursor.getString(column_index);
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    } finally {
+      if (cursor != null) {
+        cursor.close();
+      }
+    }
+    return null;
   }
 
 }

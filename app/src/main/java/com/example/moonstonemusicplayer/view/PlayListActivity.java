@@ -29,12 +29,15 @@ import com.example.moonstonemusicplayer.controller.MainActivity.FolderFragment.F
 import com.example.moonstonemusicplayer.controller.MainActivity.GenreFragment.GenreFragmentListener;
 import com.example.moonstonemusicplayer.controller.MainActivity.PlaylistFragment.PlaylistFragmentListener;
 import com.example.moonstonemusicplayer.controller.PlayListActivity.PlayListActivityListener;
+import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.AudiobookFragment;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.FolderFragment;
 
 import static com.example.moonstonemusicplayer.controller.MainActivity.GenreFragment.GenreFragmentListener.GENRELISTEXTRA;
 import static com.example.moonstonemusicplayer.view.mainactivity_fragments.AudiobookFragment.FOLDERAUDIOBOOKINDEXEXTRA;
 import static com.example.moonstonemusicplayer.view.mainactivity_fragments.FolderFragment.FOLDERSONGINDEXEXTRA;
+
+import java.io.File;
 
 /** MainActivity
   * Defines the Mainscreen auf the app.
@@ -97,6 +100,11 @@ public class PlayListActivity extends AppCompatActivity {
     else if(getIntent().hasExtra(ArtistFragmentListener.ARTISTALBUMLISTEXTRA)){
       song_index = getIntent().getIntExtra(ArtistFragmentListener.ARTISTALBUMLISTEXTRA,0);
       playListActivityListener = new PlayListActivityListener(this, ArtistFragmentListener.getAlbumSonglist(),song_index);
+    } else if(getIntent().hasExtra(MainActivity.SONG_DIRECT_EXTRA)){
+      song_index = 0;
+      String fileURL = getIntent().getStringExtra(MainActivity.SONG_DIRECT_EXTRA);
+      File[] songSingleton = new File[]{new File(fileURL)};
+      playListActivityListener = new PlayListActivityListener(this, songSingleton,song_index);
     } else {
       //no extras found, missing info -> go back to mainactivity
       Toast.makeText(this, "Missing Info", Toast.LENGTH_LONG);
