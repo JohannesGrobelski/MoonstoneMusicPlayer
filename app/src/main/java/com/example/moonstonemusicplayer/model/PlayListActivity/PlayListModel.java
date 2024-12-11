@@ -8,10 +8,12 @@ import static com.example.moonstonemusicplayer.model.PlayListActivity.PlayListMo
 import static com.example.moonstonemusicplayer.model.PlayListActivity.PlayListModel.REPEATMODE.ALL;
 import static com.example.moonstonemusicplayer.model.PlayListActivity.Song.getIdentifier;
 
+import com.example.moonstonemusicplayer.model.NextSongToPlayUtility;
 import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
 
 public class PlayListModel {
   private final List<File> playlist;
+  private Song prioSong;
   private int currentSongIndex = 0;
   boolean shuffleModelOn = false;
   public enum REPEATMODE {
@@ -31,11 +33,11 @@ public class PlayListModel {
   }
 
   public Song getCurrentSong(){
-    return BrowserManager.getSongFromAudioFile(playlist.get(currentSongIndex));
+    return prioSong != null ? prioSong : BrowserManager.getSongFromAudioFile(playlist.get(currentSongIndex));
   }
 
   public File getCurrentSongFile(){
-    return playlist.get(currentSongIndex);
+    return prioSong != null ? new File(prioSong.getPath()) : playlist.get(currentSongIndex);
   }
 
   public String getFileId(){
@@ -44,11 +46,6 @@ public class PlayListModel {
 
   public void setCurrentSong(int index) {
     this.currentSongIndex = index;
-  }
-
-
-  public int getCurrentSongIndex(){
-    return currentSongIndex;
   }
 
   public void prevSong(){
@@ -66,6 +63,10 @@ public class PlayListModel {
 
   public void nextSong(){
     if(playlist.size() <= 1 || repeatmode.equals(ONESONG))return;
+    this.prioSong = NextSongToPlayUtility.getSongToPlayNext();
+    if(this.prioSong != null){
+      return;
+    }
     if(shuffleModelOn){
       int previousSong = currentSongIndex;
       while(currentSongIndex == previousSong)currentSongIndex = (int) (Math.random()* playlist.size());

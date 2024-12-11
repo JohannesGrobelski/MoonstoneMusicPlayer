@@ -30,6 +30,8 @@ import com.example.moonstonemusicplayer.view.mainactivity_fragments.AudiobookFra
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.FolderFragment;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.PlayListFragment;
 
+import com.example.moonstonemusicplayer.model.NextSongToPlayUtility;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -169,6 +171,7 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
       if((BrowserManager.getDirectories(this.selectedFolder, BrowserManager.Filter.SONGS).length <= clickedPosition)){
         menu.add(0, 1, 0, "zu Favoriten hinzufügen");
         menu.add(0, 2, 0, "zu Playlists hinzufügen");
+        menu.add(0, 3, 0, "als nächstes abspielen");
       }
     } catch (Exception e){
       Log.e(TAG,e.toString());
@@ -201,6 +204,10 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
           case 2:  {
             showAlertDialogAddToPlaylists(folderFragment.getLayoutInflater(), folderListAdapter.getContext(), selectedSong);
             break;
+          }
+          case 3: {
+            NextSongToPlayUtility.setSongToPlayNext(selectedSong);
+            return true;
           }
         }
 

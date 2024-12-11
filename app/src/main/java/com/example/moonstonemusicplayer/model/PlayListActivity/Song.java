@@ -3,9 +3,11 @@ package com.example.moonstonemusicplayer.model.PlayListActivity;
 import android.net.Uri;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import java.io.File;
 
-public class Song extends Audiofile {
+public class Song extends Audiofile implements Cloneable{
   String name;
   String path;
   String artist = "unknown Artist";
@@ -47,6 +49,12 @@ public class Song extends Audiofile {
     fileName = fileName.toLowerCase();
 
     return fileName;
+  }
+
+  @Override
+  public Object clone() throws CloneNotSupportedException {
+    // Returning a clone of the current object
+    return super.clone();
   }
 
 }

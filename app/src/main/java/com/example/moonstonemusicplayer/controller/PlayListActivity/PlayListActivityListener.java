@@ -32,6 +32,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.moonstonemusicplayer.R;
+import com.example.moonstonemusicplayer.model.NextSongToPlayUtility;
 import com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists;
 import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
 import com.example.moonstonemusicplayer.model.PlayListActivity.PlaylistManager;
@@ -39,7 +40,6 @@ import com.example.moonstonemusicplayer.model.PlayListActivity.PlayListModel;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import com.example.moonstonemusicplayer.view.PlayListActivity;
 
-import java.io.BufferedReader;
 import java.io.File;
 
 
@@ -496,6 +496,7 @@ public class PlayListActivityListener
   public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
     menu.add(0, 1, 0, "add to favorites");
     menu.add(0, 2, 0, "add to playlist");
+    menu.add(0, 2, 0, "play as next song");
   }
 
   public boolean onContextItemSelected(MenuItem item) {
@@ -513,6 +514,10 @@ public class PlayListActivityListener
         }
         case 2:  {
           showAlertDialogAddToPlaylists(selectedSong);
+          break;
+        }
+        case 3: {
+          NextSongToPlayUtility.setSongToPlayNext(selectedSong);
           break;
         }
       }
