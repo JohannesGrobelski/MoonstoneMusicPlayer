@@ -496,7 +496,7 @@ public class PlayListActivityListener
   public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
     menu.add(0, 1, 0, "add to favorites");
     menu.add(0, 2, 0, "add to playlist");
-    menu.add(0, 2, 0, "play as next song");
+    menu.add(0, 3, 0, "play as next song");
   }
 
   public boolean onContextItemSelected(MenuItem item) {
