@@ -19,7 +19,9 @@
 /app/src/main/res/values/api_keys.xml
 /app/bin
 /app/bin/*
-.idea
-.idea/*
-app/.classpath/*
-app/.settings/*
+app/.classpath
+app/.settings/
+.idea/
+*.iml
+*.ipr
+*.iws
