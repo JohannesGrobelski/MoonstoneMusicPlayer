@@ -33,7 +33,7 @@ public class PlaylistFragmentListener implements AdapterView.OnItemClickListener
   public PlaylistFragmentListener(PlayListFragment playListFragment) {
     this.playListFragment = playListFragment;
     List<Object> playlists = new ArrayList<>();
-    playlists.addAll(playListFragment.playlistListManager.getAllPlaylists());
+    playlists.addAll(playListFragment.getPlaylistManager().getAllPlaylists());
     setAdapter(playlists);
   }
 
@@ -45,16 +45,16 @@ public class PlaylistFragmentListener implements AdapterView.OnItemClickListener
         List<Object> itemList = new ArrayList<>();
           itemList.addAll(((Playlist) clickItem).getPlaylist());
         setAdapter(itemList);
-        playListFragment.playlistListManager.setCurrentPlaylist((Playlist) clickItem);
+        playListFragment.getPlaylistManager().setCurrentPlaylist((Playlist) clickItem);
       } else if(clickItem instanceof Song) {
-        startPlaylist(playListFragment.playlistListManager.getCurrentPlaylist(),position);
+        startPlaylist(playListFragment.getPlaylistManager().getCurrentPlaylist(),position);
       } else { }
     }
   }
 
   public void updateAdapter(){
     List<Object> playlists = new ArrayList<>();
-    playlists.addAll(playListFragment.playlistListManager.getAllPlaylists());
+    playlists.addAll(playListFragment.getPlaylistManager().getAllPlaylists());
     setAdapter(playlists);
   }
 
@@ -67,9 +67,9 @@ public class PlaylistFragmentListener implements AdapterView.OnItemClickListener
   public void onClick(View v) {
     if(v.getId() == R.id.ll_back_playlist){
       List<Object> itemList = new ArrayList<>();
-        itemList.addAll(playListFragment.playlistListManager.getPlaylists());
+        itemList.addAll(playListFragment.getPlaylistManager().getPlaylists());
       setAdapter(itemList);
-      playListFragment.playlistListManager.setCurrentPlaylist(null);
+      playListFragment.getPlaylistManager().setCurrentPlaylist(null);
     }
   }
 
@@ -92,7 +92,7 @@ public class PlaylistFragmentListener implements AdapterView.OnItemClickListener
 
   public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
     //the menu created if a song is clicked on
-    if(playListFragment.playlistListManager.getCurrentPlaylist() != null){
+    if(playListFragment.getPlaylistManager().getCurrentPlaylist() != null){
       //create menu item with groupid to distinguish between fragments
       //präsentation
       menu.add(1, 11, 0, "aus Playlist löschen");
@@ -102,15 +102,15 @@ public class PlaylistFragmentListener implements AdapterView.OnItemClickListener
         public boolean onMenuItemClick(MenuItem item) {
           AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
           int index = info.position;
-          Song song = playListFragment.playlistListManager.getCurrentPlaylist().getPlaylist().get(index);
-          Playlist currentPlaylist = playListFragment.playlistListManager.getCurrentPlaylist();
+          Song song = playListFragment.getPlaylistManager().getCurrentPlaylist().getPlaylist().get(index);
+          Playlist currentPlaylist = playListFragment.getPlaylistManager().getCurrentPlaylist();
           currentPlaylist.getPlaylist().remove(song);
 
           DBPlaylists.getInstance(playListFragment.getContext()).deleteFromPlaylist(song,
-              playListFragment.playlistListManager.getCurrentPlaylist().getName());
+              playListFragment.getPlaylistManager().getCurrentPlaylist().getName());
 
-          playListFragment.playlistListManager = new PlaylistListManager(playListFragment.getContext());
-          playListFragment.playlistListManager.setCurrentPlaylist(currentPlaylist);
+          playListFragment.reloadPlaylistManager(playListFragment.getContext()); 
+          playListFragment.getPlaylistManager().setCurrentPlaylist(currentPlaylist);
 
           List<Object> songs = new ArrayList<>();
           songs.addAll(currentPlaylist.getPlaylist());
@@ -127,15 +127,16 @@ public class PlaylistFragmentListener implements AdapterView.OnItemClickListener
         public boolean onMenuItemClick(MenuItem item) {
           AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
           int index = info.position;
-          Playlist playlist = playListFragment.playlistListManager.getPlaylists().get(index);
+          Playlist playlist = playListFragment.getPlaylistManager().getPlaylists().get(index);
 
           DBPlaylists.getInstance(playListFragment.getContext()).deletePlaylist(playlist);
 
-          playListFragment.playlistListManager = new PlaylistListManager(playListFragment.getContext());
-          playListFragment.playlistListManager.setCurrentPlaylist(null);
+
+          playListFragment.reloadPlaylistManager(playListFragment.getContext()); 
+          playListFragment.getPlaylistManager().setCurrentPlaylist(null);
 
           List<Object> songs = new ArrayList<>();
-          songs.addAll(playListFragment.playlistListManager.getAllPlaylists());
+          songs.addAll(playListFragment.getPlaylistManager().getAllPlaylists());
           setAdapter(songs);
 
           return false;
@@ -148,34 +149,34 @@ public class PlaylistFragmentListener implements AdapterView.OnItemClickListener
 
   public void reloadPlaylistManager() {
     Log.d("PLaylistsfragment","onResume");
-    if(playListFragment.playlistListManager != null){
-      Playlist currentPlaylist = playListFragment.playlistListManager.getCurrentPlaylist();
-      playListFragment.playlistListManager.loadPlaylistsFromDB(playListFragment.getContext());
+    if(playListFragment.getPlaylistManager() != null){
+      Playlist currentPlaylist = playListFragment.getPlaylistManager().getCurrentPlaylist();
+      playListFragment.getPlaylistManager().loadPlaylistsFromDB(playListFragment.getContext());
 
       List<Object> currentItems = new ArrayList<>();
 
       if(currentPlaylist != null){
-        currentPlaylist = playListFragment.playlistListManager.getPlaylist(currentPlaylist.getName());
+        currentPlaylist = playListFragment.getPlaylistManager().getPlaylist(currentPlaylist.getName());
         if(currentPlaylist != null){
-          playListFragment.playlistListManager.setCurrentPlaylist(currentPlaylist);
+          playListFragment.getPlaylistManager().setCurrentPlaylist(currentPlaylist);
 
           currentItems.addAll(currentPlaylist.getPlaylist());
           setAdapter(currentItems);
-          playListFragment.playlistListManager.setCurrentPlaylist(currentPlaylist);
+          playListFragment.getPlaylistManager().setCurrentPlaylist(currentPlaylist);
         }
       } else {
-        currentItems.addAll(playListFragment.playlistListManager.getPlaylists());
+        currentItems.addAll(playListFragment.getPlaylistManager().getPlaylists());
         setAdapter(currentItems);
       }
     }
   }
 
   public boolean onBackpressed() {
-    if(playListFragment.playlistListManager.getCurrentPlaylist() != null){
+    if(playListFragment.getPlaylistManager().getCurrentPlaylist() != null){
       List<Object> itemList = new ArrayList<>();
-        itemList.addAll(playListFragment.playlistListManager.getPlaylists());
+        itemList.addAll(playListFragment.getPlaylistManager().getPlaylists());
       setAdapter(itemList);
-      playListFragment.playlistListManager.setCurrentPlaylist(null);
+      playListFragment.getPlaylistManager().setCurrentPlaylist(null);
       return true;
     }
     return false;

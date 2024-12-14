@@ -30,12 +30,18 @@ import java.util.List;
 public class PlayListFragment extends Fragment {
 
   private static final String TAG = PlayListFragment.class.getSimpleName();
-  public PlaylistListManager playlistListManager;
+  private static PlaylistListManager playlistListManager;
   public PlaylistFragmentListener playlistFragmentListener;
 
 
   private LinearLayout ll_playlistBack;
   public ListView lv_playlist;
+
+  public static void preloadPlaylistManager(Context context){
+    new Thread(() -> {
+        playlistListManager = new PlaylistListManager(context);
+    }).start();
+  }
 
   public static PlayListFragment newInstance(int index) {
     PlayListFragment fragment = new PlayListFragment();
@@ -69,12 +75,17 @@ public class PlayListFragment extends Fragment {
   @Override
   public void onAttach(@NonNull Context context) {
     super.onAttach(context);
-    playlistListManager = new PlaylistListManager(this.getContext());
+    if(playlistListManager == null){
+        playlistListManager = new PlaylistListManager(this.getContext());
+    }
   }
 
   @Override
   public void onResume() {
     super.onResume();
+    if(playlistListManager == null){
+        playlistListManager = new PlaylistListManager(this.getContext());
+    }
     playlistListManager.updateData(this.getContext());
     playlistFragmentListener.updateAdapter();
   }
@@ -82,6 +93,14 @@ public class PlayListFragment extends Fragment {
   @Override
   public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v, @Nullable ContextMenu.ContextMenuInfo menuInfo) {
     playlistFragmentListener.onCreateContextMenu(menu, v, menuInfo);
+  }
+
+  public PlaylistListManager getPlaylistManager(){
+    return playlistListManager;
+  }
+
+  public void reloadPlaylistManager(Context context){
+      playlistListManager = new PlaylistListManager(context); 
   }
 
   public void searchMusic(String query) {

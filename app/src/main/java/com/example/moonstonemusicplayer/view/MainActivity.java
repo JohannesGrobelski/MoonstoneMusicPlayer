@@ -14,6 +14,7 @@ import com.example.moonstonemusicplayer.controller.MainActivity.MainActivityList
 import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
 import com.example.moonstonemusicplayer.model.MainActivity.OnlineMusicFragment.VideoModel;
 import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.Playlist;
+import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.PlaylistListManager;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.FolderFragment;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.PlayListFragment;
@@ -108,6 +109,8 @@ public class MainActivity extends AppCompatActivity {
     handleIncomingIntent(getIntent());
 
     showMediaAudioPermission();
+
+    PlayListFragment.preloadPlaylistManager(this);
   }
 
   @Override
