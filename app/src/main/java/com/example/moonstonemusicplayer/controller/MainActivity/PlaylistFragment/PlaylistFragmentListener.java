@@ -43,7 +43,7 @@ public class PlaylistFragmentListener implements AdapterView.OnItemClickListener
     if(clickItem != null) {
       if(clickItem instanceof Playlist) {
         List<Object> itemList = new ArrayList<>();
-          itemList.addAll(((Playlist) clickItem).getPlaylist());
+        itemList.addAll(((Playlist) clickItem).getPlaylist());
         setAdapter(itemList);
         playListFragment.getPlaylistManager().setCurrentPlaylist((Playlist) clickItem);
       } else if(clickItem instanceof Song) {

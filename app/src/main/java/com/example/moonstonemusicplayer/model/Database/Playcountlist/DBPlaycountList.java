@@ -122,11 +122,16 @@ public class DBPlaycountList {
             List<Song> mostPlayedSongs = new ArrayList<>();
 
             while (cursor.moveToNext()) {
-                int songPathColumnIndex = cursor.getColumnIndex(COLUMN_SONG_PATH);
-                String songPath = cursor.getString(songPathColumnIndex);
-                Song song = BrowserManager.getSongFromPath(songPath);
-                if (song != null) {
-                    mostPlayedSongs.add(song);
+                try {
+                    int songPathColumnIndex = cursor.getColumnIndex(COLUMN_SONG_PATH);
+                    String songPath = cursor.getString(songPathColumnIndex);
+                    if(songPath == null)continue;
+                    Song song = BrowserManager.getSongFromPath(songPath);
+                    if (song != null) {
+                        mostPlayedSongs.add(song);
+                    }
+                } catch (Exception e){
+                    Log.e(TAG, e.toString());
                 }
             }
 

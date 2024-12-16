@@ -30,6 +30,7 @@ public class DBPlaylists {
     private static final int RECENTLY_PLAYED_SONG_LIMIT = 100;
     public static final String RECENTLY_PLAYED_PLAYLIST_NAME = "RECENTLY PLAYED";
     public static final String RECENTLY_ADDED_PLAYLIST_NAME = "RECENTLY ADDED";
+    public static final String MOSTLY_PLAYED_PLAYLIST_NAME = "MOSTLY PLAYED";
 
     private static final String TAG = DBPlaylists.class.getSimpleName();
     private static final boolean DEBUG = true;

@@ -1,5 +1,6 @@
 package com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment;
 
+import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.MOSTLY_PLAYED_PLAYLIST_NAME;
 import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.RECENTLY_ADDED_PLAYLIST_NAME;
 import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.RECENTLY_PLAYED_PLAYLIST_NAME;
 
@@ -16,7 +17,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /** saves and loads playlists and contains the current (displayed) playlist in playlistfragment*/
 public class PlaylistListManager {
@@ -50,17 +53,23 @@ public class PlaylistListManager {
     playlists_backup.clear();
     playlists.clear();
     List<Playlist> allPlayLists = PlaylistUtil.getAllPlaylists(context);
-    boolean hasRecentlyPlayed = false;
-    for(Playlist playlist : allPlayLists){
-      if(playlist.name.equals(RECENTLY_PLAYED_PLAYLIST_NAME)){
-        hasRecentlyPlayed = true;
-        Collections.reverse(playlist.getPlaylist());
+    int indexRecentlyPlayed = -1;
+    for(int i=0; i<allPlayLists.size(); i++){
+      if(allPlayLists.get(i).name.equals(RECENTLY_PLAYED_PLAYLIST_NAME)){
+        indexRecentlyPlayed = i;
+        //Collections.reverse(playlist.getPlaylist());
       }
     }
-    createRecentlyAddedPlaylist(context);
-    if(!hasRecentlyPlayed){
+    if(indexRecentlyPlayed != -1){
+        //move RECENTLY_PLAYED
+        Playlist recentlyPlayed = allPlayLists.remove(indexRecentlyPlayed);
+        allPlayLists.add(0, recentlyPlayed); 
+    } else {
       createRecentlyPlayedPlaylist(context);
     }
+    createRecentlyAddedPlaylist(context);
+    playlists_backup.add(PlaylistUtil.getPlaylistMostlyPlayed(context));
+
     this.playlists_backup.addAll(allPlayLists);
     playlists.addAll(playlists_backup);
   }
@@ -272,7 +281,6 @@ public class PlaylistListManager {
     for(int i=songListRecentlyPlayed.size()-1; i>=0; i--){
       recentlyPlayedPlaylist.playlist.add(songListRecentlyPlayed.get(i));
     }
-    this.playlists_backup.add(recentlyPlayedPlaylist);
+    this.playlists_backup.add(0, recentlyPlayedPlaylist);
   }
-
 }

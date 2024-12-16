@@ -2,6 +2,7 @@ package com.example.moonstonemusicplayer.controller.MainActivity.PlaylistFragmen
 
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,10 @@ import androidx.core.widget.ImageViewCompat;
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.Playlist;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
+
+import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.MOSTLY_PLAYED_PLAYLIST_NAME;
+import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.RECENTLY_ADDED_PLAYLIST_NAME;
+import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.RECENTLY_PLAYED_PLAYLIST_NAME;
 
 import java.util.List;
 
@@ -61,11 +66,29 @@ public class PlaylistListAdapter extends ArrayAdapter<Object> {
 
     if(aktuellePlaylist != null){
       iv_playlistSongItem.setBackground(context.getDrawable(R.drawable.ic_playlist));
-      tv_playlistSongItem.setText(aktuellePlaylist.getName());
+        switch (aktuellePlaylist.getName()) {
+            case RECENTLY_ADDED_PLAYLIST_NAME:
+                tv_playlistSongItem.setTypeface(null, Typeface.BOLD);
+                tv_playlistSongItem.setText(R.string.RecentlyAddedPlaylist);
+                break;
+            case RECENTLY_PLAYED_PLAYLIST_NAME:
+                tv_playlistSongItem.setTypeface(null, Typeface.BOLD);
+                tv_playlistSongItem.setText(R.string.RecentlyPlayedPlaylist);
+                break;
+            case MOSTLY_PLAYED_PLAYLIST_NAME:
+                tv_playlistSongItem.setTypeface(null, Typeface.BOLD);
+                tv_playlistSongItem.setText(R.string.MostlyPlayedPlaylist);
+                break;
+            default:
+                tv_playlistSongItem.setText(aktuellePlaylist.getName());
+                break;
+        }
     } else {
       iv_playlistSongItem.setBackground(context.getDrawable(R.drawable.ic_music));
       tv_playlistSongItem.setText(currentSong.getName());
     }
+
+
 
     if(currentSong != null){
       LinearLayout ll_artist_genre = rowView.findViewById(R.id.ll_artist_genre);
