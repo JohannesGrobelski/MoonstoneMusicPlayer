@@ -1,5 +1,7 @@
 package com.example.moonstonemusicplayer.controller.MainActivity.PlaylistFragment;
 
+import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.RECENTLY_ADDED_PLAYLIST_NAME;
+
 import android.content.Intent;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -10,8 +12,8 @@ import android.widget.AdapterView;
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists;
 //import com.example.moonstonemusicplayer.model.Database.DBSonglists;
+import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
 import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.Playlist;
-import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.PlaylistListManager;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import com.example.moonstonemusicplayer.view.PlayListActivity;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.PlayListFragment;
@@ -40,16 +42,24 @@ public class PlaylistFragmentListener implements AdapterView.OnItemClickListener
   @Override
   public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
     Object clickItem = playlistListAdapter.getItem(position);
+    playListFragment.srl_playlist.setEnabled(false);
     if(clickItem != null) {
       if(clickItem instanceof Playlist) {
         List<Object> itemList = new ArrayList<>();
         itemList.addAll(((Playlist) clickItem).getPlaylist());
         setAdapter(itemList);
         playListFragment.getPlaylistManager().setCurrentPlaylist((Playlist) clickItem);
+        playListFragment.srl_playlist.setEnabled(playListFragment.getPlaylistManager().getCurrentPlaylist().getName().equals(RECENTLY_ADDED_PLAYLIST_NAME));
       } else if(clickItem instanceof Song) {
         startPlaylist(playListFragment.getPlaylistManager().getCurrentPlaylist(),position);
       } else { }
     }
+  }
+
+  public void updateAdapter(Playlist playlist){
+    List<Object> playlists = new ArrayList<>();
+    playlists.addAll(playlist.getPlaylist());
+    setAdapter(playlists);
   }
 
   public void updateAdapter(){
@@ -58,16 +68,20 @@ public class PlaylistFragmentListener implements AdapterView.OnItemClickListener
     setAdapter(playlists);
   }
 
-  public void setAdapter(List<Object> itemList){
-    playlistListAdapter = new PlaylistListAdapter(playListFragment.getContext(),itemList);
-    playListFragment.lv_playlist.setAdapter(playlistListAdapter);
+  public void setAdapter(List<Object> itemList) {
+    // Ensure this runs on the main thread
+    playListFragment.getActivity().runOnUiThread(() -> {
+      playlistListAdapter = new PlaylistListAdapter(playListFragment.getContext(), itemList);
+      playListFragment.lv_playlist.setAdapter(playlistListAdapter);
+    });
   }
+
 
   @Override
   public void onClick(View v) {
-    if(v.getId() == R.id.ll_back_playlist){
+    if(v.getId() == R.id.ll_back_playlist) {
       List<Object> itemList = new ArrayList<>();
-        itemList.addAll(playListFragment.getPlaylistManager().getPlaylists());
+      itemList.addAll(playListFragment.getPlaylistManager().getPlaylists());
       setAdapter(itemList);
       playListFragment.getPlaylistManager().setCurrentPlaylist(null);
     }
@@ -172,7 +186,9 @@ public class PlaylistFragmentListener implements AdapterView.OnItemClickListener
   }
 
   public boolean onBackpressed() {
+    playListFragment.srl_playlist.setEnabled(false);
     if(playListFragment.getPlaylistManager().getCurrentPlaylist() != null){
+      playListFragment.srl_playlist.setEnabled(playListFragment.getPlaylistManager().getCurrentPlaylist().getName().equals(RECENTLY_ADDED_PLAYLIST_NAME));
       List<Object> itemList = new ArrayList<>();
         itemList.addAll(playListFragment.getPlaylistManager().getPlaylists());
       setAdapter(itemList);
@@ -180,5 +196,20 @@ public class PlaylistFragmentListener implements AdapterView.OnItemClickListener
       return true;
     }
     return false;
+  }
+
+  public void refreshRecentAddedPlaylist(){
+    // Simulate refreshing (e.g., fetch new data)
+    new Thread(() -> {
+      //implement refresh
+      playListFragment.update(true);
+
+      if (playListFragment.getActivity() != null) {
+        playListFragment.getActivity().runOnUiThread(() -> {
+          // Stop the refreshing animation
+          playListFragment.srl_playlist.setRefreshing(false);
+        });
+      }
+    }).start();
   }
 }

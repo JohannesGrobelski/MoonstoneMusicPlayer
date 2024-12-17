@@ -74,6 +74,16 @@ public class PlaylistListManager {
     playlists.addAll(playlists_backup);
   }
 
+  public Playlist setOnRecentlyAddedPlaylist(){
+    for(Playlist playlist : this.playlists){
+      if(playlist.getName().equals(RECENTLY_ADDED_PLAYLIST_NAME)){
+        this.currentPlaylist = playlist;
+        return playlist;
+      }
+    }
+    return null;
+  }
+
   public Playlist getPlaylist(String name){
     for(Playlist playList: this.playlists){
       if(playList.name.equals(name))return playList;
@@ -207,6 +217,10 @@ public class PlaylistListManager {
     if(currentPlaylist != null){
       Collections.reverse(currentPlaylist.getPlaylist());
     }
+  }
+
+  public void updateRecentlyAddedPlaylist(Context context){
+    createRecentlyAddedPlaylist(context);
   }
 
   private void createRecentlyAddedPlaylist(Context context){

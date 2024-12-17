@@ -13,6 +13,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.MainActivity.AudiobookFragment.AudiobookFragmentListener;
@@ -31,6 +32,8 @@ public class AudiobookFragment extends Fragment {
 
 
   //Views
+  public SwipeRefreshLayout srl_folder;
+
   public ListView lv_folderList;
   private LinearLayout ll_folder_back;
   private TextView tv_folder_back;
@@ -58,6 +61,7 @@ public class AudiobookFragment extends Fragment {
 
     //Das Layout verbinden für das Fragment
     View view = inflater.inflate(R.layout.fragment_folder, container, false);
+    srl_folder = view.findViewById(R.id.srl_folder);
     //Referenz des listviews
     lv_folderList = view.findViewById(R.id.lv_folderlist);
     ll_folder_back = view.findViewById(R.id.ll_back_folder);
@@ -74,6 +78,13 @@ public class AudiobookFragment extends Fragment {
   private void initViews(){
     lv_folderList.setOnItemClickListener(audiobookFragmentListener);
     ll_folder_back.setOnClickListener(audiobookFragmentListener);
+
+    srl_folder.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+      @Override
+      public void onRefresh() {
+        audiobookFragmentListener.refreshFolderList();
+      }
+    });
   }
 
   public void searchMusic(String query) {

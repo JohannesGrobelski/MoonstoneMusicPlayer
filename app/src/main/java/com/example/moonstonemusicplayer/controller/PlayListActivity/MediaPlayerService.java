@@ -372,7 +372,10 @@ public class MediaPlayerService extends Service
     else return true;
   }
 
-  public Song getCurrentSong() {return playListModel.getCurrentSong();}
+  public Song getCurrentSong() {
+    if(playListModel == null)return null;
+    return playListModel.getCurrentSong();
+  }
 
 
   public File getCurrentSongFile() {return playListModel.getCurrentSongFile();}

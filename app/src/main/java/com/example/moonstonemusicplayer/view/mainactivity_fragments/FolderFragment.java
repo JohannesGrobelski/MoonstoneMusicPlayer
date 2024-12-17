@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -37,6 +38,7 @@ public class FolderFragment extends Fragment {
 
 
   //Views
+  public SwipeRefreshLayout srl_folder;
   public ListView lv_folderList;
   private LinearLayout ll_folder_back;
   private TextView tv_folder_back;
@@ -64,6 +66,9 @@ public class FolderFragment extends Fragment {
 
     //Das Layout verbinden für das Fragment
     View view = inflater.inflate(R.layout.fragment_folder, container, false);
+
+    srl_folder = view.findViewById(R.id.srl_folder);
+
     //Referenz des listviews
     lv_folderList = view.findViewById(R.id.lv_folderlist);
     ll_folder_back = view.findViewById(R.id.ll_back_folder);
@@ -94,6 +99,13 @@ public class FolderFragment extends Fragment {
   private void initViews(){
     lv_folderList.setOnItemClickListener(folderFragmentListener);
     ll_folder_back.setOnClickListener(folderFragmentListener);
+
+    srl_folder.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+      @Override
+      public void onRefresh() {
+        folderFragmentListener.refreshFolderList();
+      }
+    });
   }
 
   public void searchMusic(String query) {

@@ -8,11 +8,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.MainActivity.PlaylistFragment.PlaylistFragmentListener;
@@ -33,7 +33,7 @@ public class PlayListFragment extends Fragment {
   private static PlaylistListManager playlistListManager;
   public PlaylistFragmentListener playlistFragmentListener;
 
-
+  public SwipeRefreshLayout srl_playlist;
   private LinearLayout ll_playlistBack;
   public ListView lv_playlist;
 
@@ -59,6 +59,8 @@ public class PlayListFragment extends Fragment {
       Bundle savedInstanceState) {
     View root = inflater.inflate(R.layout.fragment_playlist, container, false);
 
+    srl_playlist = root.findViewById(R.id.srl_playlist);
+
     lv_playlist = root.findViewById(R.id.lv_playlistSongList);
     ll_playlistBack = root.findViewById(R.id.ll_back_playlist);
 
@@ -69,6 +71,15 @@ public class PlayListFragment extends Fragment {
 
     registerForContextMenu(lv_playlist);
     lv_playlist.setOnCreateContextMenuListener(this);
+
+    srl_playlist.setEnabled(false);
+    srl_playlist.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+      @Override
+      public void onRefresh() {
+        playlistFragmentListener.refreshRecentAddedPlaylist();
+      }
+    });
+
     return root;
   }
 
@@ -83,11 +94,16 @@ public class PlayListFragment extends Fragment {
   @Override
   public void onResume() {
     super.onResume();
-    if(playlistListManager == null){
-        playlistListManager = new PlaylistListManager(this.getContext());
-    }
+    update(false);
+  }
+
+  public void update(boolean onSRLRefresh){
     playlistListManager.updateData(this.getContext());
     playlistFragmentListener.updateAdapter();
+    Playlist recentlyAddedPlaylist = playlistListManager.setOnRecentlyAddedPlaylist();
+    if(onSRLRefresh){
+      playlistFragmentListener.updateAdapter(recentlyAddedPlaylist);
+    }
   }
 
   @Override

@@ -1,47 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    android:id="@+id/srl_folder"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context=".view.mainactivity_fragments.FolderFragment">
 
-
     <LinearLayout
-        android:id="@+id/ll_back_folder"
-        android:layout_width="match_parent"
-        android:layout_height="50dp">
-
-        <ImageView
-            android:id="@+id/iv_folderBack"
-            android:layout_width="100dp"
-            android:layout_height="match_parent"
-            android:layout_marginStart="15dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="15dp"
-            android:layout_marginBottom="10dp"
-            android:layout_weight="1"
-            android:src="@drawable/ic_folder_up"
-            />
-
-        <TextView
-            android:id="@+id/tv_folderBack"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center|center_horizontal|center_vertical"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:padding="5dp"
-            android:text="..." />
-    </LinearLayout>
-
-    <ListView
-        android:id="@+id/lv_folderlist"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/ll_back_folder">
+        android:orientation="vertical">
 
-    </ListView>
+        <LinearLayout
+            android:id="@+id/ll_back_folder"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal">
 
-</RelativeLayout>
+            <ImageView
+                android:id="@+id/iv_folderBack"
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginBottom="10dp"
+                android:layout_weight="1"
+                android:src="@drawable/ic_folder_up"/>
+
+            <TextView
+                android:id="@+id/tv_folderBack"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:padding="5dp"
+                android:text="..." />
+        </LinearLayout>
+
+        <ListView
+            android:id="@+id/lv_folderlist"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

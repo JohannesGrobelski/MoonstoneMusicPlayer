@@ -309,4 +309,19 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
   public void reverse() {
     Toast.makeText(folderFragment.getContext(), "TO BE IMPLEMENTED", Toast.LENGTH_LONG).show();
   }
+
+  public void refreshFolderList(){
+    // Simulate refreshing (e.g., fetch new data)
+    new Thread(() -> {
+      //implement refresh
+      BrowserManager.reloadFilesInstance(folderFragment.getContext());
+
+      if (folderFragment.getActivity() != null) {
+        folderFragment.getActivity().runOnUiThread(() -> {
+          // Stop the refreshing animation
+          folderFragment.srl_folder.setRefreshing(false);
+        });
+      }
+    }).start();
+  }
 }

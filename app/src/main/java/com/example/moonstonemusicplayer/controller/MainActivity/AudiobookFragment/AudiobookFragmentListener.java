@@ -169,4 +169,19 @@ public class AudiobookFragmentListener implements AdapterView.OnItemClickListene
   public void reverse() {
     Toast.makeText(audiobookFragment.getContext(), "TO BE IMPLEMENTED", Toast.LENGTH_LONG).show();
   }
+
+  public void refreshFolderList(){
+    // Simulate refreshing (e.g., fetch new data)
+    new Thread(() -> {
+      //implement refresh
+      BrowserManager.reloadFilesInstance(audiobookFragment.getContext());
+
+      if (audiobookFragment.getActivity() != null) {
+        audiobookFragment.getActivity().runOnUiThread(() -> {
+          // Stop the refreshing animation
+          audiobookFragment.srl_folder.setRefreshing(false);
+        });
+      }
+    }).start();
+  }
 }
