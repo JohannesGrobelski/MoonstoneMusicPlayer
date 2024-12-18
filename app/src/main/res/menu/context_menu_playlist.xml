@@ -4,4 +4,5 @@
     <item
         android:id="@+id/mi_delFromPlaylist"
         android:title="@string/aus_playlist_l_schen" />
+
 </menu>

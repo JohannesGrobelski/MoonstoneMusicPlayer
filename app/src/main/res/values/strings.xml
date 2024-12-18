@@ -12,7 +12,7 @@
     <string name="tab_favorites">Favoriten</string>
     <string name="tab_radios">radios</string>
     <string name="aus_playlist_l_schen">aus Playlist löschen</string>
-
+    <string name="zu_playlist_hinzufugen">zu Playlist hinzufügen</string>
 
     <string name="RecentlyPlayedPlaylist"> Zuletzt gespielte Songs</string>
     <string name="MostlyPlayedPlaylist">Meist gespielte Songs</string>
