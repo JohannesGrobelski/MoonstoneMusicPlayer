@@ -186,6 +186,23 @@ public class PlayListActivityListener
     }
   }
 
+    @Override
+    public void onDoubleClick(View v) {
+        switch (v.getId()) {
+            case R.id.btn_prev:
+                Toast.makeText(playListActivity, "double tab prev!", Toast.LENGTH_LONG).show();
+                mediaPlayerService.jumpXSecondsBackward(10);
+                break;
+            case R.id.btn_next:
+                Toast.makeText(playListActivity, "double tab next!", Toast.LENGTH_LONG).show();
+                mediaPlayerService.jumpXSecondsForward(10);
+                break;
+            default:
+                break;
+        }
+    }
+
+
 
   @Override
   /** called if query in search view is submitted*/

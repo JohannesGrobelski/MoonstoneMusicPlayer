@@ -138,6 +138,56 @@ public class MediaPlayerService extends Service
     }
   }
 
+    /**
+     * will jump forward in current song by secondsForward seconds
+     *
+     */
+    public void jumpXSecondsForward(int secondsForward) {
+        if (DEBUG)
+            Log.d(TAG, "resume: " + resumePosition);
+        if (mediaPlayer == null) {
+            initMediaPlayer();
+            jumpXSecondsBackward(secondsBackward);
+        } else {
+            if (requestAudioFocus()) {
+                if (!isMediaPlayerPrepared) {
+                    mediaPlayer.prepareAsync();
+                } else {
+                    int songLengthSeconds = 100;
+                    int secondsRemaining = songLengthSeconds - resumePosition;
+                    if (secondsRemaining >= secondsForward) {
+                        mediaPlayer.seekTo(resumePosition + secondsForward);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * will jump backwards in current song by secondsBackward seconds
+     *
+     */
+    public void jumpXSecondsBackward(int secondsBackward) {
+        if (DEBUG)
+            Log.d(TAG, "resume: " + resumePosition);
+        if (mediaPlayer == null) {
+            initMediaPlayer();
+            jumpXSecondsBackward(secondsBackward);
+        } else {
+            if (requestAudioFocus()) {
+                if (!isMediaPlayerPrepared) {
+                    mediaPlayer.prepareAsync();
+                } else {
+                    int secondsRemaining = songLengthSeconds - resumePosition;
+                    if (secondsBackward <= resumePosition) {
+                        mediaPlayer.seekTo(resumePosition - secondsBackward);
+                    }
+                }
+            }
+        }
+    }
+
+
   public void pause() {
     showNotification();
     if(mediaPlayer != null && mediaPlayer.isPlaying()){
