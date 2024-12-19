@@ -147,17 +147,14 @@ public class MediaPlayerService extends Service
             Log.d(TAG, "resume: " + resumePosition);
         if (mediaPlayer == null) {
             initMediaPlayer();
-            jumpXSecondsBackward(secondsBackward);
+            jumpXSecondsBackward(secondsForward);
         } else {
             if (requestAudioFocus()) {
                 if (!isMediaPlayerPrepared) {
                     mediaPlayer.prepareAsync();
                 } else {
-                    int songLengthSeconds = 100;
-                    int secondsRemaining = songLengthSeconds - resumePosition;
-                    if (secondsRemaining >= secondsForward) {
-                        mediaPlayer.seekTo(resumePosition + secondsForward);
-                    }
+                    int currentPosition = mediaPlayer.getCurrentPosition();
+                    mediaPlayer.seekTo(currentPosition + (secondsForward  * 1000));
                 }
             }
         }
@@ -178,10 +175,8 @@ public class MediaPlayerService extends Service
                 if (!isMediaPlayerPrepared) {
                     mediaPlayer.prepareAsync();
                 } else {
-                    int secondsRemaining = songLengthSeconds - resumePosition;
-                    if (secondsBackward <= resumePosition) {
-                        mediaPlayer.seekTo(resumePosition - secondsBackward);
-                    }
+                  int currentPosition = mediaPlayer.getCurrentPosition();
+                  mediaPlayer.seekTo(currentPosition - (secondsBackward  * 1000));
                 }
             }
         }

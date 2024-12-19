@@ -15,11 +15,14 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -86,6 +89,37 @@ public class PlayListActivityListener
     playlistManager = new PlaylistManager(playListActivity.getBaseContext(),playlist);
     bindSongListAdapterToSongListView(playListActivity.lv_songlist);
     destroyAndCreateNewService(starting_song_index);
+    playListActivity.btn_prev.setOnTouchListener(new OnTouchListener() {
+        private GestureDetector gestureDetector = new GestureDetector(playListActivity, new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onDoubleTap(MotionEvent e) {
+                mediaPlayerService.jumpXSecondsBackward(10);
+                return super.onDoubleTap(e);
+            }
+        });
+
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            gestureDetector.onTouchEvent(event);
+            return true;
+        }
+    });
+    playListActivity.btn_next.setOnTouchListener(new OnTouchListener() {
+        private GestureDetector gestureDetector = new GestureDetector(playListActivity, new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onDoubleTap(MotionEvent e) {
+                mediaPlayerService.jumpXSecondsForward(10);
+                return super.onDoubleTap(e);
+            }
+        });
+
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            gestureDetector.onTouchEvent(event);
+            return true;
+        }
+    });
+
   }
 
 
@@ -185,24 +219,6 @@ public class PlayListActivityListener
       }
     }
   }
-
-    @Override
-    public void onDoubleClick(View v) {
-        switch (v.getId()) {
-            case R.id.btn_prev:
-                Toast.makeText(playListActivity, "double tab prev!", Toast.LENGTH_LONG).show();
-                mediaPlayerService.jumpXSecondsBackward(10);
-                break;
-            case R.id.btn_next:
-                Toast.makeText(playListActivity, "double tab next!", Toast.LENGTH_LONG).show();
-                mediaPlayerService.jumpXSecondsForward(10);
-                break;
-            default:
-                break;
-        }
-    }
-
-
 
   @Override
   /** called if query in search view is submitted*/
