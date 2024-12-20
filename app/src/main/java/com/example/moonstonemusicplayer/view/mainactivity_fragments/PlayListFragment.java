@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,6 +17,7 @@ import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.MainActivity.PlaylistFragment.PlaylistFragmentListener;
 import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.Playlist;
 import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.PlaylistListManager;
+import com.woxthebox.draglistview.DragListView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,7 +35,7 @@ public class PlayListFragment extends Fragment {
 
   public SwipeRefreshLayout srl_playlist;
   private LinearLayout ll_playlistBack;
-  public ListView lv_playlist;
+  public DragListView dlv_playlistSongList;
 
   public static void preloadPlaylistManager(Context context){
     new Thread(() -> {
@@ -61,16 +61,17 @@ public class PlayListFragment extends Fragment {
 
     srl_playlist = root.findViewById(R.id.srl_playlist);
 
-    lv_playlist = root.findViewById(R.id.lv_playlistSongList);
+    dlv_playlistSongList = root.findViewById(R.id.dlv_playlistSongList);
     ll_playlistBack = root.findViewById(R.id.ll_back_playlist);
 
     playlistFragmentListener = new PlaylistFragmentListener(this);
 
-    lv_playlist.setOnItemClickListener(playlistFragmentListener);
+    dlv_playlistSongList.setOnClickListener(playlistFragmentListener);
     ll_playlistBack.setOnClickListener(playlistFragmentListener);
 
-    registerForContextMenu(lv_playlist);
-    lv_playlist.setOnCreateContextMenuListener(this);
+    registerForContextMenu(dlv_playlistSongList);
+    dlv_playlistSongList.setOnCreateContextMenuListener(this);
+    dlv_playlistSongList.setDragEnabled(false);
 
     srl_playlist.setEnabled(false);
     srl_playlist.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {

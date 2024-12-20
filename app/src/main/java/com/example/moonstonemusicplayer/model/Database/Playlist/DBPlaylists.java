@@ -117,6 +117,35 @@ public class DBPlaylists {
         close_db();
     }
 
+    public void changePlaylistOrder(String playlistName, List<Song> songList) {
+        // Check if the playlist exists.
+        String query = "SELECT * FROM " + TABLE_PLAYLISTS + " WHERE " +
+                DBHelperPlaylists.COLUMN_PLAYLIST_NAME + " = '" + playlistName + "'";
+        if (noResultsFromQuery(query)) {
+            Log.e(TAG, "Playlist '" + playlistName + "' does not exist.");
+            close_db();
+            return;
+        }
+
+        open_writable();
+        // Delete all songs from the playlist.
+        database_playlists.delete(TABLE_PLAYLISTS,
+                DBHelperPlaylists.COLUMN_PLAYLIST_NAME + " = '" + playlistName + "'", null);
+
+        // Insert songs back into the playlist in the specified order.
+        for (Song song : songList) {
+            ContentValues values = new ContentValues();
+            values.put(DBHelperPlaylists.COLUMN_PLAYLIST_NAME, playlistName);
+            values.put(DBHelperPlaylists.COLUMN_SONG_PATH, song.getPath());
+            database_playlists.insert(TABLE_PLAYLISTS, null, values);
+        }
+
+        // Close the database connection.
+        close_db();
+
+        Log.d(TAG, "Playlist '" + playlistName + "' order changed successfully.");
+    }
+
 
     public Song addToPlaylist(Context context, Song inputSong, String playlistname){
         if(DEBUG)Log.d(TAG,"add "+inputSong.getName()+" to playlist "+playlistname);

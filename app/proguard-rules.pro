@@ -19,3 +19,6 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# "Add this to proguard rules, otherwise animations won't work correctly" - README in https://github.com/woxblom/DragListView
+-keep class com.woxthebox.draglistview.** { *; }
