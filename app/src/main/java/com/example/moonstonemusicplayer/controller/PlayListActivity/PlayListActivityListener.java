@@ -1,6 +1,7 @@
 package com.example.moonstonemusicplayer.controller.PlayListActivity;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
@@ -58,6 +59,9 @@ public class PlayListActivityListener
   private static final boolean DEBUG = true;
   private static final String TAG = PlayListActivityListener.class.getSimpleName();
 
+  private static final int SINGLE_TAP_TIMEOUT = 400; // Custom timeout for single tap in milliseconds
+
+
   private final PlayListActivity playListActivity;
 
   PlaylistManager playlistManager;
@@ -83,6 +87,7 @@ public class PlayListActivityListener
            songListAdapter.notifyDataSetChanged();
      */
 
+  @SuppressLint("ClickableViewAccessibility")
   public PlayListActivityListener(PlayListActivity playListActivity, File[] playlist, int starting_song_index) {
     if(DEBUG)Log.d(TAG,"selected song: "+playlist[starting_song_index].getName());
     this.playListActivity = playListActivity;
@@ -91,13 +96,21 @@ public class PlayListActivityListener
     destroyAndCreateNewService(starting_song_index);
     playListActivity.btn_prev.setOnTouchListener(new OnTouchListener() {
         private GestureDetector gestureDetector = new GestureDetector(playListActivity, new GestureDetector.SimpleOnGestureListener() {
+            @SuppressLint("ClickableViewAccessibility")
             @Override
             public boolean onDoubleTap(MotionEvent e) {
                 mediaPlayerService.jumpXSecondsBackward(10);
                 return super.onDoubleTap(e);
             }
+
+            @Override
+            public boolean onSingleTapConfirmed(MotionEvent e) {
+              mediaPlayerService.prevSong();
+              return super.onSingleTapUp(e);
+            }
         });
 
+        @SuppressLint("ClickableViewAccessibility")
         @Override
         public boolean onTouch(View v, MotionEvent event) {
             gestureDetector.onTouchEvent(event);
@@ -106,10 +119,17 @@ public class PlayListActivityListener
     });
     playListActivity.btn_next.setOnTouchListener(new OnTouchListener() {
         private GestureDetector gestureDetector = new GestureDetector(playListActivity, new GestureDetector.SimpleOnGestureListener() {
+            @SuppressLint("ClickableViewAccessibility")
             @Override
             public boolean onDoubleTap(MotionEvent e) {
                 mediaPlayerService.jumpXSecondsForward(10);
                 return super.onDoubleTap(e);
+            }
+
+            @Override
+            public boolean onSingleTapConfirmed(MotionEvent e) {
+              mediaPlayerService.nextSong();
+              return super.onSingleTapUp(e);
             }
         });
 
@@ -119,6 +139,7 @@ public class PlayListActivityListener
             return true;
         }
     });
+
 
   }
 
