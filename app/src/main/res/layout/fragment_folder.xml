@@ -6,51 +6,52 @@ All rights reserved.
 This file is part of MoonStone Music Player and is protected under
 the proprietary license found in the LICENSE file in the root directory.
 -->
-<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-    android:id="@+id/srl_folder"
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".view.mainactivity_fragments.FolderFragment">
 
     <LinearLayout
+        android:id="@+id/ll_back_folder"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="50dp"
+        android:orientation="horizontal">
 
-        <LinearLayout
-            android:id="@+id/ll_back_folder"
+        <ImageView
+            android:id="@+id/iv_folderBack"
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginBottom="10dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_folder_up"/>
+
+        <TextView
+            android:id="@+id/tv_folderBack"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:orientation="horizontal">
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:padding="5dp"
+            android:text="..." />
+    </LinearLayout>
 
-            <ImageView
-                android:id="@+id/iv_folderBack"
-                android:layout_width="100dp"
-                android:layout_height="match_parent"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="15dp"
-                android:layout_marginBottom="10dp"
-                android:layout_weight="1"
-                android:src="@drawable/ic_folder_up"/>
-
-            <TextView
-                android:id="@+id/tv_folderBack"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center_vertical"
-                android:padding="5dp"
-                android:text="..." />
-        </LinearLayout>
+    <!-- SwipeRefreshLayout wrapping only the ListView -->
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/srl_folder"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
         <ListView
             android:id="@+id/lv_folderlist"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
-    </LinearLayout>
+            android:layout_height="match_parent" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+</LinearLayout>
