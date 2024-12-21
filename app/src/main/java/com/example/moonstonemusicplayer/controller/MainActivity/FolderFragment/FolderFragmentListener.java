@@ -198,7 +198,8 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
     try {
       //only react to context menu in this fragment (with id 0)
       if(item.getGroupId() == 0){
-        //calculate the index of the song clicked
+        //calculate th
+        // e index of the song clicked
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         int index = info.position;
         index -= BrowserManager.getDirectories(this.selectedFolder, BrowserManager.Filter.SONGS).length;

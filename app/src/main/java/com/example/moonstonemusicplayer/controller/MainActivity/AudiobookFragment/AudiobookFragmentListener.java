@@ -192,4 +192,20 @@ public class AudiobookFragmentListener implements AdapterView.OnItemClickListene
       }
     }).start();
   }
+
+  public void sortSongsByName() {
+    Toast.makeText(audiobookFragment.getContext(), "TO BE IMPLEMENTED", Toast.LENGTH_LONG).show();
+  }
+
+  public void sortSongsByArtist() {
+    Toast.makeText(audiobookFragment.getContext(), "TO BE IMPLEMENTED", Toast.LENGTH_LONG).show();
+  }
+
+  public void sortSongsByDuration() {
+    Toast.makeText(audiobookFragment.getContext(), "TO BE IMPLEMENTED", Toast.LENGTH_LONG).show();
+  }
+
+  public void sortSongsByGenre() {
+    Toast.makeText(audiobookFragment.getContext(), "TO BE IMPLEMENTED", Toast.LENGTH_LONG).show();
+  }
 }

@@ -216,8 +216,8 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
     MenuItem importItem = menu.findItem(R.id.action_import_playlists);
 
     int tabSelected = mainActivity.viewPager.getCurrentItem();
-    exportItem.setVisible(tabSelected == 1); // 1 is playlist tab
-    importItem.setVisible(tabSelected == 1);
+    exportItem.setVisible(tabSelected == 2); // 2 is playlist tab
+    importItem.setVisible(tabSelected == 2);
 
     return true;
   }
@@ -240,20 +240,24 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
             break;
           }
           case 1: {
-            ((PlayListFragment) fragments[1]).sortSongsByName();
+            ((AudiobookFragment) fragments[1]).sortSongsByName();
+            break;
+          }
+          case 2: {
+            ((PlayListFragment) fragments[2]).sortSongsByName();
             break;
           }
           //case 2: {((FavoritesFragment) fragments[2]).sortSongsByName();break;}
-          case 2: {
-            ((AlbumFragment) fragments[2]).sortSongsByName();
-            break;
-          }
           case 3: {
-            ((ArtistFragment) fragments[3]).sortSongsByName();
+            ((AlbumFragment) fragments[3]).sortSongsByName();
             break;
           }
           case 4: {
-            ((GenreFragment) fragments[4]).sortSongsByName();
+            ((ArtistFragment) fragments[4]).sortSongsByName();
+            break;
+          }
+          case 5: {
+            ((GenreFragment) fragments[5]).sortSongsByName();
             break;
           }
         }
@@ -267,20 +271,23 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
             break;
           }
           case 1: {
-            ((PlayListFragment) fragments[1]).sortSongsByArtist();
+            ((AudiobookFragment) fragments[1]).sortSongsByArtist();
             break;
           }
-          //case 2: {((FavoritesFragment) fragments[2]).sortSongsByArtist();break;}
           case 2: {
-            ((AlbumFragment) fragments[2]).sortSongsByArtist();
+            ((PlayListFragment) fragments[2]).sortSongsByArtist();
             break;
           }
           case 3: {
-            ((ArtistFragment) fragments[3]).sortSongsByArtist();
+            ((AlbumFragment) fragments[3]).sortSongsByArtist();
             break;
           }
           case 4: {
-            ((GenreFragment) fragments[4]).sortSongsByArtist();
+            ((ArtistFragment) fragments[4]).sortSongsByArtist();
+            break;
+          }
+          case 5: {
+            ((GenreFragment) fragments[5]).sortSongsByArtist();
             break;
           }
         }
@@ -294,20 +301,23 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
             break;
           }
           case 1: {
-            ((PlayListFragment) fragments[1]).sortSongsByDuration();
+            ((AudiobookFragment) fragments[1]).sortSongsByDuration();
             break;
           }
-          //case 2: {((FavoritesFragment) fragments[2]).sortSongsByDuration();break;}
           case 2: {
-            ((AlbumFragment) fragments[2]).sortSongsByDuration();
+            ((PlayListFragment) fragments[2]).sortSongsByDuration();
             break;
           }
           case 3: {
-            ((ArtistFragment) fragments[3]).sortSongsByDuration();
+            ((AlbumFragment) fragments[3]).sortSongsByDuration();
             break;
           }
           case 4: {
-            ((GenreFragment) fragments[4]).sortSongsByDuration();
+            ((ArtistFragment) fragments[4]).sortSongsByDuration();
+            break;
+          }
+          case 5: {
+            ((GenreFragment) fragments[5]).sortSongsByDuration();
             break;
           }
         }
@@ -321,20 +331,23 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
             break;
           }
           case 1: {
-            ((PlayListFragment) fragments[1]).sortSongsByGenre();
+            ((AudiobookFragment) fragments[1]).sortSongsByGenre();
             break;
           }
-          //case 2: {((FavoritesFragment) fragments[2]).sortSongsByGenre();break;}
           case 2: {
-            ((AlbumFragment) fragments[2]).sortSongsByGenre();
+            ((PlayListFragment) fragments[2]).sortSongsByGenre();
             break;
           }
           case 3: {
-            ((ArtistFragment) fragments[3]).sortSongsByGenre();
+            ((AlbumFragment) fragments[3]).sortSongsByGenre();
             break;
           }
           case 4: {
-            ((GenreFragment) fragments[4]).sortSongsByGenre();
+            ((ArtistFragment) fragments[4]).sortSongsByGenre();
+            break;
+          }
+          case 5: {
+            ((GenreFragment) fragments[5]).sortSongsByGenre();
             break;
           }
         }
@@ -348,20 +361,23 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
             break;
           }
           case 1: {
-            ((PlayListFragment) fragments[1]).reverse();
+            ((AudiobookFragment) fragments[1]).reverse();
             break;
           }
-          //case 2: {((FavoritesFragment) fragments[2]).reverse();break;}
           case 2: {
-            ((AlbumFragment) fragments[2]).reverse();
+            ((PlayListFragment) fragments[2]).reverse();
             break;
           }
           case 3: {
-            ((ArtistFragment) fragments[3]).reverse();
+            ((AlbumFragment) fragments[3]).reverse();
             break;
           }
           case 4: {
-            ((GenreFragment) fragments[4]).reverse();
+            ((ArtistFragment) fragments[4]).reverse();
+            break;
+          }
+          case 5: {
+            ((GenreFragment) fragments[5]).reverse();
             break;
           }
         }
@@ -397,39 +413,34 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
     int currentItem = mainActivity.viewPager.getCurrentItem();
     Log.d("search","in fragment: "+currentItem);
     switch(currentItem){
+      case 0: {
+        Log.v(TAG, "search the current fragment FolderFragment");
+        ((FolderFragment) fragments[0]).searchMusic(query);
+        break;
+      }
       case 1: {
         Log.v(TAG, "search the current fragment FolderFragment");
-        ((FolderFragment) fragments[1]).searchMusic(query);
+        ((AudiobookFragment) fragments[1]).searchMusic(query);
         break;
       }
       case 2: {
-        Log.v(TAG, "search the current fragment FolderFragment");
-        ((AudiobookFragment) fragments[2]).searchMusic(query);
+        Log.v(TAG, "search the current fragment PlayListFragment");
+        ((PlayListFragment) fragments[2]).searchMusic(query);
         break;
       }
       case 3: {
-        Log.v(TAG, "search the current fragment PlayListFragment");
-        ((PlayListFragment) fragments[3]).searchMusic(query);
+        Log.v(TAG, "search the current fragment AlbumFragment");
+        ((AlbumFragment) fragments[3]).searchMusic(query);
         break;
       }
-     /* case 2: {
-        Log.v(TAG, "search the current fragment FavoritesFragment");
-        ((FavoritesFragment) fragments[2]).searchMusic(query);
-        break;
-      }*/
       case 4: {
-        Log.v(TAG, "search the current fragment AlbumFragment");
-        ((AlbumFragment) fragments[4]).searchMusic(query);
+        Log.v(TAG, "search the current fragment ArtistFragment");
+        ((ArtistFragment) fragments[4]).searchMusic(query);
         break;
       }
       case 5: {
-        Log.v(TAG, "search the current fragment ArtistFragment");
-        ((ArtistFragment) fragments[5]).searchMusic(query);
-        break;
-      }
-      case 6: {
         Log.v(TAG, "search the current fragment GenreFragment");
-        ((GenreFragment) fragments[6]).searchMusic(query);
+        ((GenreFragment) fragments[5]).searchMusic(query);
         break;
       }
     }
@@ -448,8 +459,11 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
       return true;
     } else {
       switch(currentItem){
+        case 0: {
+          return ((FolderFragment) fragments[0]).onBackpressed();
+        }
         case 1: {
-          return ((FolderFragment) fragments[1]).onBackpressed();
+          return ((AudiobookFragment) fragments[1]).onBackpressed();
         }
         case 2: {
           return ((PlayListFragment) fragments[2]).onBackpressed();

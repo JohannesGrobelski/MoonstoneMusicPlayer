@@ -108,4 +108,22 @@ public class AudiobookFragment extends Fragment {
   public void reverse() {
     audiobookFragmentListener.reverse();
   }
+
+
+  public void sortSongsByName() {
+    audiobookFragmentListener.sortSongsByName();
+  }
+
+  public void sortSongsByArtist() {
+    audiobookFragmentListener.sortSongsByArtist();
+  }
+
+  public void sortSongsByDuration() {
+    audiobookFragmentListener.sortSongsByDuration();
+  }
+
+  public void sortSongsByGenre() {
+    audiobookFragmentListener.sortSongsByGenre();
+  }
+
 }
