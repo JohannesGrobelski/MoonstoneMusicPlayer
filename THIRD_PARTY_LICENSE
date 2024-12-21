@@ -1,0 +1,29 @@
+This project incorporates the following open source components:
+
+Android Support Libraries (androidx.*):
+- androidx.appcompat
+- androidx.constraintlayout
+- androidx.swiperefreshlayout
+- androidx.lifecycle
+- androidx.legacy
+License: Apache 2.0 (https://www.apache.org/licenses/LICENSE-2.0)
+
+Google Material Design Components:
+- com.google.android.material:material
+License: Apache 2.0
+
+Testing Libraries:
+- junit:junit
+License: EPL 1.0
+
+JSoup:
+- org.jsoup:jsoup
+License: MIT
+
+DragListView:
+- com.github.woxthebox:draglistview
+License: Apache 2.0
+
+SwipeLayout:
+- com.daimajia.swipelayout:library
+License: MIT

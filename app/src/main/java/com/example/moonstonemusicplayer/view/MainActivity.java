@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2025 Johannes Grobelski 
+ * All rights reserved.
+ * 
+ * This file is part of MoonStone Music Player and is protected under
+ * the proprietary license found in the LICENSE file in the root directory.
+ */
+
 package com.example.moonstonemusicplayer.view;
 
 import android.Manifest;
@@ -11,12 +19,6 @@ import android.os.Bundle;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.MainActivity.MainActivityListener;
-import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
-import com.example.moonstonemusicplayer.model.MainActivity.OnlineMusicFragment.VideoModel;
-import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.Playlist;
-import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.PlaylistListManager;
-import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
-import com.example.moonstonemusicplayer.view.mainactivity_fragments.FolderFragment;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.PlayListFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -71,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
     viewPager = findViewById(R.id.view_pager_main);
     viewPager.setSwipeEnabled(false); // Disable swiping
     viewPager.setAdapter(sectionsPagerAdapter);
-    viewPager.setCurrentItem(1);
+    viewPager.setCurrentItem(0);
     tabs = findViewById(R.id.mainactivity_tabs);
     tabs.setupWithViewPager(viewPager);
     FloatingActionButton fab = findViewById(R.id.fab);
@@ -192,14 +194,6 @@ public class MainActivity extends AppCompatActivity {
             PERMISSION_REQUEST_CODE);
   }
 
-  public void downloadSong(VideoModel currentVideoModel) {
-    if(checkPermissions()){
-      Toast.makeText(this, "Currently not supported!", Toast.LENGTH_SHORT);
-      //YouTubeDownloader youTubeDownloader = new YouTubeDownloader(this);
-      //youTubeDownloader.downloadVideo(currentVideoModel.getVideoURL(), currentVideoModel.getTitle());
-    }
-  }
-
   public boolean checkPermissions() {
     if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
             == PackageManager.PERMISSION_GRANTED) {
@@ -210,17 +204,6 @@ public class MainActivity extends AppCompatActivity {
       ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
       return false;
     }
-  }
-
-  private void initYTDL(){
-    /*try {
-      YoutubeDL.getInstance().init(this);
-      YoutubeDL.getInstance().updateYoutubeDL(this, YoutubeDL.UpdateChannel._NIGHTLY);
-      FFmpeg.getInstance().init(this);
-    } catch (YoutubeDLException e) {
-      throw new RuntimeException(e);
-    }
-     */
   }
 
   private void showCustomMediaLocationPermissionDialog() {

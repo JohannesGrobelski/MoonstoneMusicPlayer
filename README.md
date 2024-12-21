@@ -46,20 +46,22 @@ Usage
     To manage playlists, go to the playlist management section. From there, you can rename playlists, delete playlists, and reorder songs within playlists.
 
 
-License
+## Licensing
 
-This project is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License - see the LICENSE file for details.
-You are free to:
+This project uses a dual licensing approach:
 
-Share — copy and redistribute the material in any medium or format
-The licensor cannot revoke these freedoms as long as you follow the license terms.
+1. Original Code:
+   - All rights reserved
+   - Modifications and derivative works are not permitted
+   - The code can only be used as provided
 
-Under the following terms:
+2. Third-Party Dependencies:
+   - All dependencies maintain their original licenses (MIT and Apache 2.0)
+   - See THIRD_PARTY_LICENSES file for detailed information
 
-Attribution — You must give appropriate credit, provide a link to the license, and indicate if changes were made.
-NonCommercial — You may not use the material for commercial purposes.
-NoDerivatives — If you remix, transform, or build upon the material, you may not distribute the modified material.
-
+Please note that while you cannot modify the original code of MoonStone Music Player, 
+the third-party libraries used in this project maintain their open-source licenses 
+and can be used according to their respective terms.
 Contact
 
 If you have any questions, suggestions, or feedback regarding the Moonstone Music Player project, please contact the developer grobelskijohannes@gmail.com.

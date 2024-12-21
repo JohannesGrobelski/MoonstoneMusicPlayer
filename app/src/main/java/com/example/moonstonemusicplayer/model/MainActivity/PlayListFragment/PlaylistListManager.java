@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2025 Johannes Grobelski 
+ * All rights reserved.
+ * 
+ * This file is part of MoonStone Music Player and is protected under
+ * the proprietary license found in the LICENSE file in the root directory.
+ */
+
 package com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment;
 
 import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.MOSTLY_PLAYED_PLAYLIST_NAME;
