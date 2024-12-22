@@ -325,6 +325,8 @@ public class PlayListActivityListener
       playListActivity.tv_seekbar_max.setText(mediaPlayerService.getCurrentSong().getDurationString());
       playListActivity.seekBar.setMax((int) (mediaPlayerService.getCurrentSong().getDuration_ms() / 1000));
     }
+    songListAdapter.setSelectedSongPath(mediaPlayerService.getCurrentSong().getPath());
+    songListAdapter.notifyDataSetChanged();
   }
 
   //messages to mediaPlayerService
