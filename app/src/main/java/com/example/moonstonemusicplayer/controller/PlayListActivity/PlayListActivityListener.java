@@ -562,14 +562,14 @@ public class PlayListActivityListener
         public void onItemDragEnded(int fromPosition, int toPosition) {
           // Handle drag end - update your data model here if needed
           if (fromPosition != toPosition) {
-            Playlist currentPlaylistObject = new Playlist(playlistName, songListAdapter.getItemList().stream().map(i -> BrowserManager.getSongFromAudioFile(((File) i))).collect(Collectors.toList()));
+            Playlist updatedPlaylist = new Playlist(playlistName, songListAdapter.getItemList().stream().map(i -> BrowserManager.getSongFromAudioFile(((File) i))).collect(Collectors.toList()));
 
-            mediaPlayerService.setPlayList(currentPlaylistObject.getPlaylist().stream().map(BrowserManager::getFileFromSong).collect(Collectors.toList()));
+            mediaPlayerService.updatePlaylist(updatedPlaylist);
 
             //NOTE: drag list view does already manipulate the data list (do not change playlistListAdapter.getItemList())!!!
             if(!playlistName.isEmpty()){
               DBPlaylists dbPlaylists = DBPlaylists.getInstance(playListActivity);
-              dbPlaylists.changePlaylistOrder(currentPlaylistObject.getName(), songListAdapter.getItemList().stream().map(f -> BrowserManager.getSongFromAudioFile((File) f)).collect(Collectors.toList()));
+              dbPlaylists.changePlaylistOrder(updatedPlaylist.getName(), songListAdapter.getItemList().stream().map(f -> BrowserManager.getSongFromAudioFile((File) f)).collect(Collectors.toList()));
             }
           }
         }
