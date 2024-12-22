@@ -36,6 +36,7 @@ import com.example.moonstonemusicplayer.controller.PlayListActivity.Notification
 import com.example.moonstonemusicplayer.model.Database.Playcountlist.DBPlaycountList;
 import com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists;
 import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
+import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.Playlist;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Audiobook;
 import com.example.moonstonemusicplayer.model.PlayListActivity.PlayListModel;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
@@ -45,6 +46,7 @@ import com.example.moonstonemusicplayer.view.PlayListActivityListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 /** MediaPlayerService
@@ -438,7 +440,7 @@ public class MediaPlayerService extends Service
   }
 
   public void playSong(File songFile) {
-    playListModel.setCurrentSong(songFile);
+    playListModel.setCurrentSongIndexBySong(songFile);
     //Toast.makeText(this,"clicked: "+playListModel.getCurrentSong().getName(),Toast.LENGTH_LONG).show();
     Song song = BrowserManager.getSongFromAudioFile(songFile);
     DBPlaylists.getInstance(this.getApplicationContext()).addToRecentlyPlayed(this.getApplicationContext(),song);
@@ -482,7 +484,7 @@ public class MediaPlayerService extends Service
   public void setPlayList(List<File> playList) {
     if(DEBUG)Log.d(TAG,"startMediaPlayerService init Playlist: "+playList.size());
     this.playListModel = new PlayListModel(playList);
-    this.playListModel.setCurrentSong(playList.get(startIndex));
+    this.playListModel.setCurrentSongIndexBySong(playList.get(startIndex));
   }
 
 
@@ -499,6 +501,19 @@ public class MediaPlayerService extends Service
       boundServiceListener = listener;
     }
 
+  }
+
+  public void updatePlaylist(Playlist updatedPlaylist){
+    List<File> playList = updatedPlaylist.getPlaylist().stream().map(BrowserManager::getFileFromSong).collect(Collectors.toList());
+    int currentSongIndex = 0;
+    for(int i=0; i<updatedPlaylist.getPlaylist().size(); i++){
+      if(updatedPlaylist.getPlaylist().get(i).getName().equals(playListModel.getCurrentSong().getName())){
+        currentSongIndex = i;
+        currentSong = updatedPlaylist.getPlaylist().get(i);
+      }
+    }
+    this.playListModel = new PlayListModel(playList);
+    this.playListModel.setCurrentSongIndex(currentSongIndex);
   }
 
   private void updatePlaycount(Song song){

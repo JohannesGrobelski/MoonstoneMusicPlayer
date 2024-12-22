@@ -34,14 +34,22 @@ public class PlayListModel {
     this.playlist = playList;
   }
 
-  public void setCurrentSong(File song) {
+  public void setCurrentSongIndexBySong(File song) {
     for(int i=0; i<playlist.size(); i++){
       if(song.equals(playlist.get(i)))currentSongIndex = i;
     }
   }
 
+  public void setCurrentSongIndex(int index){
+    this.currentSongIndex = index;
+  }
+
   public Song getCurrentSong(){
     return prioSong != null ? prioSong : BrowserManager.getSongFromAudioFile(playlist.get(currentSongIndex));
+  }
+
+  public int getCurrentIndex(){
+    return currentSongIndex;
   }
 
   public File getCurrentSongFile(){
@@ -52,7 +60,7 @@ public class PlayListModel {
     return getIdentifier(getCurrentSongFile().getName());
   }
 
-  public void setCurrentSong(int index) {
+  public void setCurrentSongIndexBySong(int index) {
     this.currentSongIndex = index;
   }
 
