@@ -10,15 +10,13 @@ package com.example.moonstonemusicplayer.controller.MainActivity.AudiobookFragme
 
 import android.content.Intent;
 import android.util.Log;
-import android.view.ContextMenu;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Toast;
 
 import com.example.moonstonemusicplayer.R;
-import com.example.moonstonemusicplayer.controller.PlayListActivity.MediaPlayerService;
 import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
-import com.example.moonstonemusicplayer.view.PlayListActivity;
+import com.example.moonstonemusicplayer.view.PlayListActivityListener;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.AudiobookFragment;
 
 import java.io.File;
@@ -145,7 +143,7 @@ public class AudiobookFragmentListener implements AdapterView.OnItemClickListene
 
   public void startAudiobookAudiobooklist(File[] playlist, int audiobook_index, AudiobookFragment audiobookFragment){
     AudiobookAudiobooklist = playlist.clone();
-    Intent intent = new Intent(audiobookFragment.getActivity(), PlayListActivity.class);
+    Intent intent = new Intent(audiobookFragment.getActivity(), PlayListActivityListener.class);
 
     intent.putExtra(AudiobookFragment.FOLDERAUDIOBOOKINDEXEXTRA,audiobook_index);
     audiobookFragment.startActivity(intent);

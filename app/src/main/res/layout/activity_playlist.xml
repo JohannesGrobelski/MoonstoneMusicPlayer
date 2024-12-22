@@ -15,13 +15,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".view.PlayListActivity">
+    tools:context=".view.PlayListActivityListener">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme.AppBarOverlay">
-
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
@@ -31,15 +30,23 @@
             android:minHeight="?attr/actionBarSize"
             android:theme="?attr/actionBarTheme" />
 
-    </com.google.android.material.appbar.AppBarLayout>
+        </com.google.android.material.appbar.AppBarLayout>
 
-    <ListView
-        android:id="@+id/lv_songlist"
+    <LinearLayout
+        android:id="@+id/srl_songlist"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1">
 
-    </ListView>
+        <com.woxthebox.draglistview.DragListView
+            android:id="@+id/dlv_songlist"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+        </com.woxthebox.draglistview.DragListView>
+
+    </LinearLayout>
+
 
     <LinearLayout
         android:id="@+id/LL_MusicControlls"

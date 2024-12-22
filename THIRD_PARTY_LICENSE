@@ -23,7 +23,3 @@ License: MIT
 DragListView:
 - com.github.woxthebox:draglistview
 License: Apache 2.0
-
-SwipeLayout:
-- com.daimajia.swipelayout:library
-License: MIT

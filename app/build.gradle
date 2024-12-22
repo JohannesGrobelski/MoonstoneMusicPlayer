@@ -61,7 +61,6 @@ dependencies {
     // Swipe Layout
     implementation 'com.android.support:recyclerview-v7:21.0.0' // RecyclerView support (Apache 2.0)
     implementation 'com.android.support:support-v4:20.+' // Android support library (Apache 2.0)
-    implementation "com.daimajia.swipelayout:library:1.2.0@aar" // Swipeable layouts (MIT)
 
     // Draggable List View
     implementation 'com.github.woxthebox:draglistview:1.7.3' // Draggable list view (Apache 2.0)

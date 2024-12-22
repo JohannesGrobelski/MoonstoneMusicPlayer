@@ -16,7 +16,7 @@ import android.widget.AdapterView;
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.model.MainActivity.GenreFragment.Genre;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
-import com.example.moonstonemusicplayer.view.PlayListActivity;
+import com.example.moonstonemusicplayer.view.PlayListActivityListener;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.GenreFragment;
 
 import java.io.File;
@@ -72,7 +72,7 @@ public class GenreFragmentListener implements AdapterView.OnItemClickListener, V
   /** starts playlistactivity with selected songlist; playlistactivity grabs songlist by calling getPlaylistSonglist*/
   public void startGenreSonglist(List<Song> albumSongList, int song_index){
     GenreSongList = new ArrayList<>(albumSongList);
-    Intent intent = new Intent(genreFragment.getActivity(), PlayListActivity.class);
+    Intent intent = new Intent(genreFragment.getActivity(), PlayListActivityListener.class);
     intent.putExtra(GENRELISTEXTRA,song_index);
     genreFragment.startActivity(intent);
   }

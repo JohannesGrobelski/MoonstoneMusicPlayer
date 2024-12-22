@@ -42,21 +42,26 @@ import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
+import com.woxthebox.draglistview.DragListView;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.model.NextSongToPlayUtility;
 import com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists;
 import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
+import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.Playlist;
 import com.example.moonstonemusicplayer.model.PlayListActivity.PlaylistManager;
 import com.example.moonstonemusicplayer.model.PlayListActivity.PlayListModel;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
-import com.example.moonstonemusicplayer.view.PlayListActivity;
 
 import java.io.File;
-
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /** MainActivityListener
- *  Handles input from the User (through Views in {@link PlayListActivity}),
+ *  Handles input from the User (through Views in {@link com.example.moonstonemusicplayer.view.PlayListActivityListener}),
  *  changes the model {@link PlaylistManager}) according to the input and
  *  and, if necessary, sends messages to the {@link PlaylistManager}).
  */
@@ -70,7 +75,7 @@ public class PlayListActivityListener
   private static final int SINGLE_TAP_TIMEOUT = 400; // Custom timeout for single tap in milliseconds
 
 
-  private final PlayListActivity playListActivity;
+  public final com.example.moonstonemusicplayer.view.PlayListActivityListener playListActivity;
 
   PlaylistManager playlistManager;
 
@@ -78,29 +83,20 @@ public class PlayListActivityListener
   private MediaPlayerService mediaPlayerService;
   boolean isServiceBound = false;
 
+  private String playlistName;
+
   private SongListAdapter songListAdapter;
   private Thread seekbarAnimationThread;
 
-
-
-    /*
-    musicPlayer.addSong(new Song("Lyric Pieces"
-          ,"Grieg Kobold"
-          , "https://upload.wikimedia.org/wikipedia/commons/6/6c/Grieg_Lyric_Pieces_Kobold.ogg"
-          ,86000));
-    musicPlayer.addSong(new Song("Grand Duo Concertant for clarinet and piano - 2. Andante con moto"
-          ,"Weber"
-          ,"https://upload.wikimedia.org/wikipedia/commons/9/9a/Weber_-_Grand_Duo_Concertant_for_clarinet_and_piano_-_2._Andante_con_moto.ogg"
-          ,383000));
-           songListAdapter.notifyDataSetChanged();
-     */
-
   @SuppressLint("ClickableViewAccessibility")
-  public PlayListActivityListener(PlayListActivity playListActivity, File[] playlist, int starting_song_index) {
+  public PlayListActivityListener(com.example.moonstonemusicplayer.view.PlayListActivityListener playListActivity, File[] playlist, int starting_song_index, String playlist_name) {
     if(DEBUG)Log.d(TAG,"selected song: "+playlist[starting_song_index].getName());
     this.playListActivity = playListActivity;
+    this.playlistName = playlist_name;
     playlistManager = new PlaylistManager(playListActivity.getBaseContext(),playlist);
-    bindSongListAdapterToSongListView(playListActivity.lv_songlist);
+    List<Object> songList = new ArrayList<>();
+    songList.addAll(playlistManager.getPlayList());
+    bindSongListAdapterToSongListView(songList);
     destroyAndCreateNewService(starting_song_index);
     playListActivity.btn_prev.setOnTouchListener(new OnTouchListener() {
         private GestureDetector gestureDetector = new GestureDetector(playListActivity, new GestureDetector.SimpleOnGestureListener() {
@@ -113,7 +109,7 @@ public class PlayListActivityListener
 
             @Override
             public boolean onSingleTapConfirmed(MotionEvent e) {
-              mediaPlayerService.prevSong();
+              prevSong();
               return super.onSingleTapUp(e);
             }
         });
@@ -136,7 +132,7 @@ public class PlayListActivityListener
 
             @Override
             public boolean onSingleTapConfirmed(MotionEvent e) {
-              mediaPlayerService.nextSong();
+              nextSong();
               return super.onSingleTapUp(e);
             }
         });
@@ -280,6 +276,16 @@ public class PlayListActivityListener
     }
   }
 
+  public void onItemClick(int position) {
+    File songFile = playlistManager.getDisplayedSongList().get(position);
+    if(isServiceBound){
+      playSong(songFile);
+    }
+
+    playListActivity.showMusicControlls();
+    songListAdapter.setSelectedSongPath(songFile.getAbsolutePath());
+    songListAdapter.notifyDataSetChanged();
+  }
 
   //messages from mediaPlayerService
 
@@ -336,8 +342,8 @@ public class PlayListActivityListener
       int max = (mediaPlayerService.getCurrentSong().getDuration_ms() / 1000);
       playListActivity.seekBar.setMax(max);
 
-      View view = playListActivity.lv_songlist.getChildAt(mediaPlayerService.getCurrentPosition());
-      if(view != null)view.setBackgroundColor(Color.RED);
+      //View view = playListActivity.dlv_songlist.getChildAt(mediaPlayerService.getCurrentPosition());
+      // if(view != null)view.setBackgroundColor(playListActivity.getResources().getColor(android.R.color.darker_gray));
     }
   }
 
@@ -350,6 +356,8 @@ public class PlayListActivityListener
       playListActivity.tv_artist.setText(mediaPlayerService.getCurrentSong().getArtist());
       playListActivity.tv_seekbar_max.setText(mediaPlayerService.getCurrentSong().getDurationString());
       playListActivity.seekBar.setMax((int) (mediaPlayerService.getCurrentSong().getDuration_ms() / 1000));
+      songListAdapter.setSelectedSongPath(mediaPlayerService.getCurrentSong().getPath());
+      songListAdapter.notifyDataSetChanged();
     }
   }
 
@@ -362,6 +370,8 @@ public class PlayListActivityListener
       playListActivity.tv_artist.setText(mediaPlayerService.getCurrentSong().getArtist());
       playListActivity.tv_seekbar_max.setText(mediaPlayerService.getCurrentSong().getDurationString());
       playListActivity.seekBar.setMax((int) (mediaPlayerService.getCurrentSong().getDuration_ms() / 1000));
+      songListAdapter.setSelectedSongPath(mediaPlayerService.getCurrentSong().getPath());
+      songListAdapter.notifyDataSetChanged();
     }
   }
 
@@ -458,9 +468,7 @@ public class PlayListActivityListener
           public void selectedSong(String selectedSongPath) {
             if(DEBUG)Log.d(TAG,"song playing: "+selectedSongPath);
             songListAdapter.setSelectedSongPath(selectedSongPath);
-            playListActivity.lv_songlist.invalidateViews();
           }
-
 
           @Override public void finishedSong(PlayListModel.REPEATMODE repeatmode){
             finishSong(repeatmode);
@@ -531,9 +539,46 @@ public class PlayListActivityListener
 
 
   /** bind songlistview to songlistadapter using the songList of musicplayer*/
-  private void bindSongListAdapterToSongListView(ListView lv_songlist){
-    songListAdapter = new SongListAdapter(playListActivity, playlistManager.getDisplayedSongList());
-    lv_songlist.setAdapter(songListAdapter);
+  private void bindSongListAdapterToSongListView(List<Object> itemList){
+    // Ensure this runs on the main thread
+    playListActivity.runOnUiThread(() -> {
+      songListAdapter = new SongListAdapter(this, itemList);
+
+      // Set up drag listener if needed
+      playListActivity.dlv_songlist.setDragListListener(new DragListView.DragListListener() {
+        @Override
+        public void onItemDragStarted(int position) {
+          // Handle drag start#
+        }
+
+        @Override
+        public void onItemDragging(int itemPosition, float x, float y) {
+          // Handle item dragging
+        }
+
+        @Override
+        public void onItemDragEnded(int fromPosition, int toPosition) {
+          // Handle drag end - update your data model here if needed
+          if (fromPosition != toPosition) {
+            Playlist currentPlaylistObject = new Playlist(playlistName, songListAdapter.getItemList().stream().map(i -> BrowserManager.getSongFromAudioFile(((File) i))).collect(Collectors.toList()));
+
+            mediaPlayerService.setPlayList(currentPlaylistObject.getPlaylist().stream().map(BrowserManager::getFileFromSong).collect(Collectors.toList()));
+
+            //NOTE: drag list view does already manipulate the data list (do not change playlistListAdapter.getItemList())!!!
+            if(!playlistName.isEmpty()){
+              DBPlaylists dbPlaylists = DBPlaylists.getInstance(playListActivity);
+              dbPlaylists.changePlaylistOrder(currentPlaylistObject.getName(), songListAdapter.getItemList().stream().map(f -> BrowserManager.getSongFromAudioFile((File) f)).collect(Collectors.toList()));
+            }
+          }
+        }
+      });
+
+      playListActivity.dlv_songlist.setLayoutManager(new LinearLayoutManager(playListActivity));
+
+      playListActivity.dlv_songlist.setAdapter(songListAdapter, true);
+      playListActivity.dlv_songlist.setCanDragHorizontally(false);
+    });
+
   }
 
   //Permissions
@@ -565,9 +610,7 @@ public class PlayListActivityListener
     //only react to context menu in this fragment
     if(item.getGroupId() == 0){
       //calculate the index of the song clicked
-      AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-      int index = info.position;
-      File selectedSongFile = playlistManager.getDisplayedSongList().get(index);
+      File selectedSongFile = playlistManager.getDisplayedSongList().get(songListAdapter.getLastLongClickedPosition());
       Song selectedSong = BrowserManager.getSongFromAudioFile(selectedSongFile);
       switch (item.getItemId()){
         case 1: {

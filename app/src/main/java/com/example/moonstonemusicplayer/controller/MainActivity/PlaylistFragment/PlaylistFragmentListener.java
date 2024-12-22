@@ -23,17 +23,14 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists;
-//import com.example.moonstonemusicplayer.model.Database.DBSonglists;
-import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
 import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.Playlist;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
-import com.example.moonstonemusicplayer.view.PlayListActivity;
+import com.example.moonstonemusicplayer.view.PlayListActivityListener;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.PlayListFragment;
 import com.woxthebox.draglistview.DragListView;
 
@@ -45,7 +42,8 @@ import java.util.stream.Collectors;
 public class PlaylistFragmentListener implements View.OnClickListener, View.OnCreateContextMenuListener {
   private static final String TAG = PlaylistFragmentListener.class.getSimpleName();
   private static final boolean DEBUG = true;
-  public static final String PLAYLISTINDEXEXTRA = "playlistextra";
+  public static final String PLAYLISTINDEXEXTRA = "playlistIndexExtra";
+  public static final String PLAYLISTNAMEEXTRA = "playlistNameExtra";
 
   private final PlayListFragment playListFragment;
   public PlaylistListAdapter playlistListAdapter;
@@ -145,8 +143,9 @@ public class PlaylistFragmentListener implements View.OnClickListener, View.OnCr
   /** starts playlistactivity with selected songlist; playlistactivity grabs songlist by calling getPlaylistSonglist*/
   public void startPlaylist(Playlist playlist, int song_index){
     Playlist = new Playlist(playlist.getName(),playlist.getPlaylist());
-    Intent intent = new Intent(playListFragment.getActivity(), PlayListActivity.class);
+    Intent intent = new Intent(playListFragment.getActivity(), PlayListActivityListener.class);
     intent.putExtra(PLAYLISTINDEXEXTRA,song_index);
+    intent.putExtra(PLAYLISTNAMEEXTRA,playlist.getName());
     playListFragment.startActivity(intent);
   }
 

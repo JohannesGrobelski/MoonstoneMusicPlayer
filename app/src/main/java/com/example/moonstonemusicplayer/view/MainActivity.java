@@ -44,9 +44,6 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.SectionsPagerAdapter;
 
-import java.io.File;
-import java.util.List;
-
 public class MainActivity extends AppCompatActivity {
   private final int PERMISSION_REQUEST_CODE = 678;
   private final int PERMISSION_REQUEST_MEDIA_AUDIO = 679;
@@ -248,7 +245,7 @@ public class MainActivity extends AppCompatActivity {
       if (filePath != null) {
         // Launch PlayListActivity with the selected file
         Toast.makeText(this, "Incoming: "+filePath, Toast.LENGTH_LONG).show();
-        Intent intentPlaylistActivity = new Intent(this, PlayListActivity.class);
+        Intent intentPlaylistActivity = new Intent(this, PlayListActivityListener.class);
         intentPlaylistActivity.putExtra(SONG_DIRECT_EXTRA,filePath);
         this.startActivity(intentPlaylistActivity);
       } else {

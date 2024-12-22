@@ -8,30 +8,13 @@
  * the proprietary license found in the LICENSE file in the root directory.
  *
 -->
-<com.daimajia.swipe.SwipeLayout
-    android:id="@+id/item_row_swipe_layout"
+<LinearLayout
+    android:id="@+id/item_row_ll_layout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="50dp"
-    app:leftEdgeSwipeOffset="100sp"
-    app:rightEdgeSwipeOffset="100sp"
+    android:orientation="horizontal"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-
-    <!-- bottom views -->
-    <ImageButton
-        android:src="@drawable/is_not_favorites"
-        android:id="@+id/add_remove_favorites"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/transparent"/>
-
-    <ImageButton
-        android:src="@drawable/playlists"
-        android:id="@+id/add_to_playlist"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/transparent"/>
-
 
     <!-- surface view -->
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -157,4 +140,4 @@
 
     </RelativeLayout>
 
-</com.daimajia.swipe.SwipeLayout>
+</LinearLayout>

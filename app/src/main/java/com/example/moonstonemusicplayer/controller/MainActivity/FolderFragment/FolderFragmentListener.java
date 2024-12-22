@@ -8,12 +8,10 @@
 
 package com.example.moonstonemusicplayer.controller.MainActivity.FolderFragment;
 
-import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Build;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -25,16 +23,12 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import androidx.core.app.ActivityCompat;
-
 import com.example.moonstonemusicplayer.R;
-import com.example.moonstonemusicplayer.controller.PlayListActivity.MediaPlayerService;
 import com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists;
 import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import com.example.moonstonemusicplayer.view.MainActivity;
-import com.example.moonstonemusicplayer.view.PlayListActivity;
-import com.example.moonstonemusicplayer.view.mainactivity_fragments.AudiobookFragment;
+import com.example.moonstonemusicplayer.view.PlayListActivityListener;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.FolderFragment;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.PlayListFragment;
 
@@ -43,7 +37,6 @@ import com.example.moonstonemusicplayer.model.NextSongToPlayUtility;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class FolderFragmentListener implements AdapterView.OnItemClickListener, View.OnClickListener {
   private static final String TAG = FolderFragmentListener.class.getSimpleName();
@@ -185,7 +178,6 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
       Log.e(TAG,e.toString());
       Toast.makeText(folderListAdapter.getContext(), "ERROR: Could not open context menu", Toast.LENGTH_LONG).show();
     }
-
   }
 
   /** Implements the options of the context menu (defined above, in onCreateContextMenu(...))
@@ -271,7 +263,7 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
 
   public void startFolderSonglist(File[] playlist, int song_index, FolderFragment folderFragment){
     FolderSonglist = playlist.clone();
-    Intent intent = new Intent(folderFragment.getActivity(), PlayListActivity.class);
+    Intent intent = new Intent(folderFragment.getActivity(), PlayListActivityListener.class);
     intent.putExtra(FolderFragment.FOLDERSONGINDEXEXTRA,song_index);
     folderFragment.startActivity(intent);
   }

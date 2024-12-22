@@ -20,7 +20,6 @@ import android.media.AudioAttributes;
 import android.media.AudioFocusRequest;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.media.audiofx.Visualizer;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
@@ -31,7 +30,6 @@ import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.PlayListActivity.Notification.Constants;
@@ -42,7 +40,7 @@ import com.example.moonstonemusicplayer.model.PlayListActivity.Audiobook;
 import com.example.moonstonemusicplayer.model.PlayListActivity.PlayListModel;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import com.example.moonstonemusicplayer.model.PlaytimePersistence;
-import com.example.moonstonemusicplayer.view.PlayListActivity;
+import com.example.moonstonemusicplayer.view.PlayListActivityListener;
 
 import java.io.File;
 import java.io.IOException;
@@ -490,14 +488,14 @@ public class MediaPlayerService extends Service
 
   /** used to bind service to activity*/
   public class LocalBinder extends Binder {
-    public PlayListActivityListener.BoundServiceListener boundServiceListener;
+    public com.example.moonstonemusicplayer.controller.PlayListActivity.PlayListActivityListener.BoundServiceListener boundServiceListener;
 
     public MediaPlayerService getService() {
       return MediaPlayerService.this;
     }
 
     /** set Listener-Object*/
-    public void setListener(PlayListActivityListener.BoundServiceListener listener) {
+    public void setListener(com.example.moonstonemusicplayer.controller.PlayListActivity.PlayListActivityListener.BoundServiceListener listener) {
       boundServiceListener = listener;
     }
 
@@ -509,7 +507,7 @@ public class MediaPlayerService extends Service
 
   private void showNotification(){
     //setting up the notification intent
-    final Intent notificationIntent = new Intent(MediaPlayerService.this, PlayListActivity.class);
+    final Intent notificationIntent = new Intent(MediaPlayerService.this, PlayListActivityListener.class);
     notificationIntent.setAction(Intent.ACTION_MAIN);
     notificationIntent.addCategory(Intent.CATEGORY_LAUNCHER);
     notificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

@@ -8,179 +8,112 @@
 
 package com.example.moonstonemusicplayer.controller.PlayListActivity;
 
-import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
-import com.daimajia.swipe.SwipeLayout;
 import com.example.moonstonemusicplayer.R;
-import com.example.moonstonemusicplayer.controller.MainActivity.FolderFragment.FolderFragmentListener;
-import com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists;
 import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
-
+import com.example.moonstonemusicplayer.controller.PlayListActivity.PlayListActivityListener;
+import com.woxthebox.draglistview.DragItemAdapter;
 import java.io.File;
 import java.util.List;
 
-public class SongListAdapter extends ArrayAdapter<File> {
+public class SongListAdapter extends DragItemAdapter<Object, SongListAdapter.ViewHolder> {
+  private int lastLongClickedPosition = -1; // Default to an invalid position
   private static final String TAG = SongListAdapter.class.getSimpleName();
 
-  private final List<File> songList;
+  private final List<Object> songList;
   private String selectedSongPath = "";
 
-  private final Context context;
-  private final LayoutInflater layoutInflater;
-
-  public SongListAdapter(@NonNull Context context, List<File> songList) {
-    super(context, R.layout.song_row_layout,songList);
+  private final PlayListActivityListener playListActivityListener;
+  public SongListAdapter(@NonNull PlayListActivityListener playListActivityListener, List<Object> songList) {
+    super();
     this.songList = songList;
-    this.context = context;
-    this.layoutInflater = LayoutInflater.from(context);
+    this.playListActivityListener = playListActivityListener;
+    setItemList(songList);
   }
 
   @NonNull
   @Override
-  public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-    File currentSongFile = songList.get(position);
+  public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.song_row_layout, parent, false);
+        return new ViewHolder(view);
+  }
 
-    View rowView;
-    if(convertView != null){
-      rowView = convertView;
-    } else {
-      rowView = layoutInflater.inflate(R.layout.song_row_layout, parent, false);
-    }
-
-    //init the views of songRowView
-    LinearLayout ll_song_background = rowView.findViewById(R.id.ll_song_background);
-    TextView tv_title = rowView.findViewById(R.id.tv_name_song);
-
-    TextView tv_artist_song = rowView.findViewById(R.id.tv_artist_song);
-    TextView tv_genre_song = rowView.findViewById(R.id.tv_genre_song);
-    TextView tv_duration_song = rowView.findViewById(R.id.tv_duration_song);
-
+  @Override
+  public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    super.onBindViewHolder(holder, holder.getAbsoluteAdapterPosition());
+    holder.itemView.setTag(holder.getAbsoluteAdapterPosition()); // Save position in the tag
+    Object item = songList.get(holder.getAbsoluteAdapterPosition());
+        
     //set the views of songRowView
-    Song song = BrowserManager.getSongFromAudioFile(currentSongFile);
-    tv_title.setText(song.getName());
+    Song song = BrowserManager.getSongFromAudioFile((File) item);
+    holder.tv_title.setText(song.getName());
     if(song.getArtist() != null && !song.getArtist().isEmpty()){
-      tv_artist_song.setVisibility(View.VISIBLE);
-      tv_artist_song.setText(song.getArtist());
+      holder.tv_artist_song.setVisibility(View.VISIBLE);
+      holder.tv_artist_song.setText(song.getArtist());
     }
     if(song.getGenre() != null && !song.getGenre().isEmpty()){
-      tv_genre_song.setVisibility(View.VISIBLE);
-      tv_genre_song.setText(song.getGenre());
+      holder.tv_genre_song.setVisibility(View.VISIBLE);
+      holder.tv_genre_song.setText(song.getGenre());
     }
     if(song.getDurationString() != null && !song.getDurationString().isEmpty()){
-      tv_duration_song.setVisibility(View.VISIBLE);
-      tv_duration_song.setText(song.getDurationString());
+      holder.tv_duration_song.setVisibility(View.VISIBLE);
+      holder.tv_duration_song.setText(song.getDurationString());
     }
 
     int nightModeFlags =
-            getContext().getResources().getConfiguration().uiMode &
+            playListActivityListener.playListActivity.getResources().getConfiguration().uiMode &
                     Configuration.UI_MODE_NIGHT_MASK;
 
     if(nightModeFlags == Configuration.UI_MODE_NIGHT_YES){
-      if(currentSongFile.getPath().equals(selectedSongPath))ll_song_background.setBackgroundColor(Color.LTGRAY);
-      else ll_song_background.setBackgroundColor(Color.DKGRAY);
+      if(((File) item).getPath().equals(selectedSongPath))holder.ll_song_background.setBackgroundColor(Color.LTGRAY);
+      else holder.ll_song_background.setBackgroundColor(Color.DKGRAY);
     } else {
-      if(currentSongFile.getPath().equals(selectedSongPath))ll_song_background.setBackgroundColor(Color.LTGRAY);
-      else ll_song_background.setBackgroundColor(Color.WHITE);
+      if(((File) item).getPath().equals(selectedSongPath))holder.ll_song_background.setBackgroundColor(Color.LTGRAY);
+      else holder.ll_song_background.setBackgroundColor(Color.WHITE);
     }
 
-    SwipeLayout item_row_swipe_layout = rowView.findViewById(R.id.song_row_swipe_layout);
-    item_row_swipe_layout.setSwipeEnabled(true);
-    item_row_swipe_layout.setShowMode(SwipeLayout.ShowMode.LayDown);
+    holder.itemView.setOnClickListener(v -> handleItemClick(item, holder.getAbsoluteAdapterPosition()));
 
-    //add drag edge.(If the BottomView has 'layout_gravity' attribute, this line is unnecessary)
-    item_row_swipe_layout.addDrag(SwipeLayout.DragEdge.Left, rowView.findViewById(R.id.add_remove_song_favorites));
-    item_row_swipe_layout.addDrag(SwipeLayout.DragEdge.Right, rowView.findViewById(R.id.add_song_to_playlist));
-
-    item_row_swipe_layout.addSwipeListener(new SwipeLayout.SwipeListener() {
-      @Override
-      public void onStartOpen(SwipeLayout layout) {
-
-      }
-
-      @Override
-      public void onOpen(SwipeLayout layout) {
-
-      }
-
-      @Override
-      public void onStartClose(SwipeLayout layout) {
-
-      }
-
-      @Override
-      public void onClose(SwipeLayout layout) {
-
-      }
-
-      @Override
-      public void onUpdate(SwipeLayout layout, int leftOffset, int topOffset) {
-
-      }
-
-      @Override
-      public void onHandRelease(SwipeLayout layout, float xvel, float yvel) {
-
-      }
+    holder.itemView.setOnLongClickListener(v -> {
+      // Save the clicked position in a global variable
+      lastLongClickedPosition = holder.getAbsoluteAdapterPosition();
+      v.showContextMenu();
+      return true;
     });
+  }
 
-    ImageButton add_remove_song_favorites = rowView.findViewById(R.id.add_remove_song_favorites);
-    final boolean[] isInFavorites = {DBPlaylists.getInstance(context).isInFavorites(context, song)};
-    if(isInFavorites[0]){
-      add_remove_song_favorites.setImageResource(R.drawable.is_favorites);
-    } else {
-      add_remove_song_favorites.setImageResource(R.drawable.is_not_favorites);
+  public int getLastLongClickedPosition() {
+    return lastLongClickedPosition;
+  }
+
+  private void handleItemClick(Object clickItem, int position) {
+    if (clickItem != null) {
+      playListActivityListener.onItemClick(position);
     }
+  }
 
-    add_remove_song_favorites.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
-        if(isInFavorites[0]){
-          Toast.makeText(context, "Remove from favorites: "+song.getName(), Toast.LENGTH_SHORT).show();
-          DBPlaylists.getInstance(context).removeFromFavorites(context,song);
-          add_remove_song_favorites.setImageResource(R.drawable.is_not_favorites);
-        } else {
-          Toast.makeText(context, "Added to favorites: "+song.getName(), Toast.LENGTH_SHORT).show();
-          DBPlaylists.getInstance(context).addToFavorites(context,song);
-          add_remove_song_favorites.setImageResource(R.drawable.is_favorites);
-        }
-        isInFavorites[0] = !isInFavorites[0];
-
-        item_row_swipe_layout.close(true);
-      }
-    });
-
-    ImageButton add_to_playlist = rowView.findViewById(R.id.add_song_to_playlist);
-    add_to_playlist.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
-        FolderFragmentListener.showAlertDialogAddToPlaylists(layoutInflater, context, song);
-        item_row_swipe_layout.close(true);
-      }
-    });
-
-    return rowView;
+  @Override
+  public long getUniqueItemId(int position) {
+    return songList.get(position).hashCode();
   }
 
   public String getSelectedSongPath() {
     return selectedSongPath;
   }
 
-  public void setSelectedSongPath(String selectedSongIndex) {
-    this.selectedSongPath = selectedSongIndex;
+  public void setSelectedSongPath(String selectedSongPath) {
+    this.selectedSongPath = selectedSongPath;
   }
 
   public static String removeFileType(String fileName) {
@@ -191,12 +124,25 @@ public class SongListAdapter extends ArrayAdapter<File> {
     return fileName;
   }
 
-  /** translate some english genres to german */
-  private static String translateGenre(String genre){
-    switch(genre.toLowerCase()){
-      case "classical": return "Klassik";
-      case "other": return "Andere";
-      default: return genre;
+  /** Holds the views of the Adapter for later use (mostly in onCreateViewHolder method)
+   *
+   */
+  public static class ViewHolder extends DragItemAdapter.ViewHolder {
+    LinearLayout ll_song_background;
+    TextView tv_title;
+    TextView tv_artist_song;
+    TextView tv_genre_song; 
+    TextView tv_duration_song; 
+
+    public ViewHolder(View itemView) { 
+      super(itemView, R.id.iv_song_playing, false); // Using the ImageView as the drag handle
+      //init the views of songRowView 
+      ll_song_background = itemView.findViewById(R.id.ll_song_background);
+      tv_title = itemView.findViewById(R.id.tv_name_song);
+
+      tv_artist_song = itemView.findViewById(R.id.tv_artist_song);
+      tv_genre_song = itemView.findViewById(R.id.tv_genre_song);
+      tv_duration_song = itemView.findViewById(R.id.tv_duration_song);
     }
   }
 }

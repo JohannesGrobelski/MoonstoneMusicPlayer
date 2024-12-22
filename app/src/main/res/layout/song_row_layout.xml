@@ -8,30 +8,13 @@
  * the proprietary license found in the LICENSE file in the root directory.
  *
 -->
-<com.daimajia.swipe.SwipeLayout
-    android:id="@+id/song_row_swipe_layout"
+<LinearLayout
+    android:id="@+id/song_row_ll_layout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="50dp"
-    app:leftEdgeSwipeOffset="100sp"
-    app:rightEdgeSwipeOffset="100sp"
+    android:orientation="horizontal"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-
-    <!--background layout-->
-    <!-- bottom views -->
-    <ImageButton
-        android:src="@drawable/is_not_favorites"
-        android:id="@+id/add_remove_song_favorites"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/transparent"/>
-
-    <ImageButton
-        android:src="@drawable/playlists"
-        android:id="@+id/add_song_to_playlist"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/transparent"/>
 
     <!-- foreground layout -->
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -42,13 +25,14 @@
 
         <ImageView
             android:id="@+id/iv_song_playing"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_margin="10dp"
-            android:visibility="gone"
+            android:visibility="visible"
             app:srcCompat="@drawable/ic_music" />
 
         <LinearLayout
+            android:id="@+id/ll_name_song"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
@@ -112,6 +96,6 @@
 
     </LinearLayout>
 
-</com.daimajia.swipe.SwipeLayout>
+</LinearLayout>
 
 

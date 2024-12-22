@@ -236,6 +236,10 @@ public class BrowserManager {
     }
   }
 
+  public static File getFileFromSong(Song song){
+    return new File(song.getPath());
+  }
+
   /**
    * create song from file by extracting metadata
    * @param file
