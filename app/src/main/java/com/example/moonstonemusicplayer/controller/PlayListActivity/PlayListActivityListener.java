@@ -97,6 +97,7 @@ public class PlayListActivityListener
     List<Object> songList = new ArrayList<>();
     songList.addAll(playlistManager.getPlayList());
     bindSongListAdapterToSongListView(songList);
+    songListAdapter.setSelectedSongPath(playlist[starting_song_index].getPath());
     destroyAndCreateNewService(starting_song_index);
     playListActivity.btn_prev.setOnTouchListener(new OnTouchListener() {
         private GestureDetector gestureDetector = new GestureDetector(playListActivity, new GestureDetector.SimpleOnGestureListener() {

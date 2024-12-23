@@ -108,10 +108,6 @@ public class SongListAdapter extends DragItemAdapter<Object, SongListAdapter.Vie
     return songList.get(position).hashCode();
   }
 
-  public String getSelectedSongPath() {
-    return selectedSongPath;
-  }
-
   public void setSelectedSongPath(String selectedSongPath) {
     this.selectedSongPath = selectedSongPath;
   }
