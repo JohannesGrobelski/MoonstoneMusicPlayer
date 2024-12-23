@@ -564,7 +564,11 @@ public class PlayListActivityListener
           if (fromPosition != toPosition) {
             Playlist updatedPlaylist = new Playlist(playlistName, songListAdapter.getItemList().stream().map(i -> BrowserManager.getSongFromAudioFile(((File) i))).collect(Collectors.toList()));
 
+            //update playlist in mediaservice
             mediaPlayerService.updatePlaylist(updatedPlaylist);
+
+            //update playlist in playlistmanager
+            playlistManager.updatePlaylist(updatedPlaylist);
 
             //NOTE: drag list view does already manipulate the data list (do not change playlistListAdapter.getItemList())!!!
             if(!playlistName.isEmpty()){

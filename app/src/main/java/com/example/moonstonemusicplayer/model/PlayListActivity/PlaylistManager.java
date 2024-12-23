@@ -10,12 +10,16 @@ package com.example.moonstonemusicplayer.model.PlayListActivity;
 
 import android.content.Context;
 
+import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
+import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.Playlist;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 //import com.example.moonstonemusicplayer.model.Database.DBSonglists;
 
@@ -28,7 +32,7 @@ public class PlaylistManager {
     private final Context context;
 
 
-    private final List<File> playList; //the songs to be played
+    private List<File> playList; //the songs to be played
     private List<File> displayedSongList = new ArrayList<>(); //the songs to be displayed by
 
     public PlaylistManager(Context baseContext, File[] playlist) {
@@ -116,6 +120,11 @@ public class PlaylistManager {
         //DBSonglists.getInstance(context).deleteAllSongs();
         playList.clear();
         displayedSongList.clear();
+    }
+
+    public void updatePlaylist(Playlist updatedPlaylist) {
+        this.displayedSongList = updatedPlaylist.getPlaylist().stream().map(BrowserManager::getFileFromSong).collect(Collectors.toList());
+        this.playList = updatedPlaylist.getPlaylist().stream().map(BrowserManager::getFileFromSong).collect(Collectors.toList());
     }
 
 
