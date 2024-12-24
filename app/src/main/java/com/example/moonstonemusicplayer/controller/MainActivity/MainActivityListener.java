@@ -540,21 +540,7 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
       if (serviceBound && mediaPlayerService != null) {
         Intent intent = new Intent(mainActivity, PlayListActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-
-        // Add required extras based on current playback
-        // We need to determine which fragment's songlist is currently playing
-        // and add the appropriate extra
-        /*
-        Song currentSong = mediaPlayerService.getCurrentSong();
-        if (currentSong != null) {
-          if (currentSong.getDuration_ms() >= Audiobook.AUDIOBOOK_CUTOFF_MS) {
-            intent.putExtra(AudiobookFragment.FOLDERAUDIOBOOKINDEXEXTRA, 0);
-          } else {
-            intent.putExtra(FolderFragment.FOLDERSONGINDEXEXTRA, 0);
-          }
-        }
-        */
-
+        //NOTE: recovery of playlist activity should be handled by itself (via savedInstanceState)
         mainActivity.startActivity(intent);
       }
     });

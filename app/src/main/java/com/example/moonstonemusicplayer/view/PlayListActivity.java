@@ -96,7 +96,8 @@ public class PlayListActivity extends AppCompatActivity {
       this.tv_title.setText(savedInstanceState.getString("currentTitle"));
       this.tv_artist.setText(savedInstanceState.getString("currentArtist"));
 
-      // Reconnect to service and restore state
+      //TODO: Reconnect to service and restore state
+      /*
       if (isServiceBound && mediaPlayerService != null) {
         playlistManager.setPlayList(mediaPlayerService.getPlayList());
         songListAdapter.setSelectedSongPath(savedSongPath);
@@ -109,6 +110,7 @@ public class PlayListActivity extends AppCompatActivity {
           animateMediaplayerProgressOnSeekbar();
         }
       }
+       */
     }
 
     int song_index = 0;
