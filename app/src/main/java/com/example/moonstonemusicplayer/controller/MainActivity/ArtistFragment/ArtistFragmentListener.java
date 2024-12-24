@@ -18,7 +18,7 @@ import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.model.MainActivity.AlbumFragment.Album;
 import com.example.moonstonemusicplayer.model.MainActivity.ArtistFragment.Artist;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
-import com.example.moonstonemusicplayer.view.PlayListActivityListener;
+import com.example.moonstonemusicplayer.view.PlayListActivity;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.ArtistFragment;
 
 import java.io.File;
@@ -82,7 +82,7 @@ public class ArtistFragmentListener implements AdapterView.OnItemClickListener, 
   /** starts playlistactivity with selected songlist; playlistactivity grabs songlist by calling getPlaylistSonglist*/
   public void startAlbumSonglist(List<Song> albumSongList, int song_index){
     AlbumSongList = new ArrayList<>(albumSongList);
-    Intent intent = new Intent(artistFragment.getActivity(), PlayListActivityListener.class);
+    Intent intent = new Intent(artistFragment.getActivity(), PlayListActivity.class);
     intent.putExtra(ARTISTALBUMLISTEXTRA,song_index);
     artistFragment.startActivity(intent);
   }

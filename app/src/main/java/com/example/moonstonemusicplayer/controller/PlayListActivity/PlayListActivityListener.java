@@ -18,8 +18,8 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.media.AudioManager;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
@@ -44,6 +44,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.example.moonstonemusicplayer.view.PlayListActivity;
 import com.woxthebox.draglistview.DragListView;
 
 import com.example.moonstonemusicplayer.R;
@@ -61,7 +62,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /** MainActivityListener
- *  Handles input from the User (through Views in {@link com.example.moonstonemusicplayer.view.PlayListActivityListener}),
+ *  Handles input from the User (through Views in {@link PlayListActivity}),
  *  changes the model {@link PlaylistManager}) according to the input and
  *  and, if necessary, sends messages to the {@link PlaylistManager}).
  */
@@ -75,7 +76,7 @@ public class PlayListActivityListener
   private static final int SINGLE_TAP_TIMEOUT = 400; // Custom timeout for single tap in milliseconds
 
 
-  public final com.example.moonstonemusicplayer.view.PlayListActivityListener playListActivity;
+  public final PlayListActivity playListActivity;
 
   PlaylistManager playlistManager;
 
@@ -89,7 +90,7 @@ public class PlayListActivityListener
   private Thread seekbarAnimationThread;
 
   @SuppressLint("ClickableViewAccessibility")
-  public PlayListActivityListener(com.example.moonstonemusicplayer.view.PlayListActivityListener playListActivity, File[] playlist, int starting_song_index, String playlist_name) {
+  public PlayListActivityListener(PlayListActivity playListActivity, File[] playlist, int starting_song_index, String playlist_name) {
     if(DEBUG)Log.d(TAG,"selected song: "+playlist[starting_song_index].getName());
     this.playListActivity = playListActivity;
     this.playlistName = playlist_name;
@@ -148,6 +149,20 @@ public class PlayListActivityListener
 
   }
 
+  public void onSaveInstanceState(Bundle outState) {
+    if (isServiceBound && mediaPlayerService != null) {
+      // Save current playback state
+      outState.putInt("currentPosition", mediaPlayerService.getCurrentPosition());
+      outState.putString("currentSongPath", mediaPlayerService.getCurrentSong().getPath());
+      outState.putBoolean("isPlaying", mediaPlayerService.isPlayingMusic());
+      outState.putString("playlistName", playlistName);
+
+      // Save any UI state
+      outState.putInt("seekBarProgress", playListActivity.seekBar.getProgress());
+      outState.putString("currentTitle", playListActivity.tv_title.getText().toString());
+      outState.putString("currentArtist", playListActivity.tv_artist.getText().toString());
+    }
+  }
 
   public boolean onOptionsItemSelected(MenuItem item) {
     switch (item.getItemId()){

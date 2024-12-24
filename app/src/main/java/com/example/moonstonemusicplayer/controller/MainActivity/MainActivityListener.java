@@ -9,6 +9,7 @@
 package com.example.moonstonemusicplayer.controller.MainActivity;
 
 import android.app.Activity;
+import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -33,11 +34,14 @@ import androidx.fragment.app.Fragment;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.PlayListActivity.MediaPlayerService;
+import com.example.moonstonemusicplayer.controller.PlayListActivity.PlayListActivityListener;
 import com.example.moonstonemusicplayer.controller.PlayListActivity.PlaylistJsonHandler;
 import com.example.moonstonemusicplayer.model.Database.PlaylistUtil;
 import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.Playlist;
+import com.example.moonstonemusicplayer.model.PlayListActivity.Audiobook;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import com.example.moonstonemusicplayer.view.MainActivity;
+import com.example.moonstonemusicplayer.view.PlayListActivity;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.AlbumFragment;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.ArtistFragment;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.AudiobookFragment;
@@ -533,13 +537,14 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
 
     // Click on the LinearLayout (except button) to resume PlaylistActivity
     miniPlayerControls.setOnClickListener(v -> {
-      /*if (serviceBound && mediaPlayerService != null) {
+      if (serviceBound && mediaPlayerService != null) {
         Intent intent = new Intent(mainActivity, PlayListActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 
         // Add required extras based on current playback
         // We need to determine which fragment's songlist is currently playing
         // and add the appropriate extra
+        /*
         Song currentSong = mediaPlayerService.getCurrentSong();
         if (currentSong != null) {
           if (currentSong.getDuration_ms() >= Audiobook.AUDIOBOOK_CUTOFF_MS) {
@@ -548,11 +553,10 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
             intent.putExtra(FolderFragment.FOLDERSONGINDEXEXTRA, 0);
           }
         }
+        */
 
         mainActivity.startActivity(intent);
       }
-
-       */
     });
 
 
@@ -580,6 +584,8 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
         }
       }
     });
+
+
   }
 
   private void startSeekBarUpdate() {

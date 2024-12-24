@@ -41,7 +41,7 @@ import com.example.moonstonemusicplayer.model.PlayListActivity.Audiobook;
 import com.example.moonstonemusicplayer.model.PlayListActivity.PlayListModel;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import com.example.moonstonemusicplayer.model.PlaytimePersistence;
-import com.example.moonstonemusicplayer.view.PlayListActivityListener;
+import com.example.moonstonemusicplayer.view.PlayListActivity;
 
 import java.io.File;
 import java.io.IOException;
@@ -522,7 +522,7 @@ public class MediaPlayerService extends Service
 
   private void showNotification(){
     //setting up the notification intent
-    final Intent notificationIntent = new Intent(MediaPlayerService.this, PlayListActivityListener.class);
+    final Intent notificationIntent = new Intent(MediaPlayerService.this, PlayListActivity.class);
     notificationIntent.setAction(Intent.ACTION_MAIN);
     notificationIntent.addCategory(Intent.CATEGORY_LAUNCHER);
     notificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

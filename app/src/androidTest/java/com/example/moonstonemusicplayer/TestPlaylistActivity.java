@@ -9,7 +9,7 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
-import com.example.moonstonemusicplayer.view.PlayListActivityListener;
+import com.example.moonstonemusicplayer.view.PlayListActivity;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -33,14 +33,14 @@ import static org.hamcrest.Matchers.allOf;
 public class TestPlaylistActivity {
 
   @Rule
-  public ActivityScenarioRule<PlayListActivityListener> activityRule
-          = new ActivityScenarioRule<>(PlayListActivityListener.class);
+  public ActivityScenarioRule<PlayListActivity> activityRule
+          = new ActivityScenarioRule<>(PlayListActivity.class);
 
 
   @Test
   /** click all surface main elements (tabs) */
   public void playSong() {
-    PlayListActivityListener playListActivity = (PlayListActivityListener) getCurrentActivity();
+    PlayListActivity playListActivity = (PlayListActivity) getCurrentActivity();
     //init playlistListener with songlist
     playListActivity.setPlayListActivityListener(new com.example.moonstonemusicplayer.controller.PlayListActivity.PlayListActivityListener(playListActivity, new Song[0] ,0, ""));
   }

@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Build;
@@ -50,10 +51,10 @@ import java.io.File;
   * Contains all Views and sets Listeners for them.
   * Delegates the creation and management (itemselection) of the optionsmenu to the  {@link com.example.moonstonemusicplayer.controller.PlayListActivity.PlayListActivityListener}.
 */
-public class PlayListActivityListener extends AppCompatActivity {
+public class PlayListActivity extends AppCompatActivity {
 
 
-  private static final String TAG = PlayListActivityListener.class.getName();
+  private static final String TAG = PlayListActivity.class.getName();
   private static final boolean DEBUG = true;
   com.example.moonstonemusicplayer.controller.PlayListActivity.PlayListActivityListener playListActivityListener;
   public DragListView dlv_songlist;
@@ -82,6 +83,33 @@ public class PlayListActivityListener extends AppCompatActivity {
     tv_title = findViewById(R.id.tv_name);
     tv_artist = findViewById(R.id.tv_artist);
     LL_MusicControlls = findViewById(R.id.LL_MusicControlls);
+
+    if (savedInstanceState != null) {
+      // Restore state
+      String savedSongPath = savedInstanceState.getString("currentSongPath");
+      int savedPosition = savedInstanceState.getInt("currentPosition");
+      boolean wasPlaying = savedInstanceState.getBoolean("isPlaying");
+      String savedPlaylistName = savedInstanceState.getString("playlistName");
+
+      // Restore UI state
+      this.seekBar.setProgress(savedInstanceState.getInt("seekBarProgress"));
+      this.tv_title.setText(savedInstanceState.getString("currentTitle"));
+      this.tv_artist.setText(savedInstanceState.getString("currentArtist"));
+
+      // Reconnect to service and restore state
+      if (isServiceBound && mediaPlayerService != null) {
+        playlistManager.setPlayList(mediaPlayerService.getPlayList());
+        songListAdapter.setSelectedSongPath(savedSongPath);
+
+        if (wasPlaying) {
+          mediaPlayerService.resume();
+          playListActivity.btn_play_pause.setBackground(
+                  playListActivity.getDrawable(R.drawable.ic_pause)
+          );
+          animateMediaplayerProgressOnSeekbar();
+        }
+      }
+    }
 
     int song_index = 0;
     String playlist_name = "";
@@ -142,6 +170,9 @@ public class PlayListActivityListener extends AppCompatActivity {
   @Override
   public void onBackPressed() {
     playListActivityListener.onBackPressed();
+    Intent intent = new Intent(this, MainActivity.class);
+    intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+    startActivity(intent);
     super.onBackPressed();
   }
 
@@ -153,6 +184,11 @@ public class PlayListActivityListener extends AppCompatActivity {
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     return playListActivityListener.onCreateOptionsMenu(menu);
+  }
+
+  @Override
+  public void onResume(){
+      super.onResume();
   }
 
   @Override

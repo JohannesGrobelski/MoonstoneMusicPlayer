@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
   private final int PERMISSION_REQUEST_MEDIA_AUDIO = 679;
   private static final int IMPORT_PLAYLIST_REQUEST_CODE = 680;
   public static final String SONG_DIRECT_EXTRA = "SONG_DIRECT_EXTRA";
+  public static final String RESUME_PLAYLIST = "RESUME_PLAYLIST";
 
 
   private static final String TAG = MainActivity.class.getSimpleName();
@@ -245,7 +246,7 @@ public class MainActivity extends AppCompatActivity {
       if (filePath != null) {
         // Launch PlayListActivity with the selected file
         Toast.makeText(this, "Incoming: "+filePath, Toast.LENGTH_LONG).show();
-        Intent intentPlaylistActivity = new Intent(this, PlayListActivityListener.class);
+        Intent intentPlaylistActivity = new Intent(this, PlayListActivity.class);
         intentPlaylistActivity.putExtra(SONG_DIRECT_EXTRA,filePath);
         this.startActivity(intentPlaylistActivity);
       } else {
