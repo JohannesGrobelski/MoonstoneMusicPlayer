@@ -9,6 +9,7 @@
 package com.example.moonstonemusicplayer.view;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -24,6 +25,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.IntentSenderRequest;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
@@ -59,6 +63,8 @@ public class MainActivity extends AppCompatActivity {
   public NonSwipeableViewPager viewPager;
   TabLayout tabs;
   public int tabSelected = -1;
+
+  private ActivityResultLauncher<IntentSenderRequest> deletetionIntentSenderLauncher;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -110,6 +116,17 @@ public class MainActivity extends AppCompatActivity {
     showMediaAudioPermission();
 
     PlayListFragment.preloadPlaylistManager(this);
+
+    deletetionIntentSenderLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartIntentSenderForResult(), result -> {
+              if (result.getResultCode() == Activity.RESULT_OK) {
+                // Handle the successful deletion
+                System.out.println("File deletion confirmed.");
+              } else {
+                // Handle the cancellation or failure
+                System.out.println("File deletion was not confirmed.");
+              }
+            });
   }
 
   @Override
@@ -182,6 +199,10 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(this, "Permission Denied", Toast.LENGTH_LONG).show();
       }
     }
+  }
+
+  public ActivityResultLauncher<IntentSenderRequest> getDeletetionIntentSenderLauncher() {
+    return deletetionIntentSenderLauncher;
   }
 
   public void requestWritePermission() {

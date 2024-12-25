@@ -12,6 +12,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -173,6 +174,7 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
         menu.add(0, 1, 0, "zu Favoriten hinzufügen");
         menu.add(0, 2, 0, "zu Playlists hinzufügen");
         menu.add(0, 3, 0, "als nächstes abspielen");
+        menu.add(0, 4, 0, "Song löschen");
       }
     } catch (Exception e){
       Log.e(TAG,e.toString());
@@ -208,6 +210,11 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
           }
           case 3: {
             NextSongToPlayUtility.setSongToPlayNext(selectedSong);
+            return true;
+          }
+          case 4: {
+            BrowserManager.deleteFile(folderFragment.getActivity(), ((MainActivity) folderFragment.getActivity()).getDeletetionIntentSenderLauncher(), selectedSong.getPath());
+            setAdapter(this.selectedFolder);
             return true;
           }
         }

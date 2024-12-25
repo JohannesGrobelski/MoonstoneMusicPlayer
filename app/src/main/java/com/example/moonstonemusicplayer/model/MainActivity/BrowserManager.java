@@ -8,7 +8,10 @@
 
 package com.example.moonstonemusicplayer.model.MainActivity;
 
+import android.app.RecoverableSecurityException;
+import android.content.ContentResolver;
 import android.content.Context;
+import android.content.IntentSender;
 import android.database.Cursor;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
@@ -17,17 +20,26 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.IntentSenderRequest;
+
 import com.example.moonstonemusicplayer.model.PlayListActivity.Audiobook;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Audiofile;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import kotlinx.coroutines.CoroutineScope;
+import kotlinx.coroutines.CoroutineScopeKt;
 
 /** Singleton
  *
@@ -52,6 +64,9 @@ public class BrowserManager {
 
   private static final String TAG = BrowserManager.class.getSimpleName();
   private final Context context;
+
+  private static final ExecutorService executor = Executors.newSingleThreadExecutor();
+
 
   private File rootFolder;
 
@@ -226,13 +241,18 @@ public class BrowserManager {
    * @return
    */
   public static Song getSongFromAudioFile(File file){
-    if(audiofileSongMap.containsKey(file)){
-      return audiofileSongMap.get(file);
-    } else {
-      Audiofile audiofile = parseSongFromAudioFile(file);
-      Song song = new Song(audiofile.getPath(), audiofile.getName(), audiofile.getArtist(), audiofile.getAlbum(), audiofile.getGenre(), audiofile.getDuration_ms(), audiofile.getLyrics());
-      audiofileSongMap.put(file,song);
-      return song;
+    try {
+      if(audiofileSongMap.containsKey(file)){
+        return audiofileSongMap.get(file);
+      } else {
+        Audiofile audiofile = parseSongFromAudioFile(file);
+        Song song = new Song(audiofile.getPath(), audiofile.getName(), audiofile.getArtist(), audiofile.getAlbum(), audiofile.getGenre(), audiofile.getDuration_ms(), audiofile.getLyrics());
+        audiofileSongMap.put(file,song);
+        return song;
+      }
+    } catch (Exception e){
+      Log.e(TAG, e.toString());
+      return null;
     }
   }
 
@@ -255,6 +275,8 @@ public class BrowserManager {
       return audiobook;
     }
   }
+
+
 
 
   private static Audiofile parseSongFromAudioFile(File file){
@@ -335,6 +357,70 @@ public class BrowserManager {
       case "other": return "Andere";
       default: return genre;
     }
+  }
+
+  public static void deleteFile(Context context, ActivityResultLauncher<IntentSenderRequest> deletetionIntentSenderLauncher, String filePath) {
+    Uri dataUri = getContentUriFromFilePath(context, filePath);
+      executor.execute(() -> {
+        try {
+          context.getContentResolver().delete(dataUri, null, null);
+        } catch (SecurityException e) {
+          IntentSender intentSender = null;
+          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            try {
+              intentSender = MediaStore.createDeleteRequest(
+                      context.getContentResolver(),
+                      Collections.singletonList(dataUri)
+              ).getIntentSender();
+            } catch (Exception ex) {
+              ex.printStackTrace();
+            }
+          } else {
+            if (e instanceof RecoverableSecurityException) {
+              RecoverableSecurityException recoverableSecurityException = (RecoverableSecurityException) e;
+              intentSender = recoverableSecurityException.getUserAction()
+                      .getActionIntent()
+                      .getIntentSender();
+            }
+          }
+
+          if (intentSender != null) {
+            deletetionIntentSenderLauncher.launch(new IntentSenderRequest.Builder(intentSender).build());
+          }
+        }
+      });
+      //TODO: update files
+      BrowserManager.reloadFilesInstance(context);
+  }
+
+  private static Uri getContentUriFromFilePath(Context context, String filePath) {
+    Uri contentUri = null;
+    Cursor cursor = null;
+
+    try {
+      String[] projection = {MediaStore.MediaColumns._ID};
+      String selection = MediaStore.MediaColumns.DATA + "=?";
+      String[] selectionArgs = new String[]{filePath};
+
+      cursor = context.getContentResolver().query(
+              MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,  // Use appropriate MediaStore for your file type
+              projection,
+              selection,
+              selectionArgs,
+              null
+      );
+
+      if (cursor != null && cursor.moveToFirst()) {
+        int id = cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns._ID));
+        contentUri = Uri.withAppendedPath(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, String.valueOf(id));
+      }
+    } finally {
+      if (cursor != null) {
+        cursor.close();
+      }
+    }
+
+    return contentUri;
   }
 
   private static List<File> getAllAudioFiles(Context context) {
