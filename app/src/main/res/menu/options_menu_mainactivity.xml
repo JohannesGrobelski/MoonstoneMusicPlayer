@@ -47,16 +47,10 @@
        <menu>
            <item
                android:id="@+id/action_export_playlists"
-               android:orderInCategory="100"
-               android:title="Export Playlists"
-               android:visible="false"
-               app:showAsAction="never" />
+               android:title="Export Playlists"/>
            <item
                android:id="@+id/action_import_playlists"
-               android:orderInCategory="100"
-               android:title="Import Playlists"
-               android:visible="false"
-               app:showAsAction="never" />
+               android:title="Import Playlists" />
        </menu>
     </item>
 </menu>

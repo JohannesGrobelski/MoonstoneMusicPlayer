@@ -208,14 +208,6 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
     mainActivity.searchView = (SearchView) searchItem.getActionView();
     mainActivity.searchView.setOnQueryTextListener(this);
 
-    // Show import/export options only when playlist tab is selected
-    MenuItem exportItem = menu.findItem(R.id.action_export_playlists);
-    MenuItem importItem = menu.findItem(R.id.action_import_playlists);
-
-    int tabSelected = mainActivity.viewPager.getCurrentItem();
-    exportItem.setVisible(tabSelected == 2); // 2 is playlist tab
-    importItem.setVisible(tabSelected == 2);
-
     return true;
   }
 
