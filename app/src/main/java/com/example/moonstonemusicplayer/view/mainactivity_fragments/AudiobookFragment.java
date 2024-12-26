@@ -37,6 +37,7 @@ public class AudiobookFragment extends Fragment {
   private static final String TAG = AudiobookFragment.class.getSimpleName();
   private static final boolean DEBUG = false;
   private AudiobookFragmentListener audiobookFragmentListener;
+  private boolean isFragmentVisible = false;
 
 
   //Views
@@ -83,6 +84,28 @@ public class AudiobookFragment extends Fragment {
     return view;
   }
 
+  @Override
+  public void setUserVisibleHint(boolean isVisibleToUser) {
+    super.setUserVisibleHint(isVisibleToUser);
+    isFragmentVisible = isVisibleToUser;
+  }
+
+  @Override
+  public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v, @Nullable ContextMenu.ContextMenuInfo menuInfo) {
+    if (!isFragmentVisible) {
+      return;
+    }
+    audiobookFragmentListener.onCreateContextMenu(menu, v, menuInfo);
+  }
+
+  @Override
+  public boolean onContextItemSelected(@NonNull MenuItem item) {
+    if (!isFragmentVisible) {
+      return false;
+    }
+    return audiobookFragmentListener.onContextItemSelected(item);
+  }
+
   private void initViews(){
     lv_folderList.setOnItemClickListener(audiobookFragmentListener);
     ll_folder_back.setOnClickListener(audiobookFragmentListener);
@@ -90,7 +113,7 @@ public class AudiobookFragment extends Fragment {
     srl_folder.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
       @Override
       public void onRefresh() {
-        audiobookFragmentListener.refreshFolderList();
+        audiobookFragmentListener.refreshAfterSongDeletion();
       }
     });
   }
@@ -124,6 +147,10 @@ public class AudiobookFragment extends Fragment {
 
   public void sortSongsByGenre() {
     audiobookFragmentListener.sortSongsByGenre();
+  }
+
+  public void refreshFolderList(){
+    audiobookFragmentListener.refreshAfterSongDeletion();
   }
 
 }

@@ -8,22 +8,31 @@
 
 package com.example.moonstonemusicplayer.controller.MainActivity.AudiobookFragment;
 
+import static com.example.moonstonemusicplayer.controller.MainActivity.SharedUtility.showAlertDialogAddToPlaylists;
+
 import android.content.Intent;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Toast;
 
 import com.example.moonstonemusicplayer.R;
+import com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists;
 import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
+import com.example.moonstonemusicplayer.model.NextSongToPlayUtility;
+import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
+import com.example.moonstonemusicplayer.view.MainActivity;
 import com.example.moonstonemusicplayer.view.PlayListActivityListener;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.AudiobookFragment;
+import com.example.moonstonemusicplayer.view.mainactivity_fragments.PlayListFragment;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AudiobookFragmentListener implements AdapterView.OnItemClickListener, View.OnClickListener {
+public class AudiobookFragmentListener implements AdapterView.OnItemClickListener, View.OnClickListener, BrowserManager.AfterFileDeletion {
   private static final String TAG = AudiobookFragmentListener.class.getSimpleName();
   private static final boolean DEBUG = false;
   private static File[] AudiobookAudiobooklist;
@@ -94,7 +103,12 @@ public class AudiobookFragmentListener implements AdapterView.OnItemClickListene
       this.displayedItems = BrowserManager.getChildrenMatchingQuery(folder, this.searchQuery, BrowserManager.Filter.AUDIOBOOKS);
     }
     this.folderListAdapter = new AudiobookListAdapter(audiobookFragment.getContext(),this.displayedItems);
-    audiobookFragment.lv_folderList.setAdapter(folderListAdapter);
+    audiobookFragment.getActivity().runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
+        audiobookFragment.lv_folderList.setAdapter(folderListAdapter);
+      }
+    });
   }
 
   /** If clicked on "ll_back_folder" go to parent folder
@@ -140,6 +154,83 @@ public class AudiobookFragmentListener implements AdapterView.OnItemClickListene
     return false;
   }
 
+  /** Defines the options of the context menu in the folder fragment:
+   *  1) add to favorites
+   *  2) add to playlist
+   *
+   * @param menu
+   * @param v
+   * @param menuInfo
+   */
+  public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+    try {
+      AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+      int clickedPosition = info.position;
+      //only show context menu if clicked on song
+      if((BrowserManager.getDirectories(this.selectedAudiobook, BrowserManager.Filter.SONGS).length <= clickedPosition)){
+        menu.add(0, 1, 0, "zu Favoriten hinzufügen");
+        menu.add(0, 2, 0, "zu Playlists hinzufügen");
+        menu.add(0, 3, 0, "als nächstes abspielen");
+        menu.add(0, 4, 0, "Hörbuch löschen");
+      }
+    } catch (Exception e){
+      Log.e(TAG,e.toString());
+      Toast.makeText(folderListAdapter.getContext(), "ERROR: Could not open context menu", Toast.LENGTH_LONG).show();
+    }
+  }
+
+  /** Implements the options of the context menu (defined above, in onCreateContextMenu(...))
+   *
+   *
+   * @param item
+   * @return
+   */
+  public boolean onContextItemSelected(MenuItem item) {
+    try {
+      //only react to context menu in this fragment (with id 0)
+      if(item.getGroupId() == 0){
+        //calculate th
+        // e index of the song clicked
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        int index = info.position;
+        index -= BrowserManager.getDirectories(this.selectedAudiobook, BrowserManager.Filter.SONGS).length;
+        Song selectedSong = BrowserManager.getChildAudiobooks(this.selectedAudiobook)[index];
+
+        switch (item.getItemId()){
+          case 1: {
+            DBPlaylists.getInstance(audiobookFragment.getActivity()).addToFavorites(audiobookFragment.getContext(),selectedSong);
+            refreshAfterSongDeletion();
+            break;
+          }
+          case 2:  {
+            showAlertDialogAddToPlaylists(audiobookFragment.getLayoutInflater(), folderListAdapter.getContext(), selectedSong);
+            break;
+          }
+          case 3: {
+            NextSongToPlayUtility.setSongToPlayNext(selectedSong);
+            return true;
+          }
+          case 4: {
+            BrowserManager.deleteFile(this, audiobookFragment.getContext(), ((MainActivity) audiobookFragment.getActivity()).getDeletetionIntentSenderLauncher(),selectedSong.getPath());
+            return true;
+          }
+        }
+
+        ((PlayListFragment) ((MainActivity) audiobookFragment.getActivity())
+                .sectionsPagerAdapter.getFragments()[1])
+                .getPlaylistManager().loadPlaylistsFromDB(audiobookFragment.getActivity());
+        ((PlayListFragment) ((MainActivity) audiobookFragment.getActivity())
+                .sectionsPagerAdapter.getFragments()[1])
+                .playlistFragmentListener.playlistListAdapter.notifyDataSetChanged();
+      }
+      return true;
+    } catch (Exception e){
+      Log.e(TAG, e.toString());
+      Toast.makeText(audiobookFragment.getContext(),item.getItemId()==1 ? "ERROR: Could not add song to favorites." : "ERROR: Could not song add to playlist.", Toast.LENGTH_LONG).show();
+      return false;
+    }
+  }
+
 
   public void startAudiobookAudiobooklist(File[] playlist, int audiobook_index, AudiobookFragment audiobookFragment){
     AudiobookAudiobooklist = playlist.clone();
@@ -176,20 +267,6 @@ public class AudiobookFragmentListener implements AdapterView.OnItemClickListene
     Toast.makeText(audiobookFragment.getContext(), "TO BE IMPLEMENTED", Toast.LENGTH_LONG).show();
   }
 
-  public void refreshFolderList(){
-    // Simulate refreshing (e.g., fetch new data)
-    new Thread(() -> {
-      //implement refresh
-      BrowserManager.reloadFilesInstance(audiobookFragment.getContext());
-
-      if (audiobookFragment.getActivity() != null) {
-        audiobookFragment.getActivity().runOnUiThread(() -> {
-          // Stop the refreshing animation
-          audiobookFragment.srl_folder.setRefreshing(false);
-        });
-      }
-    }).start();
-  }
 
   public void sortSongsByName() {
     Toast.makeText(audiobookFragment.getContext(), "TO BE IMPLEMENTED", Toast.LENGTH_LONG).show();
@@ -205,5 +282,24 @@ public class AudiobookFragmentListener implements AdapterView.OnItemClickListene
 
   public void sortSongsByGenre() {
     Toast.makeText(audiobookFragment.getContext(), "TO BE IMPLEMENTED", Toast.LENGTH_LONG).show();
+  }
+
+  @Override
+  public void refreshAfterSongDeletion() {
+    // Simulate refreshing (e.g., fetch new data)
+    new Thread(() -> {
+      //implement refresh
+      String selectedFolderPath = this.selectedAudiobook.getPath();
+      BrowserManager.reloadFilesInstance(audiobookFragment.getContext());
+      this.selectedAudiobook = new File(selectedFolderPath);
+      setAdapter(this.selectedAudiobook);
+
+      if (audiobookFragment.getActivity() != null) {
+        audiobookFragment.getActivity().runOnUiThread(() -> {
+          // Stop the refreshing animation
+          audiobookFragment.srl_folder.setRefreshing(false);
+        });
+      }
+    }).start();
   }
 }

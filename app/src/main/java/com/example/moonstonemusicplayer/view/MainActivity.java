@@ -20,6 +20,7 @@ import android.os.Bundle;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.MainActivity.MainActivityListener;
+import com.example.moonstonemusicplayer.view.mainactivity_fragments.AudiobookFragment;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.FolderFragment;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.PlayListFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -126,6 +127,9 @@ public class MainActivity extends AppCompatActivity {
                 switch (position){
                   case 0: {
                     ((FolderFragment) sectionsPagerAdapter.getFragments()[position]).refreshFolderList();
+                  }
+                  case 1: {
+                    ((AudiobookFragment) sectionsPagerAdapter.getFragments()[position]).refreshFolderList();
                   }
                 }
               } else {

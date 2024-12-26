@@ -8,13 +8,10 @@
 
 package com.example.moonstonemusicplayer.view.mainactivity_fragments;
 
-import android.Manifest;
-import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
@@ -30,8 +27,6 @@ import android.widget.TextView;
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.MainActivity.FolderFragment.FolderFragmentListener;
 
-import java.util.Objects;
-
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link FolderFragment#newInstance} factory method to
@@ -44,6 +39,7 @@ public class FolderFragment extends Fragment {
   private static final boolean DEBUG = false;
   private FolderFragmentListener folderFragmentListener;
 
+  private boolean isFragmentVisible = false;
 
   //Views
   public SwipeRefreshLayout srl_folder;
@@ -90,16 +86,25 @@ public class FolderFragment extends Fragment {
     return view;
   }
 
-
-
+  @Override
+  public void setUserVisibleHint(boolean isVisibleToUser) {
+    super.setUserVisibleHint(isVisibleToUser);
+    isFragmentVisible = isVisibleToUser;
+  }
 
   @Override
   public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v, @Nullable ContextMenu.ContextMenuInfo menuInfo) {
+    if (!isFragmentVisible) {
+      return;
+    }
     folderFragmentListener.onCreateContextMenu(menu, v, menuInfo);
   }
 
   @Override
   public boolean onContextItemSelected(@NonNull MenuItem item) {
+    if (!isFragmentVisible) {
+      return false;
+    }
     return folderFragmentListener.onContextItemSelected(item);
   }
 
@@ -111,7 +116,7 @@ public class FolderFragment extends Fragment {
     srl_folder.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
       @Override
       public void onRefresh() {
-        folderFragmentListener.refreshFolderList();
+        folderFragmentListener.refreshAfterSongDeletion();
       }
     });
   }
@@ -145,6 +150,6 @@ public class FolderFragment extends Fragment {
   }
 
   public void refreshFolderList(){
-    folderFragmentListener.refreshFolderList();
+    folderFragmentListener.refreshAfterSongDeletion();
   }
 }

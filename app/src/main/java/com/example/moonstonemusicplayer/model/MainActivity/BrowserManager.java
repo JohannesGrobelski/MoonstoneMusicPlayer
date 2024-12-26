@@ -9,7 +9,6 @@
 package com.example.moonstonemusicplayer.model.MainActivity;
 
 import android.app.RecoverableSecurityException;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.IntentSender;
 import android.database.Cursor;
@@ -23,7 +22,6 @@ import android.util.Log;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.IntentSenderRequest;
 
-import com.example.moonstonemusicplayer.controller.MainActivity.FolderFragment.FolderFragmentListener;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Audiobook;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Audiofile;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
@@ -39,9 +37,6 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import kotlinx.coroutines.CoroutineScope;
-import kotlinx.coroutines.CoroutineScopeKt;
-
 /** Singleton
  *
  */
@@ -49,6 +44,10 @@ public class BrowserManager {
 
   public enum Filter {
     AUDIOBOOKS, SONGS
+  }
+
+  public interface AfterFileDeletion{
+    void refreshAfterSongDeletion();
   }
 
   private static BrowserManager instance;
@@ -204,17 +203,19 @@ public class BrowserManager {
     return songs.toArray(new Song[songs.size()]);
   }
 
-  public static Audiobook[] getChildAudiobooks(File file){
-    List<Audiobook> audiobooks = new ArrayList<>();
-    if(file != null && file.listFiles() != null){
+  public static Song[] getChildAudiobooks(File file){
+    List<Song> audiobooks = new ArrayList<>();
+    if(file != null && file.exists() && file.listFiles() != null){
       for(File audioFile : BrowserManager.audioFiles){
-        if(isDirectChildFile(file, audioFile) &&
-                parseSongFromAudioFile(file).getDuration_ms() >= Audiobook.AUDIOBOOK_CUTOFF_MS){
-          audiobooks.add(BrowserManager.getAudiobookFromAudioFile(audioFile));
+        if(isDirectChildFile(file, audioFile)){
+          Audiofile audiofileObject = parseSongFromAudioFile(audioFile);
+          if(audiofileObject != null && audiofileObject.getDuration_ms() >= Audiobook.AUDIOBOOK_CUTOFF_MS){
+            audiobooks.add(BrowserManager.getSongFromAudioFile(audioFile));
+          }
         }
       }
     }
-    return audiobooks.toArray(new Audiobook[audiobooks.size()]);
+    return audiobooks.toArray(new Song[audiobooks.size()]);
   }
 
   public static File[] getChildFiles(File file, Filter filter){
@@ -362,12 +363,12 @@ public class BrowserManager {
     }
   }
 
-  public static void deleteFile(FolderFragmentListener folderFragmentListener, Context context, ActivityResultLauncher<IntentSenderRequest> deletetionIntentSenderLauncher, String filePath) {
+  public static void deleteFile(AfterFileDeletion afterFileDeletion, Context context, ActivityResultLauncher<IntentSenderRequest> deletetionIntentSenderLauncher, String filePath) {
     Uri dataUri = getContentUriFromFilePath(context, filePath);
       executor.execute(() -> {
         try {
           context.getContentResolver().delete(dataUri, null, null);
-          folderFragmentListener.refreshFolderList();
+          afterFileDeletion.refreshAfterSongDeletion();
         } catch (SecurityException e) {
           IntentSender intentSender = null;
           if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {

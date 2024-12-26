@@ -8,20 +8,14 @@
 
 package com.example.moonstonemusicplayer.controller.MainActivity.FolderFragment;
 
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
+import static com.example.moonstonemusicplayer.controller.MainActivity.SharedUtility.showAlertDialogAddToPlaylists;
+
 import android.content.Intent;
-import android.net.Uri;
 import android.util.Log;
 import android.view.ContextMenu;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.moonstonemusicplayer.R;
@@ -39,7 +33,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FolderFragmentListener implements AdapterView.OnItemClickListener, View.OnClickListener {
+public class FolderFragmentListener implements AdapterView.OnItemClickListener, View.OnClickListener, BrowserManager.AfterFileDeletion {
   private static final String TAG = FolderFragmentListener.class.getSimpleName();
   private static final boolean DEBUG = false;
   private static File[] FolderSonglist;
@@ -207,7 +201,7 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
         switch (item.getItemId()){
           case 1: {
             DBPlaylists.getInstance(folderFragment.getActivity()).addToFavorites(folderFragment.getContext(),selectedSong);
-            refreshFolderList();
+            refreshAfterSongDeletion();
             break;
           }
           case 2:  {
@@ -239,39 +233,7 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
     }
   }
 
-  public static void showAlertDialogAddToPlaylists(LayoutInflater inflater, Context context, final Song song){
-    final String[] allPlaylistNames = DBPlaylists.getInstance(context).getAllPlaylistNames();
 
-    View dialogView = inflater.inflate(R.layout.add_to_playlist_layout, null);
-    ListView lv_playlist_alert = dialogView.findViewById(R.id.lv_playlists_alert);
-    final EditText et_addNewPlaylist = dialogView.findViewById(R.id.et_addNewPlaylist);
-
-    lv_playlist_alert.setAdapter(new ArrayAdapter<String>(context,android.R.layout.simple_list_item_1,allPlaylistNames));
-
-    final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
-    dialogBuilder.setView(dialogView);
-    dialogBuilder.setNegativeButton(android.R.string.no,null);
-    dialogBuilder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-      @Override
-      public void onClick(DialogInterface dialog, int which) {
-        String text = et_addNewPlaylist.getText().toString();
-        if(!text.isEmpty()){
-          DBPlaylists.getInstance(context).addToPlaylist(context,song,text);
-        }
-      }
-    });
-    dialogBuilder.setTitle("Füge den Song einer Playlist hinzu \noder erstelle eine neue.");
-
-    final AlertDialog alertDialog  = dialogBuilder.show();
-
-    lv_playlist_alert.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-      @Override
-      public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        DBPlaylists.getInstance(context).addToPlaylist(context,song,allPlaylistNames[position]);
-        alertDialog.dismiss();
-      }
-    });
-  }
 
   public void startFolderSonglist(File[] playlist, int song_index, FolderFragment folderFragment){
     FolderSonglist = playlist.clone();
@@ -323,7 +285,9 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
     Toast.makeText(folderFragment.getContext(), "TO BE IMPLEMENTED", Toast.LENGTH_LONG).show();
   }
 
-  public void refreshFolderList(){
+
+  @Override
+  public void refreshAfterSongDeletion() {
     // Simulate refreshing (e.g., fetch new data)
     new Thread(() -> {
       //implement refresh
