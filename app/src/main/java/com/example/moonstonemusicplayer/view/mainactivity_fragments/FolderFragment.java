@@ -143,4 +143,8 @@ public class FolderFragment extends Fragment {
   public void reverse() {
     folderFragmentListener.reverse();
   }
+
+  public void refreshFolderList(){
+    folderFragmentListener.refreshFolderList();
+  }
 }

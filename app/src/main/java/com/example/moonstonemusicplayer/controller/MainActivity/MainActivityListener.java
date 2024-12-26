@@ -479,10 +479,6 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
     return false;
   }
 
-  public Fragment getCurrentFragment(int position){
-    return fragments[position];
-  }
-
   private void closeSearchBar() {
     if(mainActivity.searchView != null) {
       mainActivity.searchView.setIconified(true);

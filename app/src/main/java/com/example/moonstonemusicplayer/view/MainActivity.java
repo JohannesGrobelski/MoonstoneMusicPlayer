@@ -20,6 +20,7 @@ import android.os.Bundle;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.MainActivity.MainActivityListener;
+import com.example.moonstonemusicplayer.view.mainactivity_fragments.FolderFragment;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.PlayListFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -121,10 +122,14 @@ public class MainActivity extends AppCompatActivity {
             registerForActivityResult(new ActivityResultContracts.StartIntentSenderForResult(), result -> {
               if (result.getResultCode() == Activity.RESULT_OK) {
                 // Handle the successful deletion
-                System.out.println("File deletion confirmed.");
+                int position = viewPager.getCurrentItem();
+                switch (position){
+                  case 0: {
+                    ((FolderFragment) sectionsPagerAdapter.getFragments()[position]).refreshFolderList();
+                  }
+                }
               } else {
                 // Handle the cancellation or failure
-                System.out.println("File deletion was not confirmed.");
               }
             });
   }

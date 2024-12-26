@@ -23,6 +23,7 @@ import android.util.Log;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.IntentSenderRequest;
 
+import com.example.moonstonemusicplayer.controller.MainActivity.FolderFragment.FolderFragmentListener;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Audiobook;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Audiofile;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
@@ -241,6 +242,7 @@ public class BrowserManager {
    * @return
    */
   public static Song getSongFromAudioFile(File file){
+    if(file == null || !file.exists())return null;
     try {
       if(audiofileSongMap.containsKey(file)){
         return audiofileSongMap.get(file);
@@ -266,6 +268,7 @@ public class BrowserManager {
    * @return
    */
   public static Audiobook getAudiobookFromAudioFile(File file){
+    if(file == null || !file.exists())return null;
     if(audioFileAudiobookMap.containsKey(file)){
       return audioFileAudiobookMap.get(file);
     } else {
@@ -359,11 +362,12 @@ public class BrowserManager {
     }
   }
 
-  public static void deleteFile(Context context, ActivityResultLauncher<IntentSenderRequest> deletetionIntentSenderLauncher, String filePath) {
+  public static void deleteFile(FolderFragmentListener folderFragmentListener, Context context, ActivityResultLauncher<IntentSenderRequest> deletetionIntentSenderLauncher, String filePath) {
     Uri dataUri = getContentUriFromFilePath(context, filePath);
       executor.execute(() -> {
         try {
           context.getContentResolver().delete(dataUri, null, null);
+          folderFragmentListener.refreshFolderList();
         } catch (SecurityException e) {
           IntentSender intentSender = null;
           if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -383,14 +387,11 @@ public class BrowserManager {
                       .getIntentSender();
             }
           }
-
           if (intentSender != null) {
             deletetionIntentSenderLauncher.launch(new IntentSenderRequest.Builder(intentSender).build());
           }
         }
       });
-      //TODO: update files
-      BrowserManager.reloadFilesInstance(context);
   }
 
   private static Uri getContentUriFromFilePath(Context context, String filePath) {

@@ -111,7 +111,12 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
       this.displayedItems = BrowserManager.getChildrenMatchingQuery(folder, this.searchQuery, BrowserManager.Filter.SONGS);
     }
     this.folderListAdapter = new FolderListAdapter(folderFragment.getContext(),this.displayedItems);
-    folderFragment.lv_folderList.setAdapter(folderListAdapter);
+    folderFragment.getActivity().runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
+        folderFragment.lv_folderList.setAdapter(folderListAdapter);
+      }
+    });
   }
 
   /** If clicked on "ll_back_folder" go to parent folder
@@ -202,6 +207,7 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
         switch (item.getItemId()){
           case 1: {
             DBPlaylists.getInstance(folderFragment.getActivity()).addToFavorites(folderFragment.getContext(),selectedSong);
+            refreshFolderList();
             break;
           }
           case 2:  {
@@ -213,8 +219,7 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
             return true;
           }
           case 4: {
-            BrowserManager.deleteFile(folderFragment.getActivity(), ((MainActivity) folderFragment.getActivity()).getDeletetionIntentSenderLauncher(), selectedSong.getPath());
-            setAdapter(this.selectedFolder);
+            BrowserManager.deleteFile(this, folderFragment.getContext(), ((MainActivity) folderFragment.getActivity()).getDeletetionIntentSenderLauncher(), selectedSong.getPath());
             return true;
           }
         }
@@ -322,7 +327,10 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
     // Simulate refreshing (e.g., fetch new data)
     new Thread(() -> {
       //implement refresh
+      String selectedFolderPath = this.selectedFolder.getPath();
       BrowserManager.reloadFilesInstance(folderFragment.getContext());
+      this.selectedFolder = new File(selectedFolderPath);
+      setAdapter(this.selectedFolder);
 
       if (folderFragment.getActivity() != null) {
         folderFragment.getActivity().runOnUiThread(() -> {
