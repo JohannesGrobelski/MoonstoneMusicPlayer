@@ -131,6 +131,9 @@ public class MainActivity extends AppCompatActivity {
                   case 1: {
                     ((AudiobookFragment) sectionsPagerAdapter.getFragments()[position]).refreshFolderList();
                   }
+                  case 2: {
+                    ((PlayListFragment) sectionsPagerAdapter.getFragments()[position]).refreshFolderList();
+                  }
                 }
               } else {
                 // Handle the cancellation or failure

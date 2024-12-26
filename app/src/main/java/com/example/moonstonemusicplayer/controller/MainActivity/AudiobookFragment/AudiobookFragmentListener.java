@@ -217,10 +217,10 @@ public class AudiobookFragmentListener implements AdapterView.OnItemClickListene
         }
 
         ((PlayListFragment) ((MainActivity) audiobookFragment.getActivity())
-                .sectionsPagerAdapter.getFragments()[1])
+                .sectionsPagerAdapter.getFragments()[2])
                 .getPlaylistManager().loadPlaylistsFromDB(audiobookFragment.getActivity());
         ((PlayListFragment) ((MainActivity) audiobookFragment.getActivity())
-                .sectionsPagerAdapter.getFragments()[1])
+                .sectionsPagerAdapter.getFragments()[2])
                 .playlistFragmentListener.playlistListAdapter.notifyDataSetChanged();
       }
       return true;

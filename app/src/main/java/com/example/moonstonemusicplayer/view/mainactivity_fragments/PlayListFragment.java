@@ -193,4 +193,8 @@ public class PlayListFragment extends Fragment {
       playlistFragmentListener.setAdapter(songs);
     }
   }
+
+  public void refreshFolderList() {
+    playlistFragmentListener.refreshAfterSongDeletion();
+  }
 }

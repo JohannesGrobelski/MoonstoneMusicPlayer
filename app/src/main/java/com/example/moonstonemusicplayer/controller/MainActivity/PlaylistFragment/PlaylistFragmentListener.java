@@ -28,8 +28,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists;
+import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
 import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.Playlist;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
+import com.example.moonstonemusicplayer.view.MainActivity;
 import com.example.moonstonemusicplayer.view.PlayListActivityListener;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.PlayListFragment;
 import com.woxthebox.draglistview.DragListView;
@@ -39,7 +41,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class PlaylistFragmentListener implements View.OnClickListener, View.OnCreateContextMenuListener {
+public class PlaylistFragmentListener implements View.OnClickListener, View.OnCreateContextMenuListener, BrowserManager.AfterFileDeletion {
   private static final String TAG = PlaylistFragmentListener.class.getSimpleName();
   private static final boolean DEBUG = true;
   public static final String PLAYLISTINDEXEXTRA = "playlistIndexExtra";
@@ -164,26 +166,15 @@ public class PlaylistFragmentListener implements View.OnClickListener, View.OnCr
     if(playListFragment.getPlaylistManager().getCurrentPlaylist() != null){
       //create menu item with groupid to distinguish between fragments
       //präsentation
-      menu.add(1, 11, 0, "aus Playlist löschen");
-      menu.add(2, 11, 0, "zu Playlist hinzufügen");
+      menu.add(0, 0, 0, "aus Playlist löschen");
+      menu.add(0, 1, 0, "zu Playlist hinzufügen");
+      menu.add(0, 2, 0, "Song löschen");
       menu.getItem(0).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
         @Override
         /** onContextItemSelected(MenuItem item) doesnt work*/
         public boolean onMenuItemClick(MenuItem item) {
           Song song = playListFragment.getPlaylistManager().getCurrentPlaylist().getPlaylist().get(position);
-          Playlist currentPlaylist = playListFragment.getPlaylistManager().getCurrentPlaylist();
-          currentPlaylist.getPlaylist().remove(song);
-
-          DBPlaylists.getInstance(playListFragment.getContext()).deleteFromPlaylist(song,
-              playListFragment.getPlaylistManager().getCurrentPlaylist().getName());
-
-          playListFragment.reloadPlaylistManager(playListFragment.getContext()); 
-          playListFragment.getPlaylistManager().setCurrentPlaylist(currentPlaylist);
-
-          List<Object> songs = new ArrayList<>();
-          songs.addAll(currentPlaylist.getPlaylist());
-          setAdapter(songs);
-
+          deleteSongFromPlaylist(song);
           return false;
         }
       });
@@ -198,9 +189,19 @@ public class PlaylistFragmentListener implements View.OnClickListener, View.OnCr
           return false;
         }
       });
+      menu.getItem(2).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+        @Override
+        /** onContextItemSelected(MenuItem item) doesnt work*/
+        public boolean onMenuItemClick(MenuItem item) {
+          Song song = playListFragment.getPlaylistManager().getCurrentPlaylist().getPlaylist().get(position);
+          deleteSongFromPlaylist(song);
+          BrowserManager.deleteFile(playListFragment.playlistFragmentListener, playListFragment.getContext(), ((MainActivity) playListFragment.getActivity()).getDeletetionIntentSenderLauncher(), song.getPath());
+          return false;
+        }
+      });
 
     } else {//the menu created if a playlist is clicked on
-      menu.add(1, 12, 0, "playlist löschen");
+      menu.add(0, 0, 0, "playlist löschen");
       menu.getItem(0).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
         @Override
         /** onContextItemSelected(MenuItem item) doesnt work*/
@@ -224,6 +225,21 @@ public class PlaylistFragmentListener implements View.OnClickListener, View.OnCr
       });
 
     }
+  }
+
+  private void deleteSongFromPlaylist(Song song) {
+    Playlist currentPlaylist = playListFragment.getPlaylistManager().getCurrentPlaylist();
+    currentPlaylist.getPlaylist().remove(song);
+
+    DBPlaylists.getInstance(playListFragment.getContext()).deleteFromPlaylist(song,
+            playListFragment.getPlaylistManager().getCurrentPlaylist().getName());
+
+    playListFragment.reloadPlaylistManager(playListFragment.getContext());
+    playListFragment.getPlaylistManager().setCurrentPlaylist(currentPlaylist);
+
+    List<Object> songs = new ArrayList<>();
+    songs.addAll(currentPlaylist.getPlaylist());
+    setAdapter(songs);
   }
 
 
@@ -323,4 +339,21 @@ public class PlaylistFragmentListener implements View.OnClickListener, View.OnCr
     });
   }
 
+  @Override
+  public void refreshAfterSongDeletion() {
+    // Simulate refreshing (e.g., fetch new data)
+    new Thread(() -> {
+      //implement refresh
+      if(currentPlaylist != null) {
+
+      }
+
+      if (playListFragment.getActivity() != null) {
+        playListFragment.getActivity().runOnUiThread(() -> {
+          // Stop the refreshing animation
+          playListFragment.srl_playlist.setRefreshing(false);
+        });
+      }
+    }).start();
+  }
 }

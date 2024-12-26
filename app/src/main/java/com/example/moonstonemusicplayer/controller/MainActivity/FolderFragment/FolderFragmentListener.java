@@ -219,10 +219,10 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
         }
 
         ((PlayListFragment) ((MainActivity) folderFragment.getActivity())
-                .sectionsPagerAdapter.getFragments()[1])
+                .sectionsPagerAdapter.getFragments()[2])
                 .getPlaylistManager().loadPlaylistsFromDB(folderFragment.getActivity());
         ((PlayListFragment) ((MainActivity) folderFragment.getActivity())
-                .sectionsPagerAdapter.getFragments()[1])
+                .sectionsPagerAdapter.getFragments()[2])
                 .playlistFragmentListener.playlistListAdapter.notifyDataSetChanged();
       }
       return true;
