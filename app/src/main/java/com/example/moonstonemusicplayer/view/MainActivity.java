@@ -127,12 +127,15 @@ public class MainActivity extends AppCompatActivity {
                 switch (position){
                   case 0: {
                     ((FolderFragment) sectionsPagerAdapter.getFragments()[position]).refreshFolderList();
+                    break;
                   }
                   case 1: {
                     ((AudiobookFragment) sectionsPagerAdapter.getFragments()[position]).refreshFolderList();
+                    break;
                   }
                   case 2: {
                     ((PlayListFragment) sectionsPagerAdapter.getFragments()[position]).refreshFolderList();
+                    break;
                   }
                 }
               } else {
