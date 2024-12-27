@@ -77,6 +77,7 @@ public class AudiobookFragmentListener implements AdapterView.OnItemClickListene
           //setAdapter
           this.selectedAudiobook = itemClicked;
           setAdapter(this.selectedAudiobook);
+          BrowserManager.grabChildFileThumbnails(this.selectedAudiobook);
         } else { //selected Audiobook
           File[] playlist = BrowserManager.getChildFiles(this.selectedAudiobook, BrowserManager.Filter.AUDIOBOOKS);
           int audiobookPosition = position - BrowserManager.getDirectories(this.selectedAudiobook, BrowserManager.Filter.AUDIOBOOKS).length;

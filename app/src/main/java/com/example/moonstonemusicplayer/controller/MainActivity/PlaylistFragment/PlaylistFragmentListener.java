@@ -85,6 +85,7 @@ public class PlaylistFragmentListener implements View.OnClickListener, View.OnCr
           if (clickItem instanceof Playlist) {
             List<Object> newItemList = new ArrayList<>();
             newItemList.addAll(((Playlist) clickItem).getPlaylist());
+            BrowserManager.grabThumbnails(((Playlist) clickItem).getPlaylist().stream().map(s -> new File(s.getPath())).collect(Collectors.toList()));
             setAdapter(newItemList);
             playListFragment.getPlaylistManager().setCurrentPlaylist((Playlist) clickItem);
             playListFragment.srl_playlist.setEnabled(

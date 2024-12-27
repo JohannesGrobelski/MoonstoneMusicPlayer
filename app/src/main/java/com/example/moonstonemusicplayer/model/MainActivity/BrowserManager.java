@@ -31,6 +31,7 @@ import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -446,47 +447,13 @@ public class BrowserManager {
       return;
     }
 
-      // Use number of available processors to determine thread pool size
-      int processors = Runtime.getRuntime().availableProcessors();
-      // Create a thread pool with size based on available processors
-      ExecutorService executor = Executors.newFixedThreadPool(processors);
+    File[] childFiles = parent.listFiles();
+    if (childFiles == null) {
+      Log.w("ThumbnailProcessor", "No files found in directory: " + parent.getPath());
+      return;
+    }
 
-      File[] childFiles = parent.listFiles();
-      if (childFiles == null) {
-        Log.w("ThumbnailProcessor", "No files found in directory: " + parent.getPath());
-        return;
-      }
-
-      for (File childFile : childFiles) {
-        // Skip directories and already processed files
-        if (!childFile.isFile() || thumbnailVault.containsKey(childFile.getPath())) {
-          continue;
-        }
-
-        executor.submit(() -> {
-          try {
-            Bitmap image = ThumbnailUtils.createAudioThumbnail(
-                    childFile.getPath(),
-                    MediaStore.Images.Thumbnails.MINI_KIND
-            );
-            thumbnailVault.put(childFile.getPath(), image);
-            Log.i("Child File Image", thumbnailVault.size() + ": " + childFile.getPath());
-          } catch (Exception e) {
-            // Log error but continue processing other files
-            Log.e("ThumbnailProcessor", "Error processing " + childFile.getPath(), e);
-          }
-        });
-      }
-
-      // Shutdown the executor and wait for all tasks to complete
-      executor.shutdown();
-      try {
-        // Wait up to 5 minutes for all tasks to complete
-        executor.awaitTermination(5, TimeUnit.MINUTES);
-      } catch (InterruptedException e) {
-        Thread.currentThread().interrupt();
-        Log.e("ThumbnailProcessor", "Thumbnail processing interrupted", e);
-      }
+    loadThumbnails(Arrays.stream(childFiles).toList());
   }
 
   /** This methods grabs the thumbnails for all songs retrieved with the help
@@ -495,12 +462,17 @@ public class BrowserManager {
    *
    * @param songFiles
    */
-  private static void grabThumbnails(List<File> songFiles){
+  public static void grabThumbnails(List<File> songFiles){
     AsyncTask.execute(() -> {
-      // Use number of available processors to determine thread pool size
-      int processors = Runtime.getRuntime().availableProcessors();
-      // Create a thread pool with size based on available processors
-      ExecutorService executor = Executors.newFixedThreadPool(processors);
+      loadThumbnails(songFiles);
+    });
+  }
+
+  private static void loadThumbnails(List<File> songFiles){
+    // Use number of available processors to determine thread pool size
+    int processors = Runtime.getRuntime().availableProcessors();
+    // Create a thread pool with size based on available processors
+    ExecutorService executor = Executors.newFixedThreadPool(processors);
 
       for (File songFile : songFiles) {
         if(thumbnailVault.containsKey(songFile.getPath()))continue;
@@ -528,7 +500,6 @@ public class BrowserManager {
         Thread.currentThread().interrupt();
         Log.e("ThumbnailProcessor", "Thumbnail processing interrupted", e);
       }
-    });
   }
 
   private static List<File> getAllAudioFiles(Context context) {

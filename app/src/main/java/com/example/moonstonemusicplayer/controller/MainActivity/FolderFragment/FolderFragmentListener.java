@@ -78,6 +78,7 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
           //setAdapter
           this.selectedFolder = itemClicked;
           setAdapter(this.selectedFolder);
+          BrowserManager.grabChildFileThumbnails(this.selectedFolder);
         } else { //selected Song
 
           File[] playlist = BrowserManager.getChildFiles(this.selectedFolder, BrowserManager.Filter.SONGS);
