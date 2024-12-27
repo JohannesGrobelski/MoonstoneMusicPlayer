@@ -12,8 +12,11 @@ import android.app.RecoverableSecurityException;
 import android.content.Context;
 import android.content.IntentSender;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -36,6 +39,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /** Singleton
  *
@@ -55,6 +59,7 @@ public class BrowserManager {
 
   private static Map<File, Song> audiofileSongMap = new HashMap<>();
   private static Map<File, Audiobook> audioFileAudiobookMap = new HashMap<>();
+  private static Map<String, Bitmap> thumbnailVault = new HashMap<>();
 
   private static Map<String, List<Song>> genreListMap = new HashMap<>();
 
@@ -75,6 +80,7 @@ public class BrowserManager {
     this.context = baseContext;
     this.rootFolder = Environment.getExternalStorageDirectory();
     audioFiles = getAllAudioFiles(baseContext);
+    grabThumbnails(audioFiles);
   }
 
   public static void reloadFilesInstance(Context context){
@@ -84,6 +90,7 @@ public class BrowserManager {
 
   private void reloadFiles(Context context){
     audioFiles = getAllAudioFiles(context);
+    grabThumbnails(audioFiles);
   }
 
   public static BrowserManager getInstance(Context context){
@@ -425,6 +432,105 @@ public class BrowserManager {
     return contentUri;
   }
 
+
+
+  /** This method grabs the thumbnails for all direct child files of the specified parent directory.
+   * It uses ThumbnailUtils to retrieve thumbnails. As this may take time, it processes files
+   * in parallel using as many runtime processors as possible, executing the task in the background.
+   *
+   * @param parent the parent directory containing the files
+   */
+  public static void grabChildFileThumbnails(File parent) {
+    if (parent == null || !parent.isDirectory()) {
+      Log.e("ThumbnailProcessor", "Invalid parent directory: " + parent);
+      return;
+    }
+
+      // Use number of available processors to determine thread pool size
+      int processors = Runtime.getRuntime().availableProcessors();
+      // Create a thread pool with size based on available processors
+      ExecutorService executor = Executors.newFixedThreadPool(processors);
+
+      File[] childFiles = parent.listFiles();
+      if (childFiles == null) {
+        Log.w("ThumbnailProcessor", "No files found in directory: " + parent.getPath());
+        return;
+      }
+
+      for (File childFile : childFiles) {
+        // Skip directories and already processed files
+        if (!childFile.isFile() || thumbnailVault.containsKey(childFile.getPath())) {
+          continue;
+        }
+
+        executor.submit(() -> {
+          try {
+            Bitmap image = ThumbnailUtils.createAudioThumbnail(
+                    childFile.getPath(),
+                    MediaStore.Images.Thumbnails.MINI_KIND
+            );
+            thumbnailVault.put(childFile.getPath(), image);
+            Log.i("Child File Image", thumbnailVault.size() + ": " + childFile.getPath());
+          } catch (Exception e) {
+            // Log error but continue processing other files
+            Log.e("ThumbnailProcessor", "Error processing " + childFile.getPath(), e);
+          }
+        });
+      }
+
+      // Shutdown the executor and wait for all tasks to complete
+      executor.shutdown();
+      try {
+        // Wait up to 5 minutes for all tasks to complete
+        executor.awaitTermination(5, TimeUnit.MINUTES);
+      } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+        Log.e("ThumbnailProcessor", "Thumbnail processing interrupted", e);
+      }
+  }
+
+  /** This methods grabs the thumbnails for all songs retrieved with the help
+   * of ThumbnailUtils. As this may take a long time (ca. 50-100 thumbnails per seconds)
+   * this is done in parallel by as many runtime processors as possible as background task.
+   *
+   * @param songFiles
+   */
+  private static void grabThumbnails(List<File> songFiles){
+    AsyncTask.execute(() -> {
+      // Use number of available processors to determine thread pool size
+      int processors = Runtime.getRuntime().availableProcessors();
+      // Create a thread pool with size based on available processors
+      ExecutorService executor = Executors.newFixedThreadPool(processors);
+
+      for (File songFile : songFiles) {
+        if(thumbnailVault.containsKey(songFile.getPath()))continue;
+        executor.submit(() -> {
+          try {
+            Bitmap image = ThumbnailUtils.createAudioThumbnail(
+                    songFile.getPath(),
+                    MediaStore.Images.Thumbnails.MINI_KIND
+            );
+            thumbnailVault.put(songFile.getPath(), image);
+            Log.i("ThumbnailProcessor", thumbnailVault.size() + ": " + songFile.getPath());
+          } catch (Exception e) {
+            // Log error but continue processing other files
+            Log.e("ThumbnailProcessor", "Error processing " + songFile.getPath(), e);
+          }
+        });
+      }
+
+      // Shutdown the executor and wait for all tasks to complete
+      executor.shutdown();
+      try {
+        // Wait up to 5 minutes for all tasks to complete
+        executor.awaitTermination(5, TimeUnit.MINUTES);
+      } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+        Log.e("ThumbnailProcessor", "Thumbnail processing interrupted", e);
+      }
+    });
+  }
+
   private static List<File> getAllAudioFiles(Context context) {
     List<File> audioFiles = new ArrayList<>();
 
@@ -530,6 +636,25 @@ public class BrowserManager {
     }
 
     return audioFiles;
+  }
+
+
+  /** grabs the thumbnail from thumbnailVault (if possible);
+   *
+   * @param filePath
+   * @return
+   */
+  public static Bitmap getThumbnailForFile(String filePath){
+    if(thumbnailVault.containsKey(filePath)){
+      return thumbnailVault.get(filePath);
+    } else {
+      Bitmap image = ThumbnailUtils.createAudioThumbnail(
+              filePath,
+              MediaStore.Images.Thumbnails.MINI_KIND
+      );
+      thumbnailVault.put(filePath, image);
+      return image;
+    }
   }
 
   private static void registerSongForAlbumMap(Song song){
