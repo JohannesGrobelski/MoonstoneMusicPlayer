@@ -10,6 +10,7 @@ package com.example.moonstonemusicplayer.controller.MainActivity.PlaylistFragmen
 
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
@@ -24,6 +25,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.widget.ImageViewCompat;
 
 import com.example.moonstonemusicplayer.R;
+import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
 import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.Playlist;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.PlayListFragment;
@@ -69,34 +71,27 @@ public class PlaylistListAdapter extends DragItemAdapter<Object, PlaylistListAda
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
-        holder.itemView.setTag(position); // Save position in the tag
+
+        // Reset the view state
+        holder.resetViewStates();
+
         Object item = playlistSongList.get(position);
+        holder.itemView.setTag(position);
 
-        // Reset visibility and styling
-        /*
-        holder.ll_artist_genre.setVisibility(View.GONE);
-        holder.tv_artist_song.setVisibility(View.GONE);
-        holder.tv_duration_song.setVisibility(View.GONE);
-        holder.tv_duration_genre.setVisibility(View.GONE);
-         */
-
-        holder.tv_playlistSongItem.setTextColor(playListFragment.getContext().getResources().getColor(R.color.colorPrimary));
-        holder.iv_playlistSongItem.setColorFilter(ContextCompat.getColor(playListFragment.getContext(), R.color.colorPrimary),
-                PorterDuff.Mode.SRC_IN);
-        ImageViewCompat.setImageTintList(holder.iv_playlistSongItem,
-                ColorStateList.valueOf(ContextCompat.getColor(playListFragment.getContext(), R.color.colorPrimary)));
+        // Set common properties
+        holder.tv_playlistSongItem.setTextColor(
+                playListFragment.getContext().getResources().getColor(R.color.colorPrimary)
+        );
 
         if (item instanceof Playlist) {
-            bindPlaylistItem(holder, (Playlist) item);
+            holder.bindPlaylistItem((Playlist) item, playListFragment.getContext());
         } else if (item instanceof Song) {
-            bindSongItem(holder, (Song) item);
+            holder.bindSongItem((Song) item, playListFragment.getContext());
         }
 
-        // Set click listener for the entire item
+        // Set click listeners
         holder.itemView.setOnClickListener(v -> handleItemClick(item, position));
-
         holder.itemView.setOnLongClickListener(v -> {
-            // Save the clicked position in a global variable
             lastLongClickedPosition = position;
             v.showContextMenu();
             return true;
@@ -189,13 +184,95 @@ public class PlaylistListAdapter extends DragItemAdapter<Object, PlaylistListAda
         TextView tv_duration_genre;
 
         public ViewHolder(View itemView) {
-            super(itemView, R.id.iv_item, false); // Using the ImageView as the drag handle
+            super(itemView, R.id.iv_item, false);
             tv_playlistSongItem = itemView.findViewById(R.id.tv_item_name);
             iv_playlistSongItem = itemView.findViewById(R.id.iv_item);
             ll_artist_genre = itemView.findViewById(R.id.ll_artist_genre);
             tv_artist_song = itemView.findViewById(R.id.tv_item_artist);
             tv_duration_song = itemView.findViewById(R.id.item_tv_duration);
             tv_duration_genre = itemView.findViewById(R.id.tv_item_genre);
+        }
+
+        void resetViewStates() {
+            ll_artist_genre.setVisibility(View.GONE);
+            tv_artist_song.setVisibility(View.GONE);
+            tv_duration_song.setVisibility(View.GONE);
+            tv_duration_genre.setVisibility(View.GONE);
+
+            // Reset ImageView state
+            iv_playlistSongItem.setImageDrawable(null);
+            iv_playlistSongItem.setBackground(null);
+            iv_playlistSongItem.setColorFilter(null);
+            ImageViewCompat.setImageTintList(iv_playlistSongItem, null);
+        }
+
+        void bindPlaylistItem(Playlist playlist, Context context) {
+            iv_playlistSongItem.setBackground(context.getDrawable(R.drawable.ic_playlist));
+            setColorFilter(context);
+
+            switch (playlist.getName()) {
+                case RECENTLY_ADDED_PLAYLIST_NAME:
+                    tv_playlistSongItem.setTypeface(null, Typeface.BOLD);
+                    tv_playlistSongItem.setText(R.string.RecentlyAddedPlaylist);
+                    break;
+                case RECENTLY_PLAYED_PLAYLIST_NAME:
+                    tv_playlistSongItem.setTypeface(null, Typeface.BOLD);
+                    tv_playlistSongItem.setText(R.string.RecentlyPlayedPlaylist);
+                    break;
+                case MOSTLY_PLAYED_PLAYLIST_NAME:
+                    tv_playlistSongItem.setTypeface(null, Typeface.BOLD);
+                    tv_playlistSongItem.setText(R.string.MostlyPlayedPlaylist);
+                    break;
+                default:
+                    tv_playlistSongItem.setTypeface(null, Typeface.NORMAL);
+                    tv_playlistSongItem.setText(playlist.getName());
+                    break;
+            }
+        }
+
+        void bindSongItem(Song song, Context context) {
+            setColorFilter(context);
+
+            tv_playlistSongItem.setTypeface(null, Typeface.NORMAL);
+            tv_playlistSongItem.setText(song.getName());
+
+            ll_artist_genre.setVisibility(View.VISIBLE);
+            tv_artist_song.setVisibility(View.VISIBLE);
+            tv_duration_song.setVisibility(View.VISIBLE);
+            tv_duration_genre.setVisibility(View.VISIBLE);
+
+            tv_artist_song.setText(song.getArtist().isEmpty() ? "unknown artist" : song.getArtist());
+            tv_duration_genre.setText(song.getGenre());
+            tv_duration_song.setText(song.getDurationString());
+
+            Bitmap image = BrowserManager.getThumbnailForFile(song.getPath());
+            if (image != null) {
+                // Clear any background and tint before setting the bitmap
+                iv_playlistSongItem.setBackground(null);
+                iv_playlistSongItem.setColorFilter(null);
+                ImageViewCompat.setImageTintList(iv_playlistSongItem, null);
+                iv_playlistSongItem.setImageBitmap(image);
+            } else {
+                // Set default music icon with tint
+                iv_playlistSongItem.setImageBitmap(null);
+                iv_playlistSongItem.setBackground(ContextCompat.getDrawable(context, R.drawable.ic_music));
+                ImageViewCompat.setImageTintList(iv_playlistSongItem,
+                        ColorStateList.valueOf(ContextCompat.getColor(context, R.color.colorPrimary)));
+                iv_playlistSongItem.setColorFilter(
+                        ContextCompat.getColor(context, R.color.colorPrimary),
+                        PorterDuff.Mode.SRC_IN);
+            }
+        }
+
+        private void setColorFilter(Context context) {
+            iv_playlistSongItem.setColorFilter(
+                    ContextCompat.getColor(context, R.color.colorPrimary),
+                    PorterDuff.Mode.SRC_IN
+            );
+            ImageViewCompat.setImageTintList(
+                    iv_playlistSongItem,
+                    ColorStateList.valueOf(ContextCompat.getColor(context, R.color.colorPrimary))
+            );
         }
     }
 }

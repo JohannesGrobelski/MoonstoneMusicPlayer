@@ -14,6 +14,9 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
+import android.media.ThumbnailUtils;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,71 +58,33 @@ public class FolderListAdapter extends ArrayAdapter<File> {
   @NonNull
   @Override
   public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-    View rowView;
-    if(convertView != null){
-      rowView = convertView;
+    ViewHolder holder;
+    if (convertView == null) {
+      convertView = layoutInflater.inflate(R.layout.item_row_layout, parent, false);
+      holder = new ViewHolder(convertView);
+      convertView.setTag(holder);
     } else {
-      rowView = layoutInflater.inflate(R.layout.item_row_layout, parent, false);
+      holder = (ViewHolder) convertView.getTag();
     }
 
-    //init the views of songRowView
-    TextView tv_folderSongItem = rowView.findViewById(R.id.tv_item_name);
-    ImageView iv_folderSongItem = rowView.findViewById(R.id.iv_item);
-    tv_folderSongItem.setTextColor(context.getResources().getColor(R.color.colorPrimary));
-    iv_folderSongItem.setColorFilter(ContextCompat.getColor(context, R.color.colorPrimary), android.graphics.PorterDuff.Mode.SRC_IN);
-    ImageViewCompat.setImageTintList(iv_folderSongItem, ColorStateList.valueOf(ContextCompat.getColor(context, R.color.colorPrimary)));
+    // Reset view states
+    holder.resetViewStates();
 
     File file = folderSongList.get(position);
-    LinearLayout item_row_ll_layout = rowView.findViewById(R.id.item_row_ll_layout);
-    if(folderSongList.get(position).isDirectory()){
-      iv_folderSongItem.setBackground(ContextCompat.getDrawable(context,R.drawable.ic_folder));
+    holder.tv_folderSongItem.setText(removeFileType(file.getName()));
+    holder.tv_folderSongItem.setTextColor(context.getResources().getColor(R.color.colorPrimary));
+
+    if (file.isDirectory()) {
+      holder.setupFolderView();
     } else {
-      iv_folderSongItem.setBackground(ContextCompat.getDrawable(context,R.drawable.ic_music));
-
-      TextView tv_item_artist = rowView.findViewById(R.id.tv_item_artist);
-      LinearLayout ll_artist_genre = rowView.findViewById(R.id.ll_artist_genre);
-      TextView tv_item_genre = rowView.findViewById(R.id.tv_item_genre);
-      TextView tv_item_duration = rowView.findViewById(R.id.item_tv_duration);
-
-      Song song = BrowserManager.getSongFromAudioFile(file);
-      if(song.getArtist() != null && !song.getArtist().isEmpty()){
-        ll_artist_genre.setVisibility(View.VISIBLE);
-        tv_item_artist.setVisibility(View.VISIBLE);
-        tv_item_artist.setText(song.getArtist());
-      }
-      if(song.getGenre() != null && !song.getGenre().isEmpty()){
-        ll_artist_genre.setVisibility(View.VISIBLE);
-        tv_item_genre.setVisibility(View.VISIBLE);
-        tv_item_genre.setText(song.getGenre());
-      }
-      if(song.getDurationString() != null && !song.getDurationString().isEmpty()){
-        tv_item_duration.setVisibility(View.VISIBLE);
-        tv_item_duration.setText(song.getDurationString());
-      }
-
-
-      //init open song info button
-      ImageView iv_item = rowView.findViewById(R.id.iv_item);
-      iv_item.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-          // Handle button click
-          showSongInfoPopup(context, file);
-        }
-      });
-
-      //TODO: replace with popup (add to favorites)
-
-
+      holder.setupSongView(file);
     }
-    tv_folderSongItem.setText(removeFileType(file.getName()));
 
-
-
-    return rowView;
+    return convertView;
   }
 
-  private void showSongInfoPopup(Context context, File file) {
+
+  private static void showSongInfoPopup(Context context, File file) {
     View popupView = LayoutInflater.from(context).inflate(R.layout.popup_song_info, null);
     AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context)
             .setView(popupView)
@@ -159,6 +124,87 @@ public class FolderListAdapter extends ArrayAdapter<File> {
     }
   }
 
+  private static class ViewHolder {
+    TextView tv_folderSongItem;
+    ImageView iv_folderSongItem;
+    TextView tv_item_artist;
+    TextView tv_item_genre;
+    TextView tv_item_duration;
+    LinearLayout ll_artist_genre;
+    LinearLayout item_row_ll_layout;
 
+    ViewHolder(View view) {
+      tv_folderSongItem = view.findViewById(R.id.tv_item_name);
+      iv_folderSongItem = view.findViewById(R.id.iv_item);
+      tv_item_artist = view.findViewById(R.id.tv_item_artist);
+      tv_item_genre = view.findViewById(R.id.tv_item_genre);
+      tv_item_duration = view.findViewById(R.id.item_tv_duration);
+      ll_artist_genre = view.findViewById(R.id.ll_artist_genre);
+      item_row_ll_layout = view.findViewById(R.id.item_row_ll_layout);
+    }
+
+    void resetViewStates() {
+      // Reset all views to default state
+      ll_artist_genre.setVisibility(View.GONE);
+      tv_item_artist.setVisibility(View.GONE);
+      tv_item_genre.setVisibility(View.GONE);
+      tv_item_duration.setVisibility(View.GONE);
+
+      // Completely reset the ImageView state
+      iv_folderSongItem.setImageBitmap(null);
+      iv_folderSongItem.setImageDrawable(null);
+      iv_folderSongItem.setBackground(null);
+      iv_folderSongItem.setColorFilter(null);
+      ImageViewCompat.setImageTintList(iv_folderSongItem, null);
+    }
+
+    void setupFolderView() {
+      iv_folderSongItem.setBackground(ContextCompat.getDrawable(iv_folderSongItem.getContext(), R.drawable.ic_folder));
+      iv_folderSongItem.setOnClickListener(null);
+    }
+
+    void setupSongView(File file) {
+      Context context = iv_folderSongItem.getContext();
+
+      Bitmap image = BrowserManager.getThumbnailForFile(file.getPath());
+      if (image != null) {
+        // Clear any background and tint before setting the bitmap
+        iv_folderSongItem.setBackground(null);
+        iv_folderSongItem.setColorFilter(null);
+        ImageViewCompat.setImageTintList(iv_folderSongItem, null);
+        iv_folderSongItem.setImageBitmap(image);
+      } else {
+        // Set default music icon with tint
+        iv_folderSongItem.setImageBitmap(null);
+        iv_folderSongItem.setBackground(ContextCompat.getDrawable(context, R.drawable.ic_music));
+        ImageViewCompat.setImageTintList(iv_folderSongItem,
+                ColorStateList.valueOf(ContextCompat.getColor(context, R.color.colorPrimary)));
+        iv_folderSongItem.setColorFilter(
+                ContextCompat.getColor(context, R.color.colorPrimary),
+                android.graphics.PorterDuff.Mode.SRC_IN);
+      }
+
+      Song song = BrowserManager.getSongFromAudioFile(file);
+
+      if (song.getArtist() != null && !song.getArtist().isEmpty()) {
+        ll_artist_genre.setVisibility(View.VISIBLE);
+        tv_item_artist.setVisibility(View.VISIBLE);
+        tv_item_artist.setText(song.getArtist());
+      }
+
+      if (song.getGenre() != null && !song.getGenre().isEmpty()) {
+        ll_artist_genre.setVisibility(View.VISIBLE);
+        tv_item_genre.setVisibility(View.VISIBLE);
+        tv_item_genre.setText(song.getGenre());
+      }
+
+      if (song.getDurationString() != null && !song.getDurationString().isEmpty()) {
+        tv_item_duration.setVisibility(View.VISIBLE);
+        tv_item_duration.setText(song.getDurationString());
+      }
+
+      iv_folderSongItem.setOnClickListener(v -> showSongInfoPopup(context, file));
+    }
+  }
 
 }
