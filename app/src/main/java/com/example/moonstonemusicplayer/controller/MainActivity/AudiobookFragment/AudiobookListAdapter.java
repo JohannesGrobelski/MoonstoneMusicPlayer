@@ -14,9 +14,6 @@ import static com.example.moonstonemusicplayer.controller.PlayListActivity.SongL
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.res.ColorStateList;
-import android.graphics.Bitmap;
-import android.graphics.PorterDuff;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -147,30 +144,11 @@ public class AudiobookListAdapter extends ArrayAdapter<File> {
 
     void setupFolderView(Context context) {
       iv_item.setBackground(ContextCompat.getDrawable(context, R.drawable.ic_folder));
-      setColorFilter(context);
     }
 
     void setupAudiobookView(Context context, File file) {
-      setColorFilter(context);
-
       Audiobook audiobook = BrowserManager.getAudiobookFromAudioFile(file);
-      Bitmap image = BrowserManager.getThumbnailForFile(file.getPath());
-      if (image != null) {
-        // Clear any background and tint before setting the bitmap
-        iv_item.setBackground(null);
-        iv_item.setColorFilter(null);
-        ImageViewCompat.setImageTintList(iv_item, null);
-        iv_item.setImageBitmap(image);
-      } else {
-        // Set default music icon with tint
-        iv_item.setImageBitmap(null);
-        iv_item.setBackground(ContextCompat.getDrawable(context, R.drawable.ic_audiobook));
-        ImageViewCompat.setImageTintList(iv_item,
-                ColorStateList.valueOf(ContextCompat.getColor(context, R.color.colorPrimary)));
-        iv_item.setColorFilter(
-                ContextCompat.getColor(context, R.color.colorPrimary),
-                android.graphics.PorterDuff.Mode.SRC_IN);
-      }
+      BrowserManager.getThumbnailForFile(file.getPath(), iv_item);
 
       if (audiobook.getArtist() != null && !audiobook.getArtist().isEmpty()) {
         ll_artist_genre.setVisibility(View.VISIBLE);
@@ -192,15 +170,5 @@ public class AudiobookListAdapter extends ArrayAdapter<File> {
       iv_item.setOnClickListener(v -> showSongInfoPopup(context, file));
     }
 
-    private void setColorFilter(Context context) {
-      iv_item.setColorFilter(
-              ContextCompat.getColor(context, R.color.colorPrimary),
-              PorterDuff.Mode.SRC_IN
-      );
-      ImageViewCompat.setImageTintList(
-              iv_item,
-              ColorStateList.valueOf(ContextCompat.getColor(context, R.color.colorPrimary))
-      );
-    }
   }
 }

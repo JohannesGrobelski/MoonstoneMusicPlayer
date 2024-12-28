@@ -12,19 +12,24 @@ import android.app.RecoverableSecurityException;
 import android.content.Context;
 import android.content.IntentSender;
 import android.database.Cursor;
-import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.media.MediaMetadataRetriever;
-import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.widget.ImageView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.IntentSenderRequest;
+import androidx.core.content.ContextCompat;
 
+import com.bumptech.glide.Glide;
+import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Audiobook;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Audiofile;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
@@ -60,7 +65,7 @@ public class BrowserManager {
 
   private static Map<File, Song> audiofileSongMap = new HashMap<>();
   private static Map<File, Audiobook> audioFileAudiobookMap = new HashMap<>();
-  private static Map<String, Bitmap> thumbnailVault = new HashMap<>();
+  private static Map<String, byte[]> thumbnailVault = new HashMap<>();
 
   private static Map<String, List<Song>> genreListMap = new HashMap<>();
 
@@ -70,6 +75,8 @@ public class BrowserManager {
 
   private static final String TAG = BrowserManager.class.getSimpleName();
   private final Context context;
+
+  private static MediaMetadataRetriever mediaMetadataRetriever;
 
   private static final ExecutorService executor = Executors.newSingleThreadExecutor();
 
@@ -92,6 +99,15 @@ public class BrowserManager {
   private void reloadFiles(Context context){
     audioFiles = getAllAudioFiles(context);
     grabThumbnails(audioFiles);
+  }
+
+  private static MediaMetadataRetriever getMediaMetadataRetriever(){
+    if(mediaMetadataRetriever == null){
+      mediaMetadataRetriever = new MediaMetadataRetriever();
+      return mediaMetadataRetriever;
+    } else {
+      return mediaMetadataRetriever;
+    }
   }
 
   public static BrowserManager getInstance(Context context){
@@ -433,29 +449,6 @@ public class BrowserManager {
     return contentUri;
   }
 
-
-
-  /** This method grabs the thumbnails for all direct child files of the specified parent directory.
-   * It uses ThumbnailUtils to retrieve thumbnails. As this may take time, it processes files
-   * in parallel using as many runtime processors as possible, executing the task in the background.
-   *
-   * @param parent the parent directory containing the files
-   */
-  public static void grabChildFileThumbnails(File parent) {
-    if (parent == null || !parent.isDirectory()) {
-      Log.e("ThumbnailProcessor", "Invalid parent directory: " + parent);
-      return;
-    }
-
-    File[] childFiles = parent.listFiles();
-    if (childFiles == null) {
-      Log.w("ThumbnailProcessor", "No files found in directory: " + parent.getPath());
-      return;
-    }
-
-    loadThumbnails(Arrays.stream(childFiles).toList());
-  }
-
   /** This methods grabs the thumbnails for all songs retrieved with the help
    * of ThumbnailUtils. As this may take a long time (ca. 50-100 thumbnails per seconds)
    * this is done in parallel by as many runtime processors as possible as background task.
@@ -478,12 +471,9 @@ public class BrowserManager {
         if(thumbnailVault.containsKey(songFile.getPath()))continue;
         executor.submit(() -> {
           try {
-            Bitmap image = ThumbnailUtils.createAudioThumbnail(
-                    songFile.getPath(),
-                    MediaStore.Images.Thumbnails.MINI_KIND
-            );
-            thumbnailVault.put(songFile.getPath(), image);
-            Log.i("ThumbnailProcessor", thumbnailVault.size() + ": " + songFile.getPath());
+            getMediaMetadataRetriever().setDataSource(songFile.getPath());
+            retrieveBitmapFromAudioFile(songFile.getPath());
+            Log.i("ThumbnailProcessor", "processed "+thumbnailVault.size()+" of "+songFiles.size());
           } catch (Exception e) {
             // Log error but continue processing other files
             Log.e("ThumbnailProcessor", "Error processing " + songFile.getPath(), e);
@@ -501,6 +491,19 @@ public class BrowserManager {
         Log.e("ThumbnailProcessor", "Thumbnail processing interrupted", e);
       }
   }
+
+  private static byte[] retrieveBitmapFromAudioFile(String filePath) {
+    try {
+      mediaMetadataRetriever.setDataSource(filePath); // Set the audio file path
+      byte[] art = mediaMetadataRetriever.getEmbeddedPicture(); // Extract album art as a byte array
+      thumbnailVault.put(filePath, art);
+      return art;
+    } catch (Exception e) {
+      Log.e("ThumbnailResolver", "Error loading thumbnail", e);
+      return null;
+    }
+  }
+
 
   private static List<File> getAllAudioFiles(Context context) {
     List<File> audioFiles = new ArrayList<>();
@@ -609,24 +612,66 @@ public class BrowserManager {
     return audioFiles;
   }
 
+  public static void getThumbnailForFile(final String filePath, final ImageView view) {
+    // Set a loading indicator (optional, can be a placeholder image)
+    Glide.with(view.getContext())
+            .load(R.drawable.ic_music) // Placeholder or loading image
+            .into(view);
 
-  /** grabs the thumbnail from thumbnailVault (if possible);
-   *
-   * @param filePath
-   * @return
-   */
-  public static Bitmap getThumbnailForFile(String filePath){
-    if(thumbnailVault.containsKey(filePath)){
-      return thumbnailVault.get(filePath);
+    // Check if the thumbnail is in the cache
+    if (thumbnailVault.containsKey(filePath)) {
+      byte[] cachedImage = thumbnailVault.get(filePath);
+      if (cachedImage != null) {
+        // If found in cache, load it into the ImageView asynchronously
+        Glide.with(view.getContext())
+                .load(cachedImage)
+                .into(view);
+      } else {
+        // If the thumbnail is not available (null), set a fallback
+        Drawable fallbackDrawable = ContextCompat.getDrawable(view.getContext(), R.drawable.ic_music);
+        Glide.with(view.getContext())
+                .load(fallbackDrawable)
+                .into(view);
+      }
     } else {
-      Bitmap image = ThumbnailUtils.createAudioThumbnail(
-              filePath,
-              MediaStore.Images.Thumbnails.MINI_KIND
-      );
-      thumbnailVault.put(filePath, image);
-      return image;
+      // If not in cache, fetch the thumbnail in a background thread and then load it
+      new Thread(new Runnable() {
+        @Override
+        public void run() {
+          // Retrieve the thumbnail in the background
+          byte[] imageBytes = retrieveBitmapFromAudioFile(filePath);
+
+          // Once the thumbnail is retrieved, update the UI on the main thread
+          if (imageBytes != null) {
+            thumbnailVault.put(filePath, imageBytes);
+
+            // Update the ImageView on the UI thread
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+              @Override
+              public void run() {
+                Glide.with(view.getContext())
+                        .load(imageBytes)
+                        .into(view);
+              }
+            });
+          } else {
+            // If thumbnail is not available, fallback to default image
+            Drawable fallbackDrawable = ContextCompat.getDrawable(view.getContext(), R.drawable.ic_music);
+
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+              @Override
+              public void run() {
+                Glide.with(view.getContext())
+                        .load(fallbackDrawable)
+                        .into(view);
+              }
+            });
+          }
+        }
+      }).start();
     }
   }
+
 
   private static void registerSongForAlbumMap(Song song){
     if(song.getAlbum() != null && !song.getAlbum().isEmpty()){

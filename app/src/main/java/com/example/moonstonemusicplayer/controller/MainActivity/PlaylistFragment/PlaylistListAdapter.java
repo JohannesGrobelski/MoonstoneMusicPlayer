@@ -208,7 +208,6 @@ public class PlaylistListAdapter extends DragItemAdapter<Object, PlaylistListAda
 
         void bindPlaylistItem(Playlist playlist, Context context) {
             iv_playlistSongItem.setBackground(context.getDrawable(R.drawable.ic_playlist));
-            setColorFilter(context);
 
             switch (playlist.getName()) {
                 case RECENTLY_ADDED_PLAYLIST_NAME:
@@ -231,8 +230,6 @@ public class PlaylistListAdapter extends DragItemAdapter<Object, PlaylistListAda
         }
 
         void bindSongItem(Song song, Context context) {
-            setColorFilter(context);
-
             tv_playlistSongItem.setTypeface(null, Typeface.NORMAL);
             tv_playlistSongItem.setText(song.getName());
 
@@ -245,34 +242,7 @@ public class PlaylistListAdapter extends DragItemAdapter<Object, PlaylistListAda
             tv_duration_genre.setText(song.getGenre());
             tv_duration_song.setText(song.getDurationString());
 
-            Bitmap image = BrowserManager.getThumbnailForFile(song.getPath());
-            if (image != null) {
-                // Clear any background and tint before setting the bitmap
-                iv_playlistSongItem.setBackground(null);
-                iv_playlistSongItem.setColorFilter(null);
-                ImageViewCompat.setImageTintList(iv_playlistSongItem, null);
-                iv_playlistSongItem.setImageBitmap(image);
-            } else {
-                // Set default music icon with tint
-                iv_playlistSongItem.setImageBitmap(null);
-                iv_playlistSongItem.setBackground(ContextCompat.getDrawable(context, R.drawable.ic_music));
-                ImageViewCompat.setImageTintList(iv_playlistSongItem,
-                        ColorStateList.valueOf(ContextCompat.getColor(context, R.color.colorPrimary)));
-                iv_playlistSongItem.setColorFilter(
-                        ContextCompat.getColor(context, R.color.colorPrimary),
-                        PorterDuff.Mode.SRC_IN);
-            }
-        }
-
-        private void setColorFilter(Context context) {
-            iv_playlistSongItem.setColorFilter(
-                    ContextCompat.getColor(context, R.color.colorPrimary),
-                    PorterDuff.Mode.SRC_IN
-            );
-            ImageViewCompat.setImageTintList(
-                    iv_playlistSongItem,
-                    ColorStateList.valueOf(ContextCompat.getColor(context, R.color.colorPrimary))
-            );
+            BrowserManager.getThumbnailForFile(song.getPath(), iv_playlistSongItem);
         }
     }
 }

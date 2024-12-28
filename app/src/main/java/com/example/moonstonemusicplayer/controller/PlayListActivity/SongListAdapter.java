@@ -170,23 +170,7 @@ public class SongListAdapter extends DragItemAdapter<Object, SongListAdapter.Vie
         tv_duration_song.setText(song.getDurationString());
       }
 
-      Bitmap image = BrowserManager.getThumbnailForFile(song.getPath());
-      if (image != null) {
-        // Clear any background and tint before setting the bitmap
-        itemView.setBackground(null);
-        iv_song_playing.setColorFilter(null);
-        ImageViewCompat.setImageTintList(iv_song_playing, null);
-        iv_song_playing.setImageBitmap(image);
-      } else {
-        // Set default music icon with tint
-        iv_song_playing.setImageBitmap(null);
-        iv_song_playing.setBackground(ContextCompat.getDrawable(context, R.drawable.ic_music));
-        ImageViewCompat.setImageTintList(iv_song_playing,
-                ColorStateList.valueOf(ContextCompat.getColor(context, R.color.colorPrimary)));
-        iv_song_playing.setColorFilter(
-                ContextCompat.getColor(context, R.color.colorPrimary),
-                PorterDuff.Mode.SRC_IN);
-      }
+      BrowserManager.getThumbnailForFile(song.getPath(), iv_song_playing);
 
     }
 

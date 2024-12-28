@@ -166,23 +166,7 @@ public class FolderListAdapter extends ArrayAdapter<File> {
     void setupSongView(File file) {
       Context context = iv_folderSongItem.getContext();
 
-      Bitmap image = BrowserManager.getThumbnailForFile(file.getPath());
-      if (image != null) {
-        // Clear any background and tint before setting the bitmap
-        iv_folderSongItem.setBackground(null);
-        iv_folderSongItem.setColorFilter(null);
-        ImageViewCompat.setImageTintList(iv_folderSongItem, null);
-        iv_folderSongItem.setImageBitmap(image);
-      } else {
-        // Set default music icon with tint
-        iv_folderSongItem.setImageBitmap(null);
-        iv_folderSongItem.setBackground(ContextCompat.getDrawable(context, R.drawable.ic_music));
-        ImageViewCompat.setImageTintList(iv_folderSongItem,
-                ColorStateList.valueOf(ContextCompat.getColor(context, R.color.colorPrimary)));
-        iv_folderSongItem.setColorFilter(
-                ContextCompat.getColor(context, R.color.colorPrimary),
-                android.graphics.PorterDuff.Mode.SRC_IN);
-      }
+      BrowserManager.getThumbnailForFile(file.getPath(), iv_folderSongItem);
 
       Song song = BrowserManager.getSongFromAudioFile(file);
 
