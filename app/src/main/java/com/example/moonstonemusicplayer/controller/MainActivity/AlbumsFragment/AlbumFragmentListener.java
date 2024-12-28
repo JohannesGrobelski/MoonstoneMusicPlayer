@@ -30,7 +30,7 @@ public class AlbumFragmentListener implements AdapterView.OnItemClickListener, V
   public static final String ALBUMLISTEXTRA = "albumlistextra";
 
   private final AlbumFragment albumFragment;
-  private GenreListAdapter genreListAdapter;
+  private AlbumListAdapter albumListAdapter;
 
   private static List<Song> AlbumSongList;
 
@@ -44,7 +44,7 @@ public class AlbumFragmentListener implements AdapterView.OnItemClickListener, V
   public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
     //set back text
-    Object clickItem = genreListAdapter.getItem(position);
+    Object clickItem = albumListAdapter.getItem(position);
     if(clickItem != null) {
       if(clickItem instanceof Song) {
         startAlbumSonglist(albumFragment.albumManager.getCurrentAlbum().getSongList(),position);
@@ -60,16 +60,16 @@ public class AlbumFragmentListener implements AdapterView.OnItemClickListener, V
   public void setAdapterAlbumList(List<Album> itemList){
     List<Object> objectList = new ArrayList<>();
     objectList.addAll(itemList);
-    genreListAdapter = new GenreListAdapter(albumFragment.getContext(),objectList);
-    albumFragment.lv_albums.setAdapter(genreListAdapter);
+    albumListAdapter = new AlbumListAdapter(albumFragment.getContext(),objectList);
+    albumFragment.lv_albums.setAdapter(albumListAdapter);
   }
 
 
   public void setAdapterSongList(List<Song> itemList){
     List<Object> objectList = new ArrayList<>();
     objectList.addAll(itemList);
-    genreListAdapter = new GenreListAdapter(albumFragment.getContext(),objectList);
-    albumFragment.lv_albums.setAdapter(genreListAdapter);
+    albumListAdapter = new AlbumListAdapter(albumFragment.getContext(),objectList);
+    albumFragment.lv_albums.setAdapter(albumListAdapter);
   }
 
   /** starts playlistactivity with selected songlist; playlistactivity grabs songlist by calling getPlaylistSonglist*/

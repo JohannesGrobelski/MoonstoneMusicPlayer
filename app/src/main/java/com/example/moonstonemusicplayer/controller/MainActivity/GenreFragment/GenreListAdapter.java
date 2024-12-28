@@ -24,6 +24,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.widget.ImageViewCompat;
 
 import com.example.moonstonemusicplayer.R;
+import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
 import com.example.moonstonemusicplayer.model.MainActivity.GenreFragment.Genre;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 
@@ -71,7 +72,14 @@ public class GenreListAdapter extends ArrayAdapter<Object> {
       iv_genreSongItem.setBackground(context.getDrawable(R.drawable.ic_folder));
       tv_genreSongItem.setText(currentGenre.getName());
     } else {
-      iv_genreSongItem.setBackground(context.getDrawable(R.drawable.ic_music));
+      // Reset ImageView state
+      iv_genreSongItem.setImageDrawable(null);
+      iv_genreSongItem.setBackground(null);
+      iv_genreSongItem.setColorFilter(null);
+      ImageViewCompat.setImageTintList(iv_genreSongItem, null);
+      //get song art
+      BrowserManager.getThumbnailForFile(currentSong.getPath(), iv_genreSongItem);
+
       tv_genreSongItem.setText(currentSong.getName());
     }
 

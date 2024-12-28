@@ -26,6 +26,7 @@ import androidx.core.widget.ImageViewCompat;
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.model.MainActivity.AlbumFragment.Album;
 import com.example.moonstonemusicplayer.model.MainActivity.ArtistFragment.Artist;
+import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 
 import java.util.List;
@@ -77,7 +78,14 @@ public class ArtistListAdapter extends ArrayAdapter<Object> {
       iv_AlbumSongItem.setBackground(context.getDrawable(R.drawable.ic_music_album));
       tv_AlbumSongItem.setText(currentAlbum.getName());
     } else {
-      iv_AlbumSongItem.setBackground(context.getDrawable(R.drawable.ic_music));
+      // Reset ImageView state
+      iv_AlbumSongItem.setImageDrawable(null);
+      iv_AlbumSongItem.setBackground(null);
+      iv_AlbumSongItem.setColorFilter(null);
+      ImageViewCompat.setImageTintList(iv_AlbumSongItem, null);
+      //get song art
+      BrowserManager.getThumbnailForFile(currentSong.getPath(), iv_AlbumSongItem);
+
       tv_AlbumSongItem.setText(currentSong.getName());
     }
 

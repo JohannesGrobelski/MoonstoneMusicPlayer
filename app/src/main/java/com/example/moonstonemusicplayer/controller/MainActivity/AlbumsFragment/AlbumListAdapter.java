@@ -25,18 +25,19 @@ import androidx.core.widget.ImageViewCompat;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.model.MainActivity.AlbumFragment.Album;
+import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 
 import java.util.List;
 
 /** describes how Albums and the songs in it are displayed in listview*/
-public class GenreListAdapter extends ArrayAdapter<Object> {
+public class AlbumListAdapter extends ArrayAdapter<Object> {
 
   private final List<Object> albumSongList;
   private final Context context;
   private final LayoutInflater layoutInflater;
 
-  public GenreListAdapter(@NonNull Context context, List<Object> albumSongList) {
+  public AlbumListAdapter(@NonNull Context context, List<Object> albumSongList) {
     super(context, R.layout.item_row_layout, albumSongList);
     this.albumSongList = albumSongList;
     this.context = context;
@@ -61,17 +62,22 @@ public class GenreListAdapter extends ArrayAdapter<Object> {
     } else {return rowView;}
 
     //init the views of songRowView
+
     TextView tv_AlbumSongItem = rowView.findViewById(R.id.tv_item_name);
     ImageView iv_AlbumSongItem = rowView.findViewById(R.id.iv_item);
     tv_AlbumSongItem.setTextColor(context.getResources().getColor(R.color.colorPrimary));
-    iv_AlbumSongItem.setColorFilter(ContextCompat.getColor(context, R.color.colorPrimary), android.graphics.PorterDuff.Mode.SRC_IN);
-    ImageViewCompat.setImageTintList(iv_AlbumSongItem, ColorStateList.valueOf(ContextCompat.getColor(context, R.color.colorPrimary)));
 
     if(aktuelleAlbum != null){
       iv_AlbumSongItem.setBackground(context.getDrawable(R.drawable.ic_music_album));
       tv_AlbumSongItem.setText(aktuelleAlbum.getName());
     } else {
-      iv_AlbumSongItem.setBackground(context.getDrawable(R.drawable.ic_music));
+      // Reset ImageView state
+      iv_AlbumSongItem.setImageDrawable(null);
+      iv_AlbumSongItem.setBackground(null);
+      iv_AlbumSongItem.setColorFilter(null);
+      ImageViewCompat.setImageTintList(iv_AlbumSongItem, null);
+      //get song art
+      BrowserManager.getThumbnailForFile(currentSong.getPath(), iv_AlbumSongItem);
       tv_AlbumSongItem.setText(currentSong.getName());
     }
 
@@ -80,12 +86,10 @@ public class GenreListAdapter extends ArrayAdapter<Object> {
       TextView tv_artist_song = rowView.findViewById(R.id.tv_item_artist);
       TextView tv_duration_song = rowView.findViewById(R.id.item_tv_duration);
 
-
       ll_artist_genre.setVisibility(View.VISIBLE);
       tv_artist_song.setVisibility(View.VISIBLE);
       tv_duration_song.setVisibility(View.VISIBLE);
       tv_duration_song.setText(aktuelleAlbum.getDurationString());
-
     }
 
 
