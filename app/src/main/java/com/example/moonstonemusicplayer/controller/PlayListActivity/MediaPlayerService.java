@@ -24,11 +24,16 @@ import android.media.AudioManager;
 import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.media.ThumbnailUtils;
+import android.media.session.MediaSession;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
 import android.provider.MediaStore;
+import android.support.v4.media.MediaDescriptionCompat;
+import android.support.v4.media.MediaMetadataCompat;
+import android.support.v4.media.session.MediaSessionCompat;
+import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
@@ -92,6 +97,9 @@ public class MediaPlayerService extends Service
   private int resumePosition = -1;
   private NotificationManager notificationManager;
 
+  private MediaSessionCompat mediaSession;
+  private PlaybackStateCompat.Builder stateBuilder;
+
   /** inits mediaplayer and sets Listeners */
   private void initMediaPlayer(){
     onDestroy();
@@ -132,12 +140,16 @@ public class MediaPlayerService extends Service
       stopSelf();
     }
 
+    initMediaSession();
+
   }
 
   //public interface
   public void resume() {
     if(DEBUG)Log.d(TAG,"resume: "+resumePosition);
     showNotification();
+    updateMediaMetadata(playListModel.getCurrentSong());
+    updatePlaybackState(PlaybackStateCompat.STATE_PLAYING);
     //setze Wiedergabe fort
     if(mediaPlayer == null)initMediaPlayer();
     else {
@@ -146,6 +158,7 @@ public class MediaPlayerService extends Service
           mediaPlayer.prepareAsync();
         } else {
           mediaPlayer.seekTo(resumePosition);
+          updatePlaybackState(PlaybackStateCompat.STATE_PLAYING);
           mediaPlayer.setVolume(1.0f,1.0f);
           if(!mediaPlayer.isPlaying())mediaPlayer.start();
         }
@@ -170,6 +183,7 @@ public class MediaPlayerService extends Service
                 } else {
                     int currentPosition = mediaPlayer.getCurrentPosition();
                     mediaPlayer.seekTo(currentPosition + (secondsForward  * 1000));
+                    updatePlaybackState(PlaybackStateCompat.STATE_PLAYING);
                 }
             }
         }
@@ -192,6 +206,7 @@ public class MediaPlayerService extends Service
                 } else {
                   int currentPosition = mediaPlayer.getCurrentPosition();
                   mediaPlayer.seekTo(currentPosition - (secondsBackward  * 1000));
+                  updatePlaybackState(PlaybackStateCompat.STATE_PLAYING);
                 }
             }
         }
@@ -200,6 +215,7 @@ public class MediaPlayerService extends Service
 
   public void pause() {
     showNotification();
+    updatePlaybackState(PlaybackStateCompat.STATE_PAUSED);
     if(mediaPlayer != null && mediaPlayer.isPlaying()){
       mediaPlayer.pause();
       resumePosition = mediaPlayer.getCurrentPosition();
@@ -234,6 +250,7 @@ public class MediaPlayerService extends Service
     if(playListModel.getCurrentSong() != null && playListModel.getCurrentSong().getDuration_ms() >= Audiobook.AUDIOBOOK_CUTOFF_MS){
       PlaytimePersistence.savePlaytime(this, mediaPlayerCurrentDataSourceUri, mediaPlayer.getCurrentPosition() / 1000);
     }
+    updatePlaybackState(PlaybackStateCompat.STATE_STOPPED);
   }
 
   //Listener interface
@@ -444,6 +461,8 @@ public class MediaPlayerService extends Service
     if(DEBUG)Log.d(TAG,"seekTo: "+i);
     mediaPlayer.seekTo(i);
     resumePosition = i;
+    updateMediaMetadata(playListModel.getCurrentSong());
+    updatePlaybackState(PlaybackStateCompat.STATE_PLAYING);
   }
 
   public void playSong(File songFile) {
@@ -453,6 +472,8 @@ public class MediaPlayerService extends Service
     DBPlaylists.getInstance(this.getApplicationContext()).addToRecentlyPlayed(this.getApplicationContext(),song);
     initMediaPlayer();
     showNotification();
+    updateMediaMetadata(playListModel.getCurrentSong());
+    updatePlaybackState(PlaybackStateCompat.STATE_PLAYING);
     updatePlaycount(playListModel.getCurrentSong());
   }
 
@@ -460,6 +481,8 @@ public class MediaPlayerService extends Service
     playListModel.nextSong();
     initMediaPlayer();
     showNotification();
+    updateMediaMetadata(playListModel.getCurrentSong());
+    updatePlaybackState(PlaybackStateCompat.STATE_PLAYING);
     updatePlaycount(playListModel.getCurrentSong());
   }
 
@@ -467,6 +490,8 @@ public class MediaPlayerService extends Service
     playListModel.prevSong();
     initMediaPlayer();
     showNotification();
+    updateMediaMetadata(playListModel.getCurrentSong());
+    updatePlaybackState(PlaybackStateCompat.STATE_PLAYING);
     updatePlaycount(playListModel.getCurrentSong());
   }
 
@@ -527,11 +552,85 @@ public class MediaPlayerService extends Service
     DBPlaycountList.getInstance(getApplicationContext()).playedSong(getApplicationContext(),song);
   }
 
-  public void createNotification(){
 
+  private void initMediaSession(){
+
+    mediaSession = new MediaSessionCompat(this, TAG);
+
+    // Set the callback to handle media actions
+    mediaSession.setCallback(new MediaSessionCompat.Callback() {
+      @Override
+      public void onPlay() {
+        super.onPlay();
+        resume();
+        updatePlaybackState(PlaybackStateCompat.STATE_PLAYING);
+      }
+
+      @Override
+      public void onPause() {
+        super.onPause();
+        pause();
+        updatePlaybackState(PlaybackStateCompat.STATE_PAUSED);
+      }
+
+      @Override
+      public void onSkipToNext() {
+        super.onSkipToNext();
+        nextSong();
+        updatePlaybackState(PlaybackStateCompat.STATE_SKIPPING_TO_NEXT);
+      }
+
+      @Override
+      public void onSkipToPrevious() {
+        super.onSkipToPrevious();
+        prevSong();
+        updatePlaybackState(PlaybackStateCompat.STATE_SKIPPING_TO_PREVIOUS);
+      }
+
+      @Override
+      public void onSeekTo(long position) {
+        super.onSeekTo(position);
+        seekTo((int) position);
+        updatePlaybackState(mediaPlayer.isPlaying() ? PlaybackStateCompat.STATE_PLAYING : PlaybackStateCompat.STATE_PAUSED);
+      }
+    });
+
+    mediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS |
+            MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
+
+    // Set the session as active
+    mediaSession.setActive(true);
   }
 
-  public void showNotification(){
+  private void updatePlaybackState(int state) {
+    long position = mediaPlayer != null ? mediaPlayer.getCurrentPosition() : 0;
+
+    stateBuilder = new PlaybackStateCompat.Builder()
+            .setActions(PlaybackStateCompat.ACTION_PLAY | PlaybackStateCompat.ACTION_PAUSE |
+                    PlaybackStateCompat.ACTION_SKIP_TO_NEXT | PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS |
+                    PlaybackStateCompat.ACTION_SEEK_TO)
+            .setState(state, position, 1.0f);
+
+    mediaSession.setPlaybackState(stateBuilder.build());
+  }
+
+  private void updateMediaMetadata(Song currentSong) {
+    if (currentSong == null) return;
+
+    MediaDescriptionCompat description = new MediaDescriptionCompat.Builder()
+            .setTitle(currentSong.getName())
+            .setSubtitle(currentSong.getArtist())
+            .setDescription(currentSong.getAlbum())
+            .build();
+
+    mediaSession.setMetadata(new MediaMetadataCompat.Builder()
+            .putString(MediaMetadataCompat.METADATA_KEY_TITLE, currentSong.getName())
+            .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, currentSong.getArtist())
+            .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, currentSong.getAlbum())
+            .build());
+  }
+
+  private void showNotification(){
     // Create notification intent
     final Intent notificationIntent = new Intent(MediaPlayerService.this, PlayListActivityListener.class);
     notificationIntent.setAction(Intent.ACTION_MAIN);
@@ -589,6 +688,7 @@ public class MediaPlayerService extends Service
             .setContentIntent(pendingIntent)
             .setDeleteIntent(pcloseIntent);
 
+
     // Add actions
     builder.addAction(android.R.drawable.ic_media_previous, "Previous", ppreviousIntent);
     builder.addAction(mediaPlayer != null && mediaPlayer.isPlaying() ?
@@ -626,6 +726,7 @@ public class MediaPlayerService extends Service
     androidx.media.app.NotificationCompat.MediaStyle mediaStyle =
             new androidx.media.app.NotificationCompat.MediaStyle()
                     .setShowCancelButton(true)
+                    .setMediaSession(mediaSession.getSessionToken())
                     .setShowActionsInCompactView(0, 1, 2);
 
     // Apply the media style
