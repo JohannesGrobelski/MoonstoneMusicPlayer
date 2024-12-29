@@ -16,20 +16,27 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.AudioAttributes;
 import android.media.AudioFocusRequest;
 import android.media.AudioManager;
+import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
+import androidx.core.graphics.drawable.IconCompat;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.PlayListActivity.Notification.Constants;
@@ -520,8 +527,12 @@ public class MediaPlayerService extends Service
     DBPlaycountList.getInstance(getApplicationContext()).playedSong(getApplicationContext(),song);
   }
 
-  private void showNotification(){
-    //setting up the notification intent
+  public void createNotification(){
+
+  }
+
+  public void showNotification(){
+    // Create notification intent
     final Intent notificationIntent = new Intent(MediaPlayerService.this, PlayListActivityListener.class);
     notificationIntent.setAction(Intent.ACTION_MAIN);
     notificationIntent.addCategory(Intent.CATEGORY_LAUNCHER);
@@ -529,8 +540,7 @@ public class MediaPlayerService extends Service
     PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
             notificationIntent, PendingIntent.FLAG_IMMUTABLE);
 
-
-    //setting up the intents for the actions available in notification: previous, play, next, close
+    // Create action intents
     Intent previousIntent = new Intent(this, MediaPlayerService.class);
     previousIntent.setAction(Constants.ACTION.PREV_ACTION);
     PendingIntent ppreviousIntent = PendingIntent.getService(this, 0,
@@ -551,81 +561,94 @@ public class MediaPlayerService extends Service
     PendingIntent pcloseIntent = PendingIntent.getService(this, 0,
             closeIntent, PendingIntent.FLAG_IMMUTABLE);
 
-    PendingIntent popenIntent = PendingIntent.getActivity(this, 0,
-            notificationIntent, PendingIntent.FLAG_IMMUTABLE);
-
-    // Using RemoteViews to bind custom layouts into Notification
-    RemoteViews views = new RemoteViews(getPackageName(),R.layout.status_bar);
-    RemoteViews bigViews = new RemoteViews(getPackageName(),R.layout.status_bar_expanded);
-
-    //connect views with pending intents
-    views.setOnClickPendingIntent(R.id.status_bar_play, pplayIntent);
-    bigViews.setOnClickPendingIntent(R.id.status_bar_play, pplayIntent);
-    views.setOnClickPendingIntent(R.id.status_bar_next, pnextIntent);
-    bigViews.setOnClickPendingIntent(R.id.status_bar_next, pnextIntent);
-    views.setOnClickPendingIntent(R.id.status_bar_prev, ppreviousIntent);
-    bigViews.setOnClickPendingIntent(R.id.status_bar_prev, ppreviousIntent);
-    views.setOnClickPendingIntent(R.id.status_bar_collapse, pcloseIntent);
-    bigViews.setOnClickPendingIntent(R.id.status_bar_collapse, pcloseIntent);
-    views.setOnClickPendingIntent(R.id.iv_status_bar_album_art, popenIntent);
-    bigViews.setOnClickPendingIntent(R.id.iv_status_bar_album_art, popenIntent);
-
-    if(mediaPlayer != null && mediaPlayer.isPlaying()) {
-      views.setImageViewResource(R.id.status_bar_play, R.drawable.ic_play_button);
-      bigViews.setImageViewResource(R.id.status_bar_play, R.drawable.ic_play_button);
-    } else {
-      views.setImageViewResource(R.id.status_bar_play, R.drawable.ic_pause);
-      bigViews.setImageViewResource(R.id.status_bar_play, R.drawable.ic_pause);
-    }
-
-    //set up the texts in the notification
-    String truncatedSongTitle = playListModel.getCurrentSong() == null ? "test123" : playListModel.getCurrentSong().getName().length() > 15 ? 
-                                                              playListModel.getCurrentSong().getName().substring(0, 15)+"..." : playListModel.getCurrentSong().getName();
-
-    views.setTextViewText(R.id.status_bar_track_name, truncatedSongTitle);
-    bigViews.setTextViewText(R.id.status_bar_track_name, truncatedSongTitle);
-    String artist = playListModel.getCurrentSong().getArtist();
-    if(artist.isEmpty() || artist.contains("<unknown>")){
-      views.setViewVisibility(R.id.status_bar_album_name, View.GONE); 
-    } else {
-      views.setViewVisibility(R.id.status_bar_album_name, View.VISIBLE); 
-    }
-    views.setTextViewText(R.id.status_bar_artist_name, artist);
-    bigViews.setTextViewText(R.id.status_bar_artist_name, artist);
-
-    //get album image and album (if possible)
-    Song song = playListModel.getCurrentSong();
-    String albumName = song.getAlbum();
-    bigViews.setTextViewText(R.id.status_bar_album_name, albumName);
-
+    // Create notification channel
     notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-    //Create a notification channel
     CharSequence name = getString(R.string.channel_name);
     String description = getString(R.string.channel_description);
-    int importance = NotificationManager.IMPORTANCE_MAX;
+    int importance = NotificationManager.IMPORTANCE_LOW;
     NotificationChannel notificationChannel = new NotificationChannel(CHANNEL_ID, name, importance);
     notificationChannel.setDescription(description);
     notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
     notificationManager.createNotificationChannel(notificationChannel);
 
-       //build the notification with Builder Pattern 
-    Notification.Builder notificationBuilder = new Notification.Builder(this, CHANNEL_ID);
-    notificationBuilder.setContentTitle(getString(R.string.app_name));
-    notificationBuilder.setContentText(truncatedSongTitle);
-    notificationBuilder.setChannelId(CHANNEL_ID);
-    notificationBuilder.setVisibility(Notification.VISIBILITY_PUBLIC);
-    notificationBuilder.setCustomContentView(views);
-    notificationBuilder.setCustomBigContentView(bigViews);
-    notificationBuilder.setSmallIcon(R.drawable.ic_moonstonemusicplayerlogo);
-    notificationBuilder.setWhen(System.currentTimeMillis());
-    notificationBuilder.setAutoCancel(false);
+    // Get song information
+    String songTitle = playListModel.getCurrentSong() == null ? "Unknown" : playListModel.getCurrentSong().getName();
+    String artist = playListModel.getCurrentSong().getArtist();
+    if (artist.isEmpty() || artist.contains("<unknown>")) {
+      artist = "Unknown Artist";
+    }
+    String album = playListModel.getCurrentSong().getAlbum();
 
-    statusNotification = notificationBuilder.build();
-    statusNotification.flags = Notification.FLAG_ONGOING_EVENT | Notification.FLAG_NO_CLEAR;
-    statusNotification.contentIntent = pendingIntent;
-    
-    notificationManager.notify(8888,statusNotification);
-    //startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, statusNotification);
+    // Create the notification using NotificationCompat
+    NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
+            .setContentTitle(songTitle)
+            .setContentText(artist)
+            .setSubText(album)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setOngoing(true)
+            .setContentIntent(pendingIntent)
+            .setDeleteIntent(pcloseIntent);
+
+    // Add actions
+    builder.addAction(android.R.drawable.ic_media_previous, "Previous", ppreviousIntent);
+    builder.addAction(mediaPlayer != null && mediaPlayer.isPlaying() ?
+                    android.R.drawable.ic_media_play : android.R.drawable.ic_media_pause,
+            "Play/Pause",
+            pplayIntent);
+    builder.addAction(android.R.drawable.ic_media_next, "Next", pnextIntent);
+
+    // Load album art
+    Bitmap albumArt = null;
+    try {
+      MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+      retriever.setDataSource(playListModel.getCurrentSongFile().getPath());
+      byte[] art = retriever.getEmbeddedPicture();
+      if (art != null) {
+        albumArt = BitmapFactory.decodeByteArray(art, 0, art.length);
+      }
+      retriever.release();
+    } catch (Exception e) {
+      Log.e(TAG, "Error loading album art", e);
+    }
+
+    // If no album art was found, use a default image
+    if (albumArt == null) {
+      albumArt = BitmapFactory.decodeResource(getResources(), R.drawable.ic_moonstonemusicplayerlogo);
+      builder.setSmallIcon(R.drawable.ic_moonstonemusicplayerlogo);
+    } else {
+      builder.setSmallIcon(IconCompat.createWithBitmap(albumArt));
+    }
+
+    // Set small and large icon (album art)
+    builder.setLargeIcon(albumArt);
+
+    // Create the media style
+    androidx.media.app.NotificationCompat.MediaStyle mediaStyle =
+            new androidx.media.app.NotificationCompat.MediaStyle()
+                    .setShowCancelButton(true)
+                    .setShowActionsInCompactView(0, 1, 2);
+
+    // Apply the media style
+    builder.setStyle(mediaStyle);
+
+    // Get the current playback position and duration
+    // Calculate playback progress
+
+    long duration = 0;
+    long position = 0;
+    if (mediaPlayer != null) {
+      try {
+        duration = mediaPlayer.getDuration();
+        position = getCurrentPosition();
+      } catch (IllegalStateException e) {
+        Log.e(TAG, "Error retrieving duration or position", e);
+      }
+    }
+
+    builder.setProgress((int) duration / 1000, (int) position, false);
+
+    // Build and show the notification
+    statusNotification = builder.build();
+    notificationManager.notify(8888, statusNotification);
   }
 }
