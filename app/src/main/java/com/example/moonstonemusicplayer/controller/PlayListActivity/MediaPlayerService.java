@@ -26,6 +26,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.MediaMetadataCompat;
@@ -69,35 +70,35 @@ public class MediaPlayerService extends Service
                   AudioManager.OnAudioFocusChangeListener {
 
   private static final String CHANNEL_ID = "MoonstoneMediaPlayerServiceChannelID_8941891918918941351";
-  Notification statusNotification;
-
   public static final String ACTION_NOTIFICATION_ORDER ="NOTIFICATION_ORDER";
-
-
   public static final String STARTING_INDEX = "STARTING_INDEX";
   private static final String TAG = MediaPlayerService.class.getSimpleName();
   private static final boolean DEBUG = true;
 
   private final IBinder iBinder = new LocalBinder();
-    private MediaPlayer mediaPlayer;
-  private boolean isMediaPlayerPrepared = false;
-  private PlayListModel playListModel = null;
-
-  private Song currentSong;
-  private String mediaPlayerCurrentDataSourceUri = "";
-  /**/
-
   private AudioManager audioManager;
+  private MediaPlayer mediaPlayer;
+  private boolean isMediaPlayerPrepared = false;
+
+  //playback state
+  private String mediaPlayerCurrentDataSourceUri = "";
+  private PlayListModel playListModel = null;
   private int startIndex;
   private int resumePosition = -1;
+  private Song currentSong;
 
+  //Notifications and Mediasession
+  private MediaSessionCompat mediaSession;
   private static final int notificationId = 8888;
   private NotificationManager notificationManager;
 
-  private MediaSessionCompat mediaSession;
   private PlaybackStateCompat.Builder stateBuilder;
-
   private NotificationCompat.Builder notificationBuilder;
+
+  //Notification - progress
+  private boolean isPlaying = false;
+  private Handler progressHandler = new Handler();
+  private Runnable progressRunnable;
 
   /** inits mediaplayer and sets Listeners */
   private void initMediaPlayer(){
@@ -170,10 +171,11 @@ public class MediaPlayerService extends Service
       e.printStackTrace();
       stopSelf();
     }
+
+    setupMediaPlayerCallbacks();
   }
 
-    //public interface
-
+  //public interface
   /**
      * will jump forward in current song by secondsForward seconds
      *
@@ -316,6 +318,7 @@ public class MediaPlayerService extends Service
     stopSelf(); //beende Service
     removeAudioFocus();
     if(notificationManager != null)notificationManager.cancelAll();
+    stopProgressUpdates();
   }
 
   @Nullable
@@ -457,10 +460,12 @@ public class MediaPlayerService extends Service
 
   public void seekTo(int i) {
     if(DEBUG)Log.d(TAG,"seekTo: "+i);
+    stopProgressUpdates();
     mediaPlayer.seekTo(i);
     resumePosition = i;
     updateMediaMetadata(playListModel.getCurrentSong());
     updatePlaybackState(PlaybackStateCompat.STATE_PLAYING);
+    startProgressUpdates();
   }
 
   public void playSong(File songFile) {
@@ -479,6 +484,7 @@ public class MediaPlayerService extends Service
     showNotification();
     updatePlaybackState(PlaybackStateCompat.STATE_PAUSED);
     if(mediaPlayer != null && mediaPlayer.isPlaying()){
+      stopProgressUpdates();
       mediaPlayer.pause();
       resumePosition = mediaPlayer.getCurrentPosition();
     }
@@ -501,6 +507,7 @@ public class MediaPlayerService extends Service
           updatePlaybackState(PlaybackStateCompat.STATE_PLAYING);
           mediaPlayer.setVolume(1.0f,1.0f);
           if(!mediaPlayer.isPlaying())mediaPlayer.start();
+          startProgressUpdates();
         }
       }
     }
@@ -658,9 +665,60 @@ public class MediaPlayerService extends Service
             .build());
   }
 
-  private void updateNotification(String message, int progress) {
-    notificationBuilder.setContentText(message)
-            .setProgress(100, progress, true);
+  // Callbacks for media player events
+  private void setupMediaPlayerCallbacks() {
+    mediaPlayer.setOnPreparedListener(mp -> {
+      mp.start();
+      isPlaying = true;
+      startProgressUpdates();
+    });
+
+    mediaPlayer.setOnCompletionListener(mp -> {
+      isPlaying = false;
+      stopProgressUpdates();
+
+      // Update notification for completed state
+      String message = "Playback completed";
+      updateNotification(message, 100,100);
+    });
+  }
+
+  // Start progress updates
+  private void startProgressUpdates() {
+    if (progressRunnable != null) {
+      progressHandler.removeCallbacks(progressRunnable);
+    }
+    progressRunnable = new Runnable() {
+      @Override
+      public void run() {
+        if (mediaPlayer != null && isPlaying) {
+          int progress = mediaPlayer.getCurrentPosition();
+          int duration = mediaPlayer.getDuration();
+
+          // Update notification with progress
+          String message = String.format("Playing: %s", playListModel.getCurrentSongFile().getName());
+          updateNotification(message, progress, duration);
+
+          // Schedule the next update
+          progressHandler.postDelayed(this, 1000); // Update every second
+        }
+      }
+    };
+    progressHandler.post(progressRunnable);
+  }
+
+  // Stop progress updates
+  private void stopProgressUpdates() {
+    if (progressRunnable != null) {
+      progressHandler.removeCallbacks(progressRunnable);
+      progressRunnable = null;
+    }
+  }
+
+  private void updateNotification(String message, int progress, int max) {
+    notificationBuilder
+            .setContentText(message)
+            .setProgress(max, progress, true);
     notificationManager.notify(notificationId, notificationBuilder.build());
   }
 
