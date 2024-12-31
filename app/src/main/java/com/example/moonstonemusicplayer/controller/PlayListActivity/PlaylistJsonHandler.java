@@ -49,6 +49,8 @@ public class PlaylistJsonHandler {
             JSONArray playlistsArray = new JSONArray();
 
             for (Playlist playlist : playlists) {
+
+                // make sure not to export special playlists like recently added
                 if(playlist.getName().equals(RECENTLY_ADDED_PLAYLIST_NAME)
                 || playlist.getName().equals(RECENTLY_PLAYED_PLAYLIST_NAME)
                 || playlist.getName().equals(MOSTLY_PLAYED_PLAYLIST_NAME)){
@@ -129,6 +131,7 @@ public class PlaylistJsonHandler {
                 String originalName = playlistObj.getString("name");
                 String playlistName = getUniquePlaylistName(originalName, existingNames);
 
+                // make sure not to import special playlists like recently added
                 if(playlistName.equals(RECENTLY_ADDED_PLAYLIST_NAME)
                         || playlistName.equals(RECENTLY_PLAYED_PLAYLIST_NAME)
                         || playlistName.equals(MOSTLY_PLAYED_PLAYLIST_NAME)){
