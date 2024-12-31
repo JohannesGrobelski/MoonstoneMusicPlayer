@@ -8,6 +8,10 @@
 
 package com.example.moonstonemusicplayer.controller.PlayListActivity;
 
+import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.MOSTLY_PLAYED_PLAYLIST_NAME;
+import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.RECENTLY_ADDED_PLAYLIST_NAME;
+import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.RECENTLY_PLAYED_PLAYLIST_NAME;
+
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -45,6 +49,11 @@ public class PlaylistJsonHandler {
             JSONArray playlistsArray = new JSONArray();
 
             for (Playlist playlist : playlists) {
+                if(playlist.getName().equals(RECENTLY_ADDED_PLAYLIST_NAME)
+                || playlist.getName().equals(RECENTLY_PLAYED_PLAYLIST_NAME)
+                || playlist.getName().equals(MOSTLY_PLAYED_PLAYLIST_NAME)){
+                    continue;
+                }
                 JSONObject playlistObj = new JSONObject();
                 playlistObj.put("name", playlist.getName());
 
@@ -119,6 +128,12 @@ public class PlaylistJsonHandler {
                 JSONObject playlistObj = playlistsArray.getJSONObject(i);
                 String originalName = playlistObj.getString("name");
                 String playlistName = getUniquePlaylistName(originalName, existingNames);
+
+                if(playlistName.equals(RECENTLY_ADDED_PLAYLIST_NAME)
+                        || playlistName.equals(RECENTLY_PLAYED_PLAYLIST_NAME)
+                        || playlistName.equals(MOSTLY_PLAYED_PLAYLIST_NAME)){
+                    continue;
+                }
 
                 // Add the new name to our set of existing names
                 existingNames.add(playlistName.toLowerCase());
