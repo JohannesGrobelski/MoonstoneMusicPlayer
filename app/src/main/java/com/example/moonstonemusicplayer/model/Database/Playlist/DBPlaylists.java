@@ -33,9 +33,9 @@ import java.util.Set;
 
 public class DBPlaylists {
     //favorites is just another playlist
-    private static final String FAVORITES_PLAYLIST_NAME = "MOONSTONE FAVORITES";
-
     private static final int RECENTLY_PLAYED_SONG_LIMIT = 100;
+    public static final String FAVORITES_PLAYLIST_NAME = "MOONSTONE FAVORITES";
+
     public static final String RECENTLY_PLAYED_PLAYLIST_NAME = "RECENTLY PLAYED";
     public static final String RECENTLY_ADDED_PLAYLIST_NAME = "RECENTLY ADDED";
     public static final String MOSTLY_PLAYED_PLAYLIST_NAME = "MOSTLY PLAYED";
@@ -179,8 +179,6 @@ public class DBPlaylists {
             ContentValues values = new ContentValues();
             values.put(com.example.moonstonemusicplayer.model.Database.Playlist.DBHelperPlaylists.COLUMN_PLAYLIST_NAME, playlistname);
             values.put(com.example.moonstonemusicplayer.model.Database.Playlist.DBHelperPlaylists.COLUMN_SONG_PATH, inputSong.getPath());
-
-
 
             //Song-Objekt in DB einfügen und ID zurückbekommen
             long insertID = database_playlists.insert(TABLE_PLAYLISTS, null, values);
