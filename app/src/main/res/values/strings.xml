@@ -15,6 +15,7 @@
     <string name="RecentlyPlayedPlaylist"> Zuletzt gespielte Songs</string>
     <string name="MostlyPlayedPlaylist">Meist gespielte Songs</string>
     <string name="RecentlyAddedPlaylist">Zuletzt hinzugefügte Songs</string>
+    <string name="MoonstoneFavoritesPlaylist">Favoriten</string>
 
     <string name="app_version_number">1.0</string>
     <string name="menu_settings">Settings</string>

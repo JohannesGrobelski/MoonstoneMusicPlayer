@@ -63,17 +63,19 @@ public class PlaylistUtil {
                         p.getName().equals(MOSTLY_PLAYED_PLAYLIST_NAME))
                 .collect(Collectors.toMap(Playlist::getName, p -> p));
 
-        if (specialPlaylists.size() != 3) {
-            throw new IllegalArgumentException("One or more required playlists not found");
-        }
-
         List<Playlist> result = playlistList.stream()
                 .filter(p -> !specialPlaylists.containsKey(p.getName()))
                 .collect(Collectors.toList());
 
-        result.add(0, specialPlaylists.get(MOSTLY_PLAYED_PLAYLIST_NAME));
-        result.add(0, specialPlaylists.get(RECENTLY_PLAYED_PLAYLIST_NAME));
-        result.add(0, specialPlaylists.get(FAVORITES_PLAYLIST_NAME));
+        if(specialPlaylists.containsKey(MOSTLY_PLAYED_PLAYLIST_NAME)){
+            result.add(0, specialPlaylists.get(MOSTLY_PLAYED_PLAYLIST_NAME));
+        }
+        if(specialPlaylists.containsKey(RECENTLY_PLAYED_PLAYLIST_NAME)) {
+            result.add(0, specialPlaylists.get(RECENTLY_PLAYED_PLAYLIST_NAME));
+        }
+        if(specialPlaylists.containsKey(FAVORITES_PLAYLIST_NAME)) {
+            result.add(0, specialPlaylists.get(FAVORITES_PLAYLIST_NAME));
+        }
 
         return result;
     }

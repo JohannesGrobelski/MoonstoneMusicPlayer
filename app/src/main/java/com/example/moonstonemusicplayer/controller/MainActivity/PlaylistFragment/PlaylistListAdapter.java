@@ -27,6 +27,7 @@ import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.PlayListFragment;
 import com.woxthebox.draglistview.DragItemAdapter;
 
+import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.FAVORITES_PLAYLIST_NAME;
 import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.MOSTLY_PLAYED_PLAYLIST_NAME;
 import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.RECENTLY_ADDED_PLAYLIST_NAME;
 import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.RECENTLY_PLAYED_PLAYLIST_NAME;
@@ -206,6 +207,10 @@ public class PlaylistListAdapter extends DragItemAdapter<Object, PlaylistListAda
             iv_playlistSongItem.setBackground(context.getDrawable(R.drawable.ic_playlist));
 
             switch (playlist.getName()) {
+                case FAVORITES_PLAYLIST_NAME:
+                    tv_playlistSongItem.setTypeface(null, Typeface.BOLD);
+                    tv_playlistSongItem.setText(R.string.MoonstoneFavoritesPlaylist);
+                    break;
                 case RECENTLY_ADDED_PLAYLIST_NAME:
                     tv_playlistSongItem.setTypeface(null, Typeface.BOLD);
                     tv_playlistSongItem.setText(R.string.RecentlyAddedPlaylist);
