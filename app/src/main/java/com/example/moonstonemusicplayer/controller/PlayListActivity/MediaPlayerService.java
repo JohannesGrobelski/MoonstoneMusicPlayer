@@ -33,7 +33,6 @@ import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -111,7 +110,7 @@ public class MediaPlayerService extends Service
       if (mediaPlayer != null && mediaPlayer.isPlaying()) {
         int currentPosition = mediaPlayer.getCurrentPosition();
         int duration = mediaPlayer.getDuration();
-        updateProgress(duration, currentPosition); // Updates the progress in notification and MediaSession
+        setProgress(duration, currentPosition); // Updates the progress in notification and MediaSession
       }
       progressHandler.postDelayed(this, 1000); // Repeat every second
     }
@@ -681,7 +680,7 @@ public class MediaPlayerService extends Service
             .build());
   }
 
-  private void updateProgress(int duration, int position) {
+  private void setProgress(int duration, int position) {
     // Update MediaSession with current position and duration
     MediaMetadataCompat.Builder metadataBuilder = new MediaMetadataCompat.Builder()
             .putString(MediaMetadataCompat.METADATA_KEY_TITLE, playListModel.getCurrentSong().getName())
@@ -794,8 +793,13 @@ public class MediaPlayerService extends Service
       Log.e(TAG, "Error loading album art", e);
     }
 
-    // problem small icon overlaps large icon -> solution: set mandatory small icon as transparent icon
-    notificationBuilder.setSmallIcon(R.drawable.ic_transparent);
+    // If no album art was found, use a default image
+    if (albumArt == null) {
+      albumArt = BitmapFactory.decodeResource(getResources(), R.drawable.ic_moonstonemusicplayerlogo);
+      notificationBuilder.setSmallIcon(R.drawable.ic_moonstonemusicplayerlogo);
+    } else {
+      notificationBuilder.setSmallIcon(IconCompat.createWithBitmap(albumArt));
+    }
 
     // Set small and large icon (album art)
     notificationBuilder.setLargeIcon(albumArt);
@@ -825,11 +829,10 @@ public class MediaPlayerService extends Service
       }
     }
 
-    updateProgress((int) duration,(int) position);
+    setProgress((int) duration,(int) position);
 
     Notification notification = notificationBuilder.build();
     notification.flags |= Notification.FLAG_ONLY_ALERT_ONCE;
-
     // Build and show the notification
     notificationManager.notify(notificationId, notification);
   }
