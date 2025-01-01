@@ -26,6 +26,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.MediaMetadataCompat;
@@ -98,6 +99,23 @@ public class MediaPlayerService extends Service
   private PlaybackStateCompat.Builder stateBuilder;
 
   private NotificationCompat.Builder notificationBuilder;
+
+  private Handler progressHandler = new Handler();
+  private Runnable progressUpdater = new Runnable() {
+    @Override
+    /** every seconds this progressUpdate will update
+     *
+     */
+    public void run() {
+      if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+        int currentPosition = mediaPlayer.getCurrentPosition();
+        int duration = mediaPlayer.getDuration();
+        setProgress(duration, currentPosition); // Updates the progress in notification and MediaSession
+      }
+      progressHandler.postDelayed(this, 1000); // Repeat every second
+    }
+  };
+
 
   /** inits mediaplayer and sets Listeners */
   private void initMediaPlayer(){
@@ -315,6 +333,7 @@ public class MediaPlayerService extends Service
     }
     stopSelf(); //beende Service
     removeAudioFocus();
+    progressHandler.removeCallbacks(progressUpdater); // Ensure no memory leaks
     if(notificationManager != null)notificationManager.cancelAll();
   }
 
@@ -381,6 +400,7 @@ public class MediaPlayerService extends Service
         }
       }
     }
+    progressHandler.post(progressUpdater); // Start progress updates
     mediaPlayer.setVolume(1.0f,1.0f);
   }
 
@@ -481,6 +501,7 @@ public class MediaPlayerService extends Service
     if(mediaPlayer != null && mediaPlayer.isPlaying()){
       mediaPlayer.pause();
       resumePosition = mediaPlayer.getCurrentPosition();
+      progressHandler.removeCallbacks(progressUpdater); // Stop progress updates
     }
   }
 
@@ -501,6 +522,7 @@ public class MediaPlayerService extends Service
           updatePlaybackState(PlaybackStateCompat.STATE_PLAYING);
           mediaPlayer.setVolume(1.0f,1.0f);
           if(!mediaPlayer.isPlaying())mediaPlayer.start();
+          progressHandler.post(progressUpdater); // Start progress updates
         }
       }
     }
@@ -658,10 +680,36 @@ public class MediaPlayerService extends Service
             .build());
   }
 
-  private void updateNotification(String message, int progress) {
-    notificationBuilder.setContentText(message)
-            .setProgress(100, progress, true);
-    notificationManager.notify(notificationId, notificationBuilder.build());
+  private void setProgress(int duration, int position) {
+    // Update MediaSession with current position and duration
+    MediaMetadataCompat.Builder metadataBuilder = new MediaMetadataCompat.Builder()
+            .putString(MediaMetadataCompat.METADATA_KEY_TITLE, playListModel.getCurrentSong().getName())
+            .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, playListModel.getCurrentSong().getArtist())
+            .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, playListModel.getCurrentSong().getAlbum())
+            .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, duration);
+
+    mediaSession.setMetadata(metadataBuilder.build());
+
+    PlaybackStateCompat.Builder stateBuilder = new PlaybackStateCompat.Builder()
+            .setActions(PlaybackStateCompat.ACTION_PLAY |
+                    PlaybackStateCompat.ACTION_PAUSE |
+                    PlaybackStateCompat.ACTION_SKIP_TO_NEXT |
+                    PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS |
+                    PlaybackStateCompat.ACTION_SEEK_TO)
+            .setState(mediaPlayer.isPlaying() ?
+                            PlaybackStateCompat.STATE_PLAYING : PlaybackStateCompat.STATE_PAUSED,
+                    position,
+                    1.0f);
+
+    mediaSession.setPlaybackState(stateBuilder.build());
+
+    // Update notification progress
+    notificationBuilder.setProgress((int) duration / 1000, (int) position, false);
+
+    // Update the notification
+    if (notificationManager != null) {
+      notificationManager.notify(notificationId, notificationBuilder.build());
+    }
   }
 
   private void showNotification(){
@@ -781,7 +829,7 @@ public class MediaPlayerService extends Service
       }
     }
 
-    notificationBuilder.setProgress((int) duration / 1000, (int) position, false);
+    setProgress((int) duration,(int) position);
 
     Notification notification = notificationBuilder.build();
     notification.flags |= Notification.FLAG_ONLY_ALERT_ONCE;
