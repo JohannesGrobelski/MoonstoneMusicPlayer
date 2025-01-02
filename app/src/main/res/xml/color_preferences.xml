@@ -5,8 +5,8 @@
         <com.github.koston.preference.ColorPreference
             app:key="colorPrimary"
             app:title="Primary Color"
-            app:summary="Main theme color for the app"
             app:defaultValue="@color/colorPrimary"
+            app:summary="Main theme color for the app \nThis will update Primary Dark Color and Accent Color."
             app:hueWheelRadius="@dimen/defaultWheelRadius"
             app:hueWheelThickness="@dimen/defaultWheelThickness"
             app:centerCircleRadius="@dimen/defaultCenterRadius"
