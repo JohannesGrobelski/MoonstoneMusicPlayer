@@ -16,4 +16,9 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.DayNight" />
 
+    <style name="AppTheme.PreferenceDialog" parent="Theme.MaterialComponents.DayNight.Dialog">
+        <item name="positiveButtonText">@android:string/ok</item>
+        <item name="negativeButtonText">@android:string/cancel</item>
+    </style>
+
 </resources>

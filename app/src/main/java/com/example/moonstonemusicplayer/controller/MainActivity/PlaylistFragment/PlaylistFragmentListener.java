@@ -32,7 +32,7 @@ import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
 import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.Playlist;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import com.example.moonstonemusicplayer.view.MainActivity;
-import com.example.moonstonemusicplayer.view.PlayListActivityListener;
+import com.example.moonstonemusicplayer.view.PlayListActivity;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.PlayListFragment;
 import com.woxthebox.draglistview.DragListView;
 
@@ -146,7 +146,7 @@ public class PlaylistFragmentListener implements View.OnClickListener, View.OnCr
   /** starts playlistactivity with selected songlist; playlistactivity grabs songlist by calling getPlaylistSonglist*/
   public void startPlaylist(Playlist playlist, int song_index){
     Playlist = new Playlist(playlist.getName(),playlist.getPlaylist());
-    Intent intent = new Intent(playListFragment.getActivity(), PlayListActivityListener.class);
+    Intent intent = new Intent(playListFragment.getActivity(), PlayListActivity.class);
     intent.putExtra(PLAYLISTINDEXEXTRA,song_index);
     intent.putExtra(PLAYLISTNAMEEXTRA,playlist.getName());
     playListFragment.startActivity(intent);

@@ -50,10 +50,10 @@ import java.io.File;
   * Contains all Views and sets Listeners for them.
   * Delegates the creation and management (itemselection) of the optionsmenu to the  {@link com.example.moonstonemusicplayer.controller.PlayListActivity.PlayListActivityListener}.
 */
-public class PlayListActivityListener extends AppCompatActivity {
+public class PlayListActivity extends AppCompatActivity {
 
 
-  private static final String TAG = PlayListActivityListener.class.getName();
+  private static final String TAG = PlayListActivity.class.getName();
   private static final boolean DEBUG = true;
   com.example.moonstonemusicplayer.controller.PlayListActivity.PlayListActivityListener playListActivityListener;
   public DragListView dlv_songlist;

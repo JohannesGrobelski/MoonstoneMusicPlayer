@@ -18,7 +18,6 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.media.AudioManager;
 import android.os.Handler;
 import android.os.IBinder;
@@ -44,6 +43,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.example.moonstonemusicplayer.view.PlayListActivity;
 import com.woxthebox.draglistview.DragListView;
 
 import com.example.moonstonemusicplayer.R;
@@ -61,7 +61,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /** MainActivityListener
- *  Handles input from the User (through Views in {@link com.example.moonstonemusicplayer.view.PlayListActivityListener}),
+ *  Handles input from the User (through Views in {@link PlayListActivity}),
  *  changes the model {@link PlaylistManager}) according to the input and
  *  and, if necessary, sends messages to the {@link PlaylistManager}).
  */
@@ -75,7 +75,7 @@ public class PlayListActivityListener
   private static final int SINGLE_TAP_TIMEOUT = 400; // Custom timeout for single tap in milliseconds
 
 
-  public final com.example.moonstonemusicplayer.view.PlayListActivityListener playListActivity;
+  public final PlayListActivity playListActivity;
 
   PlaylistManager playlistManager;
 
@@ -89,7 +89,7 @@ public class PlayListActivityListener
   private Thread seekbarAnimationThread;
 
   @SuppressLint("ClickableViewAccessibility")
-  public PlayListActivityListener(com.example.moonstonemusicplayer.view.PlayListActivityListener playListActivity, File[] playlist, int starting_song_index, String playlist_name) {
+  public PlayListActivityListener(PlayListActivity playListActivity, File[] playlist, int starting_song_index, String playlist_name) {
     if(DEBUG)Log.d(TAG,"selected song: "+playlist[starting_song_index].getName());
     this.playListActivity = playListActivity;
     this.playlistName = playlist_name;

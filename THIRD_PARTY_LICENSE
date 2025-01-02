@@ -23,3 +23,7 @@ License: MIT
 DragListView:
 - com.github.woxthebox:draglistview
 License: Apache 2.0
+
+HSVColorPicker:
+com.github.7Koston:HSVColorPicker
+License: Apache 2.0

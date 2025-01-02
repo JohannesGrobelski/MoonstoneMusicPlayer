@@ -23,7 +23,7 @@ import com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists;
 import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import com.example.moonstonemusicplayer.view.MainActivity;
-import com.example.moonstonemusicplayer.view.PlayListActivityListener;
+import com.example.moonstonemusicplayer.view.PlayListActivity;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.FolderFragment;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.PlayListFragment;
 
@@ -237,7 +237,7 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
 
   public void startFolderSonglist(File[] playlist, int song_index, FolderFragment folderFragment){
     FolderSonglist = playlist.clone();
-    Intent intent = new Intent(folderFragment.getActivity(), PlayListActivityListener.class);
+    Intent intent = new Intent(folderFragment.getActivity(), PlayListActivity.class);
     intent.putExtra(FolderFragment.FOLDERSONGINDEXEXTRA,song_index);
     folderFragment.startActivity(intent);
   }

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#bc92f8</color>
-    <color name="primaryLightColor">#bc92f8</color>
     <color name="colorPrimaryDark">#5e497c</color>
     <color name="colorAccent">#bc92f8</color>
     <color name="primaryTextColor">#000000</color>
@@ -29,6 +28,29 @@
 
         <color name="red">#ffff0000</color>
         <color name="blue">#ff0000ff</color>
+
+    <!-- Color choices for the preference dialog -->
+    <array name="color_choices">
+        <item>#F44336</item>
+        <item>#E91E63</item>
+        <item>#9C27B0</item>
+        <item>#673AB7</item>
+        <item>#3F51B5</item>
+        <item>#2196F3</item>
+        <item>#03A9F4</item>
+        <item>#00BCD4</item>
+        <item>#009688</item>
+        <item>#4CAF50</item>
+        <item>#8BC34A</item>
+        <item>#CDDC39</item>
+        <item>#FFEB3B</item>
+        <item>#FFC107</item>
+        <item>#FF9800</item>
+        <item>#FF5722</item>
+        <item>#795548</item>
+        <item>#9E9E9E</item>
+        <item>#607D8B</item>
+    </array>
 
 
 </resources>

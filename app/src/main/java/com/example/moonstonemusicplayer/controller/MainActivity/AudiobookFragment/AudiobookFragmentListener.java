@@ -24,7 +24,7 @@ import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
 import com.example.moonstonemusicplayer.model.NextSongToPlayUtility;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import com.example.moonstonemusicplayer.view.MainActivity;
-import com.example.moonstonemusicplayer.view.PlayListActivityListener;
+import com.example.moonstonemusicplayer.view.PlayListActivity;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.AudiobookFragment;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.PlayListFragment;
 
@@ -234,7 +234,7 @@ public class AudiobookFragmentListener implements AdapterView.OnItemClickListene
 
   public void startAudiobookAudiobooklist(File[] playlist, int audiobook_index, AudiobookFragment audiobookFragment){
     AudiobookAudiobooklist = playlist.clone();
-    Intent intent = new Intent(audiobookFragment.getActivity(), PlayListActivityListener.class);
+    Intent intent = new Intent(audiobookFragment.getActivity(), PlayListActivity.class);
 
     intent.putExtra(AudiobookFragment.FOLDERAUDIOBOOKINDEXEXTRA,audiobook_index);
     audiobookFragment.startActivity(intent);

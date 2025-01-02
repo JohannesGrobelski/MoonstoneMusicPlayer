@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+        <com.github.koston.preference.ColorPreference
+            app:key="colorPrimary"
+            app:title="Primary Color"
+            app:summary="Main theme color for the app"
+            app:defaultValue="@color/colorPrimary"
+            app:hueWheelRadius="@dimen/defaultWheelRadius"
+            app:hueWheelThickness="@dimen/defaultWheelThickness"
+            app:centerCircleRadius="@dimen/defaultCenterRadius"
+            app:centerCircleHaloRadius="@dimen/defaultCenterHaloRadius"
+            app:huePointerRadius="@dimen/defaultPointerRadius"
+            app:huePointerHaloRadius="@dimen/defaultPointerHaloRadius"
+            app:barThickness="@dimen/defaultBarThickness"
+            app:barLength="@dimen/defaultBarLength"
+            app:barPointerRadius="@dimen/defaultBarPointerRadius"
+            app:barPointerHaloRadius="@dimen/defaultBarPointerHaloRadius"
+            app:pointersHaloColor="@color/defaultPointerHaloColor"
+            app:indicatorColorPreview="true"/>
+            />
+
+        <com.github.koston.preference.ColorPreference
+            app:key="colorPrimaryDark"
+            app:title="Primary Dark Color"
+            app:summary="Dark variant of the primary color"
+            app:defaultValue="@color/colorPrimaryDark"
+            app:hueWheelRadius="@dimen/defaultWheelRadius"
+            app:hueWheelThickness="@dimen/defaultWheelThickness"
+            app:centerCircleRadius="@dimen/defaultCenterRadius"
+            app:centerCircleHaloRadius="@dimen/defaultCenterHaloRadius"
+            app:huePointerRadius="@dimen/defaultPointerRadius"
+            app:huePointerHaloRadius="@dimen/defaultPointerHaloRadius"
+            app:barThickness="@dimen/defaultBarThickness"
+            app:barLength="@dimen/defaultBarLength"
+            app:barPointerRadius="@dimen/defaultBarPointerRadius"
+            app:barPointerHaloRadius="@dimen/defaultBarPointerHaloRadius"
+            app:pointersHaloColor="@color/defaultPointerHaloColor"
+            app:indicatorColorPreview="true"/>
+            />
+
+        <com.github.koston.preference.ColorPreference
+            app:key="colorAccent"
+            app:title="Accent Color"
+            app:summary="Secondary color for highlights and emphasis"
+            app:defaultValue="@color/colorAccent"
+            app:hueWheelRadius="@dimen/defaultWheelRadius"
+            app:hueWheelThickness="@dimen/defaultWheelThickness"
+            app:centerCircleRadius="@dimen/defaultCenterRadius"
+            app:centerCircleHaloRadius="@dimen/defaultCenterHaloRadius"
+            app:huePointerRadius="@dimen/defaultPointerRadius"
+            app:huePointerHaloRadius="@dimen/defaultPointerHaloRadius"
+            app:barThickness="@dimen/defaultBarThickness"
+            app:barLength="@dimen/defaultBarLength"
+            app:barPointerRadius="@dimen/defaultBarPointerRadius"
+            app:barPointerHaloRadius="@dimen/defaultBarPointerHaloRadius"
+            app:pointersHaloColor="@color/defaultPointerHaloColor"
+            app:indicatorColorPreview="true"/>
+            />
+</androidx.preference.PreferenceScreen>

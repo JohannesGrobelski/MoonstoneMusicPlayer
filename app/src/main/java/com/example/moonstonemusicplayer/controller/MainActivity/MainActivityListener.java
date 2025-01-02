@@ -38,6 +38,8 @@ import com.example.moonstonemusicplayer.model.Database.PlaylistUtil;
 import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.Playlist;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import com.example.moonstonemusicplayer.view.MainActivity;
+import com.example.moonstonemusicplayer.view.PlayListActivity;
+import com.example.moonstonemusicplayer.view.SettingsActivity;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.AlbumFragment;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.ArtistFragment;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.AudiobookFragment;
@@ -378,6 +380,11 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
       }
       case R.id.action_export_playlists: {
         handleExportPlaylists();
+        break;
+      }
+      case R.id.miOpenSettings:{
+        Intent settingsIntent = new Intent(mainActivity, SettingsActivity.class);
+        mainActivity.startActivity(settingsIntent);
         break;
       }
     }
