@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -25,6 +26,8 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.MainActivity.AudiobookFragment.AudiobookFragmentListener;
+import com.example.moonstonemusicplayer.controller.Utility.DrawableUtils;
+import com.example.moonstonemusicplayer.view.settingsactivity_fragments.ColorSettingsFragment;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -74,7 +77,25 @@ public class AudiobookFragment extends Fragment {
     //Referenz des listviews
     lv_folderList = view.findViewById(R.id.lv_folderlist);
     ll_folder_back = view.findViewById(R.id.ll_back_folder);
+
     tv_folder_back = view.findViewById(R.id.tv_folderBack);
+
+    //set color of folderback icon
+    view.findViewById(R.id.iv_folderBack).setBackground(
+            DrawableUtils.getTintedDrawable(
+                    view.getContext(),
+                    R.drawable.ic_folder_up,
+                    ColorSettingsFragment.getPrimaryColor(view.getContext())
+            )
+    );
+
+    view.findViewById(R.id.iv_folderBack).setBackground(
+            DrawableUtils.getTintedDrawable(
+                    view.getContext(),
+                    R.drawable.ic_folder_up,
+                    ColorSettingsFragment.getPrimaryColor(view.getContext())
+            )
+    );
 
     audiobookFragmentListener = new AudiobookFragmentListener(this);
     initViews();
@@ -116,6 +137,8 @@ public class AudiobookFragment extends Fragment {
         audiobookFragmentListener.refreshAfterSongDeletion();
       }
     });
+
+
   }
 
   public void searchMusic(String query) {

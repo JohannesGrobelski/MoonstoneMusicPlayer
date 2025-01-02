@@ -1,5 +1,7 @@
 package com.example.moonstonemusicplayer.view.settingsactivity_fragments;
 
+import android.content.Context;
+import android.graphics.drawable.Icon;
 import android.os.Bundle;
 import android.graphics.Color;
 import androidx.preference.Preference;
@@ -81,5 +83,32 @@ public class ColorSettingsFragment extends ColorPreferenceFragmentCompat {
 
         hsv[0] = newHue;
         return Color.HSVToColor(hsv);
+    }
+
+    /**
+     * Returns the primary color.
+     * @return The value of COLOR_PRIMARY.
+     */
+    public static int getPrimaryColor(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context)
+                .getInt(COLOR_PRIMARY, Color.BLACK); // Default to black if not set
+    }
+
+    /**
+     * Returns the darkened primary color.
+     * @return The value of COLOR_PRIMARY_DARK.
+     */
+    public static int getPrimaryDarkColor(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context)
+                .getInt(COLOR_PRIMARY_DARK, Color.BLACK); // Default to black if not set
+    }
+
+    /**
+     * Returns the accent color.
+     * @return The value of COLOR_ACCENT.
+     */
+    public static int getAccentColor(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context)
+                .getInt(COLOR_ACCENT, Color.BLACK); // Default to black if not set
     }
 }

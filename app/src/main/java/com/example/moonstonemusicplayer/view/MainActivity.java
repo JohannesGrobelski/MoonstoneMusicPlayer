@@ -23,6 +23,7 @@ import com.example.moonstonemusicplayer.controller.MainActivity.MainActivityList
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.AudiobookFragment;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.FolderFragment;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.PlayListFragment;
+import com.example.moonstonemusicplayer.view.settingsactivity_fragments.ColorSettingsFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
@@ -81,8 +82,8 @@ public class MainActivity extends AppCompatActivity {
     viewPager.setCurrentItem(0);
     tabs = findViewById(R.id.mainactivity_tabs);
     tabs.setupWithViewPager(viewPager);
+    tabs.setSelectedTabIndicatorColor(getResources().getColor(R.color.white));
     FloatingActionButton fab = findViewById(R.id.fab);
-
 
     mainActivityListener = new MainActivityListener(this,sectionsPagerAdapter.getFragments());
 
@@ -109,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
             .setAction("Action", null).show();
       }
     });
-    Toolbar toolbar = findViewById(R.id.toolbar);
+    Toolbar toolbar = findViewById(R.id.playlist_toolbar);
     setSupportActionBar(toolbar);
 
     // Handle the intent when the activity is created

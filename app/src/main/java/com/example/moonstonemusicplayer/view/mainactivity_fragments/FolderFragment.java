@@ -26,6 +26,8 @@ import android.widget.TextView;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.MainActivity.FolderFragment.FolderFragmentListener;
+import com.example.moonstonemusicplayer.controller.Utility.DrawableUtils;
+import com.example.moonstonemusicplayer.view.settingsactivity_fragments.ColorSettingsFragment;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -77,6 +79,15 @@ public class FolderFragment extends Fragment {
     lv_folderList = view.findViewById(R.id.lv_folderlist);
     ll_folder_back = view.findViewById(R.id.ll_back_folder);
     tv_folder_back = view.findViewById(R.id.tv_folderBack);
+
+    //set color of folderback icon
+    view.findViewById(R.id.iv_folderBack).setBackground(
+            DrawableUtils.getTintedDrawable(
+                    view.getContext(),
+                    R.drawable.ic_folder_up,
+                    ColorSettingsFragment.getPrimaryColor(view.getContext())
+            )
+    );
 
     folderFragmentListener = new FolderFragmentListener(this);
     initViews();

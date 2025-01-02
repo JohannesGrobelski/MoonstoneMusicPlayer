@@ -43,7 +43,9 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.example.moonstonemusicplayer.controller.Utility.DrawableUtils;
 import com.example.moonstonemusicplayer.view.PlayListActivity;
+import com.example.moonstonemusicplayer.view.settingsactivity_fragments.ColorSettingsFragment;
 import com.woxthebox.draglistview.DragListView;
 
 import com.example.moonstonemusicplayer.R;
@@ -302,10 +304,22 @@ public class PlayListActivityListener
   /** media player: audioFocusChange => change UI */
   private void audioFocusChange(int state){
     if(state == AudioManager.AUDIOFOCUS_GAIN){
-      playListActivity.btn_play_pause.setBackground(playListActivity.getResources().getDrawable(R.drawable.ic_pause));
+      playListActivity.btn_play_pause.setBackground(
+              DrawableUtils.getTintedDrawable(
+                      playListActivity,
+                      R.drawable.ic_pause,
+                      ColorSettingsFragment.getPrimaryColor(playListActivity)
+              )
+      );
       animateMediaplayerProgressOnSeekbar();
     } else if(state == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT || state == AudioManager.AUDIOFOCUS_LOSS){
-      playListActivity.btn_play_pause.setBackground(playListActivity.getResources().getDrawable(R.drawable.ic_play_button));
+      playListActivity.btn_play_pause.setBackground(
+              DrawableUtils.getTintedDrawable(
+                      playListActivity,
+                      R.drawable.ic_play_button,
+                      ColorSettingsFragment.getPrimaryColor(playListActivity)
+              )
+      );
       if(seekbarAnimationThread != null) seekbarAnimationThread = null;
     }
   }
@@ -317,9 +331,21 @@ public class PlayListActivityListener
     if(DEBUG)Log.d(TAG,"finishSong: "+repeatmode);
 
     if(repeatmode.equals(PlayListModel.REPEATMODE.NONE)){
-      playListActivity.btn_play_pause.setBackground(playListActivity.getResources().getDrawable(R.drawable.ic_play_button));
+      playListActivity.btn_play_pause.setBackground(
+              DrawableUtils.getTintedDrawable(
+                      playListActivity,
+                      R.drawable.ic_play_button,
+                      ColorSettingsFragment.getPrimaryColor(playListActivity)
+              )
+      );
     } else {
-      playListActivity.btn_play_pause.setBackground(playListActivity.getResources().getDrawable(R.drawable.ic_pause));
+      playListActivity.btn_play_pause.setBackground(
+              DrawableUtils.getTintedDrawable(
+                      playListActivity,
+                      R.drawable.ic_pause,
+                      ColorSettingsFragment.getPrimaryColor(playListActivity)
+              )
+      );
       animateMediaplayerProgressOnSeekbar();
       playListActivity.tv_title.setText(mediaPlayerService.getCurrentSong().getName());
       playListActivity.tv_artist.setText(mediaPlayerService.getCurrentSong().getArtist());
@@ -336,7 +362,13 @@ public class PlayListActivityListener
   private void playSong(File song){
     if(isServiceBound){
       mediaPlayerService.playSong(song);
-      playListActivity.btn_play_pause.setBackground(playListActivity.getResources().getDrawable(R.drawable.ic_pause));
+      playListActivity.btn_play_pause.setBackground(
+              DrawableUtils.getTintedDrawable(
+                      playListActivity,
+                      R.drawable.ic_pause,
+                      ColorSettingsFragment.getPrimaryColor(playListActivity)
+              )
+      );
       animateMediaplayerProgressOnSeekbar();
       playListActivity.tv_title.setText(mediaPlayerService.getCurrentSong().getName());
       playListActivity.tv_artist.setText(mediaPlayerService.getCurrentSong().getArtist());
@@ -367,7 +399,13 @@ public class PlayListActivityListener
   private void nextSong(){
     if(isServiceBound){
       mediaPlayerService.nextSong();
-      playListActivity.btn_play_pause.setBackground(playListActivity.getResources().getDrawable(R.drawable.ic_pause));
+      playListActivity.btn_play_pause.setBackground(
+              DrawableUtils.getTintedDrawable(
+                      playListActivity,
+                      R.drawable.ic_pause,
+                      ColorSettingsFragment.getPrimaryColor(playListActivity)
+              )
+      );
       animateMediaplayerProgressOnSeekbar();
       playListActivity.tv_title.setText(mediaPlayerService.getCurrentSong().getName());
       playListActivity.tv_artist.setText(mediaPlayerService.getCurrentSong().getArtist());
@@ -382,21 +420,53 @@ public class PlayListActivityListener
     if(isServiceBound){
       boolean shuffleMode = mediaPlayerService.toogleShuffleMode();
       Log.d(TAG,"toogleShuffle: "+shuffleMode);
-      if(shuffleMode) playListActivity.btn_shuffle.setBackgroundTintList(playListActivity.getResources().getColorStateList(R.color.colorPrimary));
-      else playListActivity.btn_shuffle.setBackgroundTintList(playListActivity.getResources().getColorStateList(android.R.color.darker_gray));
+      if(shuffleMode){
+        playListActivity.btn_shuffle.setBackground(
+                DrawableUtils.getTintedDrawable(
+                        playListActivity,
+                        R.drawable.ic_shuffle,
+                        ColorSettingsFragment.getPrimaryColor(playListActivity)
+                )
+        );
+      } else {
+        playListActivity.btn_shuffle.setBackground(
+                DrawableUtils.getTintedDrawable(
+                        playListActivity,
+                        R.drawable.ic_shuffle,
+                        playListActivity.getResources().getColor(android.R.color.darker_gray)
+                )
+        );
+      }
     }
   }
 
   private void nextRepeatMode(){
     if(isServiceBound){
       PlayListModel.REPEATMODE repeatmode = mediaPlayerService.nextRepeatMode();
-      playListActivity.btn_repeat.setBackgroundTintList(playListActivity.getResources().getColorStateList(R.color.colorPrimary));
+      playListActivity.btn_repeat.setBackground(
+              DrawableUtils.getTintedDrawable(
+                      playListActivity,
+                      R.drawable.ic_replay,
+                      ColorSettingsFragment.getPrimaryColor(playListActivity)
+              )
+      );
       playListActivity.btn_repeat.setText("");
       switch (repeatmode){
         case NONE: {
-          playListActivity.btn_repeat.setBackgroundTintList(playListActivity.getResources().getColorStateList(android.R.color.darker_gray));break;}
+          playListActivity.btn_repeat.setBackground(
+                  DrawableUtils.getTintedDrawable(
+                          playListActivity,
+                          R.drawable.ic_replay,
+                          playListActivity.getResources().getColor(android.R.color.darker_gray)
+                  )
+          );
+          break;
+        }
         case ONESONG: {
-          playListActivity.btn_repeat.setText("   1");}
+          playListActivity.btn_repeat.setText("   1");
+          playListActivity.btn_repeat.setTextColor(ColorSettingsFragment.getPrimaryColor(playListActivity));
+          break;
+        }
       }
     }
   }
@@ -405,7 +475,13 @@ public class PlayListActivityListener
   private void resumeAudio(){
     if(isServiceBound){
       mediaPlayerService.resume();
-      playListActivity.btn_play_pause.setBackground(playListActivity.getResources().getDrawable(R.drawable.ic_pause));
+      playListActivity.btn_play_pause.setBackground(
+              DrawableUtils.getTintedDrawable(
+                      playListActivity,
+                      R.drawable.ic_pause,
+                      ColorSettingsFragment.getPrimaryColor(playListActivity)
+              )
+      );
       animateMediaplayerProgressOnSeekbar();
       playListActivity.tv_title.setText(mediaPlayerService.getCurrentSong().getName());
       playListActivity.tv_artist.setText(mediaPlayerService.getCurrentSong().getArtist());
@@ -417,7 +493,13 @@ public class PlayListActivityListener
   private void pauseAudio(){
     if(isServiceBound){
       mediaPlayerService.pause();
-      playListActivity.btn_play_pause.setBackground(playListActivity.getResources().getDrawable(R.drawable.ic_play_button));
+      playListActivity.btn_play_pause.setBackground(
+              DrawableUtils.getTintedDrawable(
+                      playListActivity,
+                      R.drawable.ic_play_button,
+                      ColorSettingsFragment.getPrimaryColor(playListActivity)
+              )
+      );
       if(seekbarAnimationThread != null) seekbarAnimationThread = null;
     }
   }
@@ -492,17 +574,35 @@ public class PlayListActivityListener
           @Override
           public void stopSong() {
             playListActivity.seekBar.setProgress(0);
-            playListActivity.btn_play_pause.setBackground(playListActivity.getDrawable(R.drawable.ic_play_button));
+            playListActivity.btn_play_pause.setBackground(
+                    DrawableUtils.getTintedDrawable(
+                            playListActivity,
+                            R.drawable.ic_play_button,
+                            ColorSettingsFragment.getPrimaryColor(playListActivity)
+                    )
+            );
           }
 
           @Override
           public void resumeSong() {
-            playListActivity.btn_play_pause.setBackground(playListActivity.getDrawable(R.drawable.ic_pause));
+            playListActivity.btn_play_pause.setBackground(
+                    DrawableUtils.getTintedDrawable(
+                            playListActivity,
+                            R.drawable.ic_pause,
+                            ColorSettingsFragment.getPrimaryColor(playListActivity)
+                    )
+            );
           }
 
           @Override
           public void pauseSong() {
-            playListActivity.btn_play_pause.setBackground(playListActivity.getDrawable(R.drawable.ic_play_button));
+            playListActivity.btn_play_pause.setBackground(
+                    DrawableUtils.getTintedDrawable(
+                            playListActivity,
+                            R.drawable.ic_play_button,
+                            ColorSettingsFragment.getPrimaryColor(playListActivity)
+                    )
+            );
           }
         });
         Log.d(TAG,"onServiceConnected: binder: "+ (binder == null));

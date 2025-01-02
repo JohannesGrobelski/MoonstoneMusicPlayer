@@ -15,6 +15,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.media.ThumbnailUtils;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
@@ -33,9 +34,11 @@ import androidx.core.content.ContextCompat;
 import androidx.core.widget.ImageViewCompat;
 
 import com.example.moonstonemusicplayer.R;
+import com.example.moonstonemusicplayer.controller.Utility.DrawableUtils;
 import com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists;
 import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
+import com.example.moonstonemusicplayer.view.settingsactivity_fragments.ColorSettingsFragment;
 
 import java.io.File;
 import java.util.List;
@@ -72,10 +75,10 @@ public class FolderListAdapter extends ArrayAdapter<File> {
 
     File file = folderSongList.get(position);
     holder.tv_folderSongItem.setText(removeFileType(file.getName()));
-    holder.tv_folderSongItem.setTextColor(context.getResources().getColor(R.color.colorPrimary));
+    holder.tv_folderSongItem.setTextColor(ColorSettingsFragment.getPrimaryColor(context));
 
     if (file.isDirectory()) {
-      holder.setupFolderView();
+      holder.setupFolderView(context);
     } else {
       holder.setupSongView(file);
     }
@@ -158,8 +161,14 @@ public class FolderListAdapter extends ArrayAdapter<File> {
       ImageViewCompat.setImageTintList(iv_folderSongItem, null);
     }
 
-    void setupFolderView() {
-      iv_folderSongItem.setBackground(ContextCompat.getDrawable(iv_folderSongItem.getContext(), R.drawable.ic_folder));
+    void setupFolderView(Context context) {
+      iv_folderSongItem.setBackground(
+              DrawableUtils.getTintedDrawable(
+                      iv_folderSongItem.getContext(),
+                      R.drawable.ic_folder,
+                      ColorSettingsFragment.getPrimaryColor(context)
+              )
+      );
       iv_folderSongItem.setOnClickListener(null);
     }
 
@@ -174,17 +183,20 @@ public class FolderListAdapter extends ArrayAdapter<File> {
         ll_artist_genre.setVisibility(View.VISIBLE);
         tv_item_artist.setVisibility(View.VISIBLE);
         tv_item_artist.setText(song.getArtist());
+        tv_item_artist.setTextColor(ColorSettingsFragment.getPrimaryColor(context));
       }
 
       if (song.getGenre() != null && !song.getGenre().isEmpty()) {
         ll_artist_genre.setVisibility(View.VISIBLE);
         tv_item_genre.setVisibility(View.VISIBLE);
         tv_item_genre.setText(song.getGenre());
+        tv_item_genre.setTextColor(ColorSettingsFragment.getPrimaryColor(context));
       }
 
       if (song.getDurationString() != null && !song.getDurationString().isEmpty()) {
         tv_item_duration.setVisibility(View.VISIBLE);
         tv_item_duration.setText(song.getDurationString());
+        tv_item_duration.setTextColor(ColorSettingsFragment.getPrimaryColor(context));
       }
 
       iv_folderSongItem.setOnClickListener(v -> showSongInfoPopup(context, file));

@@ -32,9 +32,11 @@ import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
 import com.example.moonstonemusicplayer.R;
+import com.example.moonstonemusicplayer.controller.Utility.DrawableUtils;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Audiobook;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Audiofile;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
+import com.example.moonstonemusicplayer.view.settingsactivity_fragments.ColorSettingsFragment;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -560,9 +562,21 @@ public class BrowserManager {
   }
 
   public static void getThumbnailForFile(final String filePath, final ImageView view) {
+    Drawable fallbackDrawable = DrawableUtils.getTintedDrawable(
+            view.getContext(),
+            R.drawable.ic_music,
+            ColorSettingsFragment.getPrimaryColor(view.getContext())
+    );
+
     // Set a loading indicator (optional, can be a placeholder image)
     Glide.with(view.getContext())
-            .load(R.drawable.ic_music) // Placeholder or loading image
+            .load(
+              DrawableUtils.getTintedDrawable(
+                      view.getContext(),
+                      R.drawable.ic_music,
+                      ColorSettingsFragment.getPrimaryColor(view.getContext())
+              )
+            ) // Placeholder or loading image
             .into(view);
 
     // Check if the thumbnail is in the cache
@@ -575,7 +589,6 @@ public class BrowserManager {
                 .into(view);
       } else {
         // If the thumbnail is not available (null), set a fallback
-        Drawable fallbackDrawable = ContextCompat.getDrawable(view.getContext(), R.drawable.ic_music);
         Glide.with(view.getContext())
                 .load(fallbackDrawable)
                 .into(view);
@@ -601,8 +614,6 @@ public class BrowserManager {
           });
         } else {
           // If thumbnail is not available, fallback to default image
-          Drawable fallbackDrawable = ContextCompat.getDrawable(view.getContext(), R.drawable.ic_music);
-
           new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {

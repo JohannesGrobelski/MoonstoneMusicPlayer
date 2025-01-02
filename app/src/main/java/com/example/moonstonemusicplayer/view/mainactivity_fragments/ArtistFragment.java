@@ -24,8 +24,10 @@ import androidx.fragment.app.Fragment;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.MainActivity.ArtistFragment.ArtistFragmentListener;
+import com.example.moonstonemusicplayer.controller.Utility.DrawableUtils;
 import com.example.moonstonemusicplayer.model.MainActivity.ArtistFragment.Artist;
 import com.example.moonstonemusicplayer.model.MainActivity.ArtistFragment.ArtistManager;
+import com.example.moonstonemusicplayer.view.settingsactivity_fragments.ColorSettingsFragment;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -83,6 +85,16 @@ public class ArtistFragment extends Fragment {
 
     ll_artists_back.setOnClickListener(artistFragmentListener);
     lv_artists.setOnItemClickListener(artistFragmentListener);
+
+    //set color of iv_albumBack icon
+    rootView.findViewById(R.id.iv_albumBack).setBackground(
+            DrawableUtils.getTintedDrawable(
+                    rootView.getContext(),
+                    R.drawable.ic_folder_up,
+                    ColorSettingsFragment.getPrimaryColor(rootView.getContext())
+            )
+    );
+
     return rootView;
   }
 

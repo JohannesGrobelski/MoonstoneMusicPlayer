@@ -23,10 +23,9 @@
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
+            android:id="@+id/playlist_toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?attr/colorPrimary"
             android:minHeight="?attr/actionBarSize"
             android:theme="?attr/actionBarTheme" />
 
@@ -76,9 +75,7 @@
                 android:layout_marginEnd="22dp"
                 android:layout_weight="1"
                 android:background="@drawable/ic_replay"
-                android:backgroundTint="@color/colorPrimary"
                 android:textAlignment="textStart"
-                android:textColor="@color/colorPrimary"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -90,8 +87,7 @@
                 android:layout_marginStart="22dp"
                 android:layout_marginEnd="22dp"
                 android:layout_weight="1"
-                android:background="@drawable/ic_previous"
-                android:backgroundTint="@color/colorPrimary" />
+                android:background="@drawable/ic_previous"/>
 
             <Button
                 android:id="@+id/btn_play_pause"
@@ -101,8 +97,7 @@
                 android:layout_marginStart="22dp"
                 android:layout_marginEnd="22dp"
                 android:layout_weight="1"
-                android:background="@drawable/ic_play_button"
-                android:backgroundTint="@color/colorPrimary" />
+                android:background="@drawable/ic_play_button" />
 
             <Button
                 android:id="@+id/btn_next"
@@ -112,8 +107,7 @@
                 android:layout_marginStart="22dp"
                 android:layout_marginEnd="22dp"
                 android:layout_weight="1"
-                android:background="@drawable/ic_next"
-                android:backgroundTint="@color/colorPrimary" />
+                android:background="@drawable/ic_next"/>
 
             <Button
                 android:id="@+id/btn_shuffle"
@@ -122,8 +116,7 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginStart="22dp"
                 android:layout_marginEnd="22dp"
-                android:layout_weight="1"
-                android:background="@drawable/ic_shuffle" />
+                android:layout_weight="1"/>
 
         </LinearLayout>
 
@@ -141,16 +134,14 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
-                android:text="00:00"
-                android:textColor="@color/colorPrimary" />
+                android:text="00:00" />
 
             <SeekBar
                 android:id="@+id/seekBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_weight="1"
-                android:thumbTint="@color/colorPrimary" />
+                android:layout_weight="1" />
 
             <TextView
                 android:id="@+id/tv_seekbar_max"
@@ -159,8 +150,7 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
-                android:text="00:00"
-                android:textColor="@color/colorPrimary" />
+                android:text="00:00" />
         </LinearLayout>
 
         <LinearLayout
@@ -182,7 +172,6 @@
                 android:paddingEnd="10dp"
                 android:paddingBottom="1dp"
                 android:text="unknown title"
-                android:textColor="@color/colorPrimary"
                 android:textSize="15sp" />
 
             <TextView
@@ -197,7 +186,6 @@
                 android:paddingEnd="10dp"
                 android:paddingBottom="1dp"
                 android:text="unknown artist"
-                android:textColor="@color/colorPrimary"
                 android:textSize="10sp" />
         </LinearLayout>
 

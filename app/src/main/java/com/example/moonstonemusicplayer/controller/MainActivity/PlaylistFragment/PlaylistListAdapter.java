@@ -21,10 +21,12 @@ import androidx.annotation.NonNull;
 import androidx.core.widget.ImageViewCompat;
 
 import com.example.moonstonemusicplayer.R;
+import com.example.moonstonemusicplayer.controller.Utility.DrawableUtils;
 import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
 import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.Playlist;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.PlayListFragment;
+import com.example.moonstonemusicplayer.view.settingsactivity_fragments.ColorSettingsFragment;
 import com.woxthebox.draglistview.DragItemAdapter;
 
 import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.FAVORITES_PLAYLIST_NAME;
@@ -132,7 +134,13 @@ public class PlaylistListAdapter extends DragItemAdapter<Object, PlaylistListAda
     }
 
     private void bindPlaylistItem(ViewHolder holder, Playlist playlist) {
-        holder.iv_playlistSongItem.setBackground(playListFragment.getContext().getDrawable(R.drawable.ic_playlist));
+        holder.iv_playlistSongItem.setBackground(
+                DrawableUtils.getTintedDrawable(
+                        playListFragment.getContext(),
+                        R.drawable.ic_playlist,
+                        ColorSettingsFragment.getPrimaryColor(playListFragment.getContext())
+                )
+        );
 
         switch (playlist.getName()) {
             case RECENTLY_ADDED_PLAYLIST_NAME:
@@ -154,7 +162,13 @@ public class PlaylistListAdapter extends DragItemAdapter<Object, PlaylistListAda
     }
 
     private void bindSongItem(ViewHolder holder, Song song) {
-        holder.iv_playlistSongItem.setBackground(playListFragment.getContext().getDrawable(R.drawable.ic_music));
+        holder.iv_playlistSongItem.setBackground(
+                DrawableUtils.getTintedDrawable(
+                        holder.iv_playlistSongItem.getContext(),
+                        R.drawable.ic_music,
+                        ColorSettingsFragment.getPrimaryColor(playListFragment.getContext())
+                )
+        );
         holder.tv_playlistSongItem.setText(song.getName());
 
         holder.ll_artist_genre.setVisibility(View.VISIBLE);
@@ -204,7 +218,14 @@ public class PlaylistListAdapter extends DragItemAdapter<Object, PlaylistListAda
         }
 
         void bindPlaylistItem(Playlist playlist, Context context) {
-            iv_playlistSongItem.setBackground(context.getDrawable(R.drawable.ic_playlist));
+            iv_playlistSongItem.setBackground(
+                    DrawableUtils.getTintedDrawable(
+                            iv_playlistSongItem.getContext(),
+                            R.drawable.ic_playlist,
+                            ColorSettingsFragment.getPrimaryColor(context)
+                    )
+            );
+            tv_playlistSongItem.setTextColor(ColorSettingsFragment.getAccentColor(context));
 
             switch (playlist.getName()) {
                 case FAVORITES_PLAYLIST_NAME:
@@ -233,6 +254,7 @@ public class PlaylistListAdapter extends DragItemAdapter<Object, PlaylistListAda
         void bindSongItem(Song song, Context context) {
             tv_playlistSongItem.setTypeface(null, Typeface.NORMAL);
             tv_playlistSongItem.setText(song.getName());
+            tv_playlistSongItem.setTextColor(ColorSettingsFragment.getPrimaryColor(context));
 
             ll_artist_genre.setVisibility(View.VISIBLE);
             tv_artist_song.setVisibility(View.VISIBLE);
@@ -240,8 +262,11 @@ public class PlaylistListAdapter extends DragItemAdapter<Object, PlaylistListAda
             tv_duration_genre.setVisibility(View.VISIBLE);
 
             tv_artist_song.setText(song.getArtist().isEmpty() ? "unknown artist" : song.getArtist());
+            tv_artist_song.setTextColor(ColorSettingsFragment.getPrimaryColor(context));
             tv_duration_genre.setText(song.getGenre());
+            tv_duration_genre.setTextColor(ColorSettingsFragment.getPrimaryColor(context));
             tv_duration_song.setText(song.getDurationString());
+            tv_duration_song.setTextColor(ColorSettingsFragment.getPrimaryColor(context));
 
             BrowserManager.getThumbnailForFile(song.getPath(), iv_playlistSongItem);
         }

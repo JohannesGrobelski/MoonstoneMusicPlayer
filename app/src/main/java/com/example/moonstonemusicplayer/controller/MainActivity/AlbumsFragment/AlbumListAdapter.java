@@ -24,9 +24,11 @@ import androidx.core.content.ContextCompat;
 import androidx.core.widget.ImageViewCompat;
 
 import com.example.moonstonemusicplayer.R;
+import com.example.moonstonemusicplayer.controller.Utility.DrawableUtils;
 import com.example.moonstonemusicplayer.model.MainActivity.AlbumFragment.Album;
 import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
+import com.example.moonstonemusicplayer.view.settingsactivity_fragments.ColorSettingsFragment;
 
 import java.util.List;
 
@@ -65,10 +67,16 @@ public class AlbumListAdapter extends ArrayAdapter<Object> {
 
     TextView tv_AlbumSongItem = rowView.findViewById(R.id.tv_item_name);
     ImageView iv_AlbumSongItem = rowView.findViewById(R.id.iv_item);
-    tv_AlbumSongItem.setTextColor(context.getResources().getColor(R.color.colorPrimary));
+    tv_AlbumSongItem.setTextColor(ColorSettingsFragment.getPrimaryColor(context));
 
     if(aktuelleAlbum != null){
-      iv_AlbumSongItem.setBackground(context.getDrawable(R.drawable.ic_music_album));
+      iv_AlbumSongItem.setBackground(
+              DrawableUtils.getTintedDrawable(
+                      iv_AlbumSongItem.getContext(),
+                      R.drawable.ic_music_album,
+                      ColorSettingsFragment.getPrimaryColor(context)
+              )
+      );
       tv_AlbumSongItem.setText(aktuelleAlbum.getName());
     } else {
       // Reset ImageView state
@@ -90,6 +98,8 @@ public class AlbumListAdapter extends ArrayAdapter<Object> {
       tv_artist_song.setVisibility(View.VISIBLE);
       tv_duration_song.setVisibility(View.VISIBLE);
       tv_duration_song.setText(aktuelleAlbum.getDurationString());
+      tv_artist_song.setTextColor(ColorSettingsFragment.getPrimaryColor(context));
+      tv_duration_song.setTextColor(ColorSettingsFragment.getPrimaryColor(context));
     }
 
 
@@ -107,7 +117,10 @@ public class AlbumListAdapter extends ArrayAdapter<Object> {
       tv_item_artist.setText(currentSong.getArtist());
       if(currentSong.getArtist().isEmpty())tv_item_artist.setText("unknown artist");
       tv_item_duration.setText(currentSong.getDurationString());
+      tv_item_duration.setTextColor(ColorSettingsFragment.getPrimaryColor(context));
       tv_item_genre.setText(currentSong.getGenre());
+      tv_item_artist.setTextColor(ColorSettingsFragment.getPrimaryColor(context));
+      tv_item_genre.setTextColor(ColorSettingsFragment.getPrimaryColor(context));
     }
 
     return rowView;

@@ -14,6 +14,7 @@ import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
@@ -23,8 +24,10 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.MainActivity.PlaylistFragment.PlaylistFragmentListener;
+import com.example.moonstonemusicplayer.controller.Utility.DrawableUtils;
 import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.Playlist;
 import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.PlaylistListManager;
+import com.example.moonstonemusicplayer.view.settingsactivity_fragments.ColorSettingsFragment;
 import com.woxthebox.draglistview.DragListView;
 
 import java.util.ArrayList;
@@ -44,6 +47,9 @@ public class PlayListFragment extends Fragment {
   public SwipeRefreshLayout srl_playlist;
   private LinearLayout ll_playlistBack;
   public DragListView dlv_playlistSongList;
+
+  private ImageView iv_playlistBack;
+
 
   public static void preloadPlaylistManager(Context context){
     new Thread(() -> {
@@ -72,6 +78,8 @@ public class PlayListFragment extends Fragment {
     dlv_playlistSongList = root.findViewById(R.id.dlv_playlistSongList);
     ll_playlistBack = root.findViewById(R.id.ll_back_playlist);
 
+    iv_playlistBack = root.findViewById(R.id.iv_playlistBack);
+
     playlistFragmentListener = new PlaylistFragmentListener(this);
 
     dlv_playlistSongList.setOnClickListener(playlistFragmentListener);
@@ -88,6 +96,15 @@ public class PlayListFragment extends Fragment {
         playlistFragmentListener.refreshRecentAddedPlaylist();
       }
     });
+
+    //set color of iv_playlistBack icon
+    iv_playlistBack.setBackground(
+            DrawableUtils.getTintedDrawable(
+                    root.getContext(),
+                    R.drawable.ic_folder_up,
+                    ColorSettingsFragment.getPrimaryColor(root.getContext())
+            )
+    );
 
     return root;
   }

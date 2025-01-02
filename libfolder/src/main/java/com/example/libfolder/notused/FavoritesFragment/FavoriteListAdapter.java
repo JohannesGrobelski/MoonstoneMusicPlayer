@@ -49,9 +49,9 @@ package com.example.libfolder.notused.FavoritesFragment;
 //    //init the views of songRowView
 //    TextView tv_playlistSongItem = rowView.findViewById(R.id.tv_item_name);
 //    ImageView iv_playlistSongItem = rowView.findViewById(R.id.iv_item);
-//    tv_playlistSongItem.setTextColor(context.getResources().getColor(R.color.colorPrimary));
-//    iv_playlistSongItem.setColorFilter(ContextCompat.getColor(context, R.color.colorPrimary), android.graphics.PorterDuff.Mode.SRC_IN);
-//    ImageViewCompat.setImageTintList(iv_playlistSongItem, ColorStateList.valueOf(ContextCompat.getColor(context, R.color.colorPrimary)));
+//    tv_playlistSongItem.setTextColor(ColorSettingsFragment.getPrimaryColor());
+//    iv_playlistSongItem.setColorFilter(ColorSettingsFragment.getPrimaryColor(context), android.graphics.PorterDuff.Mode.SRC_IN);
+//    ImageViewCompat.setImageTintList(iv_playlistSongItem, ColorStateList.valueOf(ColorSettingsFragment.getPrimaryColor(context)));
 //
 //    iv_playlistSongItem.setBackground(context.getDrawable(R.drawable.ic_music));
 //    tv_playlistSongItem.setText(currentSong.getName());

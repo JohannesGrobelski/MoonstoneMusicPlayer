@@ -24,9 +24,11 @@ import androidx.core.content.ContextCompat;
 import androidx.core.widget.ImageViewCompat;
 
 import com.example.moonstonemusicplayer.R;
+import com.example.moonstonemusicplayer.controller.Utility.DrawableUtils;
 import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
 import com.example.moonstonemusicplayer.model.MainActivity.GenreFragment.Genre;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
+import com.example.moonstonemusicplayer.view.settingsactivity_fragments.ColorSettingsFragment;
 
 import java.util.List;
 
@@ -64,12 +66,19 @@ public class GenreListAdapter extends ArrayAdapter<Object> {
     //init the views of songRowView
     TextView tv_genreSongItem = rowView.findViewById(R.id.tv_item_name);
     ImageView iv_genreSongItem = rowView.findViewById(R.id.iv_item);
-    tv_genreSongItem.setTextColor(context.getResources().getColor(R.color.colorPrimary));
-    iv_genreSongItem.setColorFilter(ContextCompat.getColor(context, R.color.colorPrimary), android.graphics.PorterDuff.Mode.SRC_IN);
-    ImageViewCompat.setImageTintList(iv_genreSongItem, ColorStateList.valueOf(ContextCompat.getColor(context, R.color.colorPrimary)));
+    TextView tv_artist_song = rowView.findViewById(R.id.tv_item_artist);
+    TextView tv_duration_song = rowView.findViewById(R.id.item_tv_duration);
+    TextView tv_duration_genre = rowView.findViewById(R.id.tv_item_genre);
+    ImageViewCompat.setImageTintList(iv_genreSongItem, ColorStateList.valueOf(ColorSettingsFragment.getPrimaryColor(context)));
 
     if(currentGenre != null){
-      iv_genreSongItem.setBackground(context.getDrawable(R.drawable.ic_folder));
+      iv_genreSongItem.setBackground(
+              DrawableUtils.getTintedDrawable(
+                      iv_genreSongItem.getContext(),
+                      R.drawable.ic_folder,
+                      ColorSettingsFragment.getPrimaryColor(context)
+              )
+      );
       tv_genreSongItem.setText(currentGenre.getName());
     } else {
       // Reset ImageView state
@@ -85,9 +94,7 @@ public class GenreListAdapter extends ArrayAdapter<Object> {
 
     if(currentSong != null){
       LinearLayout ll_artist_genre = rowView.findViewById(R.id.ll_artist_genre);
-      TextView tv_artist_song = rowView.findViewById(R.id.tv_item_artist);
-      TextView tv_duration_song = rowView.findViewById(R.id.item_tv_duration);
-      TextView tv_duration_genre = rowView.findViewById(R.id.tv_item_genre);
+
 
       ll_artist_genre.setVisibility(View.VISIBLE);
       tv_artist_song.setVisibility(View.VISIBLE);
@@ -99,6 +106,11 @@ public class GenreListAdapter extends ArrayAdapter<Object> {
       tv_duration_genre.setText(currentSong.getGenre());
       tv_duration_song.setText(currentSong.getDurationString());
     }
+    tv_genreSongItem.setTextColor(ColorSettingsFragment.getPrimaryColor(context));
+    tv_artist_song.setTextColor(ColorSettingsFragment.getPrimaryColor(context));
+    tv_duration_song.setTextColor(ColorSettingsFragment.getPrimaryColor(context));
+    tv_duration_genre.setTextColor(ColorSettingsFragment.getPrimaryColor(context));
+
     return rowView;
   }
 

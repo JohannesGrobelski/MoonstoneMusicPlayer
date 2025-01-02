@@ -41,6 +41,7 @@ import androidx.core.graphics.drawable.IconCompat;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.PlayListActivity.Notification.Constants;
+import com.example.moonstonemusicplayer.controller.Utility.DrawableUtils;
 import com.example.moonstonemusicplayer.model.Database.Playcountlist.DBPlaycountList;
 import com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists;
 import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
@@ -50,6 +51,7 @@ import com.example.moonstonemusicplayer.model.PlayListActivity.PlayListModel;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import com.example.moonstonemusicplayer.model.PlaytimePersistence;
 import com.example.moonstonemusicplayer.view.PlayListActivity;
+import com.example.moonstonemusicplayer.view.settingsactivity_fragments.ColorSettingsFragment;
 
 import java.io.File;
 import java.io.IOException;
@@ -795,7 +797,8 @@ public class MediaPlayerService extends Service
 
     // If no album art was found, use a default image
     if (albumArt == null) {
-      albumArt = BitmapFactory.decodeResource(getResources(), R.drawable.ic_moonstonemusicplayerlogo);
+      albumArt = BitmapFactory.decodeResource(getResources(),
+              R.drawable.ic_moonstonemusicplayerlogo);
       notificationBuilder.setSmallIcon(R.drawable.ic_moonstonemusicplayerlogo);
     } else {
       notificationBuilder.setSmallIcon(IconCompat.createWithBitmap(albumArt));

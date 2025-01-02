@@ -34,6 +34,7 @@ import androidx.fragment.app.Fragment;
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.PlayListActivity.MediaPlayerService;
 import com.example.moonstonemusicplayer.controller.PlayListActivity.PlaylistJsonHandler;
+import com.example.moonstonemusicplayer.controller.Utility.DrawableUtils;
 import com.example.moonstonemusicplayer.model.Database.PlaylistUtil;
 import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.Playlist;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
@@ -46,6 +47,7 @@ import com.example.moonstonemusicplayer.view.mainactivity_fragments.AudiobookFra
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.FolderFragment;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.GenreFragment;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.PlayListFragment;
+import com.example.moonstonemusicplayer.view.settingsactivity_fragments.ColorSettingsFragment;
 
 import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.RECENTLY_ADDED_PLAYLIST_NAME;
 import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.RECENTLY_PLAYED_PLAYLIST_NAME;
@@ -78,6 +80,8 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
   private boolean serviceBound = false;
 
   // Views for mini player
+  private LinearLayout main_toolbar;
+
   private LinearLayout miniPlayerControls;
   private TextView miniPlayerTitle;
   private TextView miniPlayerArtist;
@@ -508,11 +512,15 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
   }
 
   private void initializeMiniPlayerViews() {
+    main_toolbar = mainActivity.findViewById(R.id.main_toolbar);
+
     miniPlayerControls = mainActivity.findViewById(R.id.mini_player_controls);
     miniPlayerTitle = mainActivity.findViewById(R.id.mini_player_title);
     miniPlayerArtist = mainActivity.findViewById(R.id.mini_player_artist);
     miniPlayerPlayPause = mainActivity.findViewById(R.id.mini_player_play_pause);
     miniPlayerSeekBar = mainActivity.findViewById(R.id.mini_player_seekbar);
+
+    main_toolbar.setBackgroundColor(ColorSettingsFragment.getPrimaryColor(mainActivity));
 
     // Set click listener for play/pause
     miniPlayerPlayPause.setOnClickListener(v -> {

@@ -28,9 +28,11 @@ import androidx.core.content.ContextCompat;
 import androidx.core.widget.ImageViewCompat;
 
 import com.example.moonstonemusicplayer.R;
+import com.example.moonstonemusicplayer.controller.Utility.DrawableUtils;
 import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Audiobook;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
+import com.example.moonstonemusicplayer.view.settingsactivity_fragments.ColorSettingsFragment;
 
 import java.io.File;
 import java.util.List;
@@ -65,7 +67,7 @@ public class AudiobookListAdapter extends ArrayAdapter<File> {
 
     File file = folderAudiobookList.get(position);
     holder.tv_item.setText(removeFileType(file.getName()));
-    holder.tv_item.setTextColor(context.getResources().getColor(R.color.colorPrimary));
+    holder.tv_item.setTextColor(ColorSettingsFragment.getPrimaryColor(context));
 
     if (file.isDirectory()) {
       holder.setupFolderView(context);
@@ -143,7 +145,13 @@ public class AudiobookListAdapter extends ArrayAdapter<File> {
     }
 
     void setupFolderView(Context context) {
-      iv_item.setBackground(ContextCompat.getDrawable(context, R.drawable.ic_folder));
+      iv_item.setBackground(
+              DrawableUtils.getTintedDrawable(
+                      iv_item.getContext(),
+                      R.drawable.ic_folder,
+                      ColorSettingsFragment.getPrimaryColor(context)
+              )
+      );
     }
 
     void setupAudiobookView(Context context, File file) {
@@ -154,17 +162,20 @@ public class AudiobookListAdapter extends ArrayAdapter<File> {
         ll_artist_genre.setVisibility(View.VISIBLE);
         tv_artist.setVisibility(View.VISIBLE);
         tv_artist.setText(audiobook.getArtist());
+        tv_artist.setTextColor(ColorSettingsFragment.getPrimaryColor(context));
       }
 
       if (audiobook.getGenre() != null && !audiobook.getGenre().isEmpty()) {
         ll_artist_genre.setVisibility(View.VISIBLE);
         tv_genre.setVisibility(View.VISIBLE);
         tv_genre.setText(audiobook.getGenre());
+        tv_genre.setTextColor(ColorSettingsFragment.getPrimaryColor(context));
       }
 
       if (audiobook.getDurationString() != null && !audiobook.getDurationString().isEmpty()) {
         tv_duration.setVisibility(View.VISIBLE);
         tv_duration.setText(audiobook.getDurationString());
+        tv_duration.setTextColor(ColorSettingsFragment.getPrimaryColor(context));
       }
 
       iv_item.setOnClickListener(v -> showSongInfoPopup(context, file));
