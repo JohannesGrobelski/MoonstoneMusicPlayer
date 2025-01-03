@@ -75,6 +75,15 @@ dependencies {
     //SettingsActivity
     implementation 'com.github.7Koston:HSVColorPicker:1.1.5'//Color picker (Apache 2.0)
 
+    //Google Drive integration (to sync settings and appdata like playlists)
+    implementation 'com.google.android.gms:play-services-auth:20.7.0' // Google Sign-In
+    implementation 'com.google.api-client:google-api-client:1.34.1' // Google API Client (For Drive)
+    implementation 'com.google.api-client:google-api-client-android:1.34.1'
+    implementation 'com.google.http-client:google-http-client-gson:1.40.0'
+    implementation 'com.google.code.gson:gson:2.9.0' // Gson (For JSON Serialization and Deserialization)
+    implementation 'com.google.http-client:google-http-client:1.40.0' // NetHttpTransport for HTTP requests
+    implementation 'com.google.http-client:google-http-client-android:1.40.0'
+    implementation 'com.google.apis:google-api-services-drive:v3-rev197-1.25.0'
 
     // Fix Duplicate Class issue
     implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.8.0")) // Kotlin BOM (Apache 2.0)

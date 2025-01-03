@@ -51,6 +51,9 @@
            <item
                android:id="@+id/action_import_playlists"
                android:title="Import Playlists" />
+           <item
+               android:id="@+id/action_login_google_drive"
+               android:title="Login with Google Drive"/>
        </menu>
     </item>
 

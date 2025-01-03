@@ -36,6 +36,7 @@ import com.example.moonstonemusicplayer.controller.PlayListActivity.MediaPlayerS
 import com.example.moonstonemusicplayer.controller.PlayListActivity.PlaylistJsonHandler;
 import com.example.moonstonemusicplayer.controller.Utility.DrawableUtils;
 import com.example.moonstonemusicplayer.model.Database.PlaylistUtil;
+import com.example.moonstonemusicplayer.model.GoogleDriveManager;
 import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.Playlist;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import com.example.moonstonemusicplayer.view.MainActivity;
@@ -48,6 +49,10 @@ import com.example.moonstonemusicplayer.view.mainactivity_fragments.FolderFragme
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.GenreFragment;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.PlayListFragment;
 import com.example.moonstonemusicplayer.view.settingsactivity_fragments.ColorSettingsFragment;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.Task;
 
 import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.RECENTLY_ADDED_PLAYLIST_NAME;
 import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.RECENTLY_PLAYED_PLAYLIST_NAME;
@@ -91,6 +96,7 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
   private Runnable seekBarRunnable;
 
   private ActivityResultLauncher<Intent> importPlaylistLauncher;
+
 
   // Create ServiceConnection to bind to MediaPlayerService
   private ServiceConnection serviceConnection = new ServiceConnection() {
@@ -384,6 +390,10 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
       }
       case R.id.action_export_playlists: {
         handleExportPlaylists();
+        break;
+      }
+      case R.id.action_login_google_drive: {
+        GoogleDriveManager.initializeSignIn(mainActivity,mainActivity.getSignInLauncher());
         break;
       }
       case R.id.miOpenSettings:{
@@ -681,4 +691,23 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
     return tempFile;
   }
 
+  public void handleSignInResult(Intent data) {
+    // Process the sign-in result
+    Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+    try {
+      GoogleSignInAccount account = task.getResult(ApiException.class);
+      if (account != null) {
+        Toast.makeText(mainActivity, "Sign-in successful: " + account.getEmail(), Toast.LENGTH_LONG).show();
+
+        // Initialize GoogleDriveManager with the signed-in account
+        GoogleDriveManager driveManager = GoogleDriveManager.getInstance(mainActivity, account);
+
+        // Optional: Load settings and playlists using the manager
+        driveManager.loadSettings();
+        driveManager.loadPlaylists();
+      }
+    } catch (ApiException e) {
+      Log.e("SignIn", "Google Sign-In failed: " + e.getStatusCode());
+    }
+  }
 }
