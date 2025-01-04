@@ -11,6 +11,7 @@ package com.example.moonstonemusicplayer.model.MainActivity;
 import android.app.RecoverableSecurityException;
 import android.content.Context;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -31,6 +32,7 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.IntentSenderRequest;
 import androidx.core.content.ContextCompat;
+import androidx.preference.PreferenceManager;
 
 import com.bumptech.glide.Glide;
 import com.example.moonstonemusicplayer.R;
@@ -526,32 +528,38 @@ public class BrowserManager {
     // First try MediaStore for indexed files
     getAudioFilesFromMediaStore(context, audioFiles);
 
-    // Create thread pool based on available processors
-    int processors = Runtime.getRuntime().availableProcessors();
-    ExecutorService executor = Executors.newFixedThreadPool(processors);
-    CountDownLatch latch = new CountDownLatch(storagePaths.size());
+    // Access shared preferences
+    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+    boolean enableSDCardMusic = sharedPreferences.getBoolean("EnableSDCardMusic", false);
 
-    // Process each storage path in parallel
-    for (String storagePath : storagePaths) {
-      executor.submit(() -> {
-        try {
-          scanDirectoryRecursively(new File(storagePath), audioFiles);
-        } finally {
-          latch.countDown();
-        }
-      });
-    }
+    if(enableSDCardMusic){
+      // Create thread pool based on available processors
+      int processors = Runtime.getRuntime().availableProcessors();
+      ExecutorService executor = Executors.newFixedThreadPool(processors);
+      CountDownLatch latch = new CountDownLatch(storagePaths.size());
 
-    try {
-      // Wait for all scanning to complete with a timeout
-      if (!latch.await(5, TimeUnit.MINUTES)) {
-        Log.w(TAG, "Scanning timeout reached");
+      // Process each storage path in parallel
+      for (String storagePath : storagePaths) {
+        executor.submit(() -> {
+          try {
+            scanDirectoryRecursively(new File(storagePath), audioFiles);
+          } finally {
+            latch.countDown();
+          }
+        });
       }
-    } catch (InterruptedException e) {
-      Thread.currentThread().interrupt();
-      Log.e(TAG, "Scanning interrupted", e);
-    } finally {
-      executor.shutdown();
+
+      try {
+        // Wait for all scanning to complete with a timeout
+        if (!latch.await(5, TimeUnit.MINUTES)) {
+          Log.w(TAG, "Scanning timeout reached");
+        }
+      } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+        Log.e(TAG, "Scanning interrupted", e);
+      } finally {
+        executor.shutdown();
+      }
     }
 
     return audioFiles;

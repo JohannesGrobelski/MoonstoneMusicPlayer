@@ -58,4 +58,12 @@
             app:pointersHaloColor="@color/defaultPointerHaloColor"
             app:indicatorColorPreview="true"/>
             />
+
+    <SwitchPreference
+        app:key="EnableSDCardMusic"
+        android:title="Enable SD Card Music"
+        app:summary="Enabling this will search the SD Card for music. \n By enabling this you may have access to more music."
+    />
+
+
 </androidx.preference.PreferenceScreen>
