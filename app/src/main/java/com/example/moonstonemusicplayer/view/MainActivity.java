@@ -16,6 +16,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
 import com.example.moonstonemusicplayer.R;
@@ -176,18 +177,39 @@ public class MainActivity extends AppCompatActivity {
 
 
   public void showMediaAudioPermission() {
-    int permissionCheck = ContextCompat.checkSelfPermission(
-            this, Manifest.permission.READ_MEDIA_AUDIO);
-    if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
-      if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-              Manifest.permission.READ_MEDIA_AUDIO)) {
-        showMediaLocationExplanation("Permission Needed", "Rationale", Manifest.permission.READ_MEDIA_AUDIO, PERMISSION_REQUEST_MEDIA_AUDIO);
-      } else {
-        requestPermission(Manifest.permission.READ_MEDIA_AUDIO, PERMISSION_REQUEST_MEDIA_AUDIO);
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) { // For SDK >= 30
+        int permissionCheck = ContextCompat.checkSelfPermission(
+                this, Manifest.permission.READ_MEDIA_AUDIO);
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+          if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                  Manifest.permission.READ_MEDIA_AUDIO)) {
+            showMediaLocationExplanation("Permission Needed",
+                    "This app needs audio permissions to function properly.",
+                    Manifest.permission.READ_MEDIA_AUDIO,
+                    PERMISSION_REQUEST_MEDIA_AUDIO);
+          } else {
+            requestPermission(Manifest.permission.READ_MEDIA_AUDIO, PERMISSION_REQUEST_MEDIA_AUDIO);
+          }
+        } else {
+          Log.d(TAG, "READ_MEDIA_AUDIO Permission (already) Granted!");
+        }
+      } else { // For SDK < 30
+        int permissionCheck = ContextCompat.checkSelfPermission(
+                this, Manifest.permission.READ_EXTERNAL_STORAGE);
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+          if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                  Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            showMediaLocationExplanation("Permission Needed",
+                    "This app needs storage access permissions to function properly.",
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    PERMISSION_REQUEST_CODE);
+          } else {
+            requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE, PERMISSION_REQUEST_CODE);
+          }
+        } else {
+          Log.d(TAG, "READ_EXTERNAL_STORAGE Permission (already) Granted!");
+        }
       }
-    } else {
-      Log.d(TAG,"READ_MEDIA_AUDIO Permission (already) Granted!");
-    }
   }
 
   private void requestPermission(String permissionName, int permissionRequestCode) {

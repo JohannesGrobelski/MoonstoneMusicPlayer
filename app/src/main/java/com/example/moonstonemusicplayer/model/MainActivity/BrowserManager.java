@@ -11,6 +11,7 @@ package com.example.moonstonemusicplayer.model.MainActivity;
 import android.app.RecoverableSecurityException;
 import android.content.Context;
 import android.content.IntentSender;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
@@ -25,6 +26,7 @@ import android.os.Looper;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.IntentSenderRequest;
@@ -43,9 +45,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -125,37 +130,58 @@ public class BrowserManager {
     return albumListMap;
   }
 
-  public static List<File> getChildren(File file, Filter filter){
-    List<File> songs = new ArrayList<>();
-    List<File> children = new ArrayList<>();
-
+  public static List<File> getChildren(File file, Filter filter) {
+    List<File> results = new ArrayList<>();
     Set<String> childDirPathSet = new HashSet<>();
-    if(file != null && file.listFiles() != null){
-      for(File audioFile : BrowserManager.audioFiles){
-        if(filter == Filter.AUDIOBOOKS && !audioFileAudiobookMap.containsKey(audioFile)){
-          continue;
+
+    // If we're at root level, we need to handle it differently
+    boolean isRootDirectory = file.getAbsolutePath().equals("/storage/emulated/0");
+
+    for(File audioFile : BrowserManager.audioFiles) {
+      if(filter == Filter.AUDIOBOOKS && !audioFileAudiobookMap.containsKey(audioFile)) {
+        continue;
+      }
+
+      if (isRootDirectory) {
+        // For root directory, check if the file is in a direct subdirectory of /storage/emulated/0
+        String relativePath = audioFile.getAbsolutePath().substring(file.getAbsolutePath().length());
+        if (relativePath.startsWith("/")) {
+          relativePath = relativePath.substring(1);
         }
-        if(isDirectChildFile(file, audioFile)){
-          songs.add(audioFile);
-        }
-        if(!audioFile.getAbsolutePath().contains(file.getAbsolutePath())
-                || audioFile.getParentFile().equals(file)){
-          continue;
+
+        // Get the first directory in the path
+        int firstSlash = relativePath.indexOf('/');
+        if (firstSlash != -1) {
+          String topLevelDir = relativePath.substring(0, firstSlash);
+          String fullPath = file.getAbsolutePath() + "/" + topLevelDir;
+          if (!childDirPathSet.contains(fullPath)) {
+            childDirPathSet.add(fullPath);
+          }
         } else {
-          //if audio file resides in child directory of file add subdirectory to directories
+          // This is a file directly in the root
+          results.add(audioFile);
+        }
+      } else {
+        // Normal directory handling
+        if(isDirectChildFile(file, audioFile)) {
+          results.add(audioFile);
+        } else if(audioFile.getAbsolutePath().contains(file.getAbsolutePath())
+                && !audioFile.getParentFile().equals(file)) {
           String relPath = audioFile.getAbsolutePath().replace(file.getAbsolutePath()+"/", "");
-          String pathChildDir = file.getAbsolutePath() + "/" + relPath.substring(0,relPath.indexOf("/"));
-          if(!childDirPathSet.contains(pathChildDir)){
+          String pathChildDir = file.getAbsolutePath() + "/" + relPath.substring(0, relPath.indexOf("/"));
+          if(!childDirPathSet.contains(pathChildDir)) {
             childDirPathSet.add(pathChildDir);
           }
         }
       }
     }
-    for(String childDirPath : childDirPathSet){
-      children.add(new File(childDirPath));
+
+    // Add all discovered directories to the results
+    for(String childDirPath : childDirPathSet) {
+      results.add(new File(childDirPath));
     }
-    children.addAll(songs);
-    return children;
+
+    return results;
   }
 
   public static List<File> getChildrenMatchingQuery(File file, String query, Filter filter){
@@ -491,9 +517,92 @@ public class BrowserManager {
     }
   }
 
-
   private static List<File> getAllAudioFiles(Context context) {
-    List<File> audioFiles = new ArrayList<>();
+    List<File> audioFiles = Collections.synchronizedList(new ArrayList<>());
+
+    // Get all storage paths including SD card
+    List<String> storagePaths = getStoragePaths(context);
+
+    // First try MediaStore for indexed files
+    getAudioFilesFromMediaStore(context, audioFiles);
+
+    // Create thread pool based on available processors
+    int processors = Runtime.getRuntime().availableProcessors();
+    ExecutorService executor = Executors.newFixedThreadPool(processors);
+    CountDownLatch latch = new CountDownLatch(storagePaths.size());
+
+    // Process each storage path in parallel
+    for (String storagePath : storagePaths) {
+      executor.submit(() -> {
+        try {
+          scanDirectoryRecursively(new File(storagePath), audioFiles);
+        } finally {
+          latch.countDown();
+        }
+      });
+    }
+
+    try {
+      // Wait for all scanning to complete with a timeout
+      if (!latch.await(5, TimeUnit.MINUTES)) {
+        Log.w(TAG, "Scanning timeout reached");
+      }
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+      Log.e(TAG, "Scanning interrupted", e);
+    } finally {
+      executor.shutdown();
+    }
+
+    return audioFiles;
+  }
+
+  private static List<String> getStoragePaths(Context context) {
+    List<String> paths = new ArrayList<>();
+
+    // Add primary external storage
+    paths.add(Environment.getExternalStorageDirectory().getAbsolutePath());
+
+    // Get secondary storage (SD card) paths
+    File[] externalFilesDirs = context.getExternalFilesDirs(null);
+    if (externalFilesDirs != null) {
+      for (File file : externalFilesDirs) {
+        if (file != null) {
+          String path = file.getAbsolutePath();
+          // Remove Android-specific paths to get root storage path
+          int index = path.indexOf("/Android/data");
+          if (index > 0) {
+            path = path.substring(0, index);
+            if (!paths.contains(path)) {
+              paths.add(path);
+            }
+          }
+        }
+      }
+    }
+
+    // Additional common SD card paths
+    String[] commonPaths = {
+            "/storage/sdcard1",
+            "/storage/extSdCard",
+            "/storage/external_SD",
+            "/storage/ext_sd"
+    };
+
+    for (String path : commonPaths) {
+      File file = new File(path);
+      if (file.exists() && file.canRead() && !paths.contains(path)) {
+        paths.add(path);
+      }
+    }
+
+    return paths;
+  }
+
+  private static void getAudioFilesFromMediaStore(Context context, List<File> audioFiles) {
+    if(!hasStorageMediaPermissions(context)){
+      Toast.makeText(context, "No Storage Permissions!", Toast.LENGTH_SHORT).show();
+    }
 
     // Define the columns to retrieve from the MediaStore
     String[] projection = {
@@ -501,9 +610,19 @@ public class BrowserManager {
             MediaStore.Audio.Media.TITLE,
             MediaStore.Audio.Media.ARTIST,
             MediaStore.Audio.Media.ALBUM,
-            MediaStore.Audio.Media.GENRE,
             MediaStore.Audio.Media.DURATION,
     };
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) { // SDK 30 or above
+      projection = new String[]{
+              MediaStore.Audio.Media.DATA,
+              MediaStore.Audio.Media.TITLE,
+              MediaStore.Audio.Media.ARTIST,
+              MediaStore.Audio.Media.ALBUM,
+              MediaStore.Audio.Media.GENRE,
+              MediaStore.Audio.Media.DURATION,
+      };
+    }
 
     // Perform the query using the MediaStore.Audio.Media.EXTERNAL_CONTENT_URI content URI
     Cursor cursor =  context.getContentResolver().query(
@@ -520,7 +639,7 @@ public class BrowserManager {
       int titleIndex = cursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
       int artistIndex = cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
       int albumIndex = cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM);
-      int genreIndex = cursor.getColumnIndex(MediaStore.Audio.Media.GENRE);
+      int genreIndex = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) ? cursor.getColumnIndex(MediaStore.Audio.Media.GENRE) : -1;
       int durationIndex = cursor.getColumnIndex(MediaStore.Audio.Media.DURATION);
 
       // Iterate through the cursor to retrieve the file paths
@@ -529,7 +648,7 @@ public class BrowserManager {
         String name = cursor.getString(titleIndex);
         String artist = cursor.getString(artistIndex);
         String album = cursor.getString(albumIndex);
-        String genre = cursor.getString(genreIndex);
+        String genre = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) ? cursor.getString(genreIndex) : "";
         String durationString = cursor.getString(durationIndex);
 
         if(filePath == null || filePath.isEmpty()
@@ -540,25 +659,149 @@ public class BrowserManager {
         duration_ms = Integer.parseInt(durationString);
 
         File songFile = new File(filePath);
+        if(!songFile.exists())continue;
 
         audioFiles.add(songFile);
         if(duration_ms >= Audiobook.AUDIOBOOK_CUTOFF_MS){
           Audiobook audiobook = new Audiobook(filePath,name,artist,album,genre,duration_ms,"");
           audioFileAudiobookMap.put(songFile,audiobook);
-        } else {
-          Song song = new Song(filePath,name,artist,album,genre,duration_ms,"");
-          registerSongForArtistMap(song);
-          registerSongForAlbumMap(song);
-          registerSongForGenreMap(song);
-          audiofileSongMap.put(songFile,song);
         }
+        Song song = new Song(filePath,name,artist,album,genre,duration_ms,"");
+        registerSongForArtistMap(song);
+        registerSongForAlbumMap(song);
+        registerSongForGenreMap(song);
+        audiofileSongMap.put(songFile,song);
+
       }
 
       // Close the cursor
       cursor.close();
     }
+  }
 
-    return audioFiles;
+  private static void scanDirectoryRecursively(File directory, List<File> audioFiles) {
+    if (directory == null || !directory.exists() || !directory.canRead()) {
+      return;
+    }
+
+    File[] files = directory.listFiles();
+    if (files == null) return;
+
+    // Create a queue for BFS directory traversal
+    Queue<File> directoriesToScan = new LinkedList<>();
+    List<File> filesToProcess = new ArrayList<>();
+
+    // Add root directory
+    directoriesToScan.offer(directory);
+
+    // Collect all files and directories first
+    while (!directoriesToScan.isEmpty()) {
+      File currentDir = directoriesToScan.poll();
+      File[] currentFiles = currentDir.listFiles();
+
+      if (currentFiles == null) continue;
+
+      for (File file : currentFiles) {
+        if (file.isDirectory() && file.canRead()) {
+          directoriesToScan.offer(file);
+        } else if (isSupportedAudioFile(file)) {
+          filesToProcess.add(file);
+        }
+      }
+    }
+
+    // Process files in parallel using a local thread pool
+    int processors = Runtime.getRuntime().availableProcessors();
+    ExecutorService executor = Executors.newFixedThreadPool(processors);
+    CountDownLatch latch = new CountDownLatch(filesToProcess.size());
+
+    for (File file : filesToProcess) {
+      executor.submit(() -> {
+        try {
+          if (!audioFiles.contains(file)) {
+            processAudioFileDirectly(file, audioFiles);
+          }
+        } finally {
+          latch.countDown();
+        }
+      });
+    }
+
+    try {
+      // Wait for all file processing to complete with a timeout
+      if (!latch.await(2, TimeUnit.MINUTES)) {
+        Log.w(TAG, "File processing timeout reached for directory: " + directory.getPath());
+      }
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+      Log.e(TAG, "File processing interrupted for directory: " + directory.getPath(), e);
+    } finally {
+      executor.shutdown();
+    }
+  }
+
+  private static boolean isSupportedAudioFile(File file) {
+    String name = file.getName().toLowerCase();
+    return name.endsWith(".mp3") || name.endsWith(".wav") ||
+            name.endsWith(".ogg") || name.endsWith(".m4a") ||
+            name.endsWith(".aac") || name.endsWith(".flac");
+  }
+
+  private static void processAudioFileDirectly(File file, List<File> audioFiles) {
+    synchronized (audioFiles) {
+      try {
+        Song song = BrowserManager.getSongFromAudioFile(file);
+        if(song != null && song.getName() != null){
+          audioFiles.add(file);
+
+          if (song.getDuration_ms() >= Audiobook.AUDIOBOOK_CUTOFF_MS) {
+            Audiobook audiobook = new Audiobook(song.getPath(), song.getName(),
+                    song.getArtist(), song.getAlbum(), song.getGenre(), song.getDuration_ms(), "");
+            audioFileAudiobookMap.put(file, audiobook);
+          } else {
+            registerSongForArtistMap(song);
+            registerSongForAlbumMap(song);
+            registerSongForGenreMap(song);
+            audiofileSongMap.put(file, song);
+          }
+        } else {
+          Log.d(TAG, "unreadable audiofile: "+file.getAbsolutePath());
+        }
+      } catch (Exception e) {
+        Log.e(TAG, "Error processing file: " + file.getAbsolutePath(), e);
+      }
+    }
+  }
+
+  // Make registration methods thread-safe
+  private static synchronized void registerSongForAlbumMap(Song song) {
+    if (song.getAlbum() != null && !song.getAlbum().isEmpty()) {
+      String albumName = song.getAlbum();
+      if (!albumListMap.containsKey(albumName)) {
+        albumListMap.put(albumName, Collections.synchronizedList(new ArrayList<>()));
+      }
+      albumListMap.get(albumName).add(song);
+    }
+  }
+
+  private static synchronized void registerSongForArtistMap(Song song) {
+    if (song.getArtist() != null && !song.getArtist().isEmpty()) {
+      String artistName = song.getArtist();
+      if (!artistListMap.containsKey(artistName)) {
+        artistListMap.put(artistName, Collections.synchronizedList(new ArrayList<>()));
+      }
+      artistListMap.get(artistName).add(song);
+    }
+  }
+
+  private static synchronized void registerSongForGenreMap(Song song) {
+    if (song.getGenre() != null && !song.getGenre().isEmpty()) {
+      String genreName = song.getGenre();
+      if (!genreListMap.containsKey(genreName)) {
+        genreListMap.put(genreName, Collections.synchronizedList(new ArrayList<>()));
+      }
+      genreListMap.get(genreName).add(song);
+    }
   }
 
   public static void getThumbnailForFile(final String filePath, final ImageView view) {
@@ -627,42 +870,17 @@ public class BrowserManager {
     }
   }
 
-
-  private static void registerSongForAlbumMap(Song song){
-    if(song.getAlbum() != null && !song.getAlbum().isEmpty()){
-      String albumName = song.getAlbum();
-      if(!albumListMap.containsKey(albumName)){
-        albumListMap.put(albumName, new ArrayList<>());
-      }
-      albumListMap.get(albumName).add(song);
-    }
-  }
-
-  private static void registerSongForArtistMap(Song song){
-    if(song.getArtist() != null && !song.getArtist().isEmpty()){
-      String artistName = song.getArtist();
-      if(!artistListMap.containsKey(artistName)){
-        artistListMap.put(artistName, new ArrayList<>());
-      }
-      artistListMap.get(artistName).add(song);
-    }
-  }
-
-  private static void registerSongForGenreMap(Song song){
-    if(song.getGenre() != null && !song.getGenre().isEmpty()){
-      String genreName = song.getGenre();
-      if(!genreListMap.containsKey(genreName)){
-        genreListMap.put(genreName, new ArrayList<>());
-      }
-      genreListMap.get(genreName).add(song);
-    }
-  }
-
   private static boolean fileMatchesQuery(String query, File audioFile){
     return audioFile.getAbsolutePath().toLowerCase().contains(query.toLowerCase());
   }
 
   public static Song getSongFromPath(String songPath){
     return getSongFromAudioFile(new File(songPath));
+  }
+
+  private static boolean hasStorageMediaPermissions(Context context){
+    return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) ?
+      (ContextCompat.checkSelfPermission(context, android.Manifest.permission.READ_MEDIA_AUDIO) == PackageManager.PERMISSION_GRANTED)
+      : (ContextCompat.checkSelfPermission(context, android.Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
   }
 }

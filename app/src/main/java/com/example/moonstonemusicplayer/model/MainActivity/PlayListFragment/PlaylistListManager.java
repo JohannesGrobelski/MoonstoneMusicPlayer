@@ -14,6 +14,7 @@ import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylis
 
 import android.content.Context;
 import android.database.Cursor;
+import android.os.Build;
 import android.provider.MediaStore;
 
 //import com.example.moonstonemusicplayer.model.Database.DBSonglists;
@@ -242,9 +243,20 @@ public class PlaylistListManager {
             MediaStore.Audio.Media.TITLE,
             MediaStore.Audio.Media.ARTIST,
             MediaStore.Audio.Media.ALBUM,
-            MediaStore.Audio.Media.GENRE,
             MediaStore.Audio.Media.DURATION,
     };
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) { // SDK 30 or above
+      projection = new String[]{
+              MediaStore.Audio.Media.DATA,
+              MediaStore.Audio.Media.TITLE,
+              MediaStore.Audio.Media.ARTIST,
+              MediaStore.Audio.Media.ALBUM,
+              MediaStore.Audio.Media.GENRE,
+              MediaStore.Audio.Media.DURATION,
+      };
+    }
+
 
     // Set the sort order to get the most recently added songs first
     String sortOrder = MediaStore.Audio.Media.DATE_ADDED + " DESC";
@@ -263,19 +275,23 @@ public class PlaylistListManager {
     // Process the cursor to get the song information
     if (cursor != null && cursor.moveToFirst()) {
       do {
+        String genre = "";
         // Retrieve the column index for the data column
         int dataIndex = cursor.getColumnIndex(MediaStore.Audio.Media.DATA);
         int titleIndex = cursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
         int artistIndex = cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
         int albumIndex = cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM);
-        int genreIndex = cursor.getColumnIndex(MediaStore.Audio.Media.GENRE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) { // SDK 30 or above
+          int genreIndex = cursor.getColumnIndex(MediaStore.Audio.Media.GENRE);
+          genre = cursor.getString(genreIndex);
+        }
+
         int durationIndex = cursor.getColumnIndex(MediaStore.Audio.Media.DURATION);
 
         String filePath = cursor.getString(dataIndex);
         String name = cursor.getString(titleIndex);
         String artist = cursor.getString(artistIndex);
         String album = cursor.getString(albumIndex);
-        String genre = cursor.getString(genreIndex);
         String durationString = cursor.getString(durationIndex);
 
         if(filePath == null || filePath.isEmpty()
