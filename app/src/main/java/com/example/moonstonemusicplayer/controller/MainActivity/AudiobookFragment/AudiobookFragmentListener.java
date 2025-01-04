@@ -243,9 +243,7 @@ public class AudiobookFragmentListener implements AdapterView.OnItemClickListene
 
   public static File[] getAudiobookAudiobooklist(){
     try {
-      File[] playlistCopy = AudiobookFragmentListener.AudiobookAudiobooklist.clone();
-      AudiobookFragmentListener.AudiobookAudiobooklist = null;
-      return playlistCopy;
+      return AudiobookFragmentListener.AudiobookAudiobooklist.clone();
     } catch (Exception e){
       Log.e(TAG, e.toString());
       return new File[0];

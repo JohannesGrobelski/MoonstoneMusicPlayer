@@ -245,9 +245,7 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
 
   public static File[] getFolderSonglist(){
     try {
-      File[] playlistCopy = FolderFragmentListener.FolderSonglist.clone();
-      FolderFragmentListener.FolderSonglist = null;
-      return playlistCopy;
+      return FolderFragmentListener.FolderSonglist.clone();
     } catch (Exception e){
       Log.e(TAG, e.toString());
       return new File[0];

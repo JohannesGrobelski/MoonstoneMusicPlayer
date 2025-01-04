@@ -110,9 +110,13 @@ public class MediaPlayerService extends Service
      */
     public void run() {
       if (mediaPlayer != null && mediaPlayer.isPlaying()) {
-        int currentPosition = mediaPlayer.getCurrentPosition();
-        int duration = mediaPlayer.getDuration();
-        setProgress(duration, currentPosition); // Updates the progress in notification and MediaSession
+        try {
+          int currentPosition = mediaPlayer.getCurrentPosition();
+          int duration = mediaPlayer.getDuration();
+          setProgress(duration, currentPosition); // Updates the progress in notification and MediaSession
+        } catch (Exception e){
+          Log.e(TAG, "Error setting progress in Mediaplayer", e);
+        }
       }
       progressHandler.postDelayed(this, 1000); // Repeat every second
     }
@@ -820,7 +824,6 @@ public class MediaPlayerService extends Service
 
     // Get the current playback position and duration
     // Calculate playback progress
-
     long duration = 0;
     long position = 0;
     if (mediaPlayer != null) {
