@@ -75,14 +75,11 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
 
       if(this.searchQuery.isEmpty()){
         if(itemClicked.isDirectory()){ //selected Folder
-          //setAdapter
           this.selectedFolder = itemClicked;
           setAdapter(this.selectedFolder);
         } else { //selected Song
-
           File[] playlist = BrowserManager.getChildFiles(this.selectedFolder, BrowserManager.Filter.SONGS);
-          int songPosition = position - BrowserManager.getDirectories(this.selectedFolder, BrowserManager.Filter.SONGS).length;
-          startFolderSonglist(playlist, songPosition, folderFragment);
+          startFolderSonglist(playlist, position, folderFragment);
         }
       } else {
         startFolderSonglist(displayedItems.toArray(new File[0]), position, folderFragment);
@@ -169,7 +166,8 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
       AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
       int clickedPosition = info.position;
       //only show context menu if clicked on song
-      if((BrowserManager.getDirectories(this.selectedFolder, BrowserManager.Filter.SONGS).length <= clickedPosition)){
+
+      if(!this.selectedFolder.listFiles()[clickedPosition].isDirectory()){
         menu.add(0, 1, 0, "zu Favoriten hinzufügen");
         menu.add(0, 2, 0, "zu Playlists hinzufügen");
         menu.add(0, 3, 0, "als nächstes abspielen");
@@ -195,7 +193,6 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
         // e index of the song clicked
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         int index = info.position;
-        index -= BrowserManager.getDirectories(this.selectedFolder, BrowserManager.Filter.SONGS).length;
         Song selectedSong = BrowserManager.getChildSongs(this.selectedFolder)[index];
 
         switch (item.getItemId()){
@@ -236,6 +233,10 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
 
 
   public void startFolderSonglist(File[] playlist, int song_index, FolderFragment folderFragment){
+    if(song_index < 0 || playlist == null || playlist.length == 0){
+      Toast.makeText(folderFragment.getActivity(),"Internal error getting song index", Toast.LENGTH_LONG).show();
+      return;
+    }
     FolderSonglist = playlist.clone();
     Intent intent = new Intent(folderFragment.getActivity(), PlayListActivity.class);
     intent.putExtra(FolderFragment.FOLDERSONGINDEXEXTRA,song_index);

@@ -202,33 +202,6 @@ public class BrowserManager {
     return children;
   }
 
-  public static File[] getDirectories(File file, Filter filter){
-    Set<String> childDirPathSet = new HashSet<>();
-    if(file != null && file.listFiles() != null){
-      for(File audioFile : BrowserManager.audioFiles){
-        if(!audioFile.getAbsolutePath().contains(file.getAbsolutePath())
-          || audioFile.getParentFile().equals(file)){
-          continue;
-        } else {
-          //if audio file resides in child directory of file add subdirectory to directories
-          if(filter == Filter.AUDIOBOOKS && !audioFileAudiobookMap.containsKey(audioFile)){
-            continue;
-          }
-          String relPath = audioFile.getAbsolutePath().replace(file.getAbsolutePath()+"/", "");
-          String pathChildDir = file.getAbsolutePath() + "/" + relPath.substring(0,relPath.indexOf("/"));
-          if(!childDirPathSet.contains(pathChildDir)){
-            childDirPathSet.add(pathChildDir);
-          }
-        }
-      }
-    }
-    List<File> directories = new ArrayList<>();
-    for(String childDirPath : childDirPathSet){
-      directories.add(new File(childDirPath));
-    }
-    return directories.toArray(new File[directories.size()]);
-  }
-
   public static Song[] getChildSongs(File file){
     List<Song> songs = new ArrayList<>();
     if(file != null && file.listFiles() != null){

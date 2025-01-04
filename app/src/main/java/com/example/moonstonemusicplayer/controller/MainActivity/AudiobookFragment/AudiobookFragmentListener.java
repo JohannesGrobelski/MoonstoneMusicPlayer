@@ -79,8 +79,7 @@ public class AudiobookFragmentListener implements AdapterView.OnItemClickListene
           setAdapter(this.selectedAudiobook);
         } else { //selected Audiobook
           File[] playlist = BrowserManager.getChildFiles(this.selectedAudiobook, BrowserManager.Filter.AUDIOBOOKS);
-          int audiobookPosition = position - BrowserManager.getDirectories(this.selectedAudiobook, BrowserManager.Filter.AUDIOBOOKS).length;
-          startAudiobookAudiobooklist(playlist, audiobookPosition, audiobookFragment);
+          startAudiobookAudiobooklist(playlist, position, audiobookFragment);
         }
       } else {
         startAudiobookAudiobooklist(displayedItems.toArray(new File[0]), position, audiobookFragment);
@@ -167,7 +166,7 @@ public class AudiobookFragmentListener implements AdapterView.OnItemClickListene
       AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
       int clickedPosition = info.position;
       //only show context menu if clicked on song
-      if((BrowserManager.getDirectories(this.selectedAudiobook, BrowserManager.Filter.SONGS).length <= clickedPosition)){
+      if(!this.selectedAudiobook.listFiles()[clickedPosition].isDirectory()){
         menu.add(0, 1, 0, "zu Favoriten hinzufügen");
         menu.add(0, 2, 0, "zu Playlists hinzufügen");
         menu.add(0, 3, 0, "als nächstes abspielen");
@@ -193,7 +192,6 @@ public class AudiobookFragmentListener implements AdapterView.OnItemClickListene
         // e index of the song clicked
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         int index = info.position;
-        index -= BrowserManager.getDirectories(this.selectedAudiobook, BrowserManager.Filter.SONGS).length;
         Song selectedSong = BrowserManager.getChildAudiobooks(this.selectedAudiobook)[index];
 
         switch (item.getItemId()){
