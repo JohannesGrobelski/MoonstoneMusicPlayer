@@ -56,10 +56,9 @@ public class AudiobookFragment extends Fragment {
    * Use this factory method to create a new instance of
    * this fragment using the provided parameters.
    *
-   * @param index Parameter 1.
    * @return A new instance of fragment AudiobookFragment.
    */
-  public static AudiobookFragment newInstance(int index) {
+  public static AudiobookFragment newInstance() {
     AudiobookFragment fragment = new AudiobookFragment();
     return fragment;
   }

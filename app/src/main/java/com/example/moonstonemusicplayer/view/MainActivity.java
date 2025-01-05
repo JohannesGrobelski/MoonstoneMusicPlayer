@@ -23,6 +23,7 @@ import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.MainActivity.MainActivityListener;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.AudiobookFragment;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.FolderFragment;
+import com.example.moonstonemusicplayer.view.mainactivity_fragments.MainactivitySectionsPagerAdapter;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.PlayListFragment;
 import com.example.moonstonemusicplayer.view.settingsactivity_fragments.ColorSettingsFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -50,7 +51,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.example.moonstonemusicplayer.view.mainactivity_fragments.SectionsPagerAdapter;
+import com.example.moonstonemusicplayer.view.mainactivity_fragments.MainactivitySectionsPagerAdapter;
 
 public class MainActivity extends AppCompatActivity {
   private final int PERMISSION_REQUEST_CODE = 678;
@@ -63,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
   public SearchView searchView;
   MainActivityListener mainActivityListener;
 
-  public SectionsPagerAdapter sectionsPagerAdapter;
+  public MainactivitySectionsPagerAdapter sectionsPagerAdapter;
   public NonSwipeableViewPager viewPager;
   TabLayout tabs;
   public int tabSelected = -1;
@@ -91,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
 
     setContentView(R.layout.activity_main);
-    sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
+    sectionsPagerAdapter = new MainactivitySectionsPagerAdapter(this, getSupportFragmentManager());
 
     viewPager = findViewById(R.id.view_pager_main);
     viewPager.setSwipeEnabled(false); // Disable swiping

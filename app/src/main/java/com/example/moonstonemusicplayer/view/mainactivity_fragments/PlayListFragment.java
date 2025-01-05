@@ -57,7 +57,7 @@ public class PlayListFragment extends Fragment {
     }).start();
   }
 
-  public static PlayListFragment newInstance(int index) {
+  public static PlayListFragment newInstance() {
     PlayListFragment fragment = new PlayListFragment();
     return fragment;
   }

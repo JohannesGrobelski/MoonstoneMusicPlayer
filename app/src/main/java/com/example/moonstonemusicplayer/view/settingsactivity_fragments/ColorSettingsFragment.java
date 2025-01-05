@@ -24,7 +24,7 @@ public class ColorSettingsFragment extends ColorPreferenceFragmentCompat {
 
     @Override
     public void onCreatePreferences(Bundle bundle, String s) {
-        addPreferencesFromResource(R.xml.color_preferences);
+        addPreferencesFromResource(R.xml.preferences);
 
         // Add listener to COLOR_PRIMARY
         ColorPreference primaryColorPreference = findPreference(COLOR_PRIMARY);

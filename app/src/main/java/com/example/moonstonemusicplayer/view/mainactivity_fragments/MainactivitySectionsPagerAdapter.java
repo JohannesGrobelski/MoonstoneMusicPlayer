@@ -23,7 +23,7 @@ import com.example.moonstonemusicplayer.R;
  * A [FragmentPagerAdapter] that returns a fragment corresponding to
  * one of the sections/tabs/pages.
  */
-public class SectionsPagerAdapter extends FragmentPagerAdapter {
+public class MainactivitySectionsPagerAdapter extends FragmentPagerAdapter {
 
   @StringRes
   private static final int[] TAB_TITLES = new int[]{R.string.tab_folders,R.string.tab_audiobooks,R.string.tab_playlists,R.string.tab_albums,R.string.tab_artists,R.string.tab_genre};
@@ -31,7 +31,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
   Fragment[] fragments = new Fragment[6];
 
-  public SectionsPagerAdapter(Context context, FragmentManager fm) {
+  public MainactivitySectionsPagerAdapter(Context context, FragmentManager fm) {
     super(fm);
     mContext = context;
   }
@@ -41,22 +41,22 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     // getItem is called to instantiate the fragment for the given page.
     // Return a PlaceholderFragment (defined as a static inner class below).
     if(position == 0){
-      fragments[0] = FolderFragment.newInstance(position + 0);
+      fragments[0] = FolderFragment.newInstance();
       return fragments[0];
     } else if(position == 1){
-      fragments[1] = AudiobookFragment.newInstance(position + 1);
+      fragments[1] = AudiobookFragment.newInstance();
       return fragments[1];
     } else if(position == 2){
-      fragments[2] = PlayListFragment.newInstance(position + 2);
+      fragments[2] = PlayListFragment.newInstance();
       return fragments[2];
     } else if(position == 3){
-      fragments[3] = AlbumFragment.newInstance(position + 3);
+      fragments[3] = AlbumFragment.newInstance();
       return fragments[3];
     } else if(position == 4){
-      fragments[4] = ArtistFragment.newInstance(position + 4);
+      fragments[4] = ArtistFragment.newInstance();
       return fragments[4];
     } else if(position == 5){
-      fragments[5] = GenreFragment.newInstance(position + 5);
+      fragments[5] = GenreFragment.newInstance();
       return fragments[5];
     }
     return null;

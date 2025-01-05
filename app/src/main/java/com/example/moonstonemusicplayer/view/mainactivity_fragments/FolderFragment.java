@@ -55,10 +55,9 @@ public class FolderFragment extends Fragment {
    * Use this factory method to create a new instance of
    * this fragment using the provided parameters.
    *
-   * @param index Parameter 1.
    * @return A new instance of fragment FolderFragment.
    */
-  public static FolderFragment newInstance(int index) {
+  public static FolderFragment newInstance() {
     FolderFragment fragment = new FolderFragment();
     return fragment;
   }

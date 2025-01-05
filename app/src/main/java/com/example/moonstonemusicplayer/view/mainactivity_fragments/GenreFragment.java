@@ -61,8 +61,7 @@ public class GenreFragment extends Fragment {
    * @param
    * @return A new instance of fragment albumsFragment.
    */
-  // TODO: Rename and change types and number of parameters
-  public static GenreFragment newInstance(int index) {
+  public static GenreFragment newInstance() {
     GenreFragment fragment = new GenreFragment();
     return fragment;
   }

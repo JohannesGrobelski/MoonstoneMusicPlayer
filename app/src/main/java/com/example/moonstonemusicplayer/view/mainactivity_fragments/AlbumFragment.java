@@ -60,8 +60,7 @@ public class AlbumFragment extends Fragment {
    * @param
    * @return A new instance of fragment albumsFragment.
    */
-  // TODO: Rename and change types and number of parameters
-  public static AlbumFragment newInstance(int index) {
+  public static AlbumFragment newInstance() {
     AlbumFragment fragment = new AlbumFragment();
     return fragment;
   }

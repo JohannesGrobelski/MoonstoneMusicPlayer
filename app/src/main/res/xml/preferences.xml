@@ -2,6 +2,11 @@
 <androidx.preference.PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+        app:key="theme_category"
+        app:title="Theme">
+
         <com.github.koston.preference.ColorPreference
             app:key="colorPrimary"
             app:title="Primary Color"
@@ -57,13 +62,22 @@
             app:barPointerHaloRadius="@dimen/defaultBarPointerHaloRadius"
             app:pointersHaloColor="@color/defaultPointerHaloColor"
             app:indicatorColorPreview="true"/>
-            />
+        />
 
-    <SwitchPreference
-        app:key="EnableSDCardMusic"
-        android:title="Enable SD Card Music"
-        app:summary="Enabling this will search the SD Card for music. \n By enabling this you may have access to more music."
-    />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:key="other_category"
+        app:title="Other Settings">
+
+        <SwitchPreference
+            app:key="EnableSDCardMusic"
+            android:title="Enable SD Card Music"
+            app:summary="Enabling this will search the SD Card for music. \n By enabling this you may have access to more music."
+        />
+
+    </PreferenceCategory>
 
 
 </androidx.preference.PreferenceScreen>
+
