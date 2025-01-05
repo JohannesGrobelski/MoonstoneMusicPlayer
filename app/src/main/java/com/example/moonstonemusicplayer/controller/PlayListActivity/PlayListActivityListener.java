@@ -45,7 +45,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.moonstonemusicplayer.controller.Utility.DrawableUtils;
 import com.example.moonstonemusicplayer.view.PlayListActivity;
-import com.example.moonstonemusicplayer.view.settingsactivity_fragments.ColorSettingsFragment;
+import com.example.moonstonemusicplayer.view.settingsactivity_fragments.SettingsFragment;
 import com.woxthebox.draglistview.DragListView;
 
 import com.example.moonstonemusicplayer.R;
@@ -308,7 +308,7 @@ public class PlayListActivityListener
               DrawableUtils.getTintedDrawable(
                       playListActivity,
                       R.drawable.ic_pause,
-                      ColorSettingsFragment.getPrimaryColor(playListActivity)
+                      SettingsFragment.getPrimaryColor(playListActivity)
               )
       );
       animateMediaplayerProgressOnSeekbar();
@@ -317,7 +317,7 @@ public class PlayListActivityListener
               DrawableUtils.getTintedDrawable(
                       playListActivity,
                       R.drawable.ic_play_button,
-                      ColorSettingsFragment.getPrimaryColor(playListActivity)
+                      SettingsFragment.getPrimaryColor(playListActivity)
               )
       );
       if(seekbarAnimationThread != null) seekbarAnimationThread = null;
@@ -335,7 +335,7 @@ public class PlayListActivityListener
               DrawableUtils.getTintedDrawable(
                       playListActivity,
                       R.drawable.ic_play_button,
-                      ColorSettingsFragment.getPrimaryColor(playListActivity)
+                      SettingsFragment.getPrimaryColor(playListActivity)
               )
       );
     } else {
@@ -343,7 +343,7 @@ public class PlayListActivityListener
               DrawableUtils.getTintedDrawable(
                       playListActivity,
                       R.drawable.ic_pause,
-                      ColorSettingsFragment.getPrimaryColor(playListActivity)
+                      SettingsFragment.getPrimaryColor(playListActivity)
               )
       );
       animateMediaplayerProgressOnSeekbar();
@@ -366,7 +366,7 @@ public class PlayListActivityListener
               DrawableUtils.getTintedDrawable(
                       playListActivity,
                       R.drawable.ic_pause,
-                      ColorSettingsFragment.getPrimaryColor(playListActivity)
+                      SettingsFragment.getPrimaryColor(playListActivity)
               )
       );
       animateMediaplayerProgressOnSeekbar();
@@ -403,7 +403,7 @@ public class PlayListActivityListener
               DrawableUtils.getTintedDrawable(
                       playListActivity,
                       R.drawable.ic_pause,
-                      ColorSettingsFragment.getPrimaryColor(playListActivity)
+                      SettingsFragment.getPrimaryColor(playListActivity)
               )
       );
       animateMediaplayerProgressOnSeekbar();
@@ -425,7 +425,7 @@ public class PlayListActivityListener
                 DrawableUtils.getTintedDrawable(
                         playListActivity,
                         R.drawable.ic_shuffle,
-                        ColorSettingsFragment.getPrimaryColor(playListActivity)
+                        SettingsFragment.getPrimaryColor(playListActivity)
                 )
         );
       } else {
@@ -447,7 +447,7 @@ public class PlayListActivityListener
               DrawableUtils.getTintedDrawable(
                       playListActivity,
                       R.drawable.ic_replay,
-                      ColorSettingsFragment.getPrimaryColor(playListActivity)
+                      SettingsFragment.getPrimaryColor(playListActivity)
               )
       );
       playListActivity.btn_repeat.setText("");
@@ -464,7 +464,7 @@ public class PlayListActivityListener
         }
         case ONESONG: {
           playListActivity.btn_repeat.setText("   1");
-          playListActivity.btn_repeat.setTextColor(ColorSettingsFragment.getPrimaryColor(playListActivity));
+          playListActivity.btn_repeat.setTextColor(SettingsFragment.getPrimaryColor(playListActivity));
           break;
         }
       }
@@ -479,7 +479,7 @@ public class PlayListActivityListener
               DrawableUtils.getTintedDrawable(
                       playListActivity,
                       R.drawable.ic_pause,
-                      ColorSettingsFragment.getPrimaryColor(playListActivity)
+                      SettingsFragment.getPrimaryColor(playListActivity)
               )
       );
       animateMediaplayerProgressOnSeekbar();
@@ -497,7 +497,7 @@ public class PlayListActivityListener
               DrawableUtils.getTintedDrawable(
                       playListActivity,
                       R.drawable.ic_play_button,
-                      ColorSettingsFragment.getPrimaryColor(playListActivity)
+                      SettingsFragment.getPrimaryColor(playListActivity)
               )
       );
       if(seekbarAnimationThread != null) seekbarAnimationThread = null;
@@ -578,7 +578,7 @@ public class PlayListActivityListener
                     DrawableUtils.getTintedDrawable(
                             playListActivity,
                             R.drawable.ic_play_button,
-                            ColorSettingsFragment.getPrimaryColor(playListActivity)
+                            SettingsFragment.getPrimaryColor(playListActivity)
                     )
             );
           }
@@ -589,7 +589,7 @@ public class PlayListActivityListener
                     DrawableUtils.getTintedDrawable(
                             playListActivity,
                             R.drawable.ic_pause,
-                            ColorSettingsFragment.getPrimaryColor(playListActivity)
+                            SettingsFragment.getPrimaryColor(playListActivity)
                     )
             );
           }
@@ -600,7 +600,7 @@ public class PlayListActivityListener
                     DrawableUtils.getTintedDrawable(
                             playListActivity,
                             R.drawable.ic_play_button,
-                            ColorSettingsFragment.getPrimaryColor(playListActivity)
+                            SettingsFragment.getPrimaryColor(playListActivity)
                     )
             );
           }

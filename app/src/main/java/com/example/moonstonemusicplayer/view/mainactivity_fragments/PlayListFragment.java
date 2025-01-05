@@ -27,7 +27,7 @@ import com.example.moonstonemusicplayer.controller.MainActivity.PlaylistFragment
 import com.example.moonstonemusicplayer.controller.Utility.DrawableUtils;
 import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.Playlist;
 import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.PlaylistListManager;
-import com.example.moonstonemusicplayer.view.settingsactivity_fragments.ColorSettingsFragment;
+import com.example.moonstonemusicplayer.view.settingsactivity_fragments.SettingsFragment;
 import com.woxthebox.draglistview.DragListView;
 
 import java.util.ArrayList;
@@ -102,7 +102,7 @@ public class PlayListFragment extends Fragment {
             DrawableUtils.getTintedDrawable(
                     root.getContext(),
                     R.drawable.ic_folder_up,
-                    ColorSettingsFragment.getPrimaryColor(root.getContext())
+                    SettingsFragment.getPrimaryColor(root.getContext())
             )
     );
 

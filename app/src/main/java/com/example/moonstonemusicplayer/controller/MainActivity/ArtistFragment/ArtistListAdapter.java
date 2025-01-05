@@ -29,7 +29,7 @@ import com.example.moonstonemusicplayer.model.MainActivity.AlbumFragment.Album;
 import com.example.moonstonemusicplayer.model.MainActivity.ArtistFragment.Artist;
 import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
-import com.example.moonstonemusicplayer.view.settingsactivity_fragments.ColorSettingsFragment;
+import com.example.moonstonemusicplayer.view.settingsactivity_fragments.SettingsFragment;
 
 import java.util.List;
 
@@ -73,17 +73,17 @@ public class ArtistListAdapter extends ArrayAdapter<Object> {
     TextView tv_item_duration = rowView.findViewById(R.id.item_tv_duration);
     TextView tv_item_genre = rowView.findViewById(R.id.tv_item_genre);
 
-    tv_AlbumSongItem.setTextColor(ColorSettingsFragment.getPrimaryColor(context));
-    iv_AlbumSongItem.setColorFilter(ColorSettingsFragment.getPrimaryColor(context), android.graphics.PorterDuff.Mode.SRC_IN);
-    ImageViewCompat.setImageTintList(iv_AlbumSongItem, ColorStateList.valueOf(ColorSettingsFragment.getPrimaryColor(context)));
-    tv_AlbumSongItem.setTextColor(ColorSettingsFragment.getPrimaryColor(context));
+    tv_AlbumSongItem.setTextColor(SettingsFragment.getPrimaryColor(context));
+    iv_AlbumSongItem.setColorFilter(SettingsFragment.getPrimaryColor(context), android.graphics.PorterDuff.Mode.SRC_IN);
+    ImageViewCompat.setImageTintList(iv_AlbumSongItem, ColorStateList.valueOf(SettingsFragment.getPrimaryColor(context)));
+    tv_AlbumSongItem.setTextColor(SettingsFragment.getPrimaryColor(context));
 
     if(currentArtist != null) {
       iv_AlbumSongItem.setBackground(
               DrawableUtils.getTintedDrawable(
                       iv_AlbumSongItem.getContext(),
                       R.drawable.ic_artist,
-                      ColorSettingsFragment.getPrimaryColor(context)
+                      SettingsFragment.getPrimaryColor(context)
               )
       );
       tv_AlbumSongItem.setText(currentArtist.getName());
@@ -92,7 +92,7 @@ public class ArtistListAdapter extends ArrayAdapter<Object> {
               DrawableUtils.getTintedDrawable(
                       iv_AlbumSongItem.getContext(),
                       R.drawable.ic_music_album,
-                      ColorSettingsFragment.getPrimaryColor(context)
+                      SettingsFragment.getPrimaryColor(context)
               )
       );
       tv_AlbumSongItem.setText(currentAlbum.getName());
@@ -137,8 +137,8 @@ public class ArtistListAdapter extends ArrayAdapter<Object> {
       tv_item_duration.setText(currentSong.getDurationString());
       tv_item_genre.setText(currentSong.getGenre());
     }
-    tv_item_artist.setTextColor(ColorSettingsFragment.getPrimaryColor(context));
-    tv_item_duration.setTextColor(ColorSettingsFragment.getPrimaryColor(context));
+    tv_item_artist.setTextColor(SettingsFragment.getPrimaryColor(context));
+    tv_item_duration.setTextColor(SettingsFragment.getPrimaryColor(context));
 
     return rowView;
   }

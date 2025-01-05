@@ -38,7 +38,7 @@ import com.example.moonstonemusicplayer.controller.Utility.DrawableUtils;
 import com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists;
 import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
-import com.example.moonstonemusicplayer.view.settingsactivity_fragments.ColorSettingsFragment;
+import com.example.moonstonemusicplayer.view.settingsactivity_fragments.SettingsFragment;
 
 import java.io.File;
 import java.util.List;
@@ -75,7 +75,7 @@ public class FolderListAdapter extends ArrayAdapter<File> {
 
     File file = folderSongList.get(position);
     holder.tv_folderSongItem.setText(removeFileType(file.getName()));
-    holder.tv_folderSongItem.setTextColor(ColorSettingsFragment.getPrimaryColor(context));
+    holder.tv_folderSongItem.setTextColor(SettingsFragment.getPrimaryColor(context));
 
     if (file.isDirectory()) {
       holder.setupFolderView(context);
@@ -166,7 +166,7 @@ public class FolderListAdapter extends ArrayAdapter<File> {
               DrawableUtils.getTintedDrawable(
                       iv_folderSongItem.getContext(),
                       R.drawable.ic_folder,
-                      ColorSettingsFragment.getPrimaryColor(context)
+                      SettingsFragment.getPrimaryColor(context)
               )
       );
       iv_folderSongItem.setOnClickListener(null);
@@ -183,20 +183,20 @@ public class FolderListAdapter extends ArrayAdapter<File> {
         ll_artist_genre.setVisibility(View.VISIBLE);
         tv_item_artist.setVisibility(View.VISIBLE);
         tv_item_artist.setText(song.getArtist());
-        tv_item_artist.setTextColor(ColorSettingsFragment.getPrimaryColor(context));
+        tv_item_artist.setTextColor(SettingsFragment.getPrimaryColor(context));
       }
 
       if (song.getGenre() != null && !song.getGenre().isEmpty()) {
         ll_artist_genre.setVisibility(View.VISIBLE);
         tv_item_genre.setVisibility(View.VISIBLE);
         tv_item_genre.setText(song.getGenre());
-        tv_item_genre.setTextColor(ColorSettingsFragment.getPrimaryColor(context));
+        tv_item_genre.setTextColor(SettingsFragment.getPrimaryColor(context));
       }
 
       if (song.getDurationString() != null && !song.getDurationString().isEmpty()) {
         tv_item_duration.setVisibility(View.VISIBLE);
         tv_item_duration.setText(song.getDurationString());
-        tv_item_duration.setTextColor(ColorSettingsFragment.getPrimaryColor(context));
+        tv_item_duration.setTextColor(SettingsFragment.getPrimaryColor(context));
       }
 
       iv_folderSongItem.setOnClickListener(v -> showSongInfoPopup(context, file));

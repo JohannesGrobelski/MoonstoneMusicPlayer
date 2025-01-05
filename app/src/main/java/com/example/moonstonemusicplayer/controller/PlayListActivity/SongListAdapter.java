@@ -29,7 +29,7 @@ import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import com.example.moonstonemusicplayer.controller.PlayListActivity.PlayListActivityListener;
-import com.example.moonstonemusicplayer.view.settingsactivity_fragments.ColorSettingsFragment;
+import com.example.moonstonemusicplayer.view.settingsactivity_fragments.SettingsFragment;
 import com.woxthebox.draglistview.DragItemAdapter;
 import java.io.File;
 import java.util.List;
@@ -155,24 +155,24 @@ public class SongListAdapter extends DragItemAdapter<Object, SongListAdapter.Vie
     void bindSong(Song song) {
       Context context = iv_song_playing.getContext();
       tv_title.setText(song.getName());
-      tv_title.setTextColor(ColorSettingsFragment.getPrimaryColor(context));
+      tv_title.setTextColor(SettingsFragment.getPrimaryColor(context));
 
       if (song.getArtist() != null && !song.getArtist().isEmpty()) {
         tv_artist_song.setVisibility(View.VISIBLE);
         tv_artist_song.setText(song.getArtist());
-        tv_artist_song.setTextColor(ColorSettingsFragment.getPrimaryColor(context));
+        tv_artist_song.setTextColor(SettingsFragment.getPrimaryColor(context));
       }
 
       if (song.getGenre() != null && !song.getGenre().isEmpty()) {
         tv_genre_song.setVisibility(View.VISIBLE);
         tv_genre_song.setText(song.getGenre());
-        tv_genre_song.setTextColor(ColorSettingsFragment.getPrimaryColor(context));
+        tv_genre_song.setTextColor(SettingsFragment.getPrimaryColor(context));
       }
 
       if (song.getDurationString() != null && !song.getDurationString().isEmpty()) {
         tv_duration_song.setVisibility(View.VISIBLE);
         tv_duration_song.setText(song.getDurationString());
-        tv_duration_song.setTextColor(ColorSettingsFragment.getPrimaryColor(context));
+        tv_duration_song.setTextColor(SettingsFragment.getPrimaryColor(context));
       }
 
       BrowserManager.getThumbnailForFile(song.getPath(), iv_song_playing);

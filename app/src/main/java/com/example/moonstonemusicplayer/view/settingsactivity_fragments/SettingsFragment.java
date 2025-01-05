@@ -11,7 +11,7 @@ import com.github.koston.preference.ColorPreferenceFragmentCompat;
 import com.github.koston.preference.ColorPreference;
 import com.example.moonstonemusicplayer.R;
 
-public class ColorSettingsFragment extends ColorPreferenceFragmentCompat {
+public class SettingsFragment extends ColorPreferenceFragmentCompat {
 
     public static final String COLOR_PRIMARY = "colorPrimary";
     public static final String COLOR_PRIMARY_DARK = "colorPrimaryDark";

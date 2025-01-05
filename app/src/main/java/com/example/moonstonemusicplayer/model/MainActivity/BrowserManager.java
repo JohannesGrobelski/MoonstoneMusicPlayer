@@ -40,7 +40,7 @@ import com.example.moonstonemusicplayer.controller.Utility.DrawableUtils;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Audiobook;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Audiofile;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
-import com.example.moonstonemusicplayer.view.settingsactivity_fragments.ColorSettingsFragment;
+import com.example.moonstonemusicplayer.view.settingsactivity_fragments.SettingsFragment;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -789,7 +789,7 @@ public class BrowserManager {
     Drawable fallbackDrawable = DrawableUtils.getTintedDrawable(
             view.getContext(),
             R.drawable.ic_music,
-            ColorSettingsFragment.getPrimaryColor(view.getContext())
+            SettingsFragment.getPrimaryColor(view.getContext())
     );
 
     // Set a loading indicator (optional, can be a placeholder image)
@@ -798,7 +798,7 @@ public class BrowserManager {
               DrawableUtils.getTintedDrawable(
                       view.getContext(),
                       R.drawable.ic_music,
-                      ColorSettingsFragment.getPrimaryColor(view.getContext())
+                      SettingsFragment.getPrimaryColor(view.getContext())
               )
             ) // Placeholder or loading image
             .into(view);

@@ -27,7 +27,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.MainActivity.AudiobookFragment.AudiobookFragmentListener;
 import com.example.moonstonemusicplayer.controller.Utility.DrawableUtils;
-import com.example.moonstonemusicplayer.view.settingsactivity_fragments.ColorSettingsFragment;
+import com.example.moonstonemusicplayer.view.settingsactivity_fragments.SettingsFragment;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -84,7 +84,7 @@ public class AudiobookFragment extends Fragment {
             DrawableUtils.getTintedDrawable(
                     view.getContext(),
                     R.drawable.ic_folder_up,
-                    ColorSettingsFragment.getPrimaryColor(view.getContext())
+                    SettingsFragment.getPrimaryColor(view.getContext())
             )
     );
 
@@ -92,7 +92,7 @@ public class AudiobookFragment extends Fragment {
             DrawableUtils.getTintedDrawable(
                     view.getContext(),
                     R.drawable.ic_folder_up,
-                    ColorSettingsFragment.getPrimaryColor(view.getContext())
+                    SettingsFragment.getPrimaryColor(view.getContext())
             )
     );
 

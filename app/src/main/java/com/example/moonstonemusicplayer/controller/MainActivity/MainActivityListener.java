@@ -48,7 +48,7 @@ import com.example.moonstonemusicplayer.view.mainactivity_fragments.AudiobookFra
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.FolderFragment;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.GenreFragment;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.PlayListFragment;
-import com.example.moonstonemusicplayer.view.settingsactivity_fragments.ColorSettingsFragment;
+import com.example.moonstonemusicplayer.view.settingsactivity_fragments.SettingsFragment;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.common.api.ApiException;
@@ -530,7 +530,7 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
     miniPlayerPlayPause = mainActivity.findViewById(R.id.mini_player_play_pause);
     miniPlayerSeekBar = mainActivity.findViewById(R.id.mini_player_seekbar);
 
-    main_toolbar.setBackgroundColor(ColorSettingsFragment.getPrimaryColor(mainActivity));
+    main_toolbar.setBackgroundColor(SettingsFragment.getPrimaryColor(mainActivity));
 
     // Set click listener for play/pause
     miniPlayerPlayPause.setOnClickListener(v -> {

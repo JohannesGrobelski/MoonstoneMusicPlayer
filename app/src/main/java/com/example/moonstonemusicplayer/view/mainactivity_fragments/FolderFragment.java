@@ -27,7 +27,7 @@ import android.widget.TextView;
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.MainActivity.FolderFragment.FolderFragmentListener;
 import com.example.moonstonemusicplayer.controller.Utility.DrawableUtils;
-import com.example.moonstonemusicplayer.view.settingsactivity_fragments.ColorSettingsFragment;
+import com.example.moonstonemusicplayer.view.settingsactivity_fragments.SettingsFragment;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -84,7 +84,7 @@ public class FolderFragment extends Fragment {
             DrawableUtils.getTintedDrawable(
                     view.getContext(),
                     R.drawable.ic_folder_up,
-                    ColorSettingsFragment.getPrimaryColor(view.getContext())
+                    SettingsFragment.getPrimaryColor(view.getContext())
             )
     );
 

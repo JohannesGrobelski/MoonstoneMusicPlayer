@@ -28,7 +28,7 @@ import com.example.moonstonemusicplayer.controller.Utility.DrawableUtils;
 import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
 import com.example.moonstonemusicplayer.model.MainActivity.GenreFragment.Genre;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
-import com.example.moonstonemusicplayer.view.settingsactivity_fragments.ColorSettingsFragment;
+import com.example.moonstonemusicplayer.view.settingsactivity_fragments.SettingsFragment;
 
 import java.util.List;
 
@@ -69,14 +69,14 @@ public class GenreListAdapter extends ArrayAdapter<Object> {
     TextView tv_artist_song = rowView.findViewById(R.id.tv_item_artist);
     TextView tv_duration_song = rowView.findViewById(R.id.item_tv_duration);
     TextView tv_duration_genre = rowView.findViewById(R.id.tv_item_genre);
-    ImageViewCompat.setImageTintList(iv_genreSongItem, ColorStateList.valueOf(ColorSettingsFragment.getPrimaryColor(context)));
+    ImageViewCompat.setImageTintList(iv_genreSongItem, ColorStateList.valueOf(SettingsFragment.getPrimaryColor(context)));
 
     if(currentGenre != null){
       iv_genreSongItem.setBackground(
               DrawableUtils.getTintedDrawable(
                       iv_genreSongItem.getContext(),
                       R.drawable.ic_folder,
-                      ColorSettingsFragment.getPrimaryColor(context)
+                      SettingsFragment.getPrimaryColor(context)
               )
       );
       tv_genreSongItem.setText(currentGenre.getName());
@@ -106,10 +106,10 @@ public class GenreListAdapter extends ArrayAdapter<Object> {
       tv_duration_genre.setText(currentSong.getGenre());
       tv_duration_song.setText(currentSong.getDurationString());
     }
-    tv_genreSongItem.setTextColor(ColorSettingsFragment.getPrimaryColor(context));
-    tv_artist_song.setTextColor(ColorSettingsFragment.getPrimaryColor(context));
-    tv_duration_song.setTextColor(ColorSettingsFragment.getPrimaryColor(context));
-    tv_duration_genre.setTextColor(ColorSettingsFragment.getPrimaryColor(context));
+    tv_genreSongItem.setTextColor(SettingsFragment.getPrimaryColor(context));
+    tv_artist_song.setTextColor(SettingsFragment.getPrimaryColor(context));
+    tv_duration_song.setTextColor(SettingsFragment.getPrimaryColor(context));
+    tv_duration_genre.setTextColor(SettingsFragment.getPrimaryColor(context));
 
     return rowView;
   }

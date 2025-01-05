@@ -27,7 +27,7 @@ import com.example.moonstonemusicplayer.controller.MainActivity.ArtistFragment.A
 import com.example.moonstonemusicplayer.controller.Utility.DrawableUtils;
 import com.example.moonstonemusicplayer.model.MainActivity.ArtistFragment.Artist;
 import com.example.moonstonemusicplayer.model.MainActivity.ArtistFragment.ArtistManager;
-import com.example.moonstonemusicplayer.view.settingsactivity_fragments.ColorSettingsFragment;
+import com.example.moonstonemusicplayer.view.settingsactivity_fragments.SettingsFragment;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -90,7 +90,7 @@ public class ArtistFragment extends Fragment {
             DrawableUtils.getTintedDrawable(
                     rootView.getContext(),
                     R.drawable.ic_folder_up,
-                    ColorSettingsFragment.getPrimaryColor(rootView.getContext())
+                    SettingsFragment.getPrimaryColor(rootView.getContext())
             )
     );
 

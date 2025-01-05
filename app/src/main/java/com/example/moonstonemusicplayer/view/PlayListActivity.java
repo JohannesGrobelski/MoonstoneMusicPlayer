@@ -40,7 +40,7 @@ import com.example.moonstonemusicplayer.controller.MainActivity.PlaylistFragment
 import com.example.moonstonemusicplayer.controller.Utility.DrawableUtils;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.AudiobookFragment;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.FolderFragment;
-import com.example.moonstonemusicplayer.view.settingsactivity_fragments.ColorSettingsFragment;
+import com.example.moonstonemusicplayer.view.settingsactivity_fragments.SettingsFragment;
 import com.woxthebox.draglistview.DragListView;
 
 import static com.example.moonstonemusicplayer.controller.MainActivity.GenreFragment.GenreFragmentListener.GENRELISTEXTRA;
@@ -90,7 +90,7 @@ public class PlayListActivity extends AppCompatActivity {
     tv_artist = findViewById(R.id.tv_artist);
     LL_MusicControlls = findViewById(R.id.LL_MusicControlls);
 
-    playlist_toolbar.setBackgroundColor(ColorSettingsFragment.getPrimaryColor(this));
+    playlist_toolbar.setBackgroundColor(SettingsFragment.getPrimaryColor(this));
 
     int song_index = 0;
     String playlist_name = "";
@@ -144,49 +144,49 @@ public class PlayListActivity extends AppCompatActivity {
     setSupportActionBar(toolbar);
 
     //set color of music controls
-    //LL_MusicControlls.setBackgroundColor(ColorSettingsFragment.getPrimaryColor(this));
+    //LL_MusicControlls.setBackgroundColor(SettingsFragment.getPrimaryColor(this));
     btn_prev.setBackground(
             DrawableUtils.getTintedDrawable(
                     this,
                     R.drawable.ic_previous,
-                    ColorSettingsFragment.getPrimaryColor(this)
+                    SettingsFragment.getPrimaryColor(this)
             )
     );
     btn_next.setBackground(
             DrawableUtils.getTintedDrawable(
                     this,
                     R.drawable.ic_next,
-                    ColorSettingsFragment.getPrimaryColor(this)
+                    SettingsFragment.getPrimaryColor(this)
             )
     );
     btn_play_pause.setBackground(
             DrawableUtils.getTintedDrawable(
                     this,
                     R.drawable.ic_pause,
-                    ColorSettingsFragment.getPrimaryColor(this)
+                    SettingsFragment.getPrimaryColor(this)
             )
     );
     btn_shuffle.setBackground(
             DrawableUtils.getTintedDrawable(
                     this,
                     R.drawable.ic_shuffle,
-                    ColorSettingsFragment.getPrimaryColor(this)
+                    SettingsFragment.getPrimaryColor(this)
             )
     );
     btn_repeat.setBackground(
             DrawableUtils.getTintedDrawable(
                     this,
                     R.drawable.ic_replay,
-                    ColorSettingsFragment.getPrimaryColor(this)
+                    SettingsFragment.getPrimaryColor(this)
             )
     );
-    seekBar.setThumbTintList(ColorStateList.valueOf(ColorSettingsFragment.getPrimaryColor(this)));
-    seekBar.setProgressTintList(ColorStateList.valueOf(ColorSettingsFragment.getPrimaryColor(this)));
+    seekBar.setThumbTintList(ColorStateList.valueOf(SettingsFragment.getPrimaryColor(this)));
+    seekBar.setProgressTintList(ColorStateList.valueOf(SettingsFragment.getPrimaryColor(this)));
 
-    tv_seekbar_progress.setTextColor(ColorSettingsFragment.getPrimaryColor(this));
-    tv_seekbar_max.setTextColor(ColorSettingsFragment.getPrimaryColor(this));
-    tv_title.setTextColor(ColorSettingsFragment.getPrimaryColor(this));
-    tv_artist.setTextColor(ColorSettingsFragment.getPrimaryColor(this));
+    tv_seekbar_progress.setTextColor(SettingsFragment.getPrimaryColor(this));
+    tv_seekbar_max.setTextColor(SettingsFragment.getPrimaryColor(this));
+    tv_title.setTextColor(SettingsFragment.getPrimaryColor(this));
+    tv_artist.setTextColor(SettingsFragment.getPrimaryColor(this));
   }
 
   public void setPlayListActivityListener(com.example.moonstonemusicplayer.controller.PlayListActivity.PlayListActivityListener playlistActivityListener){
