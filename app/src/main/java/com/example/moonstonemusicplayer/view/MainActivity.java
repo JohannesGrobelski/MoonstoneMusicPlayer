@@ -71,21 +71,7 @@ public class MainActivity extends AppCompatActivity {
 
   private ActivityResultLauncher<IntentSenderRequest> deletetionIntentSenderLauncher;
 
-  // Register the launcher as a member variable, initialized inline
-  private final ActivityResultLauncher<Intent> signInLauncher =
-          registerForActivityResult(
-                  new ActivityResultContracts.StartActivityForResult(),
-                  result -> {
-                    if (result.getResultCode() == Activity.RESULT_OK) {
-                      Intent data = result.getData();
-                      if (data != null) {
-                        mainActivityListener.handleSignInResult(data);
-                      }
-                    } else {
-                      Log.e("SignIn", "Sign-in failed or was canceled");
-                    }
-                  }
-          );
+
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -279,9 +265,7 @@ public class MainActivity extends AppCompatActivity {
     }
   }
 
-  public ActivityResultLauncher<Intent> getSignInLauncher() {
-    return signInLauncher;
-  }
+
 
   private void showCustomMediaLocationPermissionDialog() {
     new AlertDialog.Builder(this)

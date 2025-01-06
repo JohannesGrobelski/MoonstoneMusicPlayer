@@ -34,13 +34,11 @@ import androidx.fragment.app.Fragment;
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.PlayListActivity.MediaPlayerService;
 import com.example.moonstonemusicplayer.controller.PlayListActivity.PlaylistJsonHandler;
-import com.example.moonstonemusicplayer.controller.Utility.DrawableUtils;
 import com.example.moonstonemusicplayer.model.Database.PlaylistUtil;
 import com.example.moonstonemusicplayer.model.GoogleDriveManager;
 import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.Playlist;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import com.example.moonstonemusicplayer.view.MainActivity;
-import com.example.moonstonemusicplayer.view.PlayListActivity;
 import com.example.moonstonemusicplayer.view.SettingsActivity;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.AlbumFragment;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.ArtistFragment;
@@ -95,9 +93,6 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
   private Handler seekBarHandler = new Handler();
   private Runnable seekBarRunnable;
 
-  private ActivityResultLauncher<Intent> importPlaylistLauncher;
-
-
   // Create ServiceConnection to bind to MediaPlayerService
   private ServiceConnection serviceConnection = new ServiceConnection() {
     @Override
@@ -133,16 +128,6 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
     // Set up play/pause button click listener
     ImageButton playPauseButton = mainActivity.findViewById(R.id.mini_player_play_pause);
     playPauseButton.setOnClickListener(v -> handlePlayPause());
-
-    // Register activity result launcher
-    importPlaylistLauncher = mainActivity.registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-              if (result.getResultCode() == Activity.RESULT_OK) {
-                handleImportPlaylistResult(result.getData());
-              }
-            }
-    );
   }
 
   // Clean up when activity is destroyed
@@ -384,18 +369,6 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
         }
         break;
       }
-      case R.id.action_import_playlists: {
-        handleImportPlaylists();
-        break;
-      }
-      case R.id.action_export_playlists: {
-        handleExportPlaylists();
-        break;
-      }
-      case R.id.action_login_google_drive: {
-        GoogleDriveManager.initializeSignIn(mainActivity,mainActivity.getSignInLauncher());
-        break;
-      }
       case R.id.miOpenSettings:{
         Intent settingsIntent = new Intent(mainActivity, SettingsActivity.class);
         mainActivity.startActivity(settingsIntent);
@@ -619,95 +592,4 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
     return !mainActivity.searchView.isIconified();
   }
 
-  private void handleExportPlaylists() {
-    try {
-      List<Playlist> playlists = PlaylistUtil.getAllPlaylists(mainActivity);
-      playlists = playlists.stream().filter(playlist -> !playlist.getName().equals(RECENTLY_ADDED_PLAYLIST_NAME) && !playlist.getName().equals(RECENTLY_PLAYED_PLAYLIST_NAME)).collect(Collectors.toList());
-      PlaylistJsonHandler.exportPlaylists(mainActivity, playlists);
-      Toast.makeText(mainActivity, "Playlists exported successfully", Toast.LENGTH_SHORT).show();
-    } catch (Exception e) {
-      Toast.makeText(mainActivity, "Failed to export playlists", Toast.LENGTH_SHORT).show();
-      Log.e(TAG, "Export failed: " + e.getMessage());
-    }
-  }
-
-  private void handleImportPlaylists() {
-    Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-    intent.setType("application/json");
-    intent.addCategory(Intent.CATEGORY_OPENABLE);
-
-    try {
-      importPlaylistLauncher.launch(
-              Intent.createChooser(intent, "Select playlist file")
-      );
-    } catch (android.content.ActivityNotFoundException ex) {
-      Toast.makeText(mainActivity, "Please install a File Manager.", Toast.LENGTH_SHORT).show();
-    }
-  }
-
-  private void handleImportPlaylistResult(Intent data) {
-    try {
-      Uri uri = data.getData();
-      InputStream inputStream = mainActivity.getContentResolver().openInputStream(uri);
-      File tempFile = createTempFileFromInputStream(inputStream);
-
-      PlaylistJsonHandler.importPlaylists(mainActivity, tempFile);
-      Toast.makeText(mainActivity, "Playlists imported successfully", Toast.LENGTH_SHORT).show();
-
-      // Cleanup temp file
-      tempFile.delete();
-
-      // Reload playlist fragment
-      if (mainActivity.sectionsPagerAdapter.getFragments()[1] instanceof PlayListFragment) {
-        ((PlayListFragment) mainActivity.sectionsPagerAdapter.getFragments()[1])
-                .playlistFragmentListener.reloadPlaylistManager();
-      }
-    } catch (Exception e) {
-      Toast.makeText(mainActivity, "Failed to import playlists", Toast.LENGTH_SHORT).show();
-      Log.e(TAG, "Import failed: " + e.getMessage());
-    }
-  }
-
-
-  private File createTempFileFromInputStream(InputStream inputStream) throws IOException {
-    File tempFile = File.createTempFile("playlist_import", ".json", mainActivity.getCacheDir());
-
-    BufferedInputStream bis = new BufferedInputStream(inputStream);
-    FileOutputStream fos = new FileOutputStream(tempFile);
-    BufferedOutputStream bos = new BufferedOutputStream(fos);
-
-    byte[] buffer = new byte[4096];
-    int count;
-    while ((count = bis.read(buffer)) != -1) {
-      bos.write(buffer, 0, count);
-    }
-
-    bos.flush();
-    bos.close();
-    fos.close();
-    bis.close();
-    inputStream.close();
-
-    return tempFile;
-  }
-
-  public void handleSignInResult(Intent data) {
-    // Process the sign-in result
-    Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-    try {
-      GoogleSignInAccount account = task.getResult(ApiException.class);
-      if (account != null) {
-        Toast.makeText(mainActivity, "Sign-in successful: " + account.getEmail(), Toast.LENGTH_LONG).show();
-
-        // Initialize GoogleDriveManager with the signed-in account
-        GoogleDriveManager driveManager = GoogleDriveManager.getInstance(mainActivity, account);
-
-        // Optional: Load settings and playlists using the manager
-        driveManager.loadSettings();
-        driveManager.loadPlaylists();
-      }
-    } catch (ApiException e) {
-      Log.e("SignIn", "Google Sign-In failed: " + e.getStatusCode());
-    }
-  }
 }

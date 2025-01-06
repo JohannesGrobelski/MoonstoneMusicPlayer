@@ -40,23 +40,6 @@
                 android:title="sortieren nach Länge des Songs" />
         </menu>
     </item>
-
-    <item
-        android:id="@+id/miExportImportPlaylists"
-        android:title="Playlists importieren/exportieren">
-       <menu>
-           <item
-               android:id="@+id/action_export_playlists"
-               android:title="Export Playlists"/>
-           <item
-               android:id="@+id/action_import_playlists"
-               android:title="Import Playlists" />
-           <item
-               android:id="@+id/action_login_google_drive"
-               android:title="Login with Google Drive"/>
-       </menu>
-    </item>
-
     <item
         android:id="@+id/miOpenSettings"
         android:title="Einstellungen öffnen">

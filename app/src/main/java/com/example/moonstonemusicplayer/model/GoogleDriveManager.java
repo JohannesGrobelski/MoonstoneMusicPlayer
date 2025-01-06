@@ -1,23 +1,12 @@
 package com.example.moonstonemusicplayer.model;
 
-import static androidx.activity.result.ActivityResultCallerKt.registerForActivityResult;
-
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.util.Log;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.fragment.app.FragmentActivity;
-
+import com.example.moonstonemusicplayer.model.Database.PlaylistUtil;
+import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.Playlist;
 import com.example.moonstonemusicplayer.model.SettingsActivity.SettingsModel;
 import com.example.moonstonemusicplayer.model.Database.Playlist.PlaylistModel;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
@@ -41,6 +30,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 public class GoogleDriveManager {
+    private static final String TAG = GoogleDriveManager.class.getSimpleName();
     private static GoogleDriveManager instance;
     private final Drive driveService;
     private final Executor executor = Executors.newSingleThreadExecutor();
@@ -82,17 +72,6 @@ public class GoogleDriveManager {
             instance = new GoogleDriveManager(context, account);
         }
         return instance;
-    }
-
-    // Initialize Google Sign-In
-    public static void initializeSignIn(Activity activity, ActivityResultLauncher<Intent> signInLauncher) {
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
-                .requestScopes(new Scope(DriveScopes.DRIVE_APPDATA))
-                .build();
-
-        GoogleSignInClient signInClient = GoogleSignIn.getClient(activity, gso);
-        signInLauncher.launch(signInClient.getSignInIntent());
     }
 
     // Set listener for data loading callbacks
@@ -142,8 +121,13 @@ public class GoogleDriveManager {
     }
 
     // Save playlists
-    public Task<Void> savePlaylists(List<PlaylistModel> playlists) {
+    public Task<Void> savePlaylists(Context context) {
         return Tasks.call(executor, () -> {
+            //
+            List<Playlist> playlists = PlaylistUtil.getAllPlaylists(context);
+
+
+            //save playlists
             String jsonContent = gson.toJson(playlists);
             String fileId = findFile(PLAYLISTS_FILE);
 
