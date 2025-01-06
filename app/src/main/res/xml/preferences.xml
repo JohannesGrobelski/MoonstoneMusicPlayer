@@ -64,6 +64,39 @@
             app:indicatorColorPreview="true"/>
         />
 
+        </PreferenceCategory>
+
+    <PreferenceCategory
+        app:key="playlist_category"
+        app:title="Import/Export Playlists">
+
+        <Preference
+            app:key="ImportPlaylistsDevice"
+            android:title="Import playlists to device"
+            app:summary="This will import all your playlists from a file from your device after you choose the file you want to import it from."
+            />
+        <Preference
+            app:key="ExportPlaylistsDevice"
+            android:title="Export playlists to device"
+            app:summary="This will export all your playlists as a file to your device after you choose the location."
+        />
+        <Preference
+            app:key="SignIntoGDrive"
+            android:title="Sign into your Google Drive."
+            app:summary="After you signed in, you will be able to import/export all your playlists to you Google Drive."
+            />
+        <Preference
+            android:enabled="false"
+            app:key="ExportPlaylistsGDrive"
+            android:title="Export playlists to Google Drive"
+            app:summary="This will export all your playlists as a file to your Google Drive.\nBefore using this you have to sign into your Google account"
+            />
+        <Preference
+            android:enabled="false"
+            app:key="ImportPlaylistsGDrive"
+            android:title="Import playlists from Google Drive"
+            app:summary="This will import all your playlists from a file from your Google Drive.\nBefore using this you have to sign into your Google account"
+            />
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -75,9 +108,6 @@
             android:title="Enable SD Card Music"
             app:summary="Enabling this will search the SD Card for music. \n By enabling this you may have access to more music."
         />
-
     </PreferenceCategory>
-
-
 </androidx.preference.PreferenceScreen>
 
