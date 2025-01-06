@@ -28,7 +28,8 @@
             android:layout_marginTop="10dp"
             android:layout_marginEnd="15dp"
             android:layout_marginBottom="10dp"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:src="@drawable/ic_folder_up" />
 
         <TextView
             android:id="@+id/tv_artistBack"
