@@ -9,7 +9,6 @@
 package com.example.moonstonemusicplayer.model.Database.Playlist;
 
 import static com.example.moonstonemusicplayer.model.Database.Playlist.DBHelperPlaylists.COLUMN_ID;
-import static com.example.moonstonemusicplayer.model.Database.Playlist.DBHelperPlaylists.DB_NAME;
 import static com.example.moonstonemusicplayer.model.Database.Playlist.DBHelperPlaylists.TABLE_PLAYLISTS;
 
 import android.content.ContentValues;
@@ -284,28 +283,6 @@ public class DBPlaylists {
         return SongList;
     }
 
-    private void limitRecentlyPlayed(){
-        String query = "SELECT * FROM "+ TABLE_PLAYLISTS
-                +" WHERE "+ com.example.moonstonemusicplayer.model.Database.Playlist.DBHelperPlaylists.COLUMN_PLAYLIST_NAME + " = '" +RECENTLY_PLAYED_PLAYLIST_NAME+ "'";
-
-
-        open_readable();
-        //Zeiger auf die Einträge der Tabelle
-        Cursor cursor = database_playlists.rawQuery(query, null);
-
-        while (cursor.getCount() > RECENTLY_PLAYED_SONG_LIMIT){
-            cursor.moveToFirst();
-
-            int index = cursor.getInt(0);
-
-            database_playlists.delete(TABLE_PLAYLISTS, COLUMN_ID + "=" + index, null);
-        }
-
-
-        cursor.close();
-        close_db();
-    }
-
     public List<Playlist> getAllPlaylists(Context context) {
         List<Playlist> allPlaylists = new ArrayList<>();
         String[] allPlaylistNames = getAllPlaylistNames();
@@ -313,6 +290,9 @@ public class DBPlaylists {
         for(String playlistName: allPlaylistNames){
             String query = "SELECT * FROM "+ TABLE_PLAYLISTS +" WHERE "+
                     com.example.moonstonemusicplayer.model.Database.Playlist.DBHelperPlaylists.COLUMN_PLAYLIST_NAME + " LIKE '" + escapeString(playlistName)+ "'";
+            if(playlistName.equals(RECENTLY_PLAYED_PLAYLIST_NAME)){
+               query +=  "ORDER BY " + COLUMN_ID + " DESC";
+            }
             List<Song> playlistSongs = getSongListFromQuery(context,query);
             allPlaylists.add(new Playlist(playlistName,playlistSongs));
         }
