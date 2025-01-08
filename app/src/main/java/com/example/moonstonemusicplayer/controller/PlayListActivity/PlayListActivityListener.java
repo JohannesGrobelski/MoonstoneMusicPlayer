@@ -553,6 +553,7 @@ public class PlayListActivityListener
           public void selectedSong(String selectedSongPath) {
             if(DEBUG)Log.d(TAG,"song playing: "+selectedSongPath);
             songListAdapter.setSelectedSongPath(selectedSongPath);
+            songListAdapter.notifyDataSetChanged(); //NOTE: this is necessary
           }
 
           @Override public void finishedSong(PlayListModel.REPEATMODE repeatmode){
