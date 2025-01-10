@@ -8,7 +8,9 @@
 
 package com.example.moonstonemusicplayer.controller.MainActivity.PlaylistFragment;
 
+import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.MOSTLY_PLAYED_PLAYLIST_NAME;
 import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.RECENTLY_ADDED_PLAYLIST_NAME;
+import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.RECENTLY_PLAYED_PLAYLIST_NAME;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -164,7 +166,7 @@ public class PlaylistFragmentListener implements View.OnClickListener, View.OnCr
   public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
     int position = playlistListAdapter.getLastLongClickedPosition();
     //the menu created if a song is clicked on
-    if(playListFragment.getPlaylistManager().getCurrentPlaylist() != null){
+    if(playlistListAdapter.getItemList().get(position) instanceof Song){
       //create menu item with groupid to distinguish between fragments
       //präsentation
       menu.add(0, 0, 0, "aus Playlist löschen");
@@ -202,30 +204,34 @@ public class PlaylistFragmentListener implements View.OnClickListener, View.OnCr
       });
 
     } else {//the menu created if a playlist is clicked on
-      menu.add(0, 0, 0, "playlist löschen");
-      menu.getItem(0).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-        @Override
-        /** onContextItemSelected(MenuItem item) doesnt work*/
-        public boolean onMenuItemClick(MenuItem item) {
-          AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-          int index = info.position;
-          Playlist playlist = playListFragment.getPlaylistManager().getPlaylists().get(index);
+      if(!((Playlist) playlistListAdapter.getItemList().get(position)).getName().equals(RECENTLY_ADDED_PLAYLIST_NAME)
+      && !((Playlist) playlistListAdapter.getItemList().get(position)).getName().equals(RECENTLY_PLAYED_PLAYLIST_NAME)
+      && !((Playlist) playlistListAdapter.getItemList().get(position)).getName().equals(MOSTLY_PLAYED_PLAYLIST_NAME)){
+        menu.add(0, 0, 0, "playlist löschen");
+        menu.getItem(0).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+          @Override
+          /** onContextItemSelected(MenuItem item) doesnt work*/
+          public boolean onMenuItemClick(MenuItem item) {
+            AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+            int index = info.position;
+            Playlist playlist = playListFragment.getPlaylistManager().getPlaylists().get(index);
 
-          DBPlaylists.getInstance(playListFragment.getContext()).deletePlaylist(playlist);
+            DBPlaylists.getInstance(playListFragment.getContext()).deletePlaylist(playlist);
 
 
-          playListFragment.reloadPlaylistManager(playListFragment.getContext()); 
-          playListFragment.getPlaylistManager().setCurrentPlaylist(null);
+            playListFragment.reloadPlaylistManager(playListFragment.getContext());
+            playListFragment.getPlaylistManager().setCurrentPlaylist(null);
 
-          List<Object> songs = new ArrayList<>();
-          songs.addAll(playListFragment.getPlaylistManager().getAllPlaylists());
-          setAdapter(songs);
+            List<Object> songs = new ArrayList<>();
+            songs.addAll(playListFragment.getPlaylistManager().getAllPlaylists());
+            setAdapter(songs);
 
-          return false;
-        }
-      });
+            return false;
+          }
+        });
+      }
+      }
 
-    }
   }
 
   private void deleteSongFromPlaylist(Song song) {

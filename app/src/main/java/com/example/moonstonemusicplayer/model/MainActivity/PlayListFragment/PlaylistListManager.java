@@ -86,7 +86,7 @@ public class PlaylistListManager {
   public Playlist setOnRecentlyAddedPlaylist(){
     for(Playlist playlist : this.playlists){
       if(playlist.getName().equals(RECENTLY_ADDED_PLAYLIST_NAME)){
-        this.currentPlaylist = playlist;
+        //this.currentPlaylist = playlist;
         return playlist;
       }
     }
