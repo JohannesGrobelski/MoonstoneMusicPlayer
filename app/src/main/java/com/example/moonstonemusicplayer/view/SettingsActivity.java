@@ -25,6 +25,7 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.Scope;
 import com.google.api.services.drive.DriveScopes;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -51,7 +52,7 @@ public class SettingsActivity extends AppCompatActivity {
         }
     }
 
-public void startAuthorizationRequest(){
+    public void startAuthorizationRequest(){
             List<Scope> requestedScopes = Collections.singletonList(new Scope(DriveScopes.DRIVE_FILE));
             AuthorizationRequest authorizationRequest = AuthorizationRequest.builder().setRequestedScopes(requestedScopes).build();
             Identity.getAuthorizationClient(this)

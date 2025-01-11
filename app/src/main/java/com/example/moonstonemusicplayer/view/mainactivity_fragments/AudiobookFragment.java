@@ -14,7 +14,6 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -40,12 +39,9 @@ public class AudiobookFragment extends Fragment {
   private static final String TAG = AudiobookFragment.class.getSimpleName();
   private static final boolean DEBUG = false;
   private AudiobookFragmentListener audiobookFragmentListener;
-  private boolean isFragmentVisible = false;
-
 
   //Views
   public SwipeRefreshLayout srl_folder;
-
   public ListView lv_folderList;
   private LinearLayout ll_folder_back;
   private TextView tv_folder_back;
@@ -105,24 +101,12 @@ public class AudiobookFragment extends Fragment {
   }
 
   @Override
-  public void setUserVisibleHint(boolean isVisibleToUser) {
-    super.setUserVisibleHint(isVisibleToUser);
-    isFragmentVisible = isVisibleToUser;
-  }
-
-  @Override
   public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v, @Nullable ContextMenu.ContextMenuInfo menuInfo) {
-    if (!isFragmentVisible) {
-      return;
-    }
     audiobookFragmentListener.onCreateContextMenu(menu, v, menuInfo);
   }
 
   @Override
   public boolean onContextItemSelected(@NonNull MenuItem item) {
-    if (!isFragmentVisible) {
-      return false;
-    }
     return audiobookFragmentListener.onContextItemSelected(item);
   }
 
@@ -136,15 +120,11 @@ public class AudiobookFragment extends Fragment {
         audiobookFragmentListener.refreshAfterSongDeletion();
       }
     });
-
-
   }
 
   public void searchMusic(String query) {
     audiobookFragmentListener.searchMusic(query);
   }
-
-
 
   public boolean onBackpressed() {
     return audiobookFragmentListener.onBackPressed();
@@ -153,7 +133,6 @@ public class AudiobookFragment extends Fragment {
   public void reverse() {
     audiobookFragmentListener.reverse();
   }
-
 
   public void sortSongsByName() {
     audiobookFragmentListener.sortSongsByName();
@@ -174,5 +153,4 @@ public class AudiobookFragment extends Fragment {
   public void refreshFolderList(){
     audiobookFragmentListener.refreshAfterSongDeletion();
   }
-
 }

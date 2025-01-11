@@ -164,6 +164,13 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
   public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
     try {
       AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+      // Check if menu info is null
+      if (info == null) {
+         // Handle the case where info is null
+         Toast.makeText(folderFragment.getActivity(),"Could not open context menu.", Toast.LENGTH_LONG).show();
+         Log.e("onContextItemSelected", "MenuInfo is null for item.");
+      }        
+
       int clickedPosition = info.position;
       //only show context menu if clicked on song
 
@@ -189,9 +196,17 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
     try {
       //only react to context menu in this fragment (with id 0)
       if(item.getGroupId() == 0){
-        //calculate th
-        // e index of the song clicked
+        // calculate the index of the song clicked
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+    
+        // Check if menu info is null
+        if (info == null) {
+            // Handle the case where info is null
+            Toast.makeText(folderFragment.getActivity(),"Internal error getting song index", Toast.LENGTH_LONG).show();
+            Log.e("onContextItemSelected", "MenuInfo is null for item: " + item.getTitle());
+            return false; 
+        }        
+
         int index = info.position;
         Song selectedSong = BrowserManager.getChildSongs(this.selectedFolder)[index];
 

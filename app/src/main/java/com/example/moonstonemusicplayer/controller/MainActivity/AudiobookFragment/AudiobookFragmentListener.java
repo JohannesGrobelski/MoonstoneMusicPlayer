@@ -45,7 +45,6 @@ public class AudiobookFragmentListener implements AdapterView.OnItemClickListene
 
   String searchQuery = "";
 
-
   /** Sets reference to folder fragment and init selectedAudiobook to rootAudiobook
    *  i.e. the root folder will be displayed with the adapter
    *
@@ -84,7 +83,6 @@ public class AudiobookFragmentListener implements AdapterView.OnItemClickListene
       } else {
         startAudiobookAudiobooklist(displayedItems.toArray(new File[0]), position, audiobookFragment);
       }
-
     } catch (Exception e){
       Log.e(TAG, e.toString());
       Toast.makeText(audiobookFragment.getContext(), "ERROR: Could not click on item.", Toast.LENGTH_LONG).show();
@@ -164,6 +162,14 @@ public class AudiobookFragmentListener implements AdapterView.OnItemClickListene
   public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
     try {
       AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+                
+      // Check if menu info is null
+      if (info == null) {
+        // Handle the case where info is null
+        Toast.makeText(audiobookFragment.getActivity(),"Could not open context menu.", Toast.LENGTH_LONG).show();
+        Log.e("onContextItemSelected", "MenuInfo is null for item"); 
+      }        
+
       int clickedPosition = info.position;
       //only show context menu if clicked on song
       if(!this.selectedAudiobook.listFiles()[clickedPosition].isDirectory()){
@@ -180,7 +186,6 @@ public class AudiobookFragmentListener implements AdapterView.OnItemClickListene
 
   /** Implements the options of the context menu (defined above, in onCreateContextMenu(...))
    *
-   *
    * @param item
    * @return
    */
@@ -191,6 +196,14 @@ public class AudiobookFragmentListener implements AdapterView.OnItemClickListene
         //calculate th
         // e index of the song clicked
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        // Check if menu info is null
+        if (info == null) {
+            // Handle the case where info is null
+            Toast.makeText(audiobookFragment.getActivity(),"Could not open context menu.", Toast.LENGTH_LONG).show();
+            Log.e("onContextItemSelected", "MenuInfo is null for item: " + item.getTitle());
+            return false; 
+        }        
+
         int index = info.position;
         Song selectedSong = BrowserManager.getChildAudiobooks(this.selectedAudiobook)[index];
 

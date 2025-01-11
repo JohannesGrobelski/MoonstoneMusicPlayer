@@ -25,7 +25,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
-
+import android.widget.Toast;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.moonstonemusicplayer.R;
@@ -212,21 +212,35 @@ public class PlaylistFragmentListener implements View.OnClickListener, View.OnCr
           @Override
           /** onContextItemSelected(MenuItem item) doesnt work*/
           public boolean onMenuItemClick(MenuItem item) {
-            AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-            int index = info.position;
-            Playlist playlist = playListFragment.getPlaylistManager().getPlaylists().get(index);
+            try {
+                 AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+                // Check if menu info is null
+                if (info == null) {
+                    // Handle the case where info is null
+                    Toast.makeText(playListFragment.getActivity(),"Could not delete playlist.", Toast.LENGTH_LONG).show();
+                    Log.e("onContextItemSelected", "MenuInfo is null for item: " + item.getTitle());
+                    return false; 
+                }        
 
-            DBPlaylists.getInstance(playListFragment.getContext()).deletePlaylist(playlist);
+                int index = info.position;
+                Playlist playlist = playListFragment.getPlaylistManager().getPlaylists().get(index);
+
+                DBPlaylists.getInstance(playListFragment.getContext()).deletePlaylist(playlist);
 
 
-            playListFragment.reloadPlaylistManager(playListFragment.getContext());
-            playListFragment.getPlaylistManager().setCurrentPlaylist(null);
+                playListFragment.reloadPlaylistManager(playListFragment.getContext());
+                playListFragment.getPlaylistManager().setCurrentPlaylist(null);
 
-            List<Object> songs = new ArrayList<>();
-            songs.addAll(playListFragment.getPlaylistManager().getAllPlaylists());
-            setAdapter(songs);
+                List<Object> songs = new ArrayList<>();
+                songs.addAll(playListFragment.getPlaylistManager().getAllPlaylists());
+                setAdapter(songs);
 
-            return false;
+                return false;
+            } catch (Exception e) {
+                Toast.makeText(playListFragment.getActivity(),"Could not delete playlist.", Toast.LENGTH_LONG).show();
+                Log.e("onContextItemSelected", "MenuInfo is null for item: " + item.getTitle());
+                return false;
+            }
           }
         });
       }
