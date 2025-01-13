@@ -172,7 +172,7 @@ public class AudiobookFragmentListener implements AdapterView.OnItemClickListene
 
       int clickedPosition = info.position;
       //only show context menu if clicked on song
-      if(!this.selectedAudiobook.listFiles()[clickedPosition].isDirectory()){
+      if(!this.displayedItems.get(clickedPosition).isDirectory()){
         menu.add(0, 1, 0, "zu Favoriten hinzufügen");
         menu.add(0, 2, 0, "zu Playlists hinzufügen");
         menu.add(0, 3, 0, "als nächstes abspielen");

@@ -174,7 +174,7 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
       int clickedPosition = info.position;
       //only show context menu if clicked on song
 
-      if(!this.selectedFolder.listFiles()[clickedPosition].isDirectory()){
+      if(!this.displayedItems.get(clickedPosition).isDirectory()){
         menu.add(0, 1, 0, "zu Favoriten hinzufügen");
         menu.add(0, 2, 0, "zu Playlists hinzufügen");
         menu.add(0, 3, 0, "als nächstes abspielen");
