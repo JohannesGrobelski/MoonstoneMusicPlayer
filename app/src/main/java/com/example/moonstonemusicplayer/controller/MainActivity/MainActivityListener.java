@@ -65,12 +65,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /** Init the views from mainactivity and implement actions on them (mostly based on which fragment is active):
- *  * options menu:
- *    * define actions for menu items clicked (onOptionsItemSelected)
- *  * implement a request for runtime storage permissions (requestForPermission)
- *  * search view:
- *    * define what happens on input for search view (implementation onQueryTextChange)
- *  * define what happens if back button is pressed
+ *  options menu:
+ *  define actions for menu items clicked (onOptionsItemSelected)
+ *  implement a request for runtime storage permissions (requestForPermission)
+ *  search view:
+ *  define what happens on input for search view (implementation onQueryTextChange) and
+ *  defines what happens if back button is pressed
  */
 public class MainActivityListener implements SearchView.OnQueryTextListener {
   private static final boolean DEBUG = true;
@@ -82,16 +82,16 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
   private MediaPlayerService mediaPlayerService;
   private boolean serviceBound = false;
 
+  private Handler seekBarHandler = new Handler();
+  private Runnable seekBarRunnable;
+
   // Views for mini player
   private LinearLayout main_toolbar;
-
   private LinearLayout miniPlayerControls;
   private TextView miniPlayerTitle;
   private TextView miniPlayerArtist;
   private ImageButton miniPlayerPlayPause;
   private SeekBar miniPlayerSeekBar;
-  private Handler seekBarHandler = new Handler();
-  private Runnable seekBarRunnable;
 
   // Create ServiceConnection to bind to MediaPlayerService
   private ServiceConnection serviceConnection = new ServiceConnection() {
@@ -118,7 +118,6 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
     this.mainActivity = mainActivity;
     this.fragments = fragments;
     if(DEBUG)Log.d(TAG,"fragments null: "+ (fragments == null));
-
     initializeMiniPlayerViews();
 
     // Bind to MediaPlayerService

@@ -168,31 +168,35 @@ public class PlaylistFragmentListener implements View.OnClickListener, View.OnCr
     //the menu created if a song is clicked on
     if(playlistListAdapter.getItemList().get(position) instanceof Song){
       //create menu item with groupid to distinguish between fragments
-      //präsentation
-      menu.add(0, 0, 0, "aus Playlist löschen");
+      boolean isCalculatedPlaylist = currentPlaylist.equals(RECENTLY_ADDED_PLAYLIST_NAME) 
+          || currentPlaylist.equals(RECENTLY_PLAYED_PLAYLIST_NAME)
+          || currentPlaylist.equals(MOSTLY_PLAYED_PLAYLIST_NAME);
+      if(!isCalculatedPlaylist){
+        menu.add(0, 0, 0, "aus Playlist löschen");
+      }
       menu.add(0, 1, 0, "zu Playlist hinzufügen");
       menu.add(0, 2, 0, "Song löschen");
-      menu.getItem(0).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+      if(!currentPlaylist.equals(RECENTLY_ADDED_PLAYLIST_NAME)){
+          menu.getItem(0).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            /** onContextItemSelected(MenuItem item) doesnt work*/
+            public boolean onMenuItemClick(MenuItem item) {
+              Song song = playListFragment.getPlaylistManager().getCurrentPlaylist().getPlaylist().get(position);
+              deleteSongFromPlaylist(song);
+              return false;
+            }
+          });
+      }
+      menu.getItem(!isCalculatedPlaylist ? 1 : 0).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
         @Override
         /** onContextItemSelected(MenuItem item) doesnt work*/
         public boolean onMenuItemClick(MenuItem item) {
           Song song = playListFragment.getPlaylistManager().getCurrentPlaylist().getPlaylist().get(position);
-          deleteSongFromPlaylist(song);
-          return false;
-        }
-      });
-      menu.getItem(1).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-        @Override
-        /** onContextItemSelected(MenuItem item) doesnt work*/
-        public boolean onMenuItemClick(MenuItem item) {
-          Song song = playListFragment.getPlaylistManager().getCurrentPlaylist().getPlaylist().get(position);
-
           showAlertDialogAddToPlaylists(playListFragment.getLayoutInflater(), playListFragment.getContext(), song);
-
           return false;
         }
       });
-      menu.getItem(2).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+      menu.getItem(!isCalculatedPlaylist ? 2 : 1).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
         @Override
         /** onContextItemSelected(MenuItem item) doesnt work*/
         public boolean onMenuItemClick(MenuItem item) {

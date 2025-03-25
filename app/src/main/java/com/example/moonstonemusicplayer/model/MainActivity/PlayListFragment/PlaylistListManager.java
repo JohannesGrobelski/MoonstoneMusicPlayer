@@ -317,7 +317,12 @@ public class PlaylistListManager {
     Playlist recentlyPlayedPlaylist = new Playlist(RECENTLY_PLAYED_PLAYLIST_NAME, new ArrayList<>());
     List<Song> songListRecentlyPlayed = DBPlaylists.getInstance(context).getAllRecentlyPlayed(context);
     for(int i=songListRecentlyPlayed.size()-1; i>=0; i--){
-      recentlyPlayedPlaylist.playlist.add(songListRecentlyPlayed.get(i));
+      Song song = songListRecentlyPlayed.get(i);
+      if(song != null 
+        && song.getName() != null && !song.getName().isEmpty()
+        && song.getPath() != null && new File(song.getPath()).exists()){
+        recentlyPlayedPlaylist.playlist.add(songListRecentlyPlayed.get(i));
+      }
     }
     this.playlists_backup.add(0, recentlyPlayedPlaylist);
   }

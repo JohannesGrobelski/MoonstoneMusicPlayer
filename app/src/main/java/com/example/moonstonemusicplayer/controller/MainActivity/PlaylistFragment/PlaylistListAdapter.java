@@ -252,23 +252,33 @@ public class PlaylistListAdapter extends DragItemAdapter<Object, PlaylistListAda
         }
 
         void bindSongItem(Song song, Context context) {
-            tv_playlistSongItem.setTypeface(null, Typeface.NORMAL);
-            tv_playlistSongItem.setText(song.getName());
-            tv_playlistSongItem.setTextColor(SettingsFragment.getPrimaryColor(context));
+            if(song != null){
+                tv_playlistSongItem.setTypeface(null, Typeface.NORMAL);
+                if(song.getName() != null){
+                    tv_playlistSongItem.setText(song.getName());
+                }
+                tv_playlistSongItem.setTextColor(SettingsFragment.getPrimaryColor(context));
 
-            ll_artist_genre.setVisibility(View.VISIBLE);
-            tv_artist_song.setVisibility(View.VISIBLE);
-            tv_duration_song.setVisibility(View.VISIBLE);
-            tv_duration_genre.setVisibility(View.VISIBLE);
+                ll_artist_genre.setVisibility(View.VISIBLE);
+                tv_artist_song.setVisibility(View.VISIBLE);
+                tv_duration_song.setVisibility(View.VISIBLE);
+                tv_duration_genre.setVisibility(View.VISIBLE);
 
-            tv_artist_song.setText(song.getArtist().isEmpty() ? "unknown artist" : song.getArtist());
-            tv_artist_song.setTextColor(SettingsFragment.getPrimaryColor(context));
-            tv_duration_genre.setText(song.getGenre());
-            tv_duration_genre.setTextColor(SettingsFragment.getPrimaryColor(context));
-            tv_duration_song.setText(song.getDurationString());
-            tv_duration_song.setTextColor(SettingsFragment.getPrimaryColor(context));
+                tv_artist_song.setText(song.getArtist() != null && song.getArtist().isEmpty() ? "unknown artist" : song.getArtist());
+                tv_artist_song.setTextColor(SettingsFragment.getPrimaryColor(context));
+                if(song.getGenre() != null){
+                    tv_duration_genre.setText(song.getGenre());
+                } 
+                tv_duration_genre.setTextColor(SettingsFragment.getPrimaryColor(context));
+                if(song.getDurationString() != null){
+                    tv_duration_song.setText(song.getDurationString());
+                }
+                tv_duration_song.setTextColor(SettingsFragment.getPrimaryColor(context));
 
-            BrowserManager.getThumbnailForFile(song.getPath(), iv_playlistSongItem);
-        }
+                if(song.getPath() != null && !song.getPath().isEmpty()){
+                    BrowserManager.getThumbnailForFile(song.getPath(), iv_playlistSongItem);
+                }
+            }
+       }
     }
 }
