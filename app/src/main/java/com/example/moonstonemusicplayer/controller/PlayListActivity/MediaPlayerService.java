@@ -93,6 +93,7 @@ public class MediaPlayerService extends Service
   private AudioManager audioManager;
   private int startIndex;
   private int resumePosition = -1;
+  private int lastPositionSaved = -1;
 
   private static final int notificationId = 8888;
   private NotificationManager notificationManager;
@@ -181,7 +182,7 @@ public class MediaPlayerService extends Service
 
         //bereitet MediaPlayer für Wiedergabe vor
         mediaPlayer.prepareAsync();
-        resumePosition = 0;
+        lastPositionSaved = resumePosition = 0;
 
         if(((LocalBinder) iBinder) != null){
           ((LocalBinder) iBinder).boundServiceListener.selectedSong(playListModel.getCurrentSongFile().getPath());
@@ -673,7 +674,7 @@ public class MediaPlayerService extends Service
   private void updateMediaMetadata(Song currentSong) {
     if (currentSong == null) return;
 
-    MediaDescriptionCompat description = new MediaDescriptionCompat.Builder()
+    new MediaDescriptionCompat.Builder()
             .setTitle(currentSong.getName())
             .setSubtitle(currentSong.getArtist())
             .setDescription(currentSong.getAlbum())
@@ -715,6 +716,12 @@ public class MediaPlayerService extends Service
     // Update the notification
     if (notificationManager != null) {
       notificationManager.notify(notificationId, notificationBuilder.build());
+    }
+
+    // save playtime every 10 seconds
+    if(lastPositionSaved + 10 <= mediaPlayer.getCurrentPosition()/1000){
+      PlaytimePersistence.savePlaytime(this, mediaPlayerCurrentDataSourceUri, mediaPlayer.getCurrentPosition() / 1000);
+      lastPositionSaved = mediaPlayer.getCurrentPosition() / 1000;
     }
   }
 
