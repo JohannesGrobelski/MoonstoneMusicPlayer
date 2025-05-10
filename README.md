@@ -62,6 +62,3 @@ This project uses a dual licensing approach:
 Please note that while you cannot modify the original code of MoonStone Music Player, 
 the third-party libraries used in this project maintain their open-source licenses 
 and can be used according to their respective terms.
-Contact
-
-If you have any questions, suggestions, or feedback regarding the Moonstone Music Player project, please contact the developer grobelskijohannes@gmail.com.
