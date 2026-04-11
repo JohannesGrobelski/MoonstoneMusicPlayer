@@ -21,7 +21,7 @@ import android.content.res.Configuration;
 import android.media.AudioManager;
 import android.os.Handler;
 import android.os.IBinder;
-import android.util.Log;
+
 import android.view.ContextMenu;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
@@ -62,6 +62,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import timber.log.Timber;
+
 /** MainActivityListener
  *  Handles input from the User (through Views in {@link PlayListActivity}),
  *  changes the model {@link PlaylistManager}) according to the input and
@@ -72,7 +74,7 @@ public class PlayListActivityListener
     SeekBar.OnSeekBarChangeListener, SearchView.OnQueryTextListener,
     SearchView.OnCloseListener {
   private static final boolean DEBUG = true;
-  private static final String TAG = PlayListActivityListener.class.getSimpleName();
+  
 
   private static final int SINGLE_TAP_TIMEOUT = 400; // Custom timeout for single tap in milliseconds
 
@@ -92,7 +94,7 @@ public class PlayListActivityListener
 
   @SuppressLint("ClickableViewAccessibility")
   public PlayListActivityListener(PlayListActivity playListActivity, File[] playlist, int starting_song_index, String playlist_name) {
-    if(DEBUG)Log.d(TAG,"selected song: "+playlist[starting_song_index].getName());
+    if(DEBUG)Timber.d("selected song: "+playlist[starting_song_index].getName());
     this.playListActivity = playListActivity;
     this.playlistName = playlist_name;
     playlistManager = new PlaylistManager(playListActivity.getBaseContext(),playlist);
@@ -328,7 +330,7 @@ public class PlayListActivityListener
   private void finishSong(PlayListModel.REPEATMODE repeatmode){
     playListActivity.seekBar.setProgress(0);
     playListActivity.tv_seekbar_progress.setText("0:00");
-    if(DEBUG)Log.d(TAG,"finishSong: "+repeatmode);
+    if(DEBUG)Timber.d("finishSong: "+repeatmode);
 
     if(repeatmode.equals(PlayListModel.REPEATMODE.NONE)){
       playListActivity.btn_play_pause.setBackground(
@@ -419,7 +421,7 @@ public class PlayListActivityListener
   private void toogleShuffleMode(){
     if(isServiceBound){
       boolean shuffleMode = mediaPlayerService.toogleShuffleMode();
-      Log.d(TAG,"toogleShuffle: "+shuffleMode);
+      Timber.d("toogleShuffle: "+shuffleMode);
       if(shuffleMode){
         playListActivity.btn_shuffle.setBackground(
                 DrawableUtils.getTintedDrawable(
@@ -505,7 +507,7 @@ public class PlayListActivityListener
   }
 
   private void seekTo(int seekPosition){
-    Log.d(TAG,"seekTo: "+seekPosition);
+    Timber.d("seekTo: "+seekPosition);
     if(isServiceBound){
       mediaPlayerService.seekTo(seekPosition);
       animateMediaplayerProgressOnSeekbar();
@@ -517,7 +519,7 @@ public class PlayListActivityListener
   private void destroyAndCreateNewService(int starting_index){
     //if an service is bound destroy it ...
     if(isServiceBound){
-      if(DEBUG)Log.d(TAG,"destroyMediaPlayerService (bound: "+isServiceBound+")");
+      if(DEBUG)Timber.d("destroyMediaPlayerService (bound: "+isServiceBound+")");
       mediaPlayerService.onDestroy();
       isServiceBound = false;
     }
@@ -533,7 +535,7 @@ public class PlayListActivityListener
     playListActivity.startService(playerIntent);
     boolean bindService = playListActivity.getApplicationContext().
         bindService(playerIntent,serviceConnection, Context.BIND_AUTO_CREATE);
-    if(DEBUG)Log.d(TAG,"startMediaPlayerService: "+bindService);
+    if(DEBUG)Timber.d("startMediaPlayerService: "+bindService);
   }
 
 
@@ -543,7 +545,7 @@ public class PlayListActivityListener
     return new ServiceConnection() {
       @Override
       public void onServiceConnected(ComponentName name, IBinder service) {
-        if(DEBUG)Log.d(TAG,"onServiceConnected");
+        if(DEBUG)Timber.d("onServiceConnected");
         MediaPlayerService.LocalBinder binder = (MediaPlayerService.LocalBinder) service;
         mediaPlayerService = binder.getService();
         binder.setListener(new BoundServiceListener() {
@@ -551,7 +553,7 @@ public class PlayListActivityListener
 
           @Override
           public void selectedSong(String selectedSongPath) {
-            if(DEBUG)Log.d(TAG,"song playing: "+selectedSongPath);
+            if(DEBUG)Timber.d("song playing: "+selectedSongPath);
             songListAdapter.setSelectedSongPath(selectedSongPath);
             songListAdapter.notifyDataSetChanged(); //NOTE: this is necessary
           }
@@ -567,8 +569,8 @@ public class PlayListActivityListener
             //transfer playlist from MusicManager to MediaPlayerService; problem: limit of 1MB of data in a Bundle
             //solution: save data in static variable and get it later in service
 
-            if(DEBUG)Log.d(TAG,"startMediaPlayerService create Playlist: "+ playlistManager.getPlayList().size());
-            if(DEBUG)Log.d(TAG,"startMediaPlayerService transfer Playlist: "+ playlistManager.getPlayList().size());
+            if(DEBUG)Timber.d("startMediaPlayerService create Playlist: "+ playlistManager.getPlayList().size());
+            if(DEBUG)Timber.d("startMediaPlayerService transfer Playlist: "+ playlistManager.getPlayList().size());
             mediaPlayerService.setPlayList(playlistManager.getPlayList());
           }
 
@@ -606,10 +608,10 @@ public class PlayListActivityListener
             );
           }
         });
-        Log.d(TAG,"onServiceConnected: binder: "+ (binder == null));
+        Timber.d("onServiceConnected: binder: "+ (binder == null));
         isServiceBound = true;
         //transfer data
-        if(DEBUG)Log.d(TAG,"startMediaPlayerService transfer Playlist: "+ playlistManager.getPlayList().size());
+        if(DEBUG)Timber.d("startMediaPlayerService transfer Playlist: "+ playlistManager.getPlayList().size());
         mediaPlayerService.setPlayList(playlistManager.getPlayList());
         playSong(mediaPlayerService.getCurrentSongFile());
       }

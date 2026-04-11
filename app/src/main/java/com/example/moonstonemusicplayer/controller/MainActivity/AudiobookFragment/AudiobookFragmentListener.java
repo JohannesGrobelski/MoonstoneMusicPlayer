@@ -11,7 +11,7 @@ package com.example.moonstonemusicplayer.controller.MainActivity.AudiobookFragme
 import static com.example.moonstonemusicplayer.controller.MainActivity.SharedUtility.showAlertDialogAddToPlaylists;
 
 import android.content.Intent;
-import android.util.Log;
+
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,8 +32,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import timber.log.Timber;
+
 public class AudiobookFragmentListener implements AdapterView.OnItemClickListener, View.OnClickListener, BrowserManager.AfterFileDeletion {
-  private static final String TAG = AudiobookFragmentListener.class.getSimpleName();
+  
   private static final boolean DEBUG = false;
   private static File[] AudiobookAudiobooklist;
   private final AudiobookFragment audiobookFragment;
@@ -84,7 +86,7 @@ public class AudiobookFragmentListener implements AdapterView.OnItemClickListene
         startAudiobookAudiobooklist(displayedItems.toArray(new File[0]), position, audiobookFragment);
       }
     } catch (Exception e){
-      Log.e(TAG, e.toString());
+      Timber.e( e.toString());
       Toast.makeText(audiobookFragment.getContext(), "ERROR: Could not click on item.", Toast.LENGTH_LONG).show();
     }
   }
@@ -125,7 +127,7 @@ public class AudiobookFragmentListener implements AdapterView.OnItemClickListene
         }
       }
     } catch (Exception e){
-      Log.e(TAG, e.toString());
+      Timber.e( e.toString());
       Toast.makeText(audiobookFragment.getContext(), "ERROR: Could not go back!", Toast.LENGTH_LONG).show();
     }
   }
@@ -145,7 +147,7 @@ public class AudiobookFragmentListener implements AdapterView.OnItemClickListene
         return true;
       }
     } catch (Exception e){
-      Log.e(TAG, e.toString());
+      Timber.e( e.toString());
       Toast.makeText(audiobookFragment.getContext(), "ERROR: Could not go back!", Toast.LENGTH_LONG).show();
     }
     return false;
@@ -167,7 +169,7 @@ public class AudiobookFragmentListener implements AdapterView.OnItemClickListene
       if (info == null) {
         // Handle the case where info is null
         Toast.makeText(audiobookFragment.getActivity(),"Could not open context menu.", Toast.LENGTH_LONG).show();
-        Log.e("onContextItemSelected", "MenuInfo is null for item"); 
+        Timber.e( "MenuInfo is null for item"); 
       }        
 
       int clickedPosition = info.position;
@@ -179,7 +181,7 @@ public class AudiobookFragmentListener implements AdapterView.OnItemClickListene
         menu.add(0, 4, 0, "Hörbuch löschen");
       }
     } catch (Exception e){
-      Log.e(TAG,e.toString());
+      Timber.e(e.toString());
       Toast.makeText(folderListAdapter.getContext(), "ERROR: Could not open context menu", Toast.LENGTH_LONG).show();
     }
   }
@@ -200,7 +202,7 @@ public class AudiobookFragmentListener implements AdapterView.OnItemClickListene
         if (info == null) {
             // Handle the case where info is null
             Toast.makeText(audiobookFragment.getActivity(),"Could not open context menu.", Toast.LENGTH_LONG).show();
-            Log.e("onContextItemSelected", "MenuInfo is null for item: " + item.getTitle());
+            Timber.e( "MenuInfo is null for item: " + item.getTitle());
             return false; 
         }        
 
@@ -236,7 +238,7 @@ public class AudiobookFragmentListener implements AdapterView.OnItemClickListene
       }
       return true;
     } catch (Exception e){
-      Log.e(TAG, e.toString());
+      Timber.e( e.toString());
       Toast.makeText(audiobookFragment.getContext(),item.getItemId()==1 ? "ERROR: Could not add song to favorites." : "ERROR: Could not song add to playlist.", Toast.LENGTH_LONG).show();
       return false;
     }
@@ -256,7 +258,7 @@ public class AudiobookFragmentListener implements AdapterView.OnItemClickListene
     try {
       return AudiobookFragmentListener.AudiobookAudiobooklist.clone();
     } catch (Exception e){
-      Log.e(TAG, e.toString());
+      Timber.e( e.toString());
       return new File[0];
     }
   }
@@ -267,7 +269,7 @@ public class AudiobookFragmentListener implements AdapterView.OnItemClickListene
       //setAdapter
       setAdapter(this.selectedAudiobook);
     } catch (Exception e){
-      Log.e(TAG, e.toString());
+      Timber.e( e.toString());
       Toast.makeText(audiobookFragment.getContext(), "ERROR: Could not click on item.", Toast.LENGTH_LONG).show();
     }
   }

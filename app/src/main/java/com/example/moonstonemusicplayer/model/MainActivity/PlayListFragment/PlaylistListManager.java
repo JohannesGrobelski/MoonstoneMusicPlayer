@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 /** saves and loads playlists and contains the current (displayed) playlist in playlistfragment*/
 public class PlaylistListManager {
 
-  private static final String TAG = PlaylistListManager.class.getSimpleName();
+  
   private final Context context;
   //private DataSource dataSource;
 

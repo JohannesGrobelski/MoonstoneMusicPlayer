@@ -11,7 +11,7 @@ package com.example.moonstonemusicplayer.controller.MainActivity.FolderFragment;
 import static com.example.moonstonemusicplayer.controller.MainActivity.SharedUtility.showAlertDialogAddToPlaylists;
 
 import android.content.Intent;
-import android.util.Log;
+
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,8 +33,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import timber.log.Timber;
+
 public class FolderFragmentListener implements AdapterView.OnItemClickListener, View.OnClickListener, BrowserManager.AfterFileDeletion {
-  private static final String TAG = FolderFragmentListener.class.getSimpleName();
+  
   private static final boolean DEBUG = false;
   private static File[] FolderSonglist;
   private final FolderFragment folderFragment;
@@ -86,7 +88,7 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
       }
 
     } catch (Exception e){
-      Log.e(TAG, e.toString());
+      Timber.e( e.toString());
       Toast.makeText(folderFragment.getContext(), "ERROR: Could not click on item.", Toast.LENGTH_LONG).show();
     }
   }
@@ -127,7 +129,7 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
         }
       }
     } catch (Exception e){
-      Log.e(TAG, e.toString());
+      Timber.e( e.toString());
       Toast.makeText(folderFragment.getContext(), "ERROR: Could not go back!", Toast.LENGTH_LONG).show();
     }
   }
@@ -147,7 +149,7 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
         return true;
       }
     } catch (Exception e){
-      Log.e(TAG, e.toString());
+      Timber.e( e.toString());
       Toast.makeText(folderFragment.getContext(), "ERROR: Could not go back!", Toast.LENGTH_LONG).show();
     }
     return false;
@@ -168,7 +170,7 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
       if (info == null) {
          // Handle the case where info is null
          Toast.makeText(folderFragment.getActivity(),"Could not open context menu.", Toast.LENGTH_LONG).show();
-         Log.e("onContextItemSelected", "MenuInfo is null for item.");
+         Timber.e( "MenuInfo is null for item.");
       }        
 
       int clickedPosition = info.position;
@@ -181,7 +183,7 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
         menu.add(0, 4, 0, "Song löschen");
       }
     } catch (Exception e){
-      Log.e(TAG,e.toString());
+      Timber.e(e.toString());
       Toast.makeText(folderListAdapter.getContext(), "ERROR: Could not open context menu", Toast.LENGTH_LONG).show();
     }
   }
@@ -203,7 +205,7 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
         if (info == null) {
             // Handle the case where info is null
             Toast.makeText(folderFragment.getActivity(),"Internal error getting song index", Toast.LENGTH_LONG).show();
-            Log.e("onContextItemSelected", "MenuInfo is null for item: " + item.getTitle());
+            Timber.e( "MenuInfo is null for item: " + item.getTitle());
             return false; 
         }        
 
@@ -239,7 +241,7 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
       }
       return true;
     } catch (Exception e){
-      Log.e(TAG, e.toString());
+      Timber.e( e.toString());
       Toast.makeText(folderFragment.getContext(),item.getItemId()==1 ? "ERROR: Could not add song to favorites." : "ERROR: Could not song add to playlist.", Toast.LENGTH_LONG).show();
       return false;
     }
@@ -263,7 +265,7 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
     try {
       return FolderFragmentListener.FolderSonglist.clone();
     } catch (Exception e){
-      Log.e(TAG, e.toString());
+      Timber.e( e.toString());
       return new File[0];
     }
   }
@@ -274,7 +276,7 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
       //setAdapter
       setAdapter(this.selectedFolder);
     } catch (Exception e){
-      Log.e(TAG, e.toString());
+      Timber.e( e.toString());
       Toast.makeText(folderFragment.getContext(), "ERROR: Could not click on item.", Toast.LENGTH_LONG).show();
     }
   }

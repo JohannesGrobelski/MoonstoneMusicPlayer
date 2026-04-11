@@ -30,7 +30,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 public class GoogleDriveManager {
-    private static final String TAG = GoogleDriveManager.class.getSimpleName();
+    
     private static GoogleDriveManager instance;
     private final Drive driveService;
     private final Executor executor = Executors.newSingleThreadExecutor();

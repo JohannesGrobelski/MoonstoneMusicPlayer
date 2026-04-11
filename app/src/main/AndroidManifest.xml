@@ -20,6 +20,7 @@
         tools:ignore="ProtectedPermissions" />
 
     <application
+        android:name=".MMPApp"
         android:allowBackup="true"
         android:extractNativeLibs="true"
         android:icon="@mipmap/ic_launcher"

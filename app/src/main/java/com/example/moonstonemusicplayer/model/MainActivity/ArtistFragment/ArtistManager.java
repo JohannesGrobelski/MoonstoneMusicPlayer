@@ -9,7 +9,7 @@
 package com.example.moonstonemusicplayer.model.MainActivity.ArtistFragment;
 
 import android.content.Context;
-import android.util.Log;
+
 
 import com.example.moonstonemusicplayer.model.MainActivity.AlbumFragment.Album;
 import com.example.moonstonemusicplayer.model.MainActivity.ArtistFragment.Artist;
@@ -21,10 +21,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-
+import timber.log.Timber;
 public class ArtistManager {
 
-  private static final String TAG = ArtistManager.class.getSimpleName();
+  
 
   private Context context;
   private Artist currentArtist = null;
@@ -66,7 +66,8 @@ public class ArtistManager {
   }
 
   public List<Artist> getAllArtists() {
-    Log.d("artistList","backup: "+artistList_backup.size());
+    Timber.d("backup: "+artistList_backup.size());
+
     artistList.clear();
     artistList.addAll(artistList_backup);
     return artistList;

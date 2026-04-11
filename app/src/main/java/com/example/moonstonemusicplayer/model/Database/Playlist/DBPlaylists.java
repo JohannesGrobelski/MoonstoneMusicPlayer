@@ -16,7 +16,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
+
 
 
 import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
@@ -30,6 +30,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import timber.log.Timber;
+
 public class DBPlaylists {
     //favorites is just another playlist
     private static final int RECENTLY_PLAYED_SONG_LIMIT = 100;
@@ -39,7 +41,7 @@ public class DBPlaylists {
     public static final String RECENTLY_ADDED_PLAYLIST_NAME = "RECENTLY ADDED";
     public static final String MOSTLY_PLAYED_PLAYLIST_NAME = "MOSTLY PLAYED";
 
-    private static final String TAG = DBPlaylists.class.getSimpleName();
+    
     private static final boolean DEBUG = true;
     private static DBPlaylists instance;
 
@@ -56,24 +58,24 @@ public class DBPlaylists {
 
 
     private DBPlaylists(Context context){
-        Log.d(TAG,"Unsere DataSource erzeugt den DBHelperPlaylists");
+        Timber.d("Unsere DataSource erzeugt den DBHelperPlaylists");
         DBHelperPlaylists = new DBHelperPlaylists(context);
     }
 
     private void open_writable(){
-        Log.d(TAG, "Eine schreibende Referenz auf die DB wird jetzt angefragt.");
+        Timber.d( "Eine schreibende Referenz auf die DB wird jetzt angefragt.");
         database_playlists = DBHelperPlaylists.getWritableDatabase();
-        Log.d(TAG, "Datenbank-Referenz erhalten, Pfad zur Datenbank: "+ database_playlists.getPath());
+        Timber.d( "Datenbank-Referenz erhalten, Pfad zur Datenbank: "+ database_playlists.getPath());
     }
 
     private void open_readable(){
-        Log.d(TAG, "Eine lesende Referenz auf die DB wird jetzt angefragt.");
+        Timber.d( "Eine lesende Referenz auf die DB wird jetzt angefragt.");
         database_playlists = DBHelperPlaylists.getReadableDatabase();
-        Log.d(TAG, "Datenbank-Referenz erhalten, Pfad zur Datenbank: "+ database_playlists.getPath());
+        Timber.d( "Datenbank-Referenz erhalten, Pfad zur Datenbank: "+ database_playlists.getPath());
     }
 
     private void close_db(){
-        Log.d(TAG, "DB mit hilfe des DBHelperLocalSongss schließen");
+        Timber.d( "DB mit hilfe des DBHelperLocalSongss schließen");
         DBHelperPlaylists.close();
     }
 
@@ -98,14 +100,14 @@ public class DBPlaylists {
 
 
     public List<Song> getAllFavorites(Context context){
-        if(DEBUG)Log.d(TAG,"load Favorites");
+        if(DEBUG)Timber.d("load Favorites");
         String query = "SELECT * FROM "+ TABLE_PLAYLISTS
             +" WHERE "+ com.example.moonstonemusicplayer.model.Database.Playlist.DBHelperPlaylists.COLUMN_PLAYLIST_NAME + " = '" +FAVORITES_PLAYLIST_NAME+ "'";
         return getSongListFromQuery(context, query);
     }
 
     public List<Song> getAllRecentlyPlayed(Context context){
-        if(DEBUG)Log.d(TAG,"load Favorites");
+        if(DEBUG)Timber.d("load Favorites");
         String query = "SELECT * FROM "+ TABLE_PLAYLISTS
                 +" WHERE "+ com.example.moonstonemusicplayer.model.Database.Playlist.DBHelperPlaylists.COLUMN_PLAYLIST_NAME + " = '" +RECENTLY_PLAYED_PLAYLIST_NAME+ "'";
         return getSongListFromQuery(context, query);
@@ -129,7 +131,7 @@ public class DBPlaylists {
         String query = "SELECT * FROM " + TABLE_PLAYLISTS + " WHERE " +
                 DBHelperPlaylists.COLUMN_PLAYLIST_NAME + " = '" + playlistName + "'";
         if (noResultsFromQuery(query)) {
-            Log.e(TAG, "Playlist '" + playlistName + "' does not exist.");
+            Timber.e( "Playlist '" + playlistName + "' does not exist.");
             close_db();
             return;
         }
@@ -150,12 +152,12 @@ public class DBPlaylists {
         // Close the database connection.
         close_db();
 
-        Log.d(TAG, "Playlist '" + playlistName + "' order changed successfully.");
+        Timber.d( "Playlist '" + playlistName + "' order changed successfully.");
     }
 
 
     public Song addToPlaylist(Context context, Song inputSong, String playlistname){
-        if(DEBUG)Log.d(TAG,"add "+inputSong.getName()+" to playlist "+playlistname);
+        if(DEBUG)Timber.d("add "+inputSong.getName()+" to playlist "+playlistname);
 
         //check if song is already in playlist
         String query = "SELECT * FROM "+ TABLE_PLAYLISTS +" WHERE "+
@@ -181,7 +183,7 @@ public class DBPlaylists {
 
             //Song-Objekt in DB einfügen und ID zurückbekommen
             long insertID = database_playlists.insert(TABLE_PLAYLISTS, null, values);
-            Log.d(TAG,"add to playlist: "+inputSong.getName()+" "+insertID);
+            Timber.d("add to playlist: "+inputSong.getName()+" "+insertID);
             //Zeiger auf gerade eingefügtes Element
             Cursor cursor = database_playlists.query(TABLE_PLAYLISTS,
                 COLUMNS,
@@ -268,7 +270,7 @@ public class DBPlaylists {
                 String songURL = cursor.getString(2);
 
                 if(!new File(songURL).exists()){
-                    if(DEBUG)Log.d(TAG,"file does not exist: "+songURL);
+                    if(DEBUG)Timber.d("file does not exist: "+songURL);
                     continue;
                 }
 
@@ -286,7 +288,7 @@ public class DBPlaylists {
     public List<Playlist> getAllPlaylists(Context context) {
         List<Playlist> allPlaylists = new ArrayList<>();
         String[] allPlaylistNames = getAllPlaylistNames();
-        Log.d(TAG, Arrays.toString(allPlaylistNames));
+        Timber.d( Arrays.toString(allPlaylistNames));
         for(String playlistName: allPlaylistNames){
             String query = "SELECT * FROM "+ TABLE_PLAYLISTS +" WHERE "+
                     com.example.moonstonemusicplayer.model.Database.Playlist.DBHelperPlaylists.COLUMN_PLAYLIST_NAME + " LIKE '" + escapeString(playlistName)+ "'";

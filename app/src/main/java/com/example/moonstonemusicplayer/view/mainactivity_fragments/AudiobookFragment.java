@@ -36,7 +36,7 @@ import com.example.moonstonemusicplayer.view.settingsactivity_fragments.Settings
 public class AudiobookFragment extends Fragment {
   public static final String FOLDERAUDIOBOOKINDEXEXTRA = "FOLDERAUDIOBOOKINDEXEXTRA";
 
-  private static final String TAG = AudiobookFragment.class.getSimpleName();
+  
   private static final boolean DEBUG = false;
   private AudiobookFragmentListener audiobookFragmentListener;
 

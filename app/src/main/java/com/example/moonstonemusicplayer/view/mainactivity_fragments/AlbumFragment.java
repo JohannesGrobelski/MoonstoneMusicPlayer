@@ -10,7 +10,7 @@ package com.example.moonstonemusicplayer.view.mainactivity_fragments;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
+import timber.log.Timber;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,7 +41,7 @@ public class AlbumFragment extends Fragment {
 
   // TODO: Rename parameter arguments, choose names that match
   // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-  private static final String TAG = AlbumFragment.class.getSimpleName();
+  
 
   public AlbumManager albumManager;
   public AlbumFragmentListener albumFragmentListener;
@@ -111,13 +111,13 @@ public class AlbumFragment extends Fragment {
 
   public void searchMusic(String query) {
     if(!query.isEmpty()){
-      Log.d("search music",query);
+      Timber.d("search music: "+query);
       Album[] matchingAlbums = albumManager.getAllAlbumsMatchingQuery(query);
 
       albumManager.setAlbumList(new ArrayList<>(Arrays.asList(matchingAlbums)));
       albumFragmentListener.setAdapterAlbumList(albumManager.getAlbumList());
     } else {
-      Log.d("search music","empty");
+      Timber.d("search music: empty result");
       albumFragmentListener.setAdapterAlbumList((albumManager.getAllAlbums()));
     }
   }

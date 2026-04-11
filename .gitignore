@@ -11,6 +11,8 @@
 /.idea/workspace.xml
 /.idea/navEditor.xml
 /.idea/assetWizardSettings.xml
+libs/
+libs/*
 .DS_Store
 /build
 /captures
@@ -22,6 +24,7 @@
 app/.classpath
 app/.settings/
 .idea/
+.idea/*
 *.iml
 *.ipr
 *.iws

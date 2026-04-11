@@ -16,7 +16,7 @@ import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.IBinder;
-import android.util.Log;
+
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,18 +25,10 @@ import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.fragment.app.Fragment;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.PlayListActivity.MediaPlayerService;
-import com.example.moonstonemusicplayer.controller.PlayListActivity.PlaylistJsonHandler;
-import com.example.moonstonemusicplayer.model.Database.PlaylistUtil;
-import com.example.moonstonemusicplayer.model.GoogleDriveManager;
-import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.Playlist;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import com.example.moonstonemusicplayer.view.MainActivity;
 import com.example.moonstonemusicplayer.view.SettingsActivity;
@@ -47,22 +39,8 @@ import com.example.moonstonemusicplayer.view.mainactivity_fragments.FolderFragme
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.GenreFragment;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.PlayListFragment;
 import com.example.moonstonemusicplayer.view.settingsactivity_fragments.SettingsFragment;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.Task;
 
-import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.RECENTLY_ADDED_PLAYLIST_NAME;
-import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.RECENTLY_PLAYED_PLAYLIST_NAME;
-
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-import java.util.stream.Collectors;
+import timber.log.Timber;
 
 /** Init the views from mainactivity and implement actions on them (mostly based on which fragment is active):
  *  options menu:
@@ -74,7 +52,7 @@ import java.util.stream.Collectors;
  */
 public class MainActivityListener implements SearchView.OnQueryTextListener {
   private static final boolean DEBUG = true;
-  private static final String TAG = MainActivityListener.class.getSimpleName();
+  
 
   private final MainActivity mainActivity;
   private final Fragment[] fragments;
@@ -117,7 +95,7 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
   public MainActivityListener(MainActivity mainActivity,Fragment[] fragments) {
     this.mainActivity = mainActivity;
     this.fragments = fragments;
-    if(DEBUG)Log.d(TAG,"fragments null: "+ (fragments == null));
+    if(DEBUG)Timber.d("fragments null: "+ (fragments == null));
     initializeMiniPlayerViews();
 
     // Bind to MediaPlayerService
@@ -393,35 +371,35 @@ public class MainActivityListener implements SearchView.OnQueryTextListener {
 
     //Fragment currentFragment = mainActivity.getSupportFragmentManager().findFragmentById(R.id.view_pager_main);
     int currentItem = mainActivity.viewPager.getCurrentItem();
-    Log.d("search","in fragment: "+currentItem);
+    Timber.d("in fragment: "+currentItem);
     switch(currentItem){
       case 0: {
-        Log.v(TAG, "search the current fragment FolderFragment");
+        Timber.v("search the current fragment FolderFragment");
         ((FolderFragment) fragments[0]).searchMusic(query);
         break;
       }
       case 1: {
-        Log.v(TAG, "search the current fragment FolderFragment");
+        Timber.v("search the current fragment FolderFragment");
         ((AudiobookFragment) fragments[1]).searchMusic(query);
         break;
       }
       case 2: {
-        Log.v(TAG, "search the current fragment PlayListFragment");
+        Timber.v("search the current fragment PlayListFragment");
         ((PlayListFragment) fragments[2]).searchMusic(query);
         break;
       }
       case 3: {
-        Log.v(TAG, "search the current fragment AlbumFragment");
+        Timber.v("search the current fragment AlbumFragment");
         ((AlbumFragment) fragments[3]).searchMusic(query);
         break;
       }
       case 4: {
-        Log.v(TAG, "search the current fragment ArtistFragment");
+        Timber.v("search the current fragment ArtistFragment");
         ((ArtistFragment) fragments[4]).searchMusic(query);
         break;
       }
       case 5: {
-        Log.v(TAG, "search the current fragment GenreFragment");
+        Timber.v("search the current fragment GenreFragment");
         ((GenreFragment) fragments[5]).searchMusic(query);
         break;
       }

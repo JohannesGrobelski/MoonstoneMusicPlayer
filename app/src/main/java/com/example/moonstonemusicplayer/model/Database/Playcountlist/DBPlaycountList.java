@@ -18,7 +18,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
+
 
 import com.example.moonstonemusicplayer.model.Database.Playlist.DBHelperPlaylists;
 import com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists;
@@ -29,12 +29,14 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import timber.log.Timber;
+
 /** DB to track how often a song was played by user.
  * I thought about using DBPlaylist with a special playlist, but decided otherwise because this
  * would have been a "hacky" solution. With this implementation its cleaner.
  */
 public class DBPlaycountList {
-    private static final String TAG = DBPlaycountList.class.getSimpleName();
+    
     private static final boolean DEBUG = true;
     private static final int SONG_NOT_PLAYED_PLAYCOUNT = 0;
     private static DBPlaycountList instance;
@@ -65,7 +67,7 @@ public class DBPlaycountList {
      */
     public Song playedSong(Context context, Song song){
         try {
-            if(DEBUG)Log.d(TAG,"add "+song.getName()+" to playlist "+song);
+            if(DEBUG)Timber.d("add "+song.getName()+" to playlist "+song);
 
             //check if song is already in playlist
             String query = "SELECT * FROM "+ TABLE_PLAYCOUNTLIST +" WHERE "+
@@ -88,7 +90,7 @@ public class DBPlaycountList {
                 String[] whereArgs = new String[]{song.getPath()};
                 insertID = database_playcountlist.update(TABLE_PLAYCOUNTLIST, values, whereClause, whereArgs);
             }
-            Log.d(TAG,"add to playlist: "+song.getName()+" "+insertID);
+            Timber.d("add to playlist: "+song.getName()+" "+insertID);
 
             //Zeiger auf gerade eingefügtes Element
             Cursor cursor = database_playcountlist.query(TABLE_PLAYCOUNTLIST,
@@ -109,7 +111,7 @@ public class DBPlaycountList {
             close_db();
             return current;
         } catch (Exception e){
-            Log.e(TAG,e.toString());
+            Timber.e(e.toString());
             return null;
         }
     }
@@ -139,7 +141,7 @@ public class DBPlaycountList {
                         mostPlayedSongs.add(song);
                     }
                 } catch (Exception e){
-                    Log.e(TAG, e.toString());
+                    Timber.e( e.toString());
                 }
             }
 
@@ -148,30 +150,30 @@ public class DBPlaycountList {
 
             return mostPlayedSongs;
         } catch (Exception e) {
-            Log.e(TAG, e.toString());
+            Timber.e( e.toString());
             return List.of();
         }
     }
 
     private DBPlaycountList(Context context){
-        Log.d(TAG,"Unsere DataSource erzeugt den DBHelperPlaycountList");
+        Timber.d("Unsere DataSource erzeugt den DBHelperPlaycountList");
         dBHelperPlaycountList = new DBHelperPlaycountList(context);
     }
 
     private void open_writable(){
-        Log.d(TAG, "Eine schreibende Referenz auf die DB wird jetzt angefragt.");
+        Timber.d( "Eine schreibende Referenz auf die DB wird jetzt angefragt.");
         database_playcountlist = dBHelperPlaycountList.getWritableDatabase();
-        Log.d(TAG, "Datenbank-Referenz erhalten, Pfad zur Datenbank: "+ database_playcountlist.getPath());
+        Timber.d( "Datenbank-Referenz erhalten, Pfad zur Datenbank: "+ database_playcountlist.getPath());
     }
 
     private void open_readable(){
-        Log.d(TAG, "Eine lesende Referenz auf die DB wird jetzt angefragt.");
+        Timber.d( "Eine lesende Referenz auf die DB wird jetzt angefragt.");
         database_playcountlist = dBHelperPlaycountList.getReadableDatabase();
-        Log.d(TAG, "Datenbank-Referenz erhalten, Pfad zur Datenbank: "+ database_playcountlist.getPath());
+        Timber.d( "Datenbank-Referenz erhalten, Pfad zur Datenbank: "+ database_playcountlist.getPath());
     }
 
     private void close_db(){
-        Log.d(TAG, "DB mit hilfe des DBHelperLocalSongss schließen");
+        Timber.d( "DB mit hilfe des DBHelperLocalSongss schließen");
         dBHelperPlaycountList.close();
     }
 

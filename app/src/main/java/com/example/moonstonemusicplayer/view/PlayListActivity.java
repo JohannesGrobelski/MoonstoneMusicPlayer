@@ -57,7 +57,7 @@ import java.io.File;
 public class PlayListActivity extends AppCompatActivity {
 
 
-  private static final String TAG = PlayListActivity.class.getName();
+  
   private static final boolean DEBUG = true;
   com.example.moonstonemusicplayer.controller.PlayListActivity.PlayListActivityListener playListActivityListener;
 

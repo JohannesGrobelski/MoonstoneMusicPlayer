@@ -5,7 +5,7 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Bundle;
-import android.util.Log;
+
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -29,10 +29,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import timber.log.Timber;
+
 public class SettingsActivity extends AppCompatActivity {
 
     private static final int REQUEST_AUTHORIZE = 771;
-    private static final String TAG = SettingsActivity.class.getSimpleName();
+    
     private SettingsFragment settingsFragment;
 
     @Override
@@ -66,14 +68,14 @@ public class SettingsActivity extends AppCompatActivity {
                                         this.startIntentSenderForResult(pendingIntent.getIntentSender(),
                                                 REQUEST_AUTHORIZE, null, 0, 0, 0, null);
                                     } catch (IntentSender.SendIntentException e) {
-                                        Log.e(TAG, "Couldn't start Authorization UI: " + e.getLocalizedMessage());
+                                        Timber.e( "Couldn't start Authorization UI: " + e.getLocalizedMessage());
                                     }
                                 } else {
                                     // Access already granted, continue with user action
                                     Toast.makeText(this, "Access already granted, continue with user action", Toast.LENGTH_LONG).show();
                                 }
                             })
-                    .addOnFailureListener(e -> Log.e(TAG, "Failed to authorize", e));
+                    .addOnFailureListener(e -> Timber.e( "Failed to authorize", e));
         }
 
     @Override

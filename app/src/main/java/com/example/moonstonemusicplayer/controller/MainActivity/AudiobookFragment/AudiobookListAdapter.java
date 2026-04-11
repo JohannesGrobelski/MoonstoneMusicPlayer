@@ -38,7 +38,7 @@ import java.io.File;
 import java.util.List;
 
 public class AudiobookListAdapter extends ArrayAdapter<File> {
-  private static final String TAG = AudiobookListAdapter.class.getSimpleName();
+  
   private final List<File> folderAudiobookList;
   private final Context context;
   private final LayoutInflater layoutInflater;

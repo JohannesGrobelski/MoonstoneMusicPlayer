@@ -10,7 +10,6 @@ package com.example.moonstonemusicplayer.view.mainactivity_fragments;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,6 +28,7 @@ import com.example.moonstonemusicplayer.model.MainActivity.ArtistFragment.Artist
 import com.example.moonstonemusicplayer.model.MainActivity.ArtistFragment.ArtistManager;
 import com.example.moonstonemusicplayer.view.settingsactivity_fragments.SettingsFragment;
 
+import timber.log.Timber;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -41,7 +41,7 @@ public class ArtistFragment extends Fragment {
 
   // TODO: Rename parameter arguments, choose names that match
   // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-  private static final String TAG = ArtistFragment.class.getSimpleName();
+  
 
   public ArtistManager artistManager;
   public ArtistFragmentListener artistFragmentListener;
@@ -111,13 +111,13 @@ public class ArtistFragment extends Fragment {
 
   public void searchMusic(String query) {
     if(!query.isEmpty()){
-      Log.d("search music",query);
+      Timber.d("search music: "+query);
       Artist[] matchingArtists = artistManager.getAllArtistsMatchingQuery(query);
 
       artistManager.setArtistList(new ArrayList<>(Arrays.asList(matchingArtists)));
       artistFragmentListener.setAdapterAlbumList(artistManager.getAlbumList());
     } else {
-      Log.d("search music","empty");
+      Timber.d("search music: empty result");
       artistFragmentListener.setAdapterArtistList((artistManager.getAllArtists()));
     }
   }

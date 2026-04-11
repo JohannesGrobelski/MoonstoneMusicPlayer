@@ -9,7 +9,7 @@
 package com.example.moonstonemusicplayer.controller.MainActivity.ArtistFragment;
 
 import android.content.Intent;
-import android.util.Log;
+
 import android.view.ContextMenu;
 import android.view.View;
 import android.widget.AdapterView;
@@ -25,8 +25,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import timber.log.Timber;
+
 public class ArtistFragmentListener implements AdapterView.OnItemClickListener, View.OnClickListener {
-  private static final String TAG = ArtistFragmentListener.class.getSimpleName();
+  
   private static final boolean DEBUG = false;
   public static final String ARTISTALBUMLISTEXTRA = "artistalbumlistextra";
 
@@ -54,7 +56,7 @@ public class ArtistFragmentListener implements AdapterView.OnItemClickListener, 
         setAdapterSongList(artistFragment.artistManager.getCurrentArtist().getSongList());
       }
 
-      else { Log.e(TAG,"favorite list contains something different than a songs or album");}
+      else { Timber.e("favorite list contains something different than a songs or album");}
     }
   }
 

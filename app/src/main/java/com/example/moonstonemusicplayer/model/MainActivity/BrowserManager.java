@@ -25,7 +25,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.MediaStore;
-import android.util.Log;
+
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -57,6 +57,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import timber.log.Timber;
+
 /** Singleton
  *
  */
@@ -83,7 +85,7 @@ public class BrowserManager {
 
   private static Map<String, List<Song>> albumListMap = new HashMap<>();
 
-  private static final String TAG = BrowserManager.class.getSimpleName();
+  
   private static final ExecutorService executor = Executors.newSingleThreadExecutor();
   private File rootFolder;
 
@@ -265,7 +267,7 @@ public class BrowserManager {
         return song;
       }
     } catch (Exception e){
-      Log.e(TAG, e.toString());
+      Timber.e( e.toString());
       return null;
     }
   }
@@ -307,7 +309,7 @@ public class BrowserManager {
       try {
         mmr.setDataSource(Uri.fromFile(file).getPath());
       } catch (Exception e){
-        Log.e(TAG, e.toString());
+        Timber.e( e.toString());
         return null;
       }
 
@@ -335,7 +337,7 @@ public class BrowserManager {
 
       return new Audiofile(path,title,artist,album,genre,duration,"");
     } catch (Exception e){
-      Log.e(TAG, "getSongFromAudioFile Could not parse to a song: "+file.getName()+"; Exception: "+e);
+      Timber.e( "getSongFromAudioFile Could not parse to a song: "+file.getName()+"; Exception: "+e);
       return null;
     }
   }
@@ -459,10 +461,11 @@ public class BrowserManager {
         executor.submit(() -> {
           try {
             retrieveBitmapFromAudioFile(songFile.getPath());
-            Log.i("ThumbnailProcessor", "processed "+thumbnailVault.size()+" of "+songFiles.size());
+            Timber.i("ThumbnailProcessor processed "+thumbnailVault.size()+" of "+songFiles.size());
+
           } catch (Exception e) {
             // Log error but continue processing other files
-            Log.e("ThumbnailProcessor", "Error processing " + songFile.getPath(), e);
+            Timber.e( "Error processing " + songFile.getPath(), e);
           }
         });
       }
@@ -474,7 +477,7 @@ public class BrowserManager {
         executor.awaitTermination(5, TimeUnit.MINUTES);
       } catch (InterruptedException e) {
         Thread.currentThread().interrupt();
-        Log.e("ThumbnailProcessor", "Thumbnail processing interrupted", e);
+        Timber.e( "Thumbnail processing interrupted", e);
       }
   }
 
@@ -487,7 +490,7 @@ public class BrowserManager {
       thumbnailVault.put(filePath, bitmap);
       return bitmap;
     } catch (Exception e) {
-      Log.e("ThumbnailResolver", "Error loading thumbnail", e);
+      Timber.e( "Error loading thumbnail", e);
       return null;
     }
   }
@@ -525,11 +528,11 @@ public class BrowserManager {
       try {
         // Wait for all scanning to complete with a timeout
         if (!latch.await(5, TimeUnit.MINUTES)) {
-          Log.w(TAG, "Scanning timeout reached");
+          Timber.w("Scanning timeout reached");
         }
       } catch (InterruptedException e) {
         Thread.currentThread().interrupt();
-        Log.e(TAG, "Scanning interrupted", e);
+        Timber.e( "Scanning interrupted", e);
       } finally {
         executor.shutdown();
       }
@@ -711,11 +714,11 @@ public class BrowserManager {
     try {
       // Wait for all file processing to complete with a timeout
       if (!latch.await(2, TimeUnit.MINUTES)) {
-        Log.w(TAG, "File processing timeout reached for directory: " + directory.getPath());
+        Timber.w("File processing timeout reached for directory: " + directory.getPath());
       }
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
-      Log.e(TAG, "File processing interrupted for directory: " + directory.getPath(), e);
+      Timber.e( "File processing interrupted for directory: " + directory.getPath(), e);
     } finally {
       executor.shutdown();
     }
@@ -746,10 +749,10 @@ public class BrowserManager {
             audiofileSongMap.put(file, song);
           }
         } else {
-          Log.d(TAG, "unreadable audiofile: "+file.getAbsolutePath());
+          Timber.d( "unreadable audiofile: "+file.getAbsolutePath());
         }
       } catch (Exception e) {
-        Log.e(TAG, "Error processing file: " + file.getAbsolutePath(), e);
+        Timber.e( "Error processing file: " + file.getAbsolutePath(), e);
       }
     }
   }

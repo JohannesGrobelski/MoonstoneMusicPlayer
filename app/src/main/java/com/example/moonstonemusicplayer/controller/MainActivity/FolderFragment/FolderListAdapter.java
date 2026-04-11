@@ -44,7 +44,7 @@ import java.io.File;
 import java.util.List;
 
 public class FolderListAdapter extends ArrayAdapter<File> {
-  private static final String TAG = FolderListAdapter.class.getSimpleName();
+  
 
 
   private final List<File> folderSongList;

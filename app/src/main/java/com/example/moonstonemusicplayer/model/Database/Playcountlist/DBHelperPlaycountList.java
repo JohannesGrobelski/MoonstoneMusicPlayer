@@ -11,7 +11,7 @@ package com.example.moonstonemusicplayer.model.Database.Playcountlist;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
+import timber.log.Timber;
 
 import androidx.annotation.NonNull;
 
@@ -61,25 +61,25 @@ public class DBHelperPlaycountList extends SQLiteOpenHelper {
 
     public DBHelperPlaycountList(@NonNull Context context) {
         super(context, DB_NAME, null, DB_VERSION);
-        Log.d(LOG_TAG,"DBHelper erzeugt die Datenbank "+getDatabaseName());
+        Timber.d("DBHelper erzeugt die Datenbank "+getDatabaseName());
     }
 
     //wird aufgerufen, wenn noch keine DB angelegt wurde
     @Override
     public void onCreate(SQLiteDatabase db) {
         try {
-            if(DEBUG)Log.d(LOG_TAG,"DBHelper hat die Datenbank: "+getDatabaseName()+" erzeugt.");
+            if(DEBUG)Timber.d("DBHelper hat die Datenbank: "+getDatabaseName()+" erzeugt.");
             db.execSQL(SQL_CREATE_TABLE);
         } catch (Exception e){
-            if(DEBUG)Log.d(LOG_TAG,"Fehler beim anlegen: "+e.getMessage());
+            if(DEBUG)Timber.d("Fehler beim anlegen: "+e.getMessage());
         }
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if(DEBUG)Log.d(LOG_TAG,"Tabelle mit Versionsnumbmer: "+DB_VERSION+" wird entfernt.");
+        if(DEBUG)Timber.d("Tabelle mit Versionsnumbmer: "+DB_VERSION+" wird entfernt.");
         db.execSQL(SQL_DROP);
-        if(DEBUG)Log.d(LOG_TAG,"Die neue Tabelle wird hinzugefügt.");
+        if(DEBUG)Timber.d("Die neue Tabelle wird hinzugefügt.");
         onCreate(db);
     }
 }

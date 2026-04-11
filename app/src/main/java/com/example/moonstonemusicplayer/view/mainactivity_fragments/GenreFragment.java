@@ -10,7 +10,7 @@ package com.example.moonstonemusicplayer.view.mainactivity_fragments;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
+
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,7 +41,7 @@ public class GenreFragment extends Fragment {
 
   // TODO: Rename parameter arguments, choose names that match
   // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-  private static final String TAG = GenreFragment.class.getSimpleName();
+  
   private static final boolean DEBUG = false;
 
   public GenreManager genreManager;

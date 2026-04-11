@@ -24,7 +24,7 @@ import java.util.Map;
 /** saves and loads genres and contains the current (displayed) genre in genrefragment*/
 public class GenreManager {
 
-  private static final String TAG = GenreManager.class.getSimpleName();
+  
   private final Context context;
   //private DataSource dataSource;
 

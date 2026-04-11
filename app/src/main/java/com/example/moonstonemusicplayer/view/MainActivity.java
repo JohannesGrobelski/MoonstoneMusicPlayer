@@ -19,6 +19,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
+import java.text.Collator;
+
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.MainActivity.MainActivityListener;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.AudiobookFragment;
@@ -39,7 +41,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.provider.MediaStore;
-import android.util.Log;
+import timber.log.Timber;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -53,6 +55,8 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.MainactivitySectionsPagerAdapter;
 
+import timber.log.Timber;
+
 public class MainActivity extends AppCompatActivity {
   private final int PERMISSION_REQUEST_CODE = 678;
   private final int PERMISSION_REQUEST_MEDIA_AUDIO = 679;
@@ -60,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
   public static final String SONG_DIRECT_EXTRA = "SONG_DIRECT_EXTRA";
 
 
-  private static final String TAG = MainActivity.class.getSimpleName();
+  
   public SearchView searchView;
   MainActivityListener mainActivityListener;
 
@@ -72,81 +76,87 @@ public class MainActivity extends AppCompatActivity {
   private ActivityResultLauncher<IntentSenderRequest> deletetionIntentSenderLauncher;
 
 
-
   @Override
   protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
+    try {
+        Timber.e("Start MainActivity onCreate!");
+        super.onCreate(savedInstanceState);
 
-    setContentView(R.layout.activity_main);
-    sectionsPagerAdapter = new MainactivitySectionsPagerAdapter(this, getSupportFragmentManager());
+        setContentView(R.layout.activity_main);
+        sectionsPagerAdapter = new MainactivitySectionsPagerAdapter(this, getSupportFragmentManager());
 
-    viewPager = findViewById(R.id.view_pager_main);
-    viewPager.setSwipeEnabled(false); // Disable swiping
-    viewPager.setAdapter(sectionsPagerAdapter);
-    viewPager.setCurrentItem(0);
-    tabs = findViewById(R.id.mainactivity_tabs);
-    tabs.setupWithViewPager(viewPager);
-    tabs.setSelectedTabIndicatorColor(getResources().getColor(R.color.white));
-    FloatingActionButton fab = findViewById(R.id.fab);
+        viewPager = findViewById(R.id.view_pager_main);
+        viewPager.setSwipeEnabled(false); // Disable swiping
+        viewPager.setAdapter(sectionsPagerAdapter);
+        viewPager.setCurrentItem(0);
+        tabs = findViewById(R.id.mainactivity_tabs);
+        tabs.setupWithViewPager(viewPager);
+        tabs.setSelectedTabIndicatorColor(getResources().getColor(R.color.white));
+        FloatingActionButton fab = findViewById(R.id.fab);
 
-    mainActivityListener = new MainActivityListener(this,sectionsPagerAdapter.getFragments());
-
-    tabs.addOnTabSelectedListener(
-        new TabLayout.ViewPagerOnTabSelectedListener(viewPager) {
-          @Override
-          public void onTabSelected(TabLayout.Tab tab) {
-            super.onTabSelected(tab);
-            tabSelected = tab.getPosition();
-            if(tabSelected == 1){//playlist fragment
-              if(sectionsPagerAdapter.getFragments()[1] != null
-                  && sectionsPagerAdapter.getFragments()[1] instanceof PlayListFragment){
-                    ((PlayListFragment) sectionsPagerAdapter.getFragments()[1])
-                      .playlistFragmentListener.reloadPlaylistManager();
-              }
-            }
-          }
-        });
-
-    fab.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
-        Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-            .setAction("Action", null).show();
-      }
-    });
-    Toolbar toolbar = findViewById(R.id.playlist_toolbar);
-    setSupportActionBar(toolbar);
-
-    // Handle the intent when the activity is created
-    handleIncomingIntent(getIntent());
-
-    showMediaAudioPermission();
-
-    PlayListFragment.preloadPlaylistManager(this);
-
-    deletetionIntentSenderLauncher =
-            registerForActivityResult(new ActivityResultContracts.StartIntentSenderForResult(), result -> {
-              if (result.getResultCode() == Activity.RESULT_OK) {
-                // Handle the successful deletion
-                int position = viewPager.getCurrentItem();
-                switch (position){
-                  case 0: {
-                    ((FolderFragment) sectionsPagerAdapter.getFragments()[position]).refreshFolderList();
-                    break;
-                  }
-                  case 1: {
-                    ((AudiobookFragment) sectionsPagerAdapter.getFragments()[position]).refreshFolderList();
-                    break;
-                  }
-                  case 2: {
-                    ((PlayListFragment) sectionsPagerAdapter.getFragments()[position]).refreshFolderList();
-                    break;
+        mainActivityListener = new MainActivityListener(this,sectionsPagerAdapter.getFragments());
+        tabs.addOnTabSelectedListener(
+            new TabLayout.ViewPagerOnTabSelectedListener(viewPager) {
+              @Override
+              public void onTabSelected(TabLayout.Tab tab) {
+                super.onTabSelected(tab);
+                tabSelected = tab.getPosition();
+                if(tabSelected == 1){//playlist fragment
+                  if(sectionsPagerAdapter.getFragments()[1] != null
+                      && sectionsPagerAdapter.getFragments()[1] instanceof PlayListFragment){
+                        ((PlayListFragment) sectionsPagerAdapter.getFragments()[1])
+                          .playlistFragmentListener.reloadPlaylistManager();
                   }
                 }
-              } else {
-                // Handle the cancellation or failure
               }
             });
+
+        fab.setOnClickListener(new View.OnClickListener() {
+          @Override
+          public void onClick(View view) {
+            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show();
+          }
+        });
+        Toolbar toolbar = findViewById(R.id.playlist_toolbar);
+        setSupportActionBar(toolbar);
+    
+
+        // Handle the intent when the activity is created
+        handleIncomingIntent(getIntent());
+
+        showMediaAudioPermission();
+        showMediaAudioPermission();
+
+        PlayListFragment.preloadPlaylistManager(this);
+
+        deletetionIntentSenderLauncher =
+                registerForActivityResult(new ActivityResultContracts.StartIntentSenderForResult(), result -> {
+                  if (result.getResultCode() == Activity.RESULT_OK) {
+                    // Handle the successful deletion
+                    int position = viewPager.getCurrentItem();
+                    switch (position){
+                      case 0: {
+                        ((FolderFragment) sectionsPagerAdapter.getFragments()[position]).refreshFolderList();
+                        break;
+                      }
+                      case 1: {
+                        ((AudiobookFragment) sectionsPagerAdapter.getFragments()[position]).refreshFolderList();
+                        break;
+                      }
+                      case 2: {
+                        ((PlayListFragment) sectionsPagerAdapter.getFragments()[position]).refreshFolderList();
+                        break;
+                      }
+                    }
+                  } else {
+                    // Handle the cancellation or failure
+                  }
+                });
+    }
+    catch(Exception e) {
+        Timber.e(e, "Fehler bei Initialisierung");
+    }
   }
 
   @Override
@@ -178,7 +188,7 @@ public class MainActivity extends AppCompatActivity {
             requestPermission(Manifest.permission.READ_MEDIA_AUDIO, PERMISSION_REQUEST_MEDIA_AUDIO);
           }
         } else {
-          Log.d(TAG, "READ_MEDIA_AUDIO Permission (already) Granted!");
+          Timber.d( "READ_MEDIA_AUDIO Permission (already) Granted!");
         }
       } else { // For SDK < 30
         int permissionCheck = ContextCompat.checkSelfPermission(
@@ -194,7 +204,7 @@ public class MainActivity extends AppCompatActivity {
             requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE, PERMISSION_REQUEST_CODE);
           }
         } else {
-          Log.d(TAG, "READ_EXTERNAL_STORAGE Permission (already) Granted!");
+          Timber.d( "READ_EXTERNAL_STORAGE Permission (already) Granted!");
         }
       }
   }
@@ -207,7 +217,7 @@ public class MainActivity extends AppCompatActivity {
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     super.onCreateOptionsMenu(menu);
-    Log.d("MainActivity","onCreateOptionsMenu");
+    Timber.d("onCreateOptionsMenu");
     return mainActivityListener.onCreateOptionsMenu(menu);
   }
 
@@ -264,8 +274,6 @@ public class MainActivity extends AppCompatActivity {
       return false;
     }
   }
-
-
 
   private void showCustomMediaLocationPermissionDialog() {
     new AlertDialog.Builder(this)

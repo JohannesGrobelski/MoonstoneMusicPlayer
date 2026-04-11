@@ -32,7 +32,6 @@ import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
-import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -41,7 +40,6 @@ import androidx.core.graphics.drawable.IconCompat;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.PlayListActivity.Notification.Constants;
-import com.example.moonstonemusicplayer.controller.Utility.DrawableUtils;
 import com.example.moonstonemusicplayer.model.Database.Playcountlist.DBPlaycountList;
 import com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists;
 import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
@@ -51,12 +49,13 @@ import com.example.moonstonemusicplayer.model.PlayListActivity.PlayListModel;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import com.example.moonstonemusicplayer.model.PlaytimePersistence;
 import com.example.moonstonemusicplayer.view.PlayListActivity;
-import com.example.moonstonemusicplayer.view.settingsactivity_fragments.SettingsFragment;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import timber.log.Timber;
 
 
 /** MediaPlayerService
@@ -78,7 +77,7 @@ public class MediaPlayerService extends Service
 
 
   public static final String STARTING_INDEX = "STARTING_INDEX";
-  private static final String TAG = MediaPlayerService.class.getSimpleName();
+  
   private static final boolean DEBUG = true;
 
   private final IBinder iBinder = new LocalBinder();
@@ -116,7 +115,7 @@ public class MediaPlayerService extends Service
           int duration = mediaPlayer.getDuration();
           setProgress(duration, currentPosition); // Updates the progress in notification and MediaSession
         } catch (Exception e){
-          Log.e(TAG, "Error setting progress in Mediaplayer", e);
+          Timber.e( "Error setting progress in Mediaplayer", e);
         }
       }
       progressHandler.postDelayed(this, 1000); // Repeat every second
@@ -205,7 +204,7 @@ public class MediaPlayerService extends Service
      */
     public void jumpXSecondsForward(int secondsForward) {
         if (DEBUG)
-            Log.d(TAG, "resume: " + resumePosition);
+            Timber.d( "resume: " + resumePosition);
         if (mediaPlayer == null) {
             initMediaPlayer();
             jumpXSecondsBackward(secondsForward);
@@ -228,7 +227,7 @@ public class MediaPlayerService extends Service
      */
     public void jumpXSecondsBackward(int secondsBackward) {
         if (DEBUG)
-            Log.d(TAG, "resume: " + resumePosition);
+            Timber.d( "resume: " + resumePosition);
         if (mediaPlayer == null) {
             initMediaPlayer();
             jumpXSecondsBackward(secondsBackward);
@@ -279,21 +278,21 @@ public class MediaPlayerService extends Service
   //Listener interface
   @Override
   public int onStartCommand(Intent intent, int flags, int startId) {
-    Log.d(TAG,"onStartCommand: binder: "+ (iBinder == null));
+    Timber.d("onStartCommand: binder: "+ (iBinder == null));
     if(intent.hasExtra(STARTING_INDEX)){
       startIndex = intent.getIntExtra(STARTING_INDEX,0);
-      if(DEBUG)Log.d(TAG,"starting song: "+startIndex);
+      if(DEBUG)Timber.d("starting song: "+startIndex);
     }
 
     String intentAction = intent.getAction();
     if(intentAction != null){
       if (intentAction.equals(Constants.ACTION.PREV_ACTION)) {
         Toast.makeText(this, "Clicked Previous", Toast.LENGTH_SHORT).show();
-        Log.i(TAG, "Clicked Previous");
+        Timber.i("Clicked Previous");
         prevSong();
       } else if (intentAction.equals(Constants.ACTION.PLAY_ACTION)) {//toogles play,resume
         Toast.makeText(this, "Clicked Play", Toast.LENGTH_SHORT).show();
-        Log.i(TAG, "Clicked Play");
+        Timber.i("Clicked Play");
         if(mediaPlayer != null && mediaPlayer.isPlaying()) {
           pause();
           ((LocalBinder) iBinder).boundServiceListener.pauseSong();
@@ -303,11 +302,11 @@ public class MediaPlayerService extends Service
         }
       } else if (intentAction.equals(Constants.ACTION.NEXT_ACTION)) {
         Toast.makeText(this, "Clicked Next", Toast.LENGTH_SHORT).show();
-        Log.i(TAG, "Clicked Next");
+        Timber.i("Clicked Next");
         nextSong();
       } else if (intentAction.equals(
           Constants.ACTION.STOPFOREGROUND_ACTION)) {
-        Log.i(TAG, "Received Stop Foreground Intent");
+        Timber.i("Received Stop Foreground Intent");
         Toast.makeText(this, "Service Stoped", Toast.LENGTH_SHORT).show();
         stopForeground(true);
         stopSelf();
@@ -325,7 +324,7 @@ public class MediaPlayerService extends Service
     theFilter.addAction(ACTION_NOTIFICATION_ORDER);
     //init audiomanager
     this.audioManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
-    Log.d(TAG,"AudioManager.requestAudioFocus...");
+    Timber.d("AudioManager.requestAudioFocus...");
     requestAudioFocus();
   }
 
@@ -336,7 +335,7 @@ public class MediaPlayerService extends Service
       stopMedia();
       mediaPlayer.release();
       mediaPlayer = null;
-      if(DEBUG)Log.d(TAG,"onDestroy");
+      if(DEBUG)Timber.d("onDestroy");
     }
     stopSelf(); //beende Service
     removeAudioFocus();
@@ -347,7 +346,7 @@ public class MediaPlayerService extends Service
   @Nullable
   @Override
   public IBinder onBind(Intent intent) {
-    Log.d(TAG,"onBind: binder: "+ (iBinder == null));
+    Timber.d("onBind: binder: "+ (iBinder == null));
     return iBinder;
   }
 
@@ -362,7 +361,7 @@ public class MediaPlayerService extends Service
     if(mediaPlayer != null){
       autoPlay();
       if(((LocalBinder) iBinder) != null){
-        if(DEBUG)Log.d(TAG,"onCompletion: "+(iBinder != null));
+        if(DEBUG)Timber.d("onCompletion: "+(iBinder != null));
         ((LocalBinder) iBinder).boundServiceListener.finishedSong(playListModel.repeatmode);
       }
     }
@@ -418,7 +417,7 @@ public class MediaPlayerService extends Service
   /** aufgerufen wenn sich der Audiofokus ändert, z.B durch eingehenden Anruf */
   @Override
   public void onAudioFocusChange(int focusState) {
-    if(DEBUG)Log.d(TAG,"onAudioFocusChange");
+    if(DEBUG)Timber.d("onAudioFocusChange");
     switch (focusState){
       case AudioManager.AUDIOFOCUS_GAIN:
         //setze Wiedergabe fort
@@ -483,7 +482,7 @@ public class MediaPlayerService extends Service
   public File getCurrentSongFile() {return playListModel.getCurrentSongFile();}
 
   public void seekTo(int i) {
-    if(DEBUG)Log.d(TAG,"seekTo: "+i);
+    if(DEBUG)Timber.d("seekTo: "+i);
     mediaPlayer.seekTo(i);
     resumePosition = i;
     updateMediaMetadata(playListModel.getCurrentSong());
@@ -572,7 +571,7 @@ public class MediaPlayerService extends Service
   }
 
   public void setPlayList(List<File> playList) {
-    if(DEBUG)Log.d(TAG,"startMediaPlayerService init Playlist: "+playList.size());
+    if(DEBUG)Timber.d("startMediaPlayerService init Playlist: "+playList.size());
     this.playListModel = new PlayListModel(playList);
     this.playListModel.setCurrentSongIndexBySong(playList.get(startIndex));
   }
@@ -612,7 +611,7 @@ public class MediaPlayerService extends Service
 
 
   private void initMediaSession(){
-    mediaSession = new MediaSessionCompat(this, TAG);
+    mediaSession = new MediaSessionCompat(this, MediaPlayerService.class.getName());
 
     // Set the callback to handle media actions
     mediaSession.setCallback(new MediaSessionCompat.Callback() {
@@ -803,7 +802,7 @@ public class MediaPlayerService extends Service
       }
       retriever.release();
     } catch (Exception e) {
-      Log.e(TAG, "Error loading album art", e);
+      Timber.e( "Error loading album art", e);
     }
 
     // If no album art was found, use a default image
@@ -838,7 +837,7 @@ public class MediaPlayerService extends Service
         duration = mediaPlayer.getDuration();
         position = getCurrentPosition();
       } catch (IllegalStateException e) {
-        Log.e(TAG, "Error retrieving duration or position", e);
+        Timber.e( "Error retrieving duration or position", e);
       }
     }
 

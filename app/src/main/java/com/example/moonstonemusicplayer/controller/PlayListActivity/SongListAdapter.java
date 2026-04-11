@@ -36,7 +36,7 @@ import java.util.List;
 
 public class SongListAdapter extends DragItemAdapter<Object, SongListAdapter.ViewHolder> {
   private int lastLongClickedPosition = -1; // Default to an invalid position
-  private static final String TAG = SongListAdapter.class.getSimpleName();
+  
 
   private final List<Object> songList;
   private String selectedSongPath = "";

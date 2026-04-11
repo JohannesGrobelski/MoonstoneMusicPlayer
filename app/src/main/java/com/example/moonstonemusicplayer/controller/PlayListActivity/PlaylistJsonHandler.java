@@ -18,7 +18,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Log;
+
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -39,8 +39,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.HashSet;
 
+import timber.log.Timber;
+
 public class PlaylistJsonHandler {
-    private static final String TAG = PlaylistJsonHandler.class.getSimpleName();
+    
     private static final String EXPORT_DIRECTORY = "MoonstoneMusic/Playlists";
 
     // In PlaylistJsonHandler.java
@@ -99,9 +101,9 @@ public class PlaylistJsonHandler {
                 }
             }
 
-            Log.d(TAG, "All playlists exported successfully");
+            Timber.d( "All playlists exported successfully");
         } catch (Exception e) {
-            Log.e(TAG, "Error exporting playlists: " + e.getMessage());
+            Timber.e( "Error exporting playlists: " + e.getMessage());
             throw new RuntimeException("Failed to export playlists", e);
         }
     }
@@ -162,9 +164,9 @@ public class PlaylistJsonHandler {
                 }
             }
 
-            Log.d(TAG, "All playlists imported successfully");
+            Timber.d( "All playlists imported successfully");
         } catch (Exception e) {
-            Log.e(TAG, "Error importing playlists: " + e.getMessage());
+            Timber.e( "Error importing playlists: " + e.getMessage());
             throw new RuntimeException("Failed to import playlists", e);
         }
     }

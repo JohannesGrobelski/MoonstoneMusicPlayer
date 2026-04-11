@@ -6,7 +6,7 @@ import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylis
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
-import android.util.Log;
+
 import android.widget.Toast;
 
 import androidx.preference.Preference;
@@ -31,10 +31,12 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import timber.log.Timber;
+
 public class SettingsFragmentListener {
 
 
-    private static final String TAG = SettingsFragmentListener.class.getSimpleName();
+    
     private final SettingsFragment settingsFragment;
     private GoogleDriveManager driveManager;
 
@@ -173,7 +175,7 @@ public class SettingsFragmentListener {
             tempFile.delete();
         } catch (Exception e) {
             Toast.makeText(settingsFragment.getContext(), "Failed to import playlists", Toast.LENGTH_SHORT).show();
-            Log.e(TAG, "Import failed: " + e.getMessage());
+            Timber.e( "Import failed: " + e.getMessage());
         }
     }
 
@@ -208,7 +210,7 @@ public class SettingsFragmentListener {
             Toast.makeText(settingsFragment.getActivity(), "Playlists exported successfully", Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             Toast.makeText(settingsFragment.getActivity(), "Failed to export playlists", Toast.LENGTH_SHORT).show();
-            Log.e(TAG, "Export failed: " + e.getMessage());
+            Timber.e( "Export failed: " + e.getMessage());
         }
     }
 
@@ -232,7 +234,7 @@ public class SettingsFragmentListener {
                 settingsFragment.signIntoGdrivePreference.setSummary("You are signed in. Now you can import/export playlist from/to you Google Drive!");
             }
         } catch (ApiException e) {
-            Log.e(TAG,"Could not sign into Google account!");
+            Timber.e("Could not sign into Google account!");
         }
 
     }

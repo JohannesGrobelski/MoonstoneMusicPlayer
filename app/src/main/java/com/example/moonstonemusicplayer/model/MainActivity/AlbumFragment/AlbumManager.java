@@ -9,7 +9,7 @@
 package com.example.moonstonemusicplayer.model.MainActivity.AlbumFragment;
 
 import android.content.Context;
-import android.util.Log;
+
 
 import com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists;
 import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
@@ -20,10 +20,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import timber.log.Timber;
 
 public class AlbumManager {
 
-  private static final String TAG = AlbumManager.class.getSimpleName();
+  
 
   private Context context;
   private Album currentAlbum;
@@ -63,7 +64,7 @@ public class AlbumManager {
   }
 
   public List<Album> getAllAlbums() {
-    Log.d("albumList","backup: "+albumList_backup.size());
+    Timber.d("backup: "+albumList_backup.size());
     albumList.clear();
     albumList.addAll(albumList_backup);
     return albumList;

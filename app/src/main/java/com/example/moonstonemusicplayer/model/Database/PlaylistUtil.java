@@ -15,7 +15,7 @@ import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylis
 
 import android.content.Context;
 import android.graphics.Typeface;
-import android.util.Log;
+
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.model.Database.Playcountlist.DBPlaycountList;
@@ -27,8 +27,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import timber.log.Timber;
+
 public class PlaylistUtil {
-    private static final String TAG = DBPlaylists.class.getSimpleName();
+    
     private static final boolean DEBUG = true;
 
     public static List<Playlist> getAllPlaylists(Context context) {
@@ -36,7 +38,7 @@ public class PlaylistUtil {
             List<Playlist> playlists = new LinkedList<>(DBPlaylists.getInstance(context).getAllPlaylists(context));
             return sortPlaylists(playlists);
         } catch (Exception e){
-            Log.e(TAG, e.toString());
+            Timber.e( e.toString());
             return List.of();
         }
     }

@@ -16,7 +16,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.util.Log;
+
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -27,6 +27,8 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 import androidx.recyclerview.widget.LinearLayoutManager;
+
+import timber.log.Timber;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists;
@@ -44,7 +46,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class PlaylistFragmentListener implements View.OnClickListener, View.OnCreateContextMenuListener, BrowserManager.AfterFileDeletion {
-  private static final String TAG = PlaylistFragmentListener.class.getSimpleName();
+  
   private static final boolean DEBUG = true;
   public static final String PLAYLISTINDEXEXTRA = "playlistIndexExtra";
   public static final String PLAYLISTNAMEEXTRA = "playlistNameExtra";
@@ -222,7 +224,7 @@ public class PlaylistFragmentListener implements View.OnClickListener, View.OnCr
                 if (info == null) {
                     // Handle the case where info is null
                     Toast.makeText(playListFragment.getActivity(),"Could not delete playlist.", Toast.LENGTH_LONG).show();
-                    Log.e("onContextItemSelected", "MenuInfo is null for item: " + item.getTitle());
+                    Timber.e( "MenuInfo is null for item: " + item.getTitle());
                     return false; 
                 }        
 
@@ -242,7 +244,7 @@ public class PlaylistFragmentListener implements View.OnClickListener, View.OnCr
                 return false;
             } catch (Exception e) {
                 Toast.makeText(playListFragment.getActivity(),"Could not delete playlist.", Toast.LENGTH_LONG).show();
-                Log.e("onContextItemSelected", "MenuInfo is null for item: " + item.getTitle());
+                Timber.e( "MenuInfo is null for item: " + item.getTitle());
                 return false;
             }
           }
@@ -269,7 +271,7 @@ public class PlaylistFragmentListener implements View.OnClickListener, View.OnCr
 
 
   public void reloadPlaylistManager() {
-    Log.d("PLaylistsfragment","onResume");
+    Timber.d("onResume");
     if(playListFragment.getPlaylistManager() != null){
       Playlist currentPlaylist = playListFragment.getPlaylistManager().getCurrentPlaylist();
       playListFragment.getPlaylistManager().loadPlaylistsFromDB(playListFragment.getContext());

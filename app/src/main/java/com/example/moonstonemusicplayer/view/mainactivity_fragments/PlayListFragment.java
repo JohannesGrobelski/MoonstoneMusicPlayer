@@ -40,7 +40,7 @@ import java.util.List;
  */
 public class PlayListFragment extends Fragment {
 
-  private static final String TAG = PlayListFragment.class.getSimpleName();
+  
   private static PlaylistListManager playlistListManager;
   public PlaylistFragmentListener playlistFragmentListener;
 
