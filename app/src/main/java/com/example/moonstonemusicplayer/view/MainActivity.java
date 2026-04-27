@@ -75,11 +75,9 @@ public class MainActivity extends AppCompatActivity {
 
   private ActivityResultLauncher<IntentSenderRequest> deletetionIntentSenderLauncher;
 
-
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     try {
-        Timber.e("Start MainActivity onCreate!");
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);

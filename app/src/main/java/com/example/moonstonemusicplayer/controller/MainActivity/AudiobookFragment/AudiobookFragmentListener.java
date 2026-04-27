@@ -246,6 +246,18 @@ public class AudiobookFragmentListener implements AdapterView.OnItemClickListene
 
 
   public void startAudiobookAudiobooklist(File[] playlist, int audiobook_index, AudiobookFragment audiobookFragment){
+    if(playlist == null || playlist.length == 0){
+      Toast.makeText(audiobookFragment.getActivity(),"Tried to start empty audiobook list!", Toast.LENGTH_LONG).show();
+      Timber.e("Tried to start empty audiobook list!");
+      return;
+    }
+
+    if(audiobook_index < 0){
+      Toast.makeText(audiobookFragment.getActivity(),"Internal error getting song index", Toast.LENGTH_LONG).show();
+      Timber.e("Internal error getting audiobook index - audiobook index negative!");
+      return;
+    }
+
     AudiobookAudiobooklist = playlist.clone();
     Intent intent = new Intent(audiobookFragment.getActivity(), PlayListActivity.class);
 
@@ -255,6 +267,10 @@ public class AudiobookFragmentListener implements AdapterView.OnItemClickListene
 
 
   public static File[] getAudiobookAudiobooklist(){
+    if(AudiobookFragmentListener.AudiobookAudiobooklist == null){
+      Timber.e("Internal error getting audiobook list (empty)!");
+      return new File[0];
+    }
     try {
       return AudiobookFragmentListener.AudiobookAudiobooklist.clone();
     } catch (Exception e){

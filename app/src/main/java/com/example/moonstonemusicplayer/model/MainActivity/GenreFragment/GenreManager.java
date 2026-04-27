@@ -12,6 +12,7 @@ import android.content.Context;
 
 import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
+import com.example.moonstonemusicplayer.utils.LocaleUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -86,7 +87,7 @@ public class GenreManager {
   public Genre[] getAllGenresMatchingQuery(String query) {
     List<Genre> result = new ArrayList<>();
     for(Genre genre: getAllGenres()){
-      if(genre.getName().toLowerCase().contains(query.toLowerCase())){
+      if(genre.getName().toLowerCase(LocaleUtil.getCurrentLocale(context)).contains(query.toLowerCase(LocaleUtil.getCurrentLocale(context)))){
         result.add(genre);
       }
     }
@@ -97,7 +98,7 @@ public class GenreManager {
     List<Song> result = new ArrayList<>();
     for(Genre genre: getAllGenres()){
       for(Song song: genre.getSongList()) {
-        if(song.getName().toLowerCase().contains(query.toLowerCase())){
+        if(song.getName().toLowerCase(LocaleUtil.getCurrentLocale(context)).contains(query.toLowerCase(LocaleUtil.getCurrentLocale(context)))){
           result.add(song);
         }
       }

@@ -70,7 +70,7 @@
                 android:id="@+id/btn_repeat"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
+                android:layout_gravity="start"
                 android:layout_marginStart="22dp"
                 android:layout_marginEnd="22dp"
                 android:layout_weight="1"

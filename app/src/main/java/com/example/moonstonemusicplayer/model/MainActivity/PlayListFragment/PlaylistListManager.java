@@ -11,7 +11,7 @@ package com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment;
 import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.MOSTLY_PLAYED_PLAYLIST_NAME;
 import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.RECENTLY_ADDED_PLAYLIST_NAME;
 import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.RECENTLY_PLAYED_PLAYLIST_NAME;
-
+import com.example.moonstonemusicplayer.utils.LocaleUtil;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Build;
@@ -133,7 +133,7 @@ public class PlaylistListManager {
   public Playlist[] getAllPlaylistsMatchingQuery(String query) {
     List<Playlist> result = new ArrayList<>();
     for(Playlist playlist: getAllPlaylists()){
-      if(playlist.getName().toLowerCase().contains(query.toLowerCase())){
+      if(playlist.getName().toLowerCase(LocaleUtil.getCurrentLocale(context)).contains(query.toLowerCase(LocaleUtil.getCurrentLocale(context)))){
         result.add(playlist);
       }
     }
@@ -144,7 +144,7 @@ public class PlaylistListManager {
     List<Song> result = new ArrayList<>();
     for(Playlist playlist: getAllPlaylists()){
       for(Song song: playlist.getPlaylist()) {
-        if(song.getName().toLowerCase().contains(query.toLowerCase())){
+        if(song.getName().toLowerCase(LocaleUtil.getCurrentLocale(context)).contains(query.toLowerCase(LocaleUtil.getCurrentLocale(context)))){
           result.add(song);
         }
       }

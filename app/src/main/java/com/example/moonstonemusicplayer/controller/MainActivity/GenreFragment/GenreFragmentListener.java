@@ -60,14 +60,14 @@ public class GenreFragmentListener implements AdapterView.OnItemClickListener, V
   /** helper method to set the adapter */
   public void setAdapterGenreList(List<Genre> itemList){
     List<Object> objectList = new ArrayList<>(itemList);
-    genreListAdapter = new GenreListAdapter(Objects.requireNonNull(genreFragment.getContext()),objectList);
+    genreListAdapter = new GenreListAdapter(genreFragment.requireContext(),objectList);
     genreFragment.lv_albums.setAdapter(genreListAdapter);
   }
 
   /** helper method to set the adapter */
   public void setAdapterSongList(List<Song> itemList){
     List<Object> objectList = new ArrayList<>(itemList);
-    genreListAdapter = new GenreListAdapter(Objects.requireNonNull(genreFragment.getContext()),objectList);
+    genreListAdapter = new GenreListAdapter(genreFragment.requireContext(),objectList);
     genreFragment.lv_albums.setAdapter(genreListAdapter);
   }
 

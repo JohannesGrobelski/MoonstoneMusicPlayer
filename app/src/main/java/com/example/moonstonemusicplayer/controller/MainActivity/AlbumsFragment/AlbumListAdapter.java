@@ -89,24 +89,19 @@ public class AlbumListAdapter extends ArrayAdapter<Object> {
       tv_AlbumSongItem.setText(currentSong.getName());
     }
 
+    TextView tv_item_artist = rowView.findViewById(R.id.tv_item_artist);
+    LinearLayout ll_artist_genre = rowView.findViewById(R.id.ll_artist_genre);
+    TextView tv_item_duration = rowView.findViewById(R.id.item_tv_duration);
     if(aktuelleAlbum != null) {
-      LinearLayout ll_artist_genre = rowView.findViewById(R.id.ll_artist_genre);
-      TextView tv_artist_song = rowView.findViewById(R.id.tv_item_artist);
-      TextView tv_duration_song = rowView.findViewById(R.id.item_tv_duration);
-
       ll_artist_genre.setVisibility(View.VISIBLE);
-      tv_artist_song.setVisibility(View.VISIBLE);
-      tv_duration_song.setVisibility(View.VISIBLE);
-      tv_duration_song.setText(aktuelleAlbum.getDurationString());
-      tv_artist_song.setTextColor(SettingsFragment.getPrimaryColor(context));
-      tv_duration_song.setTextColor(SettingsFragment.getPrimaryColor(context));
+      tv_item_artist.setVisibility(View.VISIBLE);
+      tv_item_duration.setVisibility(View.VISIBLE);
+      tv_item_duration.setText(aktuelleAlbum.getDurationString());
+      tv_item_artist.setTextColor(SettingsFragment.getPrimaryColor(context));
+      tv_item_duration.setTextColor(SettingsFragment.getPrimaryColor(context));
     }
 
-
     if(currentSong != null){
-      LinearLayout ll_artist_genre = rowView.findViewById(R.id.ll_artist_genre);
-      TextView tv_item_artist = rowView.findViewById(R.id.tv_item_artist);
-      TextView tv_item_duration = rowView.findViewById(R.id.item_tv_duration);
       TextView tv_item_genre = rowView.findViewById(R.id.tv_item_genre);
 
       ll_artist_genre.setVisibility(View.VISIBLE);

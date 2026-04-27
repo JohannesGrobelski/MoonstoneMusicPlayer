@@ -85,7 +85,6 @@ public class BrowserManager {
 
   private static Map<String, List<Song>> albumListMap = new HashMap<>();
 
-  
   private static final ExecutorService executor = Executors.newSingleThreadExecutor();
   private File rootFolder;
 

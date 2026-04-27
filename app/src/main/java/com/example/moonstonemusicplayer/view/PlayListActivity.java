@@ -140,8 +140,7 @@ public class PlayListActivity extends AppCompatActivity {
     registerForContextMenu(dlv_songlist);
 
     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-    Toolbar toolbar = findViewById(R.id.playlist_toolbar);
-    setSupportActionBar(toolbar);
+    setSupportActionBar(playlist_toolbar);
 
     //set color of music controls
     //LL_MusicControlls.setBackgroundColor(SettingsFragment.getPrimaryColor(this));
@@ -201,6 +200,7 @@ public class PlayListActivity extends AppCompatActivity {
 
   @Override
   public void onConfigurationChanged(@NonNull Configuration newConfig) {
+    super.onConfigurationChanged(newConfig);
     playListActivityListener.onConfigurationChanged(newConfig);
   }
 

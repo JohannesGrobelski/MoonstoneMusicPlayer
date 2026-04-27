@@ -13,6 +13,7 @@ import android.content.Context;
 
 import com.example.moonstonemusicplayer.model.MainActivity.AlbumFragment.Album;
 import com.example.moonstonemusicplayer.model.MainActivity.ArtistFragment.Artist;
+import com.example.moonstonemusicplayer.utils.LocaleUtil;
 import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 
@@ -58,7 +59,7 @@ public class ArtistManager {
   public Artist[] getAllArtistsMatchingQuery(String query) {
     List<Artist> results = new ArrayList<>();
     for(Artist Artist: getArtistList()){
-      if(Artist.getName().toLowerCase().contains(query.toLowerCase())){
+      if(Artist.getName().toLowerCase(LocaleUtil.getCurrentLocale(context)).contains(query.toLowerCase(LocaleUtil.getCurrentLocale(context)))){
         results.add(Artist);
       }
     }

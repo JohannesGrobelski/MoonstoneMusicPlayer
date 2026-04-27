@@ -69,13 +69,14 @@ public class PlaylistListAdapter extends DragItemAdapter<Object, PlaylistListAda
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        super.onBindViewHolder(holder, position);
+        int updatedPosition = holder.getAdapterPosition();
+        super.onBindViewHolder(holder, updatedPosition);
 
         // Reset the view state
         holder.resetViewStates();
 
-        Object item = playlistSongList.get(position);
-        holder.itemView.setTag(position);
+        Object item = playlistSongList.get(updatedPosition);
+        holder.itemView.setTag(updatedPosition);
 
         // Set common properties
         holder.tv_playlistSongItem.setTextColor(
@@ -89,9 +90,9 @@ public class PlaylistListAdapter extends DragItemAdapter<Object, PlaylistListAda
         }
 
         // Set click listeners
-        holder.itemView.setOnClickListener(v -> handleItemClick(item, position));
+        holder.itemView.setOnClickListener(v -> handleItemClick(item, updatedPosition));
         holder.itemView.setOnLongClickListener(v -> {
-            lastLongClickedPosition = position;
+            lastLongClickedPosition = updatedPosition;
             v.showContextMenu();
             return true;
         });

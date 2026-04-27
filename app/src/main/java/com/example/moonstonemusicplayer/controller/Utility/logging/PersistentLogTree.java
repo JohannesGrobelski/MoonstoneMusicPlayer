@@ -9,13 +9,15 @@ import java.util.Map;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.BufferedWriter;
+import java.io.StringWriter;
+import java.io.PrintWriter;
 
 import android.util.Log;
 import static java.util.Map.entry;    
 import java.util.Date;
 import java.text.SimpleDateFormat;
 
-public class PersistentLogTree extends Timber.Tree {
+public class PersistentLogTree extends Timber.DebugTree {
 
     public final static int UNHANDLED_LOG_PRIO = 1000;
 
@@ -39,8 +41,16 @@ public class PersistentLogTree extends Timber.Tree {
     protected void log(int priority, String tag, @NonNull String message, Throwable t) {
         SimpleDateFormat s = new SimpleDateFormat("dd.MM.yyyy hh:mm:ss");
         String timestamp = s.format(new Date());
+        writeLogToFile(timestamp+": "+tag+" - "+message+throwableToString(t), prioToLogFileMap.get(priority));
+    }
 
-        writeLogToFile(timestamp+": "+tag+" - "+message, prioToLogFileMap.get(priority));
+    private String throwableToString(Throwable t){
+        if(t == null)return "";
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        t.printStackTrace(pw);
+        String stackTraceString = sw.toString(); 
+        return stackTraceString;
     }
 
     private void writeLogToFile(@NonNull String message, @NonNull String logfile) {

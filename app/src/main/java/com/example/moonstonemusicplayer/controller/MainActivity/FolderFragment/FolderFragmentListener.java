@@ -250,8 +250,14 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
 
 
   public void startFolderSonglist(File[] playlist, int song_index, FolderFragment folderFragment){
-    if(song_index < 0 || playlist == null || playlist.length == 0){
+    if(playlist == null || playlist.length == 0){
+      Toast.makeText(folderFragment.getActivity(),"Tried to start empty folder song list!", Toast.LENGTH_LONG).show();
+      Timber.e("Tried to start empty folder song list!");
+      return;
+    }
+    if(song_index < 0){
       Toast.makeText(folderFragment.getActivity(),"Internal error getting song index", Toast.LENGTH_LONG).show();
+      Timber.e("Internal error getting song index- song index negative!");
       return;
     }
     FolderSonglist = playlist.clone();
@@ -262,6 +268,10 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
 
 
   public static File[] getFolderSonglist(){
+    if(FolderFragmentListener.FolderSonglist == null){
+      Timber.e("Internal error getting folder song list (empty)!");
+      return new File[0];
+    }
     try {
       return FolderFragmentListener.FolderSonglist.clone();
     } catch (Exception e){

@@ -21,6 +21,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import timber.log.Timber;
+import com.example.moonstonemusicplayer.utils.LocaleUtil;
 
 public class AlbumManager {
 
@@ -56,7 +57,7 @@ public class AlbumManager {
   public Album[] getAllAlbumsMatchingQuery(String query) {
     List<Album> results = new ArrayList<>();
     for(Album Album: getAlbumList()){
-      if(Album.getName().toLowerCase().contains(query.toLowerCase())){
+      if(Album.getName().toLowerCase(LocaleUtil.getCurrentLocale(context)).contains(query.toLowerCase(LocaleUtil.getCurrentLocale(context)))){
             results.add(Album);
       }
     }

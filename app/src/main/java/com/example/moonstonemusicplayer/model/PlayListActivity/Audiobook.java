@@ -7,6 +7,7 @@
  */
 
 package com.example.moonstonemusicplayer.model.PlayListActivity;
+import com.example.moonstonemusicplayer.model.PlayListActivity.Audiofile;
 
 public class Audiobook extends Audiofile{
   public static final int AUDIOBOOK_CUTOFF_MS = 15 * 60 * 1000; //every audiofile that is over 15 minutes long is suggested to be an audiobook

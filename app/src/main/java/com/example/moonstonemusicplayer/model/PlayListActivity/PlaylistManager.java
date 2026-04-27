@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+import com.example.moonstonemusicplayer.utils.LocaleUtil;
 
 //import com.example.moonstonemusicplayer.model.Database.DBSonglists;
 
@@ -63,7 +64,7 @@ public class PlaylistManager {
     public void searchSong(String searchterm){
         this.displayedSongList.clear();
         for(File song: playList) {
-            if (song.getName().toLowerCase().contains(searchterm.toLowerCase()))
+            if (song.getName().toLowerCase(LocaleUtil.getCurrentLocale(context)).contains(searchterm.toLowerCase(LocaleUtil.getCurrentLocale(context))))
                 displayedSongList.add(song);
         }
         /*
