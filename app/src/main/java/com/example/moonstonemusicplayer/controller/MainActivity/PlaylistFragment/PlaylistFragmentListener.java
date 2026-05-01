@@ -8,9 +8,9 @@
 
 package com.example.moonstonemusicplayer.controller.MainActivity.PlaylistFragment;
 
-import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.MOSTLY_PLAYED_PLAYLIST_NAME;
-import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.RECENTLY_ADDED_PLAYLIST_NAME;
-import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.RECENTLY_PLAYED_PLAYLIST_NAME;
+import static com.example.moonstonemusicplayer.model.Database.Playlist.PlaylistDao.MOSTLY_PLAYED;
+import static com.example.moonstonemusicplayer.model.Database.Playlist.PlaylistDao.RECENTLY_ADDED;
+import static com.example.moonstonemusicplayer.model.Database.Playlist.PlaylistDao.RECENTLY_PLAYED;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -93,7 +93,7 @@ public class PlaylistFragmentListener implements View.OnClickListener, View.OnCr
             setAdapter(newItemList);
             playListFragment.getPlaylistManager().setCurrentPlaylist((Playlist) clickItem);
             playListFragment.srl_playlist.setEnabled(
-                    playListFragment.getPlaylistManager().getCurrentPlaylist().getName().equals(RECENTLY_ADDED_PLAYLIST_NAME)
+                    playListFragment.getPlaylistManager().getCurrentPlaylist().getName().equals(RECENTLY_ADDED)
             );
           } else if (clickItem instanceof Song) {
             startPlaylist(playListFragment.getPlaylistManager().getCurrentPlaylist(), position);
@@ -170,15 +170,15 @@ public class PlaylistFragmentListener implements View.OnClickListener, View.OnCr
     //the menu created if a song is clicked on
     if(playlistListAdapter.getItemList().get(position) instanceof Song){
       //create menu item with groupid to distinguish between fragments
-      boolean isCalculatedPlaylist = currentPlaylist.equals(RECENTLY_ADDED_PLAYLIST_NAME) 
-          || currentPlaylist.equals(RECENTLY_PLAYED_PLAYLIST_NAME)
-          || currentPlaylist.equals(MOSTLY_PLAYED_PLAYLIST_NAME);
+      boolean isCalculatedPlaylist = currentPlaylist.equals(RECENTLY_ADDED) 
+          || currentPlaylist.equals(RECENTLY_PLAYED)
+          || currentPlaylist.equals(MOSTLY_PLAYED);
       if(!isCalculatedPlaylist){
         menu.add(0, 0, 0, "aus Playlist löschen");
       }
       menu.add(0, 1, 0, "zu Playlist hinzufügen");
       menu.add(0, 2, 0, "Song löschen");
-      if(!currentPlaylist.equals(RECENTLY_ADDED_PLAYLIST_NAME)){
+      if(!currentPlaylist.equals(RECENTLY_ADDED)){
           menu.getItem(0).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             /** onContextItemSelected(MenuItem item) doesnt work*/
@@ -210,9 +210,9 @@ public class PlaylistFragmentListener implements View.OnClickListener, View.OnCr
       });
 
     } else {//the menu created if a playlist is clicked on
-      if(!((Playlist) playlistListAdapter.getItemList().get(position)).getName().equals(RECENTLY_ADDED_PLAYLIST_NAME)
-      && !((Playlist) playlistListAdapter.getItemList().get(position)).getName().equals(RECENTLY_PLAYED_PLAYLIST_NAME)
-      && !((Playlist) playlistListAdapter.getItemList().get(position)).getName().equals(MOSTLY_PLAYED_PLAYLIST_NAME)){
+      if(!((Playlist) playlistListAdapter.getItemList().get(position)).getName().equals(RECENTLY_ADDED)
+      && !((Playlist) playlistListAdapter.getItemList().get(position)).getName().equals(RECENTLY_PLAYED)
+      && !((Playlist) playlistListAdapter.getItemList().get(position)).getName().equals(MOSTLY_PLAYED)){
         menu.add(0, 0, 0, "playlist löschen");
         menu.getItem(0).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
           @Override
@@ -258,8 +258,9 @@ public class PlaylistFragmentListener implements View.OnClickListener, View.OnCr
     Playlist currentPlaylist = playListFragment.getPlaylistManager().getCurrentPlaylist();
     currentPlaylist.getPlaylist().remove(song);
 
-    DBPlaylists.getInstance(playListFragment.getContext()).deleteFromPlaylist(song,
-            playListFragment.getPlaylistManager().getCurrentPlaylist().getName());
+    //NOTE: temporary disable this
+    //DBPlaylists.getInstance(playListFragment.getContext()).deleteFromPlaylist(song,
+    //       playListFragment.getPlaylistManager().getCurrentPlaylist().getName());
 
     playListFragment.reloadPlaylistManager(playListFragment.getContext());
     playListFragment.getPlaylistManager().setCurrentPlaylist(currentPlaylist);
@@ -305,7 +306,7 @@ public class PlaylistFragmentListener implements View.OnClickListener, View.OnCr
   public boolean onBackpressed() {
     playListFragment.srl_playlist.setEnabled(false);
     if(playListFragment.getPlaylistManager().getCurrentPlaylist() != null){
-      playListFragment.srl_playlist.setEnabled(playListFragment.getPlaylistManager().getCurrentPlaylist().getName().equals(RECENTLY_ADDED_PLAYLIST_NAME));
+      playListFragment.srl_playlist.setEnabled(playListFragment.getPlaylistManager().getCurrentPlaylist().getName().equals(RECENTLY_ADDED));
       List<Object> itemList = new ArrayList<>();
       itemList.addAll(playListFragment.getPlaylistManager().getPlaylists());
       setAdapter(itemList);

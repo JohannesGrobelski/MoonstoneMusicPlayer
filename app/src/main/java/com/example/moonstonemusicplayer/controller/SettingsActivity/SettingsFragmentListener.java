@@ -1,7 +1,7 @@
 package com.example.moonstonemusicplayer.controller.SettingsActivity;
 
-import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.RECENTLY_ADDED_PLAYLIST_NAME;
-import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.RECENTLY_PLAYED_PLAYLIST_NAME;
+import static com.example.moonstonemusicplayer.model.Database.Playlist.PlaylistDao.RECENTLY_ADDED;
+import static com.example.moonstonemusicplayer.model.Database.Playlist.PlaylistDao.RECENTLY_PLAYED;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -205,7 +205,7 @@ public class SettingsFragmentListener {
     private void handleExportPlaylists() {
         try {
             List<Playlist> playlists = PlaylistUtil.getAllPlaylists(settingsFragment.getActivity());
-            playlists = playlists.stream().filter(playlist -> !playlist.getName().equals(RECENTLY_ADDED_PLAYLIST_NAME) && !playlist.getName().equals(RECENTLY_PLAYED_PLAYLIST_NAME)).collect(Collectors.toList());
+            playlists = playlists.stream().filter(playlist -> !playlist.getName().equals(RECENTLY_ADDED) && !playlist.getName().equals(RECENTLY_PLAYED)).collect(Collectors.toList());
             PlaylistJsonHandler.exportPlaylists(settingsFragment.getActivity(), playlists);
             Toast.makeText(settingsFragment.getActivity(), "Playlists exported successfully", Toast.LENGTH_SHORT).show();
         } catch (Exception e) {

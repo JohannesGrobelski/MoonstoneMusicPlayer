@@ -8,9 +8,9 @@
 
 package com.example.moonstonemusicplayer.controller.PlayListActivity;
 
-import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.MOSTLY_PLAYED_PLAYLIST_NAME;
-import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.RECENTLY_ADDED_PLAYLIST_NAME;
-import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.RECENTLY_PLAYED_PLAYLIST_NAME;
+import static com.example.moonstonemusicplayer.model.Database.Playlist.PlaylistDao.MOSTLY_PLAYED;
+import static com.example.moonstonemusicplayer.model.Database.Playlist.PlaylistDao.RECENTLY_ADDED;
+import static com.example.moonstonemusicplayer.model.Database.Playlist.PlaylistDao.RECENTLY_PLAYED;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -53,9 +53,9 @@ public class PlaylistJsonHandler {
             for (Playlist playlist : playlists) {
 
                 // make sure not to export special playlists like recently added
-                if(playlist.getName().equals(RECENTLY_ADDED_PLAYLIST_NAME)
-                || playlist.getName().equals(RECENTLY_PLAYED_PLAYLIST_NAME)
-                || playlist.getName().equals(MOSTLY_PLAYED_PLAYLIST_NAME)){
+                if(playlist.getName().equals(RECENTLY_ADDED)
+                || playlist.getName().equals(RECENTLY_PLAYED)
+                || playlist.getName().equals(MOSTLY_PLAYED)){
                     continue;
                 }
                 JSONObject playlistObj = new JSONObject();
@@ -135,9 +135,9 @@ public class PlaylistJsonHandler {
                 String playlistName = getUniquePlaylistName(originalName, existingNames);
 
                 // make sure not to import special playlists like recently added
-                if(playlistName.equals(RECENTLY_ADDED_PLAYLIST_NAME)
-                        || playlistName.equals(RECENTLY_PLAYED_PLAYLIST_NAME)
-                        || playlistName.equals(MOSTLY_PLAYED_PLAYLIST_NAME)){
+                if(playlistName.equals(RECENTLY_ADDED)
+                        || playlistName.equals(RECENTLY_PLAYED)
+                        || playlistName.equals(MOSTLY_PLAYED)){
                     continue;
                 }
 

@@ -8,9 +8,9 @@
 
 package com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment;
 
-import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.MOSTLY_PLAYED_PLAYLIST_NAME;
-import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.RECENTLY_ADDED_PLAYLIST_NAME;
-import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.RECENTLY_PLAYED_PLAYLIST_NAME;
+import static com.example.moonstonemusicplayer.model.Database.Playlist.PlaylistDao.MOSTLY_PLAYED;
+import static com.example.moonstonemusicplayer.model.Database.Playlist.PlaylistDao.RECENTLY_ADDED;
+import static com.example.moonstonemusicplayer.model.Database.Playlist.PlaylistDao.RECENTLY_PLAYED;
 import com.example.moonstonemusicplayer.utils.LocaleUtil;
 import android.content.Context;
 import android.database.Cursor;
@@ -64,7 +64,7 @@ public class PlaylistListManager {
     List<Playlist> allPlayLists = PlaylistUtil.getAllPlaylists(context);
     int indexRecentlyPlayed = -1;
     for(int i=0; i<allPlayLists.size(); i++){
-      if(allPlayLists.get(i).name.equals(RECENTLY_PLAYED_PLAYLIST_NAME)){
+      if(allPlayLists.get(i).name.equals(RECENTLY_PLAYED)){
         indexRecentlyPlayed = i;
         //Collections.reverse(playlist.getPlaylist());
       }
@@ -85,7 +85,7 @@ public class PlaylistListManager {
 
   public Playlist setOnRecentlyAddedPlaylist(){
     for(Playlist playlist : this.playlists){
-      if(playlist.getName().equals(RECENTLY_ADDED_PLAYLIST_NAME)){
+      if(playlist.getName().equals(RECENTLY_ADDED)){
         //this.currentPlaylist = playlist;
         return playlist;
       }
@@ -233,7 +233,7 @@ public class PlaylistListManager {
   }
 
   private void createRecentlyAddedPlaylist(Context context){
-    Playlist recentlyAddedPlaylist = new Playlist(RECENTLY_ADDED_PLAYLIST_NAME, new ArrayList<>());
+    Playlist recentlyAddedPlaylist = new Playlist(RECENTLY_ADDED, new ArrayList<>());
 
     List<Song> songList = new ArrayList<>();
 
@@ -314,7 +314,7 @@ public class PlaylistListManager {
   }
 
   private void createRecentlyPlayedPlaylist(Context context){
-    Playlist recentlyPlayedPlaylist = new Playlist(RECENTLY_PLAYED_PLAYLIST_NAME, new ArrayList<>());
+    Playlist recentlyPlayedPlaylist = new Playlist(RECENTLY_PLAYED, new ArrayList<>());
     List<Song> songListRecentlyPlayed = DBPlaylists.getInstance(context).getAllRecentlyPlayed(context);
     for(int i=songListRecentlyPlayed.size()-1; i>=0; i--){
       Song song = songListRecentlyPlayed.get(i);

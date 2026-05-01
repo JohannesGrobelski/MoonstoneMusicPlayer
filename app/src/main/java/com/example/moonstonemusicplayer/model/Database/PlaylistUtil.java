@@ -8,17 +8,13 @@
 
 package com.example.moonstonemusicplayer.model.Database;
 
-import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.FAVORITES_PLAYLIST_NAME;
-import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.MOSTLY_PLAYED_PLAYLIST_NAME;
-import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.RECENTLY_ADDED_PLAYLIST_NAME;
-import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.RECENTLY_PLAYED_PLAYLIST_NAME;
+import static com.example.moonstonemusicplayer.model.Database.Playlist.PlaylistDao.FAVORITES;
+import static com.example.moonstonemusicplayer.model.Database.Playlist.PlaylistDao.MOSTLY_PLAYED;
+import static com.example.moonstonemusicplayer.model.Database.Playlist.PlaylistDao.RECENTLY_PLAYED;
 
 import android.content.Context;
-import android.graphics.Typeface;
 
 
-import com.example.moonstonemusicplayer.R;
-import com.example.moonstonemusicplayer.model.Database.Playcountlist.DBPlaycountList;
 import com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists;
 import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.Playlist;
 
@@ -31,8 +27,6 @@ import timber.log.Timber;
 
 public class PlaylistUtil {
     
-    private static final boolean DEBUG = true;
-
     public static List<Playlist> getAllPlaylists(Context context) {
         try {
             List<Playlist> playlists = new LinkedList<>(DBPlaylists.getInstance(context).getAllPlaylists(context));
@@ -44,7 +38,7 @@ public class PlaylistUtil {
     }
 
     public static Playlist getPlaylistMostlyPlayed(Context context){
-        return new Playlist(DBPlaylists.MOSTLY_PLAYED_PLAYLIST_NAME, DBPlaycountList.getInstance(context).getMostlyPlayed());
+        return new Playlist(MOSTLY_PLAYED, DBPlaylists.getInstance(context).getMostlyPlayed());
     }
 
     /**
@@ -60,23 +54,23 @@ public class PlaylistUtil {
         }
 
         Map<String, Playlist> specialPlaylists = playlistList.stream()
-                .filter(p -> p.getName().equals(FAVORITES_PLAYLIST_NAME) ||
-                        p.getName().equals(RECENTLY_PLAYED_PLAYLIST_NAME) ||
-                        p.getName().equals(MOSTLY_PLAYED_PLAYLIST_NAME))
+                .filter(p -> p.getName().equals(FAVORITES) ||
+                        p.getName().equals(RECENTLY_PLAYED) ||
+                        p.getName().equals(MOSTLY_PLAYED))
                 .collect(Collectors.toMap(Playlist::getName, p -> p));
 
         List<Playlist> result = playlistList.stream()
                 .filter(p -> !specialPlaylists.containsKey(p.getName()))
                 .collect(Collectors.toList());
 
-        if(specialPlaylists.containsKey(MOSTLY_PLAYED_PLAYLIST_NAME)){
-            result.add(0, specialPlaylists.get(MOSTLY_PLAYED_PLAYLIST_NAME));
+        if(specialPlaylists.containsKey(MOSTLY_PLAYED)){
+            result.add(0, specialPlaylists.get(MOSTLY_PLAYED));
         }
-        if(specialPlaylists.containsKey(RECENTLY_PLAYED_PLAYLIST_NAME)) {
-            result.add(0, specialPlaylists.get(RECENTLY_PLAYED_PLAYLIST_NAME));
+        if(specialPlaylists.containsKey(RECENTLY_PLAYED)) {
+            result.add(0, specialPlaylists.get(RECENTLY_PLAYED));
         }
-        if(specialPlaylists.containsKey(FAVORITES_PLAYLIST_NAME)) {
-            result.add(0, specialPlaylists.get(FAVORITES_PLAYLIST_NAME));
+        if(specialPlaylists.containsKey(FAVORITES)) {
+            result.add(0, specialPlaylists.get(FAVORITES));
         }
 
         return result;

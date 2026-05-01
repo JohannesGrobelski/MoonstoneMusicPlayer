@@ -40,7 +40,6 @@ import androidx.core.graphics.drawable.IconCompat;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.PlayListActivity.Notification.Constants;
-import com.example.moonstonemusicplayer.model.Database.Playcountlist.DBPlaycountList;
 import com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists;
 import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
 import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.Playlist;
@@ -606,7 +605,7 @@ public class MediaPlayerService extends Service
   }
 
   private void updatePlaycount(Song song){
-    DBPlaycountList.getInstance(getApplicationContext()).playedSong(getApplicationContext(),song);
+    DBPlaylists.getInstance(getApplicationContext()).playedSong(getApplicationContext(),song);
   }
 
 

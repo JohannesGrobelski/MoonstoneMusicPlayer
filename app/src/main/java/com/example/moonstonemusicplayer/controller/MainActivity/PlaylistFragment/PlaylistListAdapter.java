@@ -29,10 +29,10 @@ import com.example.moonstonemusicplayer.view.mainactivity_fragments.PlayListFrag
 import com.example.moonstonemusicplayer.view.settingsactivity_fragments.SettingsFragment;
 import com.woxthebox.draglistview.DragItemAdapter;
 
-import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.FAVORITES_PLAYLIST_NAME;
-import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.MOSTLY_PLAYED_PLAYLIST_NAME;
-import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.RECENTLY_ADDED_PLAYLIST_NAME;
-import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.RECENTLY_PLAYED_PLAYLIST_NAME;
+import static com.example.moonstonemusicplayer.model.Database.Playlist.PlaylistDao.FAVORITES;
+import static com.example.moonstonemusicplayer.model.Database.Playlist.PlaylistDao.MOSTLY_PLAYED;
+import static com.example.moonstonemusicplayer.model.Database.Playlist.PlaylistDao.RECENTLY_ADDED;
+import static com.example.moonstonemusicplayer.model.Database.Playlist.PlaylistDao.RECENTLY_PLAYED;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -118,7 +118,7 @@ public class PlaylistListAdapter extends DragItemAdapter<Object, PlaylistListAda
 
                 playListFragment.getPlaylistManager().setCurrentPlaylist(playlist);
                 playListFragment.srl_playlist.setEnabled(
-                        playlist.getName().equals(RECENTLY_ADDED_PLAYLIST_NAME)
+                        playlist.getName().equals(RECENTLY_ADDED)
                 );
             } else if (clickItem instanceof Song) {
                 playListFragment.playlistFragmentListener.startPlaylist(
@@ -144,15 +144,15 @@ public class PlaylistListAdapter extends DragItemAdapter<Object, PlaylistListAda
         );
 
         switch (playlist.getName()) {
-            case RECENTLY_ADDED_PLAYLIST_NAME:
+            case RECENTLY_ADDED:
                 holder.tv_playlistSongItem.setTypeface(null, Typeface.BOLD);
                 holder.tv_playlistSongItem.setText(R.string.RecentlyAddedPlaylist);
                 break;
-            case RECENTLY_PLAYED_PLAYLIST_NAME:
+            case RECENTLY_PLAYED:
                 holder.tv_playlistSongItem.setTypeface(null, Typeface.BOLD);
                 holder.tv_playlistSongItem.setText(R.string.RecentlyPlayedPlaylist);
                 break;
-            case MOSTLY_PLAYED_PLAYLIST_NAME:
+            case MOSTLY_PLAYED:
                 holder.tv_playlistSongItem.setTypeface(null, Typeface.BOLD);
                 holder.tv_playlistSongItem.setText(R.string.MostlyPlayedPlaylist);
                 break;
@@ -229,19 +229,19 @@ public class PlaylistListAdapter extends DragItemAdapter<Object, PlaylistListAda
             tv_playlistSongItem.setTextColor(SettingsFragment.getAccentColor(context));
 
             switch (playlist.getName()) {
-                case FAVORITES_PLAYLIST_NAME:
+                case FAVORITES:
                     tv_playlistSongItem.setTypeface(null, Typeface.BOLD);
                     tv_playlistSongItem.setText(R.string.MoonstoneFavoritesPlaylist);
                     break;
-                case RECENTLY_ADDED_PLAYLIST_NAME:
+                case RECENTLY_ADDED:
                     tv_playlistSongItem.setTypeface(null, Typeface.BOLD);
                     tv_playlistSongItem.setText(R.string.RecentlyAddedPlaylist);
                     break;
-                case RECENTLY_PLAYED_PLAYLIST_NAME:
+                case RECENTLY_PLAYED:
                     tv_playlistSongItem.setTypeface(null, Typeface.BOLD);
                     tv_playlistSongItem.setText(R.string.RecentlyPlayedPlaylist);
                     break;
-                case MOSTLY_PLAYED_PLAYLIST_NAME:
+                case MOSTLY_PLAYED:
                     tv_playlistSongItem.setTypeface(null, Typeface.BOLD);
                     tv_playlistSongItem.setText(R.string.MostlyPlayedPlaylist);
                     break;
