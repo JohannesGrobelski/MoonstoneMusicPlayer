@@ -14,8 +14,12 @@ import static com.example.moonstonemusicplayer.model.Database.Playlist.PlaylistD
 import com.example.moonstonemusicplayer.utils.LocaleUtil;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.text.LineBreaker.Result;
 import android.os.Build;
 import android.provider.MediaStore;
+import androidx.lifecycle.LifecycleOwner;
+import android.os.Handler;
+import android.os.Looper;
 
 //import com.example.moonstonemusicplayer.model.Database.DBSonglists;
 import com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists;
@@ -29,20 +33,28 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
+import androidx.lifecycle.MediatorLiveData;
 
 /** saves and loads playlists and contains the current (displayed) playlist in playlistfragment*/
 public class PlaylistListManager {
 
   
   private final Context context;
+  private final LifecycleOwner lifecycleOwner;
   //private DataSource dataSource;
 
   private Playlist currentPlaylist;
   private List<Playlist> playlists = new ArrayList<>();
   private final List<Playlist> playlists_backup = new ArrayList<>();
 
-  public PlaylistListManager(Context baseContext) {
+  private MediatorLiveData<List<Playlist>> mergedPlaylists = null;
+  private Playlist recentlyPlayedPlaylist = null;
+  private Playlist mostlyPlayedPlaylist = null;
+  private List<Playlist> userPlaylists = null;
+
+  public PlaylistListManager(Context baseContext, LifecycleOwner lifecycleOwner) {
     this.context = baseContext;
+    this.lifecycleOwner = lifecycleOwner;
     loadPlaylistsFromDB(baseContext);
   }
 
@@ -51,36 +63,74 @@ public class PlaylistListManager {
    * @param context
    */
   public void updateData(Context context){
-    playlists_backup.clear();
-    playlists.clear();
-    loadPlaylistsFromDB(context);
-    playlists.addAll(playlists_backup);
+    /*
+        playlists_backup.clear();
+        playlists.clear();
+        loadPlaylistsFromDB(context);
+        playlists.addAll(playlists_backup);
+    */
   }
 
   /** loads local music and adds it to dataSource*/
   public void loadPlaylistsFromDB(Context context){
     playlists_backup.clear();
     playlists.clear();
-    List<Playlist> allPlayLists = PlaylistUtil.getAllPlaylists(context);
-    int indexRecentlyPlayed = -1;
-    for(int i=0; i<allPlayLists.size(); i++){
-      if(allPlayLists.get(i).name.equals(RECENTLY_PLAYED)){
-        indexRecentlyPlayed = i;
-        //Collections.reverse(playlist.getPlaylist());
-      }
-    }
-    if(indexRecentlyPlayed != -1){
-        //move RECENTLY_PLAYED
-        Playlist recentlyPlayed = allPlayLists.remove(indexRecentlyPlayed);
-        allPlayLists.add(0, recentlyPlayed); 
-    } else {
-      createRecentlyPlayedPlaylist(context);
-    }
-    createRecentlyAddedPlaylist(context);
-    playlists_backup.add(PlaylistUtil.getPlaylistMostlyPlayed(context));
 
-    this.playlists_backup.addAll(allPlayLists);
-    playlists.addAll(playlists_backup);
+    recentlyPlayedPlaylist = null;
+    mostlyPlayedPlaylist = null;
+    userPlaylists = null;
+    mergedPlaylists = new MediatorLiveData<>();
+   
+    //NOTE: RECENTLY_PLAYED aufbauen
+    mergedPlaylists.addSource(DBPlaylists.getInstance(context).getAllRecentlyPlayed(context), songListRecentlyPlayed -> {
+        List<Song> temp = new LinkedList<>();
+        for(int i=songListRecentlyPlayed.size()-1; i>=0; i--){
+          Song song = songListRecentlyPlayed.get(i);
+          if(song != null 
+            && song.getName() != null && !song.getName().isEmpty()
+            && song.getPath() != null && new File(song.getPath()).exists()){
+            temp.add(songListRecentlyPlayed.get(i));
+          }
+        }
+        recentlyPlayedPlaylist = new Playlist(RECENTLY_PLAYED, temp);
+        mergePlaylists(mergedPlaylists, recentlyPlayedPlaylist, mostlyPlayedPlaylist, userPlaylists);
+    });
+
+
+    //NOTE: MOSTLY_PLAYED aufbauen
+    mergedPlaylists.addSource(DBPlaylists.getInstance(context).getMostlyPlayed(), songListMostlyPlayed -> {
+        mostlyPlayedPlaylist = new Playlist(MOSTLY_PLAYED, songListMostlyPlayed);
+        mergePlaylists(mergedPlaylists, recentlyPlayedPlaylist, mostlyPlayedPlaylist, userPlaylists);
+    });
+
+    //NOTE: Alle anderen Playlists aufbauen
+    mergedPlaylists.addSource(DBPlaylists.getInstance(context).getAllPlaylists(context), allUserPlaylists -> {
+        userPlaylists = allUserPlaylists;
+        mergePlaylists(mergedPlaylists, recentlyPlayedPlaylist, mostlyPlayedPlaylist, userPlaylists);
+    });
+
+    //NOTE: Wenn wir alle Playlists gemerget haben -> in playlists_backup und playlists eintragen!
+    mergedPlaylists.observe(lifecycleOwner, result -> {
+        playlists_backup.clear();
+        playlists.clear();
+        playlists_backup.addAll(result);
+        playlists.addAll(result);
+    });
+  }
+
+  private void mergePlaylists(MediatorLiveData<List<Playlist>> merged, Playlist recentlyPlayed, Playlist mostlyPlayed, List<Playlist> userPlaylists){
+      if(recentlyPlayed == null || mostlyPlayed == null || userPlaylists == null){
+        return;
+      }
+        
+      List<Playlist> allPlaylists = new LinkedList<>();
+
+      allPlaylists.add(recentlyPlayed);
+      allPlaylists.add(mostlyPlayed);
+      allPlaylists.add(createRecentlyAddedPlaylist(context));
+      allPlaylists.addAll(userPlaylists);
+      
+      merged.postValue(allPlaylists);
   }
 
   public Playlist setOnRecentlyAddedPlaylist(){
@@ -232,9 +282,7 @@ public class PlaylistListManager {
     createRecentlyAddedPlaylist(context);
   }
 
-  private void createRecentlyAddedPlaylist(Context context){
-    Playlist recentlyAddedPlaylist = new Playlist(RECENTLY_ADDED, new ArrayList<>());
-
+  private Playlist createRecentlyAddedPlaylist(Context context){
     List<Song> songList = new ArrayList<>();
 
     // Define the columns to retrieve from the MediaStore
@@ -301,7 +349,6 @@ public class PlaylistListManager {
         int duration_ms = 0;
         duration_ms = Integer.parseInt(durationString);
 
-        File songFile = new File(filePath);
         Song song = new Song(filePath,name,artist,album,genre,duration_ms,"");
         songList.add(song);
         --limit;
@@ -309,21 +356,6 @@ public class PlaylistListManager {
 
       cursor.close();
     }
-    recentlyAddedPlaylist.playlist.addAll(songList);
-    this.playlists_backup.add(recentlyAddedPlaylist);
-  }
-
-  private void createRecentlyPlayedPlaylist(Context context){
-    Playlist recentlyPlayedPlaylist = new Playlist(RECENTLY_PLAYED, new ArrayList<>());
-    List<Song> songListRecentlyPlayed = DBPlaylists.getInstance(context).getAllRecentlyPlayed(context);
-    for(int i=songListRecentlyPlayed.size()-1; i>=0; i--){
-      Song song = songListRecentlyPlayed.get(i);
-      if(song != null 
-        && song.getName() != null && !song.getName().isEmpty()
-        && song.getPath() != null && new File(song.getPath()).exists()){
-        recentlyPlayedPlaylist.playlist.add(songListRecentlyPlayed.get(i));
-      }
-    }
-    this.playlists_backup.add(0, recentlyPlayedPlaylist);
+    return new Playlist(RECENTLY_ADDED, songList);
   }
 }

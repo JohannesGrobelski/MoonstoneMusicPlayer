@@ -126,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
         showMediaAudioPermission();
         showMediaAudioPermission();
 
-        PlayListFragment.preloadPlaylistManager(this);
+        PlayListFragment.preloadPlaylistManager(this, this);
 
         deletetionIntentSenderLauncher =
                 registerForActivityResult(new ActivityResultContracts.StartIntentSenderForResult(), result -> {

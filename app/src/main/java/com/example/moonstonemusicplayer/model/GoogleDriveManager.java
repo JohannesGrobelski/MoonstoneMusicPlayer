@@ -1,6 +1,8 @@
 package com.example.moonstonemusicplayer.model;
 
 import android.content.Context;
+import androidx.lifecycle.LifecycleOwner;
+import timber.log.Timber;
 
 import com.example.moonstonemusicplayer.model.Database.PlaylistUtil;
 import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.Playlist;
@@ -121,21 +123,23 @@ public class GoogleDriveManager {
     }
 
     // Save playlists
-    public Task<Void> savePlaylists(Context context) {
+    public Task<Void> savePlaylists(Context context, LifecycleOwner lifecycleOwner) {
         return Tasks.call(executor, () -> {
-            //
-            List<Playlist> playlists = PlaylistUtil.getAllPlaylists(context);
+            PlaylistUtil.getAllPlaylists(context).observe(lifecycleOwner, playlists -> {
+                try {
+                    //save playlists
+                    String jsonContent = gson.toJson(playlists);
+                    String fileId = findFile(PLAYLISTS_FILE);
 
-
-            //save playlists
-            String jsonContent = gson.toJson(playlists);
-            String fileId = findFile(PLAYLISTS_FILE);
-
-            if (fileId != null) {
-                updateFile(fileId, jsonContent);
-            } else {
-                createFile(PLAYLISTS_FILE, jsonContent);
-            }
+                    if (fileId != null) {
+                        updateFile(fileId, jsonContent);
+                    } else {
+                        createFile(PLAYLISTS_FILE, jsonContent);
+                    }
+                } catch(Exception e){
+                  Timber.e( e.toString());
+                }
+            });
             return null;
         });
     }

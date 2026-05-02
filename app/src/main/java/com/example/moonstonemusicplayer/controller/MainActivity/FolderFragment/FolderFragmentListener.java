@@ -219,7 +219,7 @@ public class FolderFragmentListener implements AdapterView.OnItemClickListener, 
             break;
           }
           case 2:  {
-            showAlertDialogAddToPlaylists(folderFragment.getLayoutInflater(), folderListAdapter.getContext(), selectedSong);
+            showAlertDialogAddToPlaylists(folderFragment.getLayoutInflater(), folderListAdapter.getContext(), folderFragment.getViewLifecycleOwner(), selectedSong);
             break;
           }
           case 3: {

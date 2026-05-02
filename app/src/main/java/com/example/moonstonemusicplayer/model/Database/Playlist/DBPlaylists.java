@@ -1,5 +1,7 @@
 package com.example.moonstonemusicplayer.model.Database.Playlist;
 
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Transformations;
 import androidx.room.*;
 
 import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
@@ -8,10 +10,11 @@ import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import android.content.Context;
 
 import java.util.List;
-import java.util.LinkedList;
+import java.util.Arrays;
 import java.util.stream.Collectors;
 import timber.log.Timber;
-
+import java.util.concurrent.Executors;
+import androidx.lifecycle.MediatorLiveData;
 
 /** 
  *  Uses {@link PlaylistDao} to access Playlist DB and 
@@ -34,87 +37,122 @@ public class DBPlaylists {
         return instance;
     }
 
-    public String[] getAllPlaylistNames() {
+    public LiveData<String[]> getAllPlaylistNames() {
         return dao.getAllPlaylistNames();
     }
 
-    public List<Song> getAllFavorites(Context context){
-        return dao.getAllFavoritesSongURLs().stream()
-            .map(songURL -> BrowserManager.getSongFromPath(songURL))
-            .collect(Collectors.toList());
+    public LiveData<List<Song>> getAllFavorites(Context context){
+        return Transformations.map(
+                    dao.getAllFavoritesSongURLs(),
+                    songURLs -> songURLs.stream()
+                        .map(songURL -> BrowserManager.getSongFromPath(songURL))
+                        .collect(Collectors.toList())
+                );
     }
 
-    public List<Song> getAllRecentlyPlayed(Context context){
-        return dao.getAllRecentlyPlayedSongURLs().stream()
-            .map(songURL -> BrowserManager.getSongFromPath(songURL))
-            .collect(Collectors.toList());
+    public LiveData<List<Song>> getAllRecentlyPlayed(Context context){
+        return Transformations.map(
+                    dao.getAllRecentlyPlayedSongURLs(),
+                    songURLs -> songURLs.stream()
+                        .map(songURL -> BrowserManager.getSongFromPath(songURL))
+                        .collect(Collectors.toList())
+                );
     }
 
     public void deleteFromPlaylist(Song song, String playlistName){
-        dao.deleteFromPlaylist(playlistName, song.getPath());
+        Executors.newSingleThreadExecutor().execute(() -> {
+            dao.deleteFromPlaylist(playlistName, song.getPath());
+        });
     }
 
     public void changePlaylistOrder(String playlistName, List<Song> songList) {
-        for(int playlistIndex=0; playlistIndex<songList.size(); playlistIndex++){
-            dao.updatePlaylistEntryIndex(playlistName, 
-                    songList.get(playlistIndex).getPath(), 
-                    playlistIndex);  
-        }
+        //NOTE: Room-Datenbankoperationen dürfen nicht auf dem Main Thread laufen - Ausnahme LiveData-Queries
+        Executors.newSingleThreadExecutor().execute(() -> {
+            for(int playlistIndex=0; playlistIndex<songList.size(); playlistIndex++){
+                dao.updatePlaylistEntryIndex(playlistName, 
+                        songList.get(playlistIndex).getPath(), 
+                        playlistIndex);  
+            }
+        });
     }
 
-    public Song addToPlaylist(Context context, Song inputSong, String playlistname){
-        int playlistIndex = dao.getPlaylistCount(playlistname);
-        dao.insert(new PlaylistEntry(++playlistIndex, playlistname, inputSong.getPath(), 0));
-        return inputSong;
+    public void addToPlaylist(Context context, Song inputSong, String playlistname){
+        //NOTE: Room-Datenbankoperationen dürfen nicht auf dem Main Thread laufen - Ausnahme LiveData-Queries
+        Executors.newSingleThreadExecutor().execute(() -> {
+            int playlistIndex = dao.getPlaylistCount(playlistname);
+            dao.insert(new PlaylistEntry(++playlistIndex, playlistname, inputSong.getPath(), 0));
+        });
     }
 
     public void addToFavorites(Context context,Song song){
-        int playlistIndex = dao.getPlaylistCount(PlaylistDao.FAVORITES);
-        dao.insert(new PlaylistEntry(++playlistIndex, PlaylistDao.FAVORITES, song.getPath(), 0));
+        //NOTE: Room-Datenbankoperationen dürfen nicht auf dem Main Thread laufen - Ausnahme LiveData-Queries
+        Executors.newSingleThreadExecutor().execute(() -> {
+            int playlistIndex = dao.getPlaylistCount(PlaylistDao.FAVORITES);
+            dao.insert(new PlaylistEntry(++playlistIndex, PlaylistDao.FAVORITES, song.getPath(), 0));
+        });
     }
 
     public void removeFromFavorites(Context context, Song song){
-        dao.deleteFromPlaylist(PlaylistDao.FAVORITES, song.getPath());
-    }
-
-    public boolean isInFavorites(Context context, Song song){
-        return dao.isInFavorites(song.getPath());
+        //NOTE: Room-Datenbankoperationen dürfen nicht auf dem Main Thread laufen - Ausnahme LiveData-Queries
+        Executors.newSingleThreadExecutor().execute(() -> {
+            dao.deleteFromPlaylist(PlaylistDao.FAVORITES, song.getPath());
+        });
     }
 
     public void addToRecentlyPlayed(Context context,Song song){
-        dao.deleteFromPlaylist(PlaylistDao.RECENTLY_PLAYED, song.getPath());
-        int playlistIndex = dao.getPlaylistCount(PlaylistDao.RECENTLY_PLAYED);
-        dao.insert(new PlaylistEntry(++playlistIndex, PlaylistDao.RECENTLY_PLAYED, song.getPath(), 1));
+        //NOTE: Room-Datenbankoperationen dürfen nicht auf dem Main Thread laufen - Ausnahme LiveData-Queries
+        Executors.newSingleThreadExecutor().execute(() -> {
+            dao.deleteFromPlaylist(PlaylistDao.RECENTLY_PLAYED, song.getPath());
+            int playlistIndex = dao.getPlaylistCount(PlaylistDao.RECENTLY_PLAYED);
+            dao.insert(new PlaylistEntry(++playlistIndex, PlaylistDao.RECENTLY_PLAYED, song.getPath(), 1));
+        });
     }
 
     public void deleteFromFavorites(Song song){
-        dao.deleteFromPlaylist(PlaylistDao.FAVORITES, song.getPath());
+        //NOTE: Room-Datenbankoperationen dürfen nicht auf dem Main Thread laufen - Ausnahme LiveData-Queries
+        Executors.newSingleThreadExecutor().execute(() -> {
+            dao.deleteFromPlaylist(PlaylistDao.FAVORITES, song.getPath());
+        });
     }
 
     public void deletePlaylist(Playlist playlist){
-        dao.deletePlaylist(playlist.getName());
+        //NOTE: Room-Datenbankoperationen dürfen nicht auf dem Main Thread laufen - Ausnahme LiveData-Queries
+        Executors.newSingleThreadExecutor().execute(() -> {
+            dao.deletePlaylist(playlist.getName());
+        });
     }
 
-    public List<Playlist> getAllPlaylists(Context context) {
-        String[] playlistNames = dao.getAllPlaylistNames();
-        List<Playlist> playlists = new LinkedList<Playlist>();
-        for(String playlistName: playlistNames){
-            List<Song> playlistEntries = dao.getAllPlaylistEntries(playlistName).stream()
-            .map(songURL -> BrowserManager.getSongFromPath(songURL))
-            .collect(Collectors.toList());
-            playlists.add(new Playlist(playlistName, playlistEntries));
-        }
-        return playlists;
+    public LiveData<List<Playlist>> getAllPlaylists(Context context) {
+        //NOTE: LiveData Objekt das andere LiveData Objekte beobachtet (mit postValue)
+        MediatorLiveData<List<Playlist>> result = new MediatorLiveData<>();
+        result.addSource(dao.getAllPlaylistNames(), playlistNames -> {
+                Executors.newSingleThreadExecutor().execute(() -> {
+                    List<Playlist> playlists = Arrays.asList(playlistNames).stream()
+                        .map(playlistName -> new Playlist(playlistName,
+                                dao.getAllPlaylistEntries(playlistName).stream()
+                                    .map(songURL -> BrowserManager.getSongFromPath(songURL))
+                                    .collect(Collectors.toList())
+                        ))
+                        .collect(Collectors.toList());
+                    result.postValue(playlists);
+                });
+        });
+        return result;
     }
 
-    public Song playedSong(Context context, Song song){
-        dao.incrementPlaycount(song.getPath());
-        return song;
+    public void playedSong(Context context, Song song){
+        //NOTE: Room-Datenbankoperationen dürfen nicht auf dem Main Thread laufen - Ausnahme LiveData-Queries
+        Executors.newSingleThreadExecutor().execute(() -> {
+            dao.incrementPlaycount(song.getPath());
+        });
     }
 
-    public List<Song> getMostlyPlayed() {
-        return dao.getMostlyPlayedEntries(50).stream()
-            .map(songURL -> BrowserManager.getSongFromPath(songURL))
-            .collect(Collectors.toList());
+    public LiveData<List<Song>> getMostlyPlayed() {
+        return Transformations.map(
+                    dao.getMostlyPlayedEntries(50),
+                    songURLs -> songURLs.stream()
+                        .map(songURL -> BrowserManager.getSongFromPath(songURL))
+                        .collect(Collectors.toList())
+                    );
     }
 }

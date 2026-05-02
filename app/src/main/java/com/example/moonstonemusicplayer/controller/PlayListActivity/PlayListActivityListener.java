@@ -41,6 +41,7 @@ import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.moonstonemusicplayer.controller.Utility.DrawableUtils;
@@ -677,7 +678,11 @@ public class PlayListActivityListener
             //NOTE: drag list view does already manipulate the data list (do not change playlistListAdapter.getItemList())!!!
             if(!playlistName.isEmpty()){
               DBPlaylists dbPlaylists = DBPlaylists.getInstance(playListActivity);
-              dbPlaylists.changePlaylistOrder(updatedPlaylist.getName(), songListAdapter.getItemList().stream().map(f -> BrowserManager.getSongFromAudioFile((File) f)).collect(Collectors.toList()));
+              dbPlaylists.changePlaylistOrder(updatedPlaylist.getName(), 
+                      songListAdapter.getItemList()
+                        .stream()
+                        .map(f -> BrowserManager.getSongFromAudioFile((File) f))
+                        .collect(Collectors.toList()));
             }
           }
         }
@@ -728,7 +733,7 @@ public class PlayListActivityListener
           break;
         }
         case 2:  {
-          showAlertDialogAddToPlaylists(selectedSong);
+          showAlertDialogAddToPlaylists(selectedSong,playListActivity);
           break;
         }
         case 3: {
@@ -740,15 +745,13 @@ public class PlayListActivityListener
     return true;
   }
 
-  private void showAlertDialogAddToPlaylists(final Song song){
-    final String[] allPlaylistNames = DBPlaylists.getInstance(playListActivity).getAllPlaylistNames();
-
+  private void showAlertDialogAddToPlaylists(final Song song, LifecycleOwner lifecycleOwner){
+   
     LayoutInflater inflater = playListActivity.getLayoutInflater();
     View dialogView = inflater.inflate(R.layout.add_to_playlist_layout, null);
     ListView lv_playlist_alert = dialogView.findViewById(R.id.lv_playlists_alert);
     final EditText et_addNewPlaylist = dialogView.findViewById(R.id.et_addNewPlaylist);
 
-    lv_playlist_alert.setAdapter(new ArrayAdapter<String>(playListActivity,android.R.layout.simple_list_item_1,allPlaylistNames));
 
     final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(playListActivity);
     dialogBuilder.setView(dialogView);
@@ -766,13 +769,18 @@ public class PlayListActivityListener
 
     final AlertDialog alertDialog  = dialogBuilder.show();
 
-    lv_playlist_alert.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-      @Override
-      public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        DBPlaylists.getInstance(playListActivity).addToPlaylist(playListActivity,song,allPlaylistNames[position]);
-        alertDialog.dismiss();
-      }
-    });
+    DBPlaylists.getInstance(playListActivity).getAllPlaylistNames().observe(
+            lifecycleOwner, allPlaylistNames -> {
+                lv_playlist_alert.setAdapter(new ArrayAdapter<String>(playListActivity,android.R.layout.simple_list_item_1,allPlaylistNames));
+                lv_playlist_alert.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                  @Override
+                  public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    DBPlaylists.getInstance(playListActivity).addToPlaylist(playListActivity,song,allPlaylistNames[position]);
+                    alertDialog.dismiss();
+                  }
+                });
+            }
+    );
   }
 
   public void onDestroy() {

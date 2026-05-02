@@ -13,7 +13,9 @@ import static com.example.moonstonemusicplayer.model.Database.Playlist.PlaylistD
 import static com.example.moonstonemusicplayer.model.Database.Playlist.PlaylistDao.RECENTLY_PLAYED;
 
 import android.content.Context;
-
+import android.view.animation.Transformation;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.LiveData;
 
 import com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists;
 import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.Playlist;
@@ -22,23 +24,24 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import androidx.lifecycle.Transformations;
 
 import timber.log.Timber;
 
 public class PlaylistUtil {
     
-    public static List<Playlist> getAllPlaylists(Context context) {
+    public static LiveData<List<Playlist>> getAllPlaylists(Context context) {
         try {
-            List<Playlist> playlists = new LinkedList<>(DBPlaylists.getInstance(context).getAllPlaylists(context));
-            return sortPlaylists(playlists);
+            return Transformations.map(
+                DBPlaylists.getInstance(context).getAllPlaylists(context),
+                songList -> {
+                    return sortPlaylists(songList);   
+                }
+            );
         } catch (Exception e){
             Timber.e( e.toString());
-            return List.of();
+            return null;
         }
-    }
-
-    public static Playlist getPlaylistMostlyPlayed(Context context){
-        return new Playlist(MOSTLY_PLAYED, DBPlaylists.getInstance(context).getMostlyPlayed());
     }
 
     /**

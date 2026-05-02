@@ -20,6 +20,7 @@ import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.moonstonemusicplayer.R;
@@ -51,10 +52,8 @@ public class PlayListFragment extends Fragment {
   private ImageView iv_playlistBack;
 
 
-  public static void preloadPlaylistManager(Context context){
-    new Thread(() -> {
-        playlistListManager = new PlaylistListManager(context);
-    }).start();
+  public static void preloadPlaylistManager(Context context, LifecycleOwner lifecycleOwner){
+    playlistListManager = new PlaylistListManager(context, lifecycleOwner);
   }
 
   public static PlayListFragment newInstance() {
@@ -113,7 +112,7 @@ public class PlayListFragment extends Fragment {
   public void onAttach(@NonNull Context context) {
     super.onAttach(context);
     if(playlistListManager == null){
-        playlistListManager = new PlaylistListManager(this.getContext());
+        playlistListManager = new PlaylistListManager(this.getContext(), getViewLifecycleOwner());
     }
   }
 
@@ -142,7 +141,7 @@ public class PlayListFragment extends Fragment {
   }
 
   public void reloadPlaylistManager(Context context){
-      playlistListManager = new PlaylistListManager(context); 
+      playlistListManager = new PlaylistListManager(context, getViewLifecycleOwner()); 
   }
 
   public void searchMusic(String query) {

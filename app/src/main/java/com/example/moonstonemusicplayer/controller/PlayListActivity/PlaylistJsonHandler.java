@@ -20,6 +20,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 
 import android.widget.Toast;
+import androidx.lifecycle.LifecycleOwner;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -108,7 +109,7 @@ public class PlaylistJsonHandler {
         }
     }
     
-    public static void importPlaylists(Context context, File jsonFile) {
+    public static void importPlaylists(Context context, LifecycleOwner lifecycleOwner, File jsonFile) {
         try {
             // Read JSON file
             StringBuilder content = new StringBuilder();
@@ -124,9 +125,11 @@ public class PlaylistJsonHandler {
 
             // Get existing playlist names
             Set<String> existingNames = new HashSet<>();
-            for (String name : dbPlaylists.getAllPlaylistNames()) {
-                existingNames.add(name.toLowerCase());
-            }
+            dbPlaylists.getAllPlaylistNames().observe(lifecycleOwner, playlistNames -> {
+                for (String name : playlistNames) {
+                    existingNames.add(name.toLowerCase());
+                }
+            });
 
             // Process each playlist
             for (int i = 0; i < playlistsArray.length(); i++) {

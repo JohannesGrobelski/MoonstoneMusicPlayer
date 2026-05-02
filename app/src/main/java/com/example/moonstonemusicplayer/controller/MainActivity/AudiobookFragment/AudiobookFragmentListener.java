@@ -216,7 +216,7 @@ public class AudiobookFragmentListener implements AdapterView.OnItemClickListene
             break;
           }
           case 2:  {
-            showAlertDialogAddToPlaylists(audiobookFragment.getLayoutInflater(), folderListAdapter.getContext(), selectedSong);
+            showAlertDialogAddToPlaylists(audiobookFragment.getLayoutInflater(), audiobookFragment.getContext(), audiobookFragment.getViewLifecycleOwner(), selectedSong);
             break;
           }
           case 3: {

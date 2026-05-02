@@ -724,6 +724,8 @@ public class MediaPlayerService extends Service
   }
 
   private void showNotification(){
+    if(playListModel == null || playListModel.getCurrentSong() == null)return;
+
     // Create notification intent
     final Intent notificationIntent = new Intent(MediaPlayerService.this, PlayListActivity.class);
     notificationIntent.setAction(Intent.ACTION_MAIN);

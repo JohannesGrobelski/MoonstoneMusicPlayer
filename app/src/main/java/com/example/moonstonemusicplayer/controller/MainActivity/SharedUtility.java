@@ -9,6 +9,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import androidx.lifecycle.LifecycleOwner;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists;
@@ -16,14 +17,10 @@ import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 
 public class SharedUtility {
 
-    public static void showAlertDialogAddToPlaylists(LayoutInflater inflater, Context context, final Song song){
-        final String[] allPlaylistNames = DBPlaylists.getInstance(context).getAllPlaylistNames();
-
+    public static void showAlertDialogAddToPlaylists(LayoutInflater inflater, Context context, LifecycleOwner lifecycleOwner, final Song song){
         View dialogView = inflater.inflate(R.layout.add_to_playlist_layout, null);
         ListView lv_playlist_alert = dialogView.findViewById(R.id.lv_playlists_alert);
         final EditText et_addNewPlaylist = dialogView.findViewById(R.id.et_addNewPlaylist);
-
-        lv_playlist_alert.setAdapter(new ArrayAdapter<String>(context,android.R.layout.simple_list_item_1,allPlaylistNames));
 
         final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
         dialogBuilder.setView(dialogView);
@@ -41,12 +38,17 @@ public class SharedUtility {
 
         final AlertDialog alertDialog  = dialogBuilder.show();
 
-        lv_playlist_alert.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                DBPlaylists.getInstance(context).addToPlaylist(context,song,allPlaylistNames[position]);
-                alertDialog.dismiss();
-            }
-        });
+        DBPlaylists.getInstance(context).getAllPlaylistNames().observe(lifecycleOwner, allPlaylistNames -> {
+                    lv_playlist_alert.setAdapter(new ArrayAdapter<String>(context,android.R.layout.simple_list_item_1,allPlaylistNames));
+
+                    lv_playlist_alert.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            DBPlaylists.getInstance(context).addToPlaylist(context,song,allPlaylistNames[position]);
+                            alertDialog.dismiss();
+                        }
+                    });
+                }
+        );
     }
 }

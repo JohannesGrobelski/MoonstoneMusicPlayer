@@ -26,6 +26,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import timber.log.Timber;
@@ -41,6 +42,7 @@ import com.example.moonstonemusicplayer.view.mainactivity_fragments.PlayListFrag
 import com.woxthebox.draglistview.DragListView;
 
 import java.io.File;
+import java.util.Optional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -194,7 +196,7 @@ public class PlaylistFragmentListener implements View.OnClickListener, View.OnCr
         /** onContextItemSelected(MenuItem item) doesnt work*/
         public boolean onMenuItemClick(MenuItem item) {
           Song song = playListFragment.getPlaylistManager().getCurrentPlaylist().getPlaylist().get(position);
-          showAlertDialogAddToPlaylists(playListFragment.getLayoutInflater(), playListFragment.getContext(), song);
+          showAlertDialogAddToPlaylists(playListFragment.getLayoutInflater(), playListFragment.getContext(), playListFragment.getViewLifecycleOwner(), song);
           return false;
         }
       });
@@ -210,36 +212,32 @@ public class PlaylistFragmentListener implements View.OnClickListener, View.OnCr
       });
 
     } else {//the menu created if a playlist is clicked on
-      if(!((Playlist) playlistListAdapter.getItemList().get(position)).getName().equals(RECENTLY_ADDED)
-      && !((Playlist) playlistListAdapter.getItemList().get(position)).getName().equals(RECENTLY_PLAYED)
-      && !((Playlist) playlistListAdapter.getItemList().get(position)).getName().equals(MOSTLY_PLAYED)){
+      String playlistName = ((Playlist) playlistListAdapter.getItemList().get(position)).getName();
+      if(!playlistName.equals(RECENTLY_ADDED)
+      && !playlistName.equals(RECENTLY_PLAYED)
+      && !playlistName.equals(MOSTLY_PLAYED)){
         menu.add(0, 0, 0, "playlist löschen");
         menu.getItem(0).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
           @Override
           /** onContextItemSelected(MenuItem item) doesnt work*/
           public boolean onMenuItemClick(MenuItem item) {
             try {
-                 AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-                // Check if menu info is null
-                if (info == null) {
-                    // Handle the case where info is null
-                    Toast.makeText(playListFragment.getActivity(),"Could not delete playlist.", Toast.LENGTH_LONG).show();
-                    Timber.e( "MenuInfo is null for item: " + item.getTitle());
-                    return false; 
-                }        
+                Optional<Playlist> playlist = playListFragment.getPlaylistManager().getPlaylists()
+                                        .stream()
+                                        .filter(p -> p.getName().equals(playlistName))
+                                        .findFirst();
 
-                int index = info.position;
-                Playlist playlist = playListFragment.getPlaylistManager().getPlaylists().get(index);
+                if(!playlist.isPresent()){
+                    Toast.makeText(playListFragment.getActivity(),
+                        String.format("Could not delete playlist '%s'.", playlistName), 
+                        Toast.LENGTH_LONG).show();
+                    return false;
+                }
 
-                DBPlaylists.getInstance(playListFragment.getContext()).deletePlaylist(playlist);
-
+                DBPlaylists.getInstance(playListFragment.getContext()).deletePlaylist(playlist.get());
 
                 playListFragment.reloadPlaylistManager(playListFragment.getContext());
                 playListFragment.getPlaylistManager().setCurrentPlaylist(null);
-
-                List<Object> songs = new ArrayList<>();
-                songs.addAll(playListFragment.getPlaylistManager().getAllPlaylists());
-                setAdapter(songs);
 
                 return false;
             } catch (Exception e) {
@@ -258,9 +256,9 @@ public class PlaylistFragmentListener implements View.OnClickListener, View.OnCr
     Playlist currentPlaylist = playListFragment.getPlaylistManager().getCurrentPlaylist();
     currentPlaylist.getPlaylist().remove(song);
 
-    //NOTE: temporary disable this
-    //DBPlaylists.getInstance(playListFragment.getContext()).deleteFromPlaylist(song,
-    //       playListFragment.getPlaylistManager().getCurrentPlaylist().getName());
+
+    DBPlaylists.getInstance(playListFragment.getContext()).deleteFromPlaylist(song,
+        playListFragment.getPlaylistManager().getCurrentPlaylist().getName());
 
     playListFragment.reloadPlaylistManager(playListFragment.getContext());
     playListFragment.getPlaylistManager().setCurrentPlaylist(currentPlaylist);
@@ -333,14 +331,12 @@ public class PlaylistFragmentListener implements View.OnClickListener, View.OnCr
   }
 
 
-  private void showAlertDialogAddToPlaylists(LayoutInflater inflater, Context context, final Song song){
-    final String[] allPlaylistNames = DBPlaylists.getInstance(context).getAllPlaylistNames();
-
+  private void showAlertDialogAddToPlaylists(LayoutInflater inflater, Context context, LifecycleOwner lifecycleOwner, final Song song){
+    
     View dialogView = inflater.inflate(R.layout.add_to_playlist_layout, null);
     ListView lv_playlist_alert = dialogView.findViewById(R.id.lv_playlists_alert);
     final EditText et_addNewPlaylist = dialogView.findViewById(R.id.et_addNewPlaylist);
 
-    lv_playlist_alert.setAdapter(new ArrayAdapter<String>(context,android.R.layout.simple_list_item_1,allPlaylistNames));
 
     final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
     dialogBuilder.setView(dialogView);
@@ -358,12 +354,15 @@ public class PlaylistFragmentListener implements View.OnClickListener, View.OnCr
 
     final AlertDialog alertDialog  = dialogBuilder.show();
 
-    lv_playlist_alert.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-      @Override
-      public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        DBPlaylists.getInstance(context).addToPlaylist(context,song,allPlaylistNames[position]);
-        alertDialog.dismiss();
-      }
+    DBPlaylists.getInstance(context).getAllPlaylistNames().observe(lifecycleOwner, allPlaylistNames -> {
+        lv_playlist_alert.setAdapter(new ArrayAdapter<String>(context,android.R.layout.simple_list_item_1,allPlaylistNames));
+        lv_playlist_alert.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+          @Override
+          public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            DBPlaylists.getInstance(context).addToPlaylist(context,song,allPlaylistNames[position]);
+            alertDialog.dismiss();
+          }
+        });
     });
   }
 

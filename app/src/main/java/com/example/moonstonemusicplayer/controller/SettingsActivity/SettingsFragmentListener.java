@@ -103,7 +103,7 @@ public class SettingsFragmentListener {
             @Override
             public boolean onPreferenceClick(Preference preference){
                 if(preference.isEnabled()){
-                    driveManager.savePlaylists(settingsFragment.getContext());
+                    driveManager.savePlaylists(settingsFragment.getContext(), settingsFragment.getViewLifecycleOwner());
                 } else {
                     Toast.makeText(settingsFragment.getContext(), "You have to sign into Google Drive before you can export playlists.", Toast.LENGTH_LONG).show();
                 }
@@ -168,7 +168,7 @@ public class SettingsFragmentListener {
             InputStream inputStream = settingsFragment.getActivity().getContentResolver().openInputStream(uri);
             File tempFile = createTempFileFromInputStream(inputStream);
 
-            PlaylistJsonHandler.importPlaylists(settingsFragment.getContext(), tempFile);
+            PlaylistJsonHandler.importPlaylists(settingsFragment.getContext(), settingsFragment.getViewLifecycleOwner(), tempFile);
             Toast.makeText(settingsFragment.getContext(), "Playlists imported successfully", Toast.LENGTH_SHORT).show();
 
             // Cleanup temp file
@@ -204,10 +204,11 @@ public class SettingsFragmentListener {
 
     private void handleExportPlaylists() {
         try {
-            List<Playlist> playlists = PlaylistUtil.getAllPlaylists(settingsFragment.getActivity());
-            playlists = playlists.stream().filter(playlist -> !playlist.getName().equals(RECENTLY_ADDED) && !playlist.getName().equals(RECENTLY_PLAYED)).collect(Collectors.toList());
-            PlaylistJsonHandler.exportPlaylists(settingsFragment.getActivity(), playlists);
-            Toast.makeText(settingsFragment.getActivity(), "Playlists exported successfully", Toast.LENGTH_SHORT).show();
+            PlaylistUtil.getAllPlaylists(settingsFragment.getActivity()).observe(settingsFragment.getViewLifecycleOwner(), playlists -> {
+                playlists = playlists.stream().filter(playlist -> !playlist.getName().equals(RECENTLY_ADDED) && !playlist.getName().equals(RECENTLY_PLAYED)).collect(Collectors.toList());
+                PlaylistJsonHandler.exportPlaylists(settingsFragment.getActivity(), playlists);
+                Toast.makeText(settingsFragment.getActivity(), "Playlists exported successfully", Toast.LENGTH_SHORT).show();
+            });
         } catch (Exception e) {
             Toast.makeText(settingsFragment.getActivity(), "Failed to export playlists", Toast.LENGTH_SHORT).show();
             Timber.e( "Export failed: " + e.getMessage());
