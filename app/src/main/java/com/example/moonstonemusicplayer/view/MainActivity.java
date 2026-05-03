@@ -93,21 +93,6 @@ public class MainActivity extends AppCompatActivity {
         FloatingActionButton fab = findViewById(R.id.fab);
 
         mainActivityListener = new MainActivityListener(this,sectionsPagerAdapter.getFragments());
-        tabs.addOnTabSelectedListener(
-            new TabLayout.ViewPagerOnTabSelectedListener(viewPager) {
-              @Override
-              public void onTabSelected(TabLayout.Tab tab) {
-                super.onTabSelected(tab);
-                tabSelected = tab.getPosition();
-                if(tabSelected == 1){//playlist fragment
-                  if(sectionsPagerAdapter.getFragments()[1] != null
-                      && sectionsPagerAdapter.getFragments()[1] instanceof PlayListFragment){
-                        ((PlayListFragment) sectionsPagerAdapter.getFragments()[1])
-                          .playlistFragmentListener.reloadPlaylistManager();
-                  }
-                }
-              }
-            });
 
         fab.setOnClickListener(new View.OnClickListener() {
           @Override
@@ -125,8 +110,6 @@ public class MainActivity extends AppCompatActivity {
 
         showMediaAudioPermission();
         showMediaAudioPermission();
-
-        PlayListFragment.preloadPlaylistManager(this, this);
 
         deletetionIntentSenderLauncher =
                 registerForActivityResult(new ActivityResultContracts.StartIntentSenderForResult(), result -> {

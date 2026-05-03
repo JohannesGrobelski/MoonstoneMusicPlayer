@@ -228,13 +228,6 @@ public class AudiobookFragmentListener implements AdapterView.OnItemClickListene
             return true;
           }
         }
-
-        ((PlayListFragment) ((MainActivity) audiobookFragment.getActivity())
-                .sectionsPagerAdapter.getFragments()[2])
-                .getPlaylistManager().loadPlaylistsFromDB(audiobookFragment.getActivity());
-        ((PlayListFragment) ((MainActivity) audiobookFragment.getActivity())
-                .sectionsPagerAdapter.getFragments()[2])
-                .playlistFragmentListener.playlistListAdapter.notifyDataSetChanged();
       }
       return true;
     } catch (Exception e){

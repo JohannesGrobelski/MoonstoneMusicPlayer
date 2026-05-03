@@ -8,6 +8,7 @@
 
 package com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment;
 
+import static com.example.moonstonemusicplayer.model.Database.Playlist.PlaylistDao.FAVORITES;
 import static com.example.moonstonemusicplayer.model.Database.Playlist.PlaylistDao.MOSTLY_PLAYED;
 import static com.example.moonstonemusicplayer.model.Database.Playlist.PlaylistDao.RECENTLY_ADDED;
 import static com.example.moonstonemusicplayer.model.Database.Playlist.PlaylistDao.RECENTLY_PLAYED;
@@ -50,34 +51,23 @@ public class PlaylistListManager {
   private MediatorLiveData<List<Playlist>> mergedPlaylists = null;
   private Playlist recentlyPlayedPlaylist = null;
   private Playlist mostlyPlayedPlaylist = null;
+  private Playlist favoritesPlaylist = null;
   private List<Playlist> userPlaylists = null;
 
-  public PlaylistListManager(Context baseContext, LifecycleOwner lifecycleOwner) {
+  public PlaylistListManager(Context baseContext, LifecycleOwner lifecycleOwner, Runnable onPlaylistsLoaded) {
     this.context = baseContext;
     this.lifecycleOwner = lifecycleOwner;
-    loadPlaylistsFromDB(baseContext);
-  }
-
-  /** Update the playlists.
-   *
-   * @param context
-   */
-  public void updateData(Context context){
-    /*
-        playlists_backup.clear();
-        playlists.clear();
-        loadPlaylistsFromDB(context);
-        playlists.addAll(playlists_backup);
-    */
+    loadPlaylistsFromDB(baseContext, onPlaylistsLoaded);
   }
 
   /** loads local music and adds it to dataSource*/
-  public void loadPlaylistsFromDB(Context context){
+  private void loadPlaylistsFromDB(Context context, Runnable onPlaylistsLoaded){
     playlists_backup.clear();
     playlists.clear();
 
     recentlyPlayedPlaylist = null;
     mostlyPlayedPlaylist = null;
+    favoritesPlaylist = null;
     userPlaylists = null;
     mergedPlaylists = new MediatorLiveData<>();
    
@@ -93,20 +83,25 @@ public class PlaylistListManager {
           }
         }
         recentlyPlayedPlaylist = new Playlist(RECENTLY_PLAYED, temp);
-        mergePlaylists(mergedPlaylists, recentlyPlayedPlaylist, mostlyPlayedPlaylist, userPlaylists);
+        mergePlaylists(mergedPlaylists, recentlyPlayedPlaylist, mostlyPlayedPlaylist, favoritesPlaylist, userPlaylists);
     });
-
 
     //NOTE: MOSTLY_PLAYED aufbauen
     mergedPlaylists.addSource(DBPlaylists.getInstance(context).getMostlyPlayed(), songListMostlyPlayed -> {
         mostlyPlayedPlaylist = new Playlist(MOSTLY_PLAYED, songListMostlyPlayed);
-        mergePlaylists(mergedPlaylists, recentlyPlayedPlaylist, mostlyPlayedPlaylist, userPlaylists);
+        mergePlaylists(mergedPlaylists, recentlyPlayedPlaylist, mostlyPlayedPlaylist, favoritesPlaylist, userPlaylists);
+    });
+
+    //NOTE: FAVORITES aufbauen
+    mergedPlaylists.addSource(DBPlaylists.getInstance(context).getAllFavorites(context), songListFavorites -> {
+        favoritesPlaylist = new Playlist(FAVORITES, songListFavorites);
+        mergePlaylists(mergedPlaylists, recentlyPlayedPlaylist, mostlyPlayedPlaylist, favoritesPlaylist, userPlaylists);
     });
 
     //NOTE: Alle anderen Playlists aufbauen
     mergedPlaylists.addSource(DBPlaylists.getInstance(context).getAllPlaylists(context), allUserPlaylists -> {
         userPlaylists = allUserPlaylists;
-        mergePlaylists(mergedPlaylists, recentlyPlayedPlaylist, mostlyPlayedPlaylist, userPlaylists);
+        mergePlaylists(mergedPlaylists, recentlyPlayedPlaylist, mostlyPlayedPlaylist, favoritesPlaylist, userPlaylists);
     });
 
     //NOTE: Wenn wir alle Playlists gemerget haben -> in playlists_backup und playlists eintragen!
@@ -115,11 +110,16 @@ public class PlaylistListManager {
         playlists.clear();
         playlists_backup.addAll(result);
         playlists.addAll(result);
+
+        //NOTE: update Adapter etc.
+        if(onPlaylistsLoaded != null){
+            onPlaylistsLoaded.run();
+        }
     });
   }
 
-  private void mergePlaylists(MediatorLiveData<List<Playlist>> merged, Playlist recentlyPlayed, Playlist mostlyPlayed, List<Playlist> userPlaylists){
-      if(recentlyPlayed == null || mostlyPlayed == null || userPlaylists == null){
+  private void mergePlaylists(MediatorLiveData<List<Playlist>> merged, Playlist recentlyPlayed, Playlist mostlyPlayed, Playlist favorites, List<Playlist> userPlaylists){
+      if(recentlyPlayed == null || mostlyPlayed == null || userPlaylists == null || favorites == null){
         return;
       }
         
@@ -128,6 +128,7 @@ public class PlaylistListManager {
       allPlaylists.add(recentlyPlayed);
       allPlaylists.add(mostlyPlayed);
       allPlaylists.add(createRecentlyAddedPlaylist(context));
+      allPlaylists.add(favorites);
       allPlaylists.addAll(userPlaylists);
       
       merged.postValue(allPlaylists);

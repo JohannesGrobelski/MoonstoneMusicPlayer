@@ -51,11 +51,6 @@ public class PlayListFragment extends Fragment {
 
   private ImageView iv_playlistBack;
 
-
-  public static void preloadPlaylistManager(Context context, LifecycleOwner lifecycleOwner){
-    playlistListManager = new PlaylistListManager(context, lifecycleOwner);
-  }
-
   public static PlayListFragment newInstance() {
     PlayListFragment fragment = new PlayListFragment();
     return fragment;
@@ -112,7 +107,7 @@ public class PlayListFragment extends Fragment {
   public void onAttach(@NonNull Context context) {
     super.onAttach(context);
     if(playlistListManager == null){
-        playlistListManager = new PlaylistListManager(this.getContext(), getViewLifecycleOwner());
+        playlistListManager = new PlaylistListManager(this.getContext(), this, () -> update(false));
     }
   }
 
@@ -123,12 +118,8 @@ public class PlayListFragment extends Fragment {
   }
 
   public void update(boolean onSRLRefresh){
-    playlistListManager.updateData(this.getContext());
     playlistFragmentListener.updateAdapter();
-    Playlist recentlyAddedPlaylist = playlistListManager.setOnRecentlyAddedPlaylist();
-    if(onSRLRefresh){
-      playlistFragmentListener.updateAdapter(recentlyAddedPlaylist);
-    }
+    
   }
 
   @Override
@@ -138,10 +129,6 @@ public class PlayListFragment extends Fragment {
 
   public PlaylistListManager getPlaylistManager(){
     return playlistListManager;
-  }
-
-  public void reloadPlaylistManager(Context context){
-      playlistListManager = new PlaylistListManager(context, getViewLifecycleOwner()); 
   }
 
   public void searchMusic(String query) {

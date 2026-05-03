@@ -75,8 +75,13 @@ public class PlaylistFragmentListener implements View.OnClickListener, View.OnCr
 
   public void updateAdapter(){
     List<Object> playlists = new ArrayList<>();
-    playlists.addAll(playListFragment.getPlaylistManager().getAllPlaylists());
-    setAdapter(playlists);
+    if(playListFragment.getPlaylistManager().getCurrentPlaylist() != null){
+        List<Object> items = new ArrayList<Object>(playListFragment.getPlaylistManager().getCurrentPlaylist().getPlaylist());
+        setAdapter(items);
+    } else {
+        playlists.addAll(playListFragment.getPlaylistManager().getAllPlaylists());
+        setAdapter(playlists);
+    }
   }
 
   public void setAdapter(List<Object> itemList) {
@@ -118,14 +123,16 @@ public class PlaylistFragmentListener implements View.OnClickListener, View.OnCr
         @Override
         public void onItemDragEnded(int fromPosition, int toPosition) {
           // Handle drag end - update your data model here if needed
-          if (!currentPlaylist.isEmpty() && fromPosition != toPosition) {
-            Playlist playlist = new Playlist(currentPlaylist, playlistListAdapter.getItemList().stream().map(o -> (Song) o).collect(Collectors.toList()));
+          if(!currentPlaylist.isEmpty() && fromPosition != toPosition) {
+              if(playlistListAdapter.getItemList().get(fromPosition) instanceof Song
+              && playlistListAdapter.getItemList().get(toPosition) instanceof Song ){
+                Playlist playlist = new Playlist(currentPlaylist, playlistListAdapter.getItemList().stream().map(o -> (Song) o).collect(Collectors.toList()));
 
-            //NOTE: drag list view does already manipulate the data list (do not change playlistListAdapter.getItemList())!!!
-            DBPlaylists dbPlaylists = DBPlaylists.getInstance(playListFragment.getContext());
-            dbPlaylists.changePlaylistOrder(currentPlaylist, playlistListAdapter.getItemList().stream().map(o -> (Song) o).collect(Collectors.toList()));
-            playListFragment.reloadPlaylistManager(playListFragment.getContext());
-            playListFragment.getPlaylistManager().setCurrentPlaylist(playlist);
+                //NOTE: drag list view does already manipulate the data list (do not change playlistListAdapter.getItemList())!!!
+                DBPlaylists dbPlaylists = DBPlaylists.getInstance(playListFragment.getContext());
+                dbPlaylists.changePlaylistOrder(currentPlaylist, playlistListAdapter.getItemList().stream().map(o -> (Song) o).collect(Collectors.toList()));
+                playListFragment.getPlaylistManager().setCurrentPlaylist(playlist);
+              }
           }
         }
       });
@@ -236,7 +243,6 @@ public class PlaylistFragmentListener implements View.OnClickListener, View.OnCr
 
                 DBPlaylists.getInstance(playListFragment.getContext()).deletePlaylist(playlist.get());
 
-                playListFragment.reloadPlaylistManager(playListFragment.getContext());
                 playListFragment.getPlaylistManager().setCurrentPlaylist(null);
 
                 return false;
@@ -260,37 +266,11 @@ public class PlaylistFragmentListener implements View.OnClickListener, View.OnCr
     DBPlaylists.getInstance(playListFragment.getContext()).deleteFromPlaylist(song,
         playListFragment.getPlaylistManager().getCurrentPlaylist().getName());
 
-    playListFragment.reloadPlaylistManager(playListFragment.getContext());
     playListFragment.getPlaylistManager().setCurrentPlaylist(currentPlaylist);
 
     List<Object> songs = new ArrayList<>();
     songs.addAll(currentPlaylist.getPlaylist());
     setAdapter(songs);
-  }
-
-
-  public void reloadPlaylistManager() {
-    Timber.d("onResume");
-    if(playListFragment.getPlaylistManager() != null){
-      Playlist currentPlaylist = playListFragment.getPlaylistManager().getCurrentPlaylist();
-      playListFragment.getPlaylistManager().loadPlaylistsFromDB(playListFragment.getContext());
-
-      List<Object> currentItems = new ArrayList<>();
-
-      if(currentPlaylist != null){
-        currentPlaylist = playListFragment.getPlaylistManager().getPlaylist(currentPlaylist.getName());
-        if(currentPlaylist != null){
-          playListFragment.getPlaylistManager().setCurrentPlaylist(currentPlaylist);
-
-          currentItems.addAll(currentPlaylist.getPlaylist());
-          setAdapter(currentItems);
-          playListFragment.getPlaylistManager().setCurrentPlaylist(currentPlaylist);
-        }
-      } else {
-        currentItems.addAll(playListFragment.getPlaylistManager().getPlaylists());
-        setAdapter(currentItems);
-      }
-    }
   }
 
   public String getCurrentPlaylist() {

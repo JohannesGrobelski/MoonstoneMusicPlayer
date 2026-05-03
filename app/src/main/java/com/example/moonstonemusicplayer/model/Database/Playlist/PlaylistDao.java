@@ -12,7 +12,7 @@ public interface PlaylistDao {
     public final static String RECENTLY_ADDED = "RecentlyAdded";
     public final static String MOSTLY_PLAYED = "MostlyPlayed";
    
-    @Query("SELECT DISTINCT PlaylistName FROM PlaylistEntry WHERE PlaylistName != 'RecentlyPlayed' AND PlaylistName != 'MostlyPlayed'")
+    @Query("SELECT DISTINCT PlaylistName FROM PlaylistEntry WHERE PlaylistName != 'RecentlyPlayed' AND PlaylistName != 'MostlyPlayed' AND PlaylistName != 'Favorites'")
     public LiveData<String[]> getAllPlaylistNames();
 
     @Query("SELECT SongURL FROM PlaylistEntry WHERE PlaylistName = 'Favorites'")
