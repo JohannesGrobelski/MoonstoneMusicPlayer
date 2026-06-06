@@ -52,6 +52,7 @@ import com.woxthebox.draglistview.DragListView;
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.model.NextSongToPlayUtility;
 import com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists;
+import com.example.moonstonemusicplayer.model.Database.Playlist.PlaylistDao;
 import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
 import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.Playlist;
 import com.example.moonstonemusicplayer.model.PlayListActivity.PlaylistManager;
@@ -716,9 +717,12 @@ public class PlayListActivityListener
   }
 
   public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-    menu.add(0, 1, 0, "add to favorites");
-    menu.add(0, 2, 0, "add to playlist");
-    menu.add(0, 3, 0, "play as next song");
+    menu.add(0, 1, 0, "zu Favoriten hinzufügen");
+    menu.add(0, 2, 0, "zu Playlist hinzufügen");
+    menu.add(0, 4, 0, "als nächstes spielen");
+    if(!List.of(PlaylistDao.MOSTLY_PLAYED, PlaylistDao.RECENTLY_ADDED, PlaylistDao.RECENTLY_PLAYED).contains(playlistName)){
+        menu.add(0, 4, 0, "aus Playlist löschen");
+    }
   }
 
   public boolean onContextItemSelected(MenuItem item) {
@@ -738,6 +742,27 @@ public class PlayListActivityListener
         }
         case 3: {
           NextSongToPlayUtility.setSongToPlayNext(selectedSong);
+          break;
+        }
+        case 4:  {
+          if(selectedSong.equals(mediaPlayerService.getCurrentSong())){
+            mediaPlayerService.nextSong();
+          }
+          List<Song> songlist = songListAdapter.getItemList().stream().map(i -> BrowserManager.getSongFromAudioFile(((File) i))).collect(Collectors.toList());
+
+          songlist.remove(songListAdapter.getLastLongClickedPosition());
+          Playlist updatedPlaylist = new Playlist(playlistName, songlist);
+
+          //update playlist in mediaservice
+          mediaPlayerService.updatePlaylist(updatedPlaylist);
+
+          //update playlist in playlistmanager
+          playlistManager.updatePlaylist(updatedPlaylist);
+
+          songListAdapter.notifyItemRemoved(songListAdapter.getLastLongClickedPosition());
+
+          DBPlaylists.getInstance(playListActivity).deleteFromPlaylist(selectedSong, playlistName);
+
           break;
         }
       }

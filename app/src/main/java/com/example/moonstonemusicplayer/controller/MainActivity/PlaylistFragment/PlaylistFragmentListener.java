@@ -95,8 +95,16 @@ public class PlaylistFragmentListener implements View.OnClickListener, View.OnCr
         if (clickItem != null) {
           if (clickItem instanceof Playlist) {
             List<Object> newItemList = new ArrayList<>();
-            newItemList.addAll(((Playlist) clickItem).getPlaylist());
-            BrowserManager.grabThumbnails(((Playlist) clickItem).getPlaylist().stream().map(s -> new File(s.getPath())).collect(Collectors.toList()));
+            newItemList.addAll(((Playlist) clickItem).getPlaylist()
+                                .stream()
+                                .filter(s -> s != null && s.getPath() != null)
+                                .collect(Collectors.toList())
+                              );
+            BrowserManager.grabThumbnails(((Playlist) clickItem).getPlaylist()
+                    .stream()
+                    .filter(s -> s != null && s.getPath() != null)
+                    .map(s -> new File(s.getPath()))
+                    .collect(Collectors.toList()));
             setAdapter(newItemList);
             playListFragment.getPlaylistManager().setCurrentPlaylist((Playlist) clickItem);
             playListFragment.srl_playlist.setEnabled(
@@ -169,7 +177,9 @@ public class PlaylistFragmentListener implements View.OnClickListener, View.OnCr
   public static File[] getPlaylistSonglist(){
     List<File> fileList = new ArrayList<>();
     for(Song song : Playlist.getPlaylist()){
-      fileList.add(new File(song.getPath()));
+        if(song != null && song.getPath() != null){
+            fileList.add(new File(song.getPath()));
+        }
     }
     return fileList.toArray(new File[0]);
   }
