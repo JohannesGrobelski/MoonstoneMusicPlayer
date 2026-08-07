@@ -4,19 +4,16 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.graphics.Color;
-
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceManager;
 
-import com.example.moonstonemusicplayer.controller.SettingsActivity.SettingsFragmentListener;
-import com.github.koston.preference.ColorPreferenceFragmentCompat;
-import com.github.koston.preference.ColorPreference;
-
 import com.example.moonstonemusicplayer.R;
+import com.example.moonstonemusicplayer.controller.SettingsActivity.SettingsFragmentListener;
+import com.github.koston.preference.ColorPreference;
+import com.github.koston.preference.ColorPreferenceFragmentCompat;
 
 public class SettingsFragment extends ColorPreferenceFragmentCompat {
 
@@ -108,9 +105,5 @@ public class SettingsFragment extends ColorPreferenceFragmentCompat {
 
     public ActivityResultLauncher<Intent> getImportPlaylistLauncher() {
         return importPlaylistLauncher;
-    }
-
-    public void handleSignInResult(Intent data) {
-        settingsFragmentListener.handleSignInResult(data);
     }
 }

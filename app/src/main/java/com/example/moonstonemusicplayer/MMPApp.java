@@ -1,11 +1,11 @@
 package com.example.moonstonemusicplayer;
 
-import timber.log.Timber;
-import android.util.Log;
 import android.content.Context;
 import android.widget.Toast;
 
-import com.example.moonstonemusicplayer.controller.Utility.logging.*;
+import com.example.moonstonemusicplayer.controller.Utility.logging.PersistentLogTree;
+
+import timber.log.Timber;
 
 public class MMPApp extends android.app.Application {
 

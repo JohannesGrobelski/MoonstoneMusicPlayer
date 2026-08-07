@@ -13,29 +13,20 @@ import static com.example.moonstonemusicplayer.controller.PlayListActivity.SongL
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.res.ColorStateList;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
-import android.media.ThumbnailUtils;
-import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.core.widget.ImageViewCompat;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.Utility.DrawableUtils;
-import com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists;
 import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import com.example.moonstonemusicplayer.view.settingsactivity_fragments.SettingsFragment;

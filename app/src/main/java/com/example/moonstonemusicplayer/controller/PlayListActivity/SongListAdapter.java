@@ -9,11 +9,8 @@
 package com.example.moonstonemusicplayer.controller.PlayListActivity;
 
 import android.content.Context;
-import android.content.res.ColorStateList;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,15 +19,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.core.widget.ImageViewCompat;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
-import com.example.moonstonemusicplayer.controller.PlayListActivity.PlayListActivityListener;
 import com.example.moonstonemusicplayer.view.settingsactivity_fragments.SettingsFragment;
 import com.woxthebox.draglistview.DragItemAdapter;
+
 import java.io.File;
 import java.util.List;
 

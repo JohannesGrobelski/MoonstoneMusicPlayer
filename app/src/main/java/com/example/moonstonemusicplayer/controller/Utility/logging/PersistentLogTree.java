@@ -1,21 +1,22 @@
 package com.example.moonstonemusicplayer.controller.Utility.logging;
 
-import timber.log.Timber;
-import androidx.annotation.NonNull;
-import android.content.Context;
+import static java.util.Map.entry;
 
-import java.io.IOException;
-import java.util.Map;
+import android.content.Context;
+import android.util.Log;
+
+import androidx.annotation.NonNull;
+
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.BufferedWriter;
-import java.io.StringWriter;
 import java.io.PrintWriter;
-
-import android.util.Log;
-import static java.util.Map.entry;    
-import java.util.Date;
+import java.io.StringWriter;
 import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Map;
+
+import timber.log.Timber;
 
 public class PersistentLogTree extends Timber.DebugTree {
 

@@ -18,26 +18,22 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
-
 import android.widget.Toast;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.json.JSONException;
 
 import com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists;
 import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.Playlist;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.FileReader;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.OutputStream;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.HashSet;
 
 import timber.log.Timber;
 

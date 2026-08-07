@@ -11,9 +11,10 @@ package com.example.moonstonemusicplayer.model.Database.Playlist;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import timber.log.Timber;
 
 import androidx.annotation.NonNull;
+
+import timber.log.Timber;
 
 public class DBHelperPlaylists extends SQLiteOpenHelper {
 

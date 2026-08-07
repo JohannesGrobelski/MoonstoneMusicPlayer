@@ -8,14 +8,12 @@
 
 package com.example.moonstonemusicplayer.view;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
+import static com.example.moonstonemusicplayer.view.mainactivity_fragments.AudiobookFragment.FOLDERAUDIOBOOKINDEXEXTRA;
+import static com.example.moonstonemusicplayer.view.mainactivity_fragments.FolderFragment.FOLDERSONGINDEXEXTRA;
 
 import android.content.pm.ActivityInfo;
 import android.content.res.ColorStateList;
 import android.content.res.Configuration;
-import android.graphics.PorterDuff;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.ContextMenu;
@@ -30,22 +28,19 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
 import com.example.moonstonemusicplayer.R;
-import com.example.moonstonemusicplayer.controller.MainActivity.AlbumsFragment.AlbumFragmentListener;
-import com.example.moonstonemusicplayer.controller.MainActivity.ArtistFragment.ArtistFragmentListener;
 import com.example.moonstonemusicplayer.controller.MainActivity.AudiobookFragment.AudiobookFragmentListener;
 import com.example.moonstonemusicplayer.controller.MainActivity.FolderFragment.FolderFragmentListener;
-import com.example.moonstonemusicplayer.controller.MainActivity.GenreFragment.GenreFragmentListener;
 import com.example.moonstonemusicplayer.controller.MainActivity.PlaylistFragment.PlaylistFragmentListener;
 import com.example.moonstonemusicplayer.controller.Utility.DrawableUtils;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.AudiobookFragment;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.FolderFragment;
 import com.example.moonstonemusicplayer.view.settingsactivity_fragments.SettingsFragment;
 import com.woxthebox.draglistview.DragListView;
-
-import static com.example.moonstonemusicplayer.controller.MainActivity.GenreFragment.GenreFragmentListener.GENRELISTEXTRA;
-import static com.example.moonstonemusicplayer.view.mainactivity_fragments.AudiobookFragment.FOLDERAUDIOBOOKINDEXEXTRA;
-import static com.example.moonstonemusicplayer.view.mainactivity_fragments.FolderFragment.FOLDERSONGINDEXEXTRA;
 
 import java.io.File;
 
@@ -101,9 +96,6 @@ public class PlayListActivity extends AppCompatActivity {
     } else if(getIntent().hasExtra(AudiobookFragment.FOLDERAUDIOBOOKINDEXEXTRA)) {
       song_index = getIntent().getIntExtra(FOLDERAUDIOBOOKINDEXEXTRA, 0);
       playListActivityListener = new com.example.moonstonemusicplayer.controller.PlayListActivity.PlayListActivityListener(this, AudiobookFragmentListener.getAudiobookAudiobooklist(), song_index, playlist_name);
-    } else if(getIntent().hasExtra(GENRELISTEXTRA)){
-      song_index = getIntent().getIntExtra(GENRELISTEXTRA,0);
-      playListActivityListener = new com.example.moonstonemusicplayer.controller.PlayListActivity.PlayListActivityListener(this, GenreFragmentListener.getGenreSonglist(),song_index, playlist_name);
     }
     else if(getIntent().hasExtra(PlaylistFragmentListener.PLAYLISTINDEXEXTRA)){
       song_index = getIntent().getIntExtra(PlaylistFragmentListener.PLAYLISTINDEXEXTRA,0);
@@ -111,14 +103,6 @@ public class PlayListActivity extends AppCompatActivity {
         playlist_name = getIntent().getStringExtra(PlaylistFragmentListener.PLAYLISTNAMEEXTRA);
       }
       playListActivityListener = new com.example.moonstonemusicplayer.controller.PlayListActivity.PlayListActivityListener(this, PlaylistFragmentListener.getPlaylistSonglist(),song_index,playlist_name);
-    }
-    else if(getIntent().hasExtra(AlbumFragmentListener.ALBUMLISTEXTRA)){
-      song_index = getIntent().getIntExtra(AlbumFragmentListener.ALBUMLISTEXTRA,0);
-      playListActivityListener = new com.example.moonstonemusicplayer.controller.PlayListActivity.PlayListActivityListener(this, AlbumFragmentListener.getAlbumSonglist(),song_index, playlist_name);
-    }
-    else if(getIntent().hasExtra(ArtistFragmentListener.ARTISTALBUMLISTEXTRA)){
-      song_index = getIntent().getIntExtra(ArtistFragmentListener.ARTISTALBUMLISTEXTRA,0);
-      playListActivityListener = new com.example.moonstonemusicplayer.controller.PlayListActivity.PlayListActivityListener(this, ArtistFragmentListener.getAlbumSonglist(),song_index, playlist_name);
     } else if(getIntent().hasExtra(MainActivity.SONG_DIRECT_EXTRA)){
       song_index = 0;
       String fileURL = getIntent().getStringExtra(MainActivity.SONG_DIRECT_EXTRA);

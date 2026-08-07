@@ -15,6 +15,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.media.MediaMetadataRetriever;
 import android.media.ThumbnailUtils;
@@ -52,6 +53,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -72,13 +74,13 @@ public class BrowserManager {
     void refreshAfterSongDeletion();
   }
 
+  private static Context appContext;
   private static BrowserManager instance;
   private static List<File> audioFiles = new ArrayList<>();
 
-  private static Map<File, Song> audiofileSongMap = new HashMap<>();
-  private static Map<File, Audiobook> audioFileAudiobookMap = new HashMap<>();
-  private static Map<String, Bitmap> thumbnailVault = new HashMap<>();
-
+  private static Map<File, Song> audiofileSongMap = Collections.synchronizedMap(new HashMap<>());
+  private static Map<File, Audiobook> audioFileAudiobookMap = Collections.synchronizedMap(new HashMap<>());
+  private static Map<String, Bitmap> thumbnailVault = Collections.synchronizedMap(new HashMap<>());
   private static Map<String, List<Song>> genreListMap = new HashMap<>();
 
   private static Map<String, List<Song>> artistListMap = new HashMap<>();
@@ -86,10 +88,28 @@ public class BrowserManager {
   private static Map<String, List<Song>> albumListMap = new HashMap<>();
 
   private static final ExecutorService executor = Executors.newSingleThreadExecutor();
+  private static final ExecutorService thumbnailOnDemandExecutor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+  private static final Set<String> thumbnailsInProgress = Collections.synchronizedSet(new HashSet<>());
   private File rootFolder;
 
+  private static File getThumbnailCacheDir() {
+    File dir = new File(appContext.getCacheDir(), "thumbnails");
+    if (!dir.exists()) dir.mkdirs();
+    return dir;
+  }
+
+  /** erzeugt einen sicheren, eindeutigen Dateinamen aus dem Songpfad */
+  private static String getThumbnailCacheFileName(String filePath) {
+    // einfacher, kollisionsarmer Hash statt MD5-Lib-Abhängigkeit
+    return Integer.toHexString(filePath.hashCode()) + ".jpg";
+  }
+
+  private static File getThumbnailCacheFile(String filePath) {
+    return new File(getThumbnailCacheDir(), getThumbnailCacheFileName(filePath));
+  }
   private BrowserManager(Context baseContext) {
-      this.rootFolder = Environment.getExternalStorageDirectory();
+    this.rootFolder = Environment.getExternalStorageDirectory();
+    this.appContext = baseContext.getApplicationContext();
     audioFiles = getAllAudioFiles(baseContext);
     grabThumbnails(audioFiles);
   }
@@ -453,11 +473,11 @@ public class BrowserManager {
     // Use number of available processors to determine thread pool size
     int processors = Runtime.getRuntime().availableProcessors();
     // Create a thread pool with size based on available processors
-    ExecutorService executor = Executors.newFixedThreadPool(processors);
+    ExecutorService bulkExecutor = Executors.newFixedThreadPool(processors);
 
       for (File songFile : songFiles) {
         if(thumbnailVault.containsKey(songFile.getPath()))continue;
-        executor.submit(() -> {
+        bulkExecutor.submit(() -> {
           try {
             retrieveBitmapFromAudioFile(songFile.getPath());
             Timber.i("ThumbnailProcessor processed "+thumbnailVault.size()+" of "+songFiles.size());
@@ -469,11 +489,11 @@ public class BrowserManager {
         });
       }
 
-      // Shutdown the executor and wait for all tasks to complete
-      executor.shutdown();
+      // Shutdown the bulkExecutor and wait for all tasks to complete
+      bulkExecutor.shutdown();
       try {
         // Wait up to 5 minutes for all tasks to complete
-        executor.awaitTermination(5, TimeUnit.MINUTES);
+        bulkExecutor.awaitTermination(5, TimeUnit.MINUTES);
       } catch (InterruptedException e) {
         Thread.currentThread().interrupt();
         Timber.e( "Thumbnail processing interrupted", e);
@@ -481,16 +501,43 @@ public class BrowserManager {
   }
 
   private static Bitmap retrieveBitmapFromAudioFile(String filePath) {
+    // 1. zuerst im Disk-Cache nachsehen
+    File cacheFile = getThumbnailCacheFile(filePath);
+    if (cacheFile.exists()) {
+      Bitmap cached = BitmapFactory.decodeFile(cacheFile.getAbsolutePath());
+      if (cached != null) {
+        thumbnailVault.put(filePath, cached);
+        return cached;
+      }
+      // korrupte Cache-Datei -> löschen und neu generieren
+      cacheFile.delete();
+    }
+
+    // 2. nicht im Cache -> aus Audiodatei extrahieren (teuer)
     try {
       Bitmap bitmap = ThumbnailUtils.createAudioThumbnail(
               filePath,
               MediaStore.Images.Thumbnails.MINI_KIND
       );
       thumbnailVault.put(filePath, bitmap);
+
+      // 3. auf Disk persistieren für den nächsten App-Start
+      if (bitmap != null) {
+        saveThumbnailToDiskCache(bitmap, cacheFile);
+      }
+
       return bitmap;
     } catch (Exception e) {
       Timber.e( "Error loading thumbnail", e);
       return null;
+    }
+  }
+
+  private static void saveThumbnailToDiskCache(Bitmap bitmap, File cacheFile) {
+    try (java.io.FileOutputStream fos = new java.io.FileOutputStream(cacheFile)) {
+      bitmap.compress(Bitmap.CompressFormat.JPEG, 85, fos);
+    } catch (Exception e) {
+      Timber.e( "Error saving thumbnail to disk cache", e);
     }
   }
 
@@ -820,36 +867,29 @@ public class BrowserManager {
                 .into(view);
       }
     } else {
+      // verhindert doppeltes Laden derselben Datei durch parallele Aufrufe (z.B. beim Scrollen)
+      if (!thumbnailsInProgress.add(filePath)) {
+        return;
+      }
       // If not in cache, fetch the thumbnail in a background thread and then load it
-      new Thread(() -> {
-        // Retrieve the thumbnail in the background
-        Bitmap bitmap = retrieveBitmapFromAudioFile(filePath);
+      thumbnailOnDemandExecutor.submit(() -> {
+        try {
+          // Retrieve the thumbnail in the background
+          Bitmap bitmap = retrieveBitmapFromAudioFile(filePath);
 
-        // Once the thumbnail is retrieved, update the UI on the main thread
-        if (bitmap != null) {
-          thumbnailVault.put(filePath, bitmap);
-
-          // Update the ImageView on the UI thread
-          new Handler(Looper.getMainLooper()).post(new Runnable() {
-            @Override
-            public void run() {
-              Glide.with(view.getContext())
-                      .load(bitmap)
-                      .into(view);
-            }
-          });
-        } else {
-          // If thumbnail is not available, fallback to default image
-          new Handler(Looper.getMainLooper()).post(new Runnable() {
-            @Override
-            public void run() {
-              Glide.with(view.getContext())
-                      .load(fallbackDrawable)
-                      .into(view);
-            }
-          });
+          // Once the thumbnail is retrieved, update the UI on the main thread
+          if (bitmap != null) {
+            thumbnailVault.put(filePath, bitmap);
+            new Handler(Looper.getMainLooper()).post(() ->
+                    Glide.with(view.getContext()).load(bitmap).into(view));
+          } else {
+            new Handler(Looper.getMainLooper()).post(() ->
+                    Glide.with(view.getContext()).load(fallbackDrawable).into(view));
+          }
+        } finally {
+            thumbnailsInProgress.remove(filePath);
         }
-      }).start();
+      });
     }
   }
 

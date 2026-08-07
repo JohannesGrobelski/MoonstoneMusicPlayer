@@ -8,13 +8,6 @@
 
 package com.example.moonstonemusicplayer.model.PlayListActivity;
 
-import com.example.moonstonemusicplayer.model.PlayListActivity.Audiofile;
-import android.net.Uri;
-
-import androidx.annotation.NonNull;
-
-import java.io.File;
-
 public class Song extends Audiofile implements Cloneable{
   String name;
   String path;

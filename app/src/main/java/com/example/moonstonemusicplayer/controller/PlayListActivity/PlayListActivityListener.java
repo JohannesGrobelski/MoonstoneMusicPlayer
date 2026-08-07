@@ -21,7 +21,6 @@ import android.content.res.Configuration;
 import android.media.AudioManager;
 import android.os.Handler;
 import android.os.IBinder;
-
 import android.view.ContextMenu;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
@@ -43,19 +42,18 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.example.moonstonemusicplayer.controller.Utility.DrawableUtils;
-import com.example.moonstonemusicplayer.view.PlayListActivity;
-import com.example.moonstonemusicplayer.view.settingsactivity_fragments.SettingsFragment;
-import com.woxthebox.draglistview.DragListView;
-
 import com.example.moonstonemusicplayer.R;
-import com.example.moonstonemusicplayer.model.NextSongToPlayUtility;
+import com.example.moonstonemusicplayer.controller.Utility.DrawableUtils;
 import com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists;
 import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
 import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.Playlist;
-import com.example.moonstonemusicplayer.model.PlayListActivity.PlaylistManager;
+import com.example.moonstonemusicplayer.model.NextSongToPlayUtility;
 import com.example.moonstonemusicplayer.model.PlayListActivity.PlayListModel;
+import com.example.moonstonemusicplayer.model.PlayListActivity.PlaylistManager;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
+import com.example.moonstonemusicplayer.view.PlayListActivity;
+import com.example.moonstonemusicplayer.view.settingsactivity_fragments.SettingsFragment;
+import com.woxthebox.draglistview.DragListView;
 
 import java.io.File;
 import java.util.ArrayList;

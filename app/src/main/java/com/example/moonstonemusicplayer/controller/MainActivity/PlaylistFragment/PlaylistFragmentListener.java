@@ -16,7 +16,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -26,9 +25,8 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
-import timber.log.Timber;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists;
@@ -44,6 +42,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import timber.log.Timber;
 
 public class PlaylistFragmentListener implements View.OnClickListener, View.OnCreateContextMenuListener, BrowserManager.AfterFileDeletion {
   

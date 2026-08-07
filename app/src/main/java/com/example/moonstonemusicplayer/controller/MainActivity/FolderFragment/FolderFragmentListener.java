@@ -11,7 +11,6 @@ package com.example.moonstonemusicplayer.controller.MainActivity.FolderFragment;
 import static com.example.moonstonemusicplayer.controller.MainActivity.SharedUtility.showAlertDialogAddToPlaylists;
 
 import android.content.Intent;
-
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,13 +20,12 @@ import android.widget.Toast;
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists;
 import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
+import com.example.moonstonemusicplayer.model.NextSongToPlayUtility;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import com.example.moonstonemusicplayer.view.MainActivity;
 import com.example.moonstonemusicplayer.view.PlayListActivity;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.FolderFragment;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.PlayListFragment;
-
-import com.example.moonstonemusicplayer.model.NextSongToPlayUtility;
 
 import java.io.File;
 import java.util.ArrayList;

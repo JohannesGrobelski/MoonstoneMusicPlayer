@@ -8,6 +8,11 @@
 
 package com.example.moonstonemusicplayer.controller.MainActivity.PlaylistFragment;
 
+import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.FAVORITES_PLAYLIST_NAME;
+import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.MOSTLY_PLAYED_PLAYLIST_NAME;
+import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.RECENTLY_ADDED_PLAYLIST_NAME;
+import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.RECENTLY_PLAYED_PLAYLIST_NAME;
+
 import android.content.Context;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
@@ -28,11 +33,6 @@ import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.PlayListFragment;
 import com.example.moonstonemusicplayer.view.settingsactivity_fragments.SettingsFragment;
 import com.woxthebox.draglistview.DragItemAdapter;
-
-import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.FAVORITES_PLAYLIST_NAME;
-import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.MOSTLY_PLAYED_PLAYLIST_NAME;
-import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.RECENTLY_ADDED_PLAYLIST_NAME;
-import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.RECENTLY_PLAYED_PLAYLIST_NAME;
 
 import java.util.ArrayList;
 import java.util.List;

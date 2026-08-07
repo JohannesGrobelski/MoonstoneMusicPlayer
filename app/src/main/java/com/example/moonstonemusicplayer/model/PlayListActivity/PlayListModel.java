@@ -8,16 +8,16 @@
 
 package com.example.moonstonemusicplayer.model.PlayListActivity;
 
-import java.io.File;
-import java.util.List;
-
+import static com.example.moonstonemusicplayer.model.PlayListActivity.PlayListModel.REPEATMODE.ALL;
 import static com.example.moonstonemusicplayer.model.PlayListActivity.PlayListModel.REPEATMODE.NONE;
 import static com.example.moonstonemusicplayer.model.PlayListActivity.PlayListModel.REPEATMODE.ONESONG;
-import static com.example.moonstonemusicplayer.model.PlayListActivity.PlayListModel.REPEATMODE.ALL;
 import static com.example.moonstonemusicplayer.model.PlayListActivity.Song.getIdentifier;
 
-import com.example.moonstonemusicplayer.model.NextSongToPlayUtility;
 import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
+import com.example.moonstonemusicplayer.model.NextSongToPlayUtility;
+
+import java.io.File;
+import java.util.List;
 
 public class PlayListModel {
   private final List<File> playlist;

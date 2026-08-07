@@ -10,14 +10,10 @@ package com.example.moonstonemusicplayer.model.Database;
 
 import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.FAVORITES_PLAYLIST_NAME;
 import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.MOSTLY_PLAYED_PLAYLIST_NAME;
-import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.RECENTLY_ADDED_PLAYLIST_NAME;
 import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.RECENTLY_PLAYED_PLAYLIST_NAME;
 
 import android.content.Context;
-import android.graphics.Typeface;
 
-
-import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.model.Database.Playcountlist.DBPlaycountList;
 import com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists;
 import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.Playlist;

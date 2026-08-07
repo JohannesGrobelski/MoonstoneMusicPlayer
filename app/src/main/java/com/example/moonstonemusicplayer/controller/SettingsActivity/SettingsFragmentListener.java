@@ -6,16 +6,13 @@ import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylis
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
-
 import android.widget.Toast;
 
 import androidx.preference.Preference;
 
 import com.example.moonstonemusicplayer.controller.PlayListActivity.PlaylistJsonHandler;
 import com.example.moonstonemusicplayer.model.Database.PlaylistUtil;
-import com.example.moonstonemusicplayer.model.GoogleDriveManager;
 import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.Playlist;
-import com.example.moonstonemusicplayer.view.SettingsActivity;
 import com.example.moonstonemusicplayer.view.settingsactivity_fragments.SettingsFragment;
 import com.google.android.gms.auth.api.identity.AuthorizationResult;
 import com.google.android.gms.auth.api.identity.Identity;
@@ -38,7 +35,6 @@ public class SettingsFragmentListener {
 
     
     private final SettingsFragment settingsFragment;
-    private GoogleDriveManager driveManager;
 
     public SettingsFragmentListener(SettingsFragment settingsFragment) {
         this.settingsFragment = settingsFragment;
@@ -78,35 +74,6 @@ public class SettingsFragmentListener {
             @Override
             public boolean onPreferenceClick(Preference preference){
                 handleExportPlaylists();
-                return true;
-            }
-        });
-        settingsFragment.signIntoGdrivePreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener(){
-            @Override
-            public boolean onPreferenceClick(Preference preference){
-                ((SettingsActivity) settingsFragment.getActivity()).startAuthorizationRequest();
-                return true;
-            }
-        });
-        settingsFragment.importPlaylistsGdrivePreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener(){
-            @Override
-            public boolean onPreferenceClick(Preference preference){
-                if(preference.isEnabled()){
-                    driveManager.loadPlaylists();
-                } else {
-                    Toast.makeText(settingsFragment.getContext(), "You have to sign into Google Drive before you can import playlists.", Toast.LENGTH_LONG).show();
-                }
-                return true;
-            }
-        });
-        settingsFragment.exportPlaylistsGdrivePreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener(){
-            @Override
-            public boolean onPreferenceClick(Preference preference){
-                if(preference.isEnabled()){
-                    driveManager.savePlaylists(settingsFragment.getContext());
-                } else {
-                    Toast.makeText(settingsFragment.getContext(), "You have to sign into Google Drive before you can export playlists.", Toast.LENGTH_LONG).show();
-                }
                 return true;
             }
         });
@@ -212,30 +179,5 @@ public class SettingsFragmentListener {
             Toast.makeText(settingsFragment.getActivity(), "Failed to export playlists", Toast.LENGTH_SHORT).show();
             Timber.e( "Export failed: " + e.getMessage());
         }
-    }
-
-    public void handleSignInResult(Intent data) {
-        // Process the sign-in result
-        AuthorizationResult authorizationResult = null;
-        try {
-            authorizationResult = Identity.getAuthorizationClient(settingsFragment.getActivity()).getAuthorizationResultFromIntent(data);
-            GoogleSignInAccount account = authorizationResult.toGoogleSignInAccount();
-            if (account != null) {
-                Toast.makeText(settingsFragment.getContext(), "Sign-in successful: " + account.getEmail(), Toast.LENGTH_LONG).show();
-
-                // Initialize GoogleDriveManager with the signed-in account
-                this.driveManager = GoogleDriveManager.getInstance(settingsFragment.getActivity(), account);
-
-                // Optional: Load settings and playlists using the manager
-                //TODO: if signed in -> enable import and export option
-                settingsFragment.exportPlaylistsGdrivePreference.setEnabled(true);
-                settingsFragment.importPlaylistsDevicePreference.setEnabled(true);
-                settingsFragment.signIntoGdrivePreference.setEnabled(false);
-                settingsFragment.signIntoGdrivePreference.setSummary("You are signed in. Now you can import/export playlist from/to you Google Drive!");
-            }
-        } catch (ApiException e) {
-            Timber.e("Could not sign into Google account!");
-        }
-
     }
 }

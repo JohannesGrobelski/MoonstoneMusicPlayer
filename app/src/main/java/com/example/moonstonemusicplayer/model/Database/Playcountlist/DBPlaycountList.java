@@ -19,13 +19,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-
-import com.example.moonstonemusicplayer.model.Database.Playlist.DBHelperPlaylists;
-import com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists;
 import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 

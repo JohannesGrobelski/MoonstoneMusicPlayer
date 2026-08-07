@@ -9,11 +9,6 @@
 package com.example.moonstonemusicplayer.model.PlayListActivity;
 
 
-import android.net.Uri;
-
-
-import java.io.File;
-
 public class Audiofile {
     String name;
     String path;

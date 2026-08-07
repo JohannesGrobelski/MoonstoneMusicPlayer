@@ -125,7 +125,6 @@ public class MediaPlayerService extends Service
 
   /** inits mediaplayer and sets Listeners */
   private void initMediaPlayer(){
-    onDestroy();
     mediaPlayer = new MediaPlayer();
     mediaPlayer.setOnCompletionListener(this);
     mediaPlayer.setOnErrorListener(this);
@@ -370,16 +369,11 @@ public class MediaPlayerService extends Service
   /** wird aufgerufen wenn es Fehler gibt */
   @Override
   public boolean onError(MediaPlayer mp, int what, int extra) {
-    switch (what){
-      case MediaPlayer.MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK:
-        break;
-      case MediaPlayer.MEDIA_ERROR_SERVER_DIED:
-        break;
-      case MediaPlayer.MEDIA_ERROR_UNKNOWN:
-        break;
-    }
-    if(((LocalBinder) iBinder) != null)((LocalBinder) iBinder).boundServiceListener.onError(what);
-    return false;
+    Timber.e("MediaPlayer error: what=%d extra=%d", what, extra);
+    isMediaPlayerPrepared = false;
+    mp.reset(); // Player aus dem ERROR-State zurückholen
+    if(((LocalBinder) iBinder) != null) ((LocalBinder) iBinder).boundServiceListener.onError(what);
+    return true; // wir haben den Fehler selbst behandelt -> onCompletion() wird NICHT zusätzlich aufgerufen
   }
 
   /** wird aufgerufen um uns Informationen zu geben */
@@ -832,7 +826,7 @@ public class MediaPlayerService extends Service
     // Calculate playback progress
     long duration = 0;
     long position = 0;
-    if (mediaPlayer != null) {
+    if (mediaPlayer != null && isMediaPlayerPrepared) {
       try {
         duration = mediaPlayer.getDuration();
         position = getCurrentPosition();

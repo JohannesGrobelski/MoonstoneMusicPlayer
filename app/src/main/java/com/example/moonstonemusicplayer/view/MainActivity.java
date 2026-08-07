@@ -18,8 +18,24 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.SearchView;
+import android.widget.Toast;
 
-import java.text.Collator;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.IntentSenderRequest;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.example.moonstonemusicplayer.R;
 import com.example.moonstonemusicplayer.controller.MainActivity.MainActivityListener;
@@ -27,33 +43,9 @@ import com.example.moonstonemusicplayer.view.mainactivity_fragments.AudiobookFra
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.FolderFragment;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.MainactivitySectionsPagerAdapter;
 import com.example.moonstonemusicplayer.view.mainactivity_fragments.PlayListFragment;
-import com.example.moonstonemusicplayer.view.settingsactivity_fragments.SettingsFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
-
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.IntentSenderRequest;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.app.ActivityCompat;
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.provider.MediaStore;
-import timber.log.Timber;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.SearchView;
-import android.widget.Toast;
-
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-
-import com.example.moonstonemusicplayer.view.mainactivity_fragments.MainactivitySectionsPagerAdapter;
 
 import timber.log.Timber;
 

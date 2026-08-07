@@ -12,15 +12,14 @@ import android.content.Context;
 
 import com.example.moonstonemusicplayer.model.MainActivity.BrowserManager;
 import com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment.Playlist;
+import com.example.moonstonemusicplayer.utils.LocaleUtil;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
-import com.example.moonstonemusicplayer.utils.LocaleUtil;
 
 //import com.example.moonstonemusicplayer.model.Database.DBSonglists;
 

@@ -8,27 +8,26 @@
 
 package com.example.moonstonemusicplayer.model.MainActivity.PlayListFragment;
 
-import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.MOSTLY_PLAYED_PLAYLIST_NAME;
 import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.RECENTLY_ADDED_PLAYLIST_NAME;
 import static com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists.RECENTLY_PLAYED_PLAYLIST_NAME;
-import com.example.moonstonemusicplayer.utils.LocaleUtil;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Build;
 import android.provider.MediaStore;
 
-//import com.example.moonstonemusicplayer.model.Database.DBSonglists;
 import com.example.moonstonemusicplayer.model.Database.Playlist.DBPlaylists;
 import com.example.moonstonemusicplayer.model.Database.PlaylistUtil;
 import com.example.moonstonemusicplayer.model.PlayListActivity.Song;
+import com.example.moonstonemusicplayer.utils.LocaleUtil;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
+
+//import com.example.moonstonemusicplayer.model.Database.DBSonglists;
 
 /** saves and loads playlists and contains the current (displayed) playlist in playlistfragment*/
 public class PlaylistListManager {
